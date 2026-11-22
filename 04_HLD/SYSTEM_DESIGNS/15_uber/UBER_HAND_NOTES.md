@@ -78,7 +78,7 @@ Technical me: "beech ka dabba" = Location Service, phone har ~4 sec (maan lo) la
 
 **2. Har 4 sec, 5 lakh driver = 1.25 lakh update / sec. Normal DB ghut gaya, jagah 30 sec peeche.**
 Arpan: Ya to chhoti parchi, kaat ke nayi jagah likho; ya bada dabba jo likhne me tez ho. Crore-crore likhai pe parchi dheemi ho sakti, gir sakti, aur kab tak replica lagaunga, kal driver aur badhenge. To bada bhai bulao, jo isi kaam ke liye bana hai, apni copies khud rakhta: Cassandra.
-Technical me: "bada dabba" = Cassandra (likhai tez, apni copies, machine jodo to badhta; andar ring = consistent hashing).
+Technical me: chhoti parchi = Redis (kaat ke nayi likho = overwrite) · "bada dabba" = Cassandra (likhai tez, apni copies, machine jodo to badhta; andar ring = consistent hashing).
 
 **Aur neeche (Zomato wali reel se): Raju ki har nayi jagah DB me nayi line ban ke jud rahi. Arpan ke map ko sirf abhi ki jagah chahiye, par DB laakhon purani lines me se sabse nayi dhoondh raha, map dheema. Aur company ko baad me poora raasta bhi chahiye (kis raaste gaya, kahan ruka), purani lines phenk nahi sakte.**
 Arpan: DB me location likhne ka koi matlab nahi, ye to faltu ki cheez ho gayi. DB me to bas wo likhenge jo kaam ki hai: haan bhai tumhara driver pahunch gaya, order delivered, order pending. Location to ek parchi pe daal do: 4 second baad request aayi, purani kaat ke nayi likh di, kaat ke likh di, jisse parchi bhi na bhare. Delivery ho jaaye to Redis se hata do, use rakhne ka koi matlab nahi. Ab maan le company ko ye sab chahiye, to wo kahin aur lagega, apne alag storage box me. Aur ye cheez bahut zyada aa sakti hai, bheed lag sakti hai; bheed ka jawab hamare paas pehle se hai, Kafka. Jitne bhi driver ki saari location har 4 second, Kafka me daal do, aur batch me alag storage box me daalte jao: 4 second baad driver yahan pahuncha, 4 second baad yahan, 10 minute se yahan khada tha, 20 minute yahan cigarette phooki (wo map nahi dikhayega, par cheezein alag-alag). DB me location daali to DB pata nahi kitne guna bada karna padega, Cassandra jaisa koi bhi DB nahi jhel paayega, aur fayda bhi nahi.
@@ -148,7 +148,7 @@ Technical me: "pehle server, phir todo" = pehle scale out, zaroorat pe hi split,
 
 **7. Raju ne 14.9 sec pe accept dabaya, server pe 16 sec pe pahuncha, tab tak Priya ko de diya.**
 Arpan: Ghadi server ki. 15 sec tak ruka, phir chala gaya; der se aaya to uski parchi phaad do, accept radd. Uber me bhi aise booking cancel hoti dikhti.
-Technical me: "ghadi server ki" = TTL ka faisla server pe, der se aaya accept reject.
+Technical me: parchi = driver ko gayi request (TTL) · "ghadi server ki" = TTL ka faisla server pe, der se aaya accept reject.
 
 **21-Nov round:**
 Arpan: Request ki umar maan lo 30 second. Arpan ki request 29.3 pe Raju ne accept ki par server dheema tha, likh nahi paaya, 30 nikal gaya: ride nahi milegi, umar aage nahi badhayenge. Agla driver le lega; ye sanyog lakhon me ek baar, Arpan ki cab agle driver se lag jaayegi. Doosra raasta: jab tak koi accept na kare, sabka phone bajta rahe, umar hi nahi. Uber asal me kaise karta (1 minute, 1.5, 3, ya jab tak driver dayre me), pakka nahi pata; dono notes me.
@@ -163,7 +163,7 @@ Technical me: "sabke phone bajao" = broadcast dispatch (aas-paas ke kai driver k
 
 **8. Raju Connaught Place ke dabbe se Janpath ke dabbe me gaya, purane dabbe me naam pada; Arpan aur Priya dono ko dikh raha.**
 Arpan: Sach wahi jo GPS ne abhi bheja: Raju Janpath me. Book pe Raju ki taaza jagah dekho; Arpan ke gole me nahi to use mat do, Arpan ke liye CP me koi aur. Dono ek saath dabaayein to wahi taala.
-Technical me: "taaza jagah dekho" = assign se pehle driver ki latest location check (ek driver ki ek sach jagah), lock double se bachata.
+Technical me: taala = lock · "taaza jagah dekho" = assign se pehle driver ki latest location check (ek driver ki ek sach jagah), lock double se bachata.
 
 **9. Dabbe kadam 3 me bana liye, par register abhi bhi driver ke naam se laga hai ("Raju -> Connaught Place"). Booking pe chahiye "Connaught Place me kaun-kaun", to phir 5 lakh line. Aur Raju dabba badle to purane panne me naam pada rehta, shaam tak 2,000 purane naam.**
 Arpan: Jagah ke hisaab se baant do: Connaught Place me itne driver, Janpath me itne, AIIMS ke paas itne. 5 lakh ki jagah utni hi line jitne us jagah me. Raju us jagah se nikla to wahan se hata do, naye panne me daal do. Raju booked hai to list se nikaal do, ab wo kisi ko nahi milna. Booked nahi aur ghoom raha to kaat ke nayi list me, U-turn le ke wapas aaya to phir purani list me. Booked Raju ne Connaught Place pe sawari utaari to pata hai thodi der me khaali hoga, phir list me daal do.
@@ -171,7 +171,7 @@ Technical me: "jagah ke hisaab se panna" = geohash -> drivers (Redis set har dab
 
 **10. Raju aa raha, Arpan ko gaadi naksha pe khisakti dikhni chahiye. 10 lakh phone har second "Raju kahan?" poochh rahe, 99% jawab "wahin", server dab gaya.**
 Arpan: Server poochh kyun raha, poochne ka mauka hi mat do. Ek aisa dabba bitha do ki Raju hila to turant Arpan ko dikha de, hila to dikha de. Asal me hilta hai, jhooth nahi dikhate.
-Technical me: "poochne ka mauka mat do, khud dikha do" = push (WebSocket, khula taar), polling band.
+Technical me: dabba = WebSocket · "poochne ka mauka mat do, khud dikha do" = push (WebSocket, khula taar), polling band.
 
 **11. Arpan ka taar server 12 pe, Raju ki jagah server 57 pe aati. 57 ko pata hi nahi Arpan kahan.**
 Arpan: 100 server me dhoondhna nahi. Store karwa lo: Arpan server 12 pe, Raju ki ride Arpan ke saath. Raju aur Arpan ke taar jodo, Raju ko sirf Arpan se lena-dena. Jaise ghar ka raasta pata ho to seedha usi raaste.
@@ -195,7 +195,7 @@ Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 
 **Maan lo poochhte raho aur gateway ka jawab aaye hi na. Arpan gaadi me baitha, Raju saamne, dono intezaar kar rahe. Kab tak rokoge?** (BookMyShow 6c wala hi jawab)
 Arpan: Gateway kitni der lega, hamare haath me nahi, to hum apni ghadi rakhte: 30 se 55 second, phir dono app pe "payment nahi hua, paisa kata to wapas aa jaayega", Arpan GPay / cash se de. Paisa katte hi gateway chhota sa event bhejta, jaise S3 file aane pe bhejta. Event aaya = kata, hum "mil gaya" bol dete. Baad me kata nikla aur Arpan cash de chuka, to gateway ko bolo "lautao". Onboard pe gateway se SLA lo: uptime aur down hone pe kitni der me khabar; bank ki der nahi.
-Technical me: "30-55 sec" = hamara client timeout, "paisa katte hi event" = webhook (PSP callback), "mil gaya" = ack (2xx), "baad me kata to lautao" = DB me REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe, "onboard pe SLA" = uptime SLA + incident response.
+Technical me: ghadi = hamara client timeout · "30-55 sec" = hamara client timeout, "paisa katte hi event" = webhook (PSP callback), "mil gaya" = ack (2xx), "baad me kata to lautao" = DB me REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe, "onboard pe SLA" = uptime SLA + incident response.
 
 **21-Nov round: 1400 kaatne gaye, gateway chup, Raju agli sawari ke liye nikalna chahta hai.**
 Arpan: Jab tak paisa nahi kata, ride poori nahi hoti; Uber me bhi pay ke baad hi ride poori hoti hai. Kuch second ruk sakte, hamesha nahi, aur bhi ride hain. 30 second jawab nahi to DB me FAILED likho. Teen raaste: Uber ka apna wallet, doosra PSP (Razorpay, jo India me chalta ho), ya driver ko cash. Arpan ne cash de diya aur 5 minute baad GPay se bhi 1400 kat gaye, to Razorpay event bhejega; table me ek extra column "kitni der baad kata" (5 minute), raat ki cron job usse pakde aur Razorpay ko bole lautao. Kaise diya wo bhi rakho: cash (transaction id nahi, driver likhega) ya GPay (transaction id). Refund 5 din me na aaye to Arpan transaction id se bank se poochh sake. Arpan ke wallet se kat gaya aur Razorpay ka event aa gaya to Arpan ko mat roko, ride poori; Uber ke account me der se aaye wo Uber aur bank ki dikkat. Gateway / bank ke andar kya hua wo PSP ka kaam, design ka hissa nahi.

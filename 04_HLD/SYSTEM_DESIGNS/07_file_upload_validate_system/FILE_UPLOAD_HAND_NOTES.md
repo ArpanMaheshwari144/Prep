@@ -70,7 +70,7 @@ Technical me: "bada dabba" = S3, "tukde" = multipart upload (resume), "safai" = 
 
 **3. Phone seedha S3 me daal raha, par S3 kaise maane ye hamara user hai? App me AWS chaabi rakhi to koi bhi nikaal le.**
 Arpan: Bank jaisa: koi seedha manager ke cabin me nahi ghusta (cabin = S3). Pehle receptionist (hamara server) JWT dekh ke tasalli kare, phir ladke ke haath me token de (token = presigned URL, sirf is file ke liye, thodi der ka): "ye le, jab teri baari aaye to file de dena". 10 GB ka bora receptionist khud nahi uthata (file hamare server se nahi guzarti, phone seedha S3 me daalta hai). Badi faltu file pe had ya paisa.
-Technical me: "receptionist ka token" = presigned URL (hamara server deta, chaabi phone ko nahi), "had" = size limit / quota.
+Technical me: ladka = user ka phone (client) · "receptionist ka token" = presigned URL (hamara server deta, chaabi phone ko nahi), "had" = size limit / quota.
 
 **Maan lo 10 GB ki file, upload 40 minute chal raha, aur receptionist ka token thodi der ka tha, beech me hi khatam ho gaya.**
 Arpan: Token poori file ka ek nahi, har tukde ka apna. Kadam 2 me file tukdon me ja rahi hai, to har tukda bhejne se pehle receptionist se us tukde ka chhota token le lo. Beech me net gaya ya token ki umar khatam hui, to koi baat nahi: jo tukde pahunch gaye wo S3 me pade hain, bas baaki tukdon ke liye naya token maango aur wahin se aage badho. Is tarah token chhota bhi rehta hai (leak hua to nuksaan kam) aur bada upload bhi poora ho jaata hai.
@@ -78,7 +78,7 @@ Technical me: har tukde ka token = har part ka alag presigned URL (multipart upl
 
 **4. File S3 me aa gayi, par server ko pata hi nahi, DB me "UPLOADING" pada, scan shuru hi nahi hua.**
 Arpan: S3 ko bol do: "jab file aa jaaye, mujhe bata dena". Hum DB me mark kar denge aur ladke ko bata denge. Poori nahi hui to wo dobara try karega.
-Technical me: "S3 bataye" = S3 event notification -> DB status + Kafka me scan ka kaam.
+Technical me: ladka = user ka phone (client) · "S3 bataye" = S3 event notification -> DB status + Kafka me scan ka kaam.
 
 **Maan lo server ne DB me UPLOADED likh diya, par Kafka me scan ka kaam daalne se pehle gira. File UPLOADED pe atki, scan kabhi shuru nahi.**
 Arpan: Wahi Kafka aur Notification wala: vasiyat likh do. UPLOADED ke saath hi likh do "iska scan karwana hai", ek hi baar me. Beech me gira to baad me koi utha ke Kafka me daal dega.
@@ -109,7 +109,7 @@ Technical me: "saamne faad di, S3 baad me" = soft delete (DB me turant), "event 
 **Maan lo folder ki jaanch, ek file fail:** Arpan: Folder parent aur child ke hisaab se: parent ki tracking id aur har child ki tracking id, ek-ek karke upload. Ek child fail hua to poora parent folder fail; ek bhi fail nahi, sab pass, to poora folder pass.
 
 **Maan lo ek saath 10 file aayi:** Arpan: Apni copy badha dunga, chaar copy ho gayi: le bhai 10 file, thodi tu sambhal, thodi tu, thodi main. Inhe scan karo aur dheere-dheere us bade ladke ko dete raho jiska naam S3 hai. Beech me net chala gaya to dobara upload, hamare paas status hai ki kahan tak hua tha.
-Technical me: "parent ka haal bachchon se" = folder status = sab child ka AND, "copy badha do, baant ke" = kai worker parallel, "kahan tak hua" = har file ka apna status (resume).
+Technical me: bada ladka = S3 · "parent ka haal bachchon se" = folder status = sab child ka AND, "copy badha do, baant ke" = kai worker parallel, "kahan tak hua" = har file ka apna status (resume).
 
 **6. Ravi ne URL me 1042 ki jagah 1043 likha aur Priya ka bank statement khul gaya. Download bhi hamare server se ja raha.**
 Arpan: Ravi asli member hai (JWT), par Priya ki statement maange to "Priya ko saath la". Server DB me dekhe file kiski hai / kisse share hui, tabhi link de. Link me chhed-chhaad ki to link bekaar. Download truck seedha ghar (S3 se seedha user ke phone pe), hamare bank me nahi aata (hamare server se data nahi guzarta).

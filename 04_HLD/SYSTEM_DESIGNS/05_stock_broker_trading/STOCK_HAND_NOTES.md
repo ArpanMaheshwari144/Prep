@@ -90,7 +90,7 @@ Technical me: withdraw sirf available se (balance - blocked = 0, isliye reject +
 
 **4. 9:15 baje bheed, engine tez karne ko 4 thread. Do thread ne ek saath TCS ki book dekhi, dono ko Ravi ke wahi 10 share dikhe. Ek ne Arpan ko bech diye, doosre ne Mohan ko. 10 share, bik gaye 20.**
 Arpan: Sabko ek line me le. Mere paas 10 share hain, maine apni ek copy bana di aur thodi door khada kar diya. Ek ladka mere paas aaya, ek copy ke paas, dono ne 10 khareed liye, 20 bik gaye, mere paas the 10, galat ho gaya. To maine copy ko apne paas kheench liya, mujhme mil ja, yahin khada ho ja. Arpan aaya, Mohan aaya: copy ko bola thodi der ruk, pehle mujhe bechne de. Bech diya, mere paas zero, copy ko kaha apne zero kar le. Ab Mohan aaya, copy ne mana kar diya. Matlab sabko ek hi jagah rakho, alag-alag mat baanto.
-Technical me: "copy door khadi, dono ne bech diya" = do thread ek book pe (race), "sabko ek line me, ek jagah, alag mat baanto" = ek share ki book ek hi thread (single-threaded per symbol).
+Technical me: ladka = ek order (thread) · "copy door khadi, dono ne bech diya" = do thread ek book pe (race), "sabko ek line me, ek jagah, alag mat baanto" = ek share ki book ek hi thread (single-threaded per symbol).
 
 **Aur neeche (hot IPO pe sab ek saath burst):** Arpan: Hot IPO aaya, sab ek saath burst. Baantna nahi hai, baant diya to race se kisi ko bhi kitne bhi share mil jaate. Line me lag jao bhai, counter jaisa: "kitne chahiye? 10; lo 10 share, niklo line se", agla. Ye bahut time nahi lagta, engine lakhon order per second kar sakta, jitna bolne me lag raha utna nahi. Sab ek hi thread pe, dikkat khatam, burst bhi sambhal jaata.
 Technical me: "ek line, counter" = symbol ki ek queue, ek thread (sequencer), "baanta to race" = shard ek symbol ke andar nahi.

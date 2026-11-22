@@ -77,7 +77,7 @@ Technical me: "thodi der intezaar" = lease / heartbeat timeout, "purana wapas aa
 
 **3. 50 chhotu. Ravi ki feed me ek khabar 40 baar: 2 chhotu ek hi Cricbuzz se laaye, 38 alag site se alag shabdon me.**
 Arpan: Chhotu ke paas ek bada aadmi rakh: "ye dobara hai, hatao, pehle aa chuki". Par "India jeeta, Kohli ki century" aur "Kohli ki shaandaar century, India jeeta" me shabd alag hain, hubahu wala check nahi pakdega. To wordings dekh lo: dono me Kohli, century, India, jeeta hai, to same khabar, hata do; nahi to rakh lo.
-Technical me: "bada aadmi" = dedup, "hubahu same" = URL / title ka hash, "wordings dekh lo" = shabd milaan (near-duplicate check).
+Technical me: chhotu = fetcher · "bada aadmi" = dedup, "hubahu same" = URL / title ka hash, "wordings dekh lo" = shabd milaan (near-duplicate check).
 
 **Isi dikkat ki doosri baat:** Arpan: Ek hi khabar baar-baar repeat ho rahi to duplicate hata sakte, dedup: paanch source pe ek hi khabar ho to ek hi laao. Jaise Bloom filter use kar sakte, usse repetition nahi hogi; aur category me baant sakte, tag: sports, politics.
 Technical me: Bloom filter = "ye pehle dekha?" ka tez jawab (thodi jagah me; kabhi-kabhi galat "haan", "nahi" hamesha sahi), category tag.
@@ -96,11 +96,11 @@ Technical me: "pasand ki ek parchi" = user preference store, "shabdon ki list se
 
 **6. Priya app kholti hai. Chhotu site pe jaata hai ya parchi se deta hai?**
 Arpan: Parchi bhi chhotu hi banata. Naya banda aaya, pehle din pasand poochi: tech. To pehli baar DB se laao (thoda time chalega) aur parchi me rakh do. Roz tech hi dekh raha to wahi pehle se saamne rakho, pasand badle to DB se. Aur jis site se khabar la rahe wo band ho to 5 sec, 10 sec baad dobara try; na khule to chhodo, baaki site chalti rahengi.
-Technical me: "pehli baar DB, phir parchi" = cache-aside, "5 sec, 10 sec baad dobara" = retry + backoff, ek site band = baaki pe asar nahi.
+Technical me: chhotu = fetcher, parchi = Redis feed · "pehli baar DB, phir parchi" = cache-aside, "5 sec, 10 sec baad dobara" = retry + backoff, ek site band = baaki pe asar nahi.
 
 **7. Priya ki parchi 8 baje bani. 9:05 iPhone ki khabar DB me gayi. 9:10 Priya ko parchi se purani feed, iPhone nahi.**
 Arpan: Nayi khabar aate hi tech walon ki feed me daal do. Aur milaan: har tech wale ki parchi me aaj ki badi khabar hai na? Chhoot gayi to DB se le ke seedha feed me.
-Technical me: "aate hi feed me" = likhte waqt push, "milaan" = check job.
+Technical me: parchi = Redis feed · "aate hi feed me" = likhte waqt push, "milaan" = check job.
 
 **8. 50 lakh tech wale, har ek ki apni parchi, har minute 20 khabar = 10 crore likhna. Workers / consumers peeche.**
 Arpan: Worker / consumer pe faltu load kyun? Sab tech wale hain, sabko same khabar; Tesla launch hua to sabke liye hai, aisa nahi Arpan ke liye hai Ravi ke liye nahi. 50 lakh alag parchi bekaar. Saari tech khabar ek parchi me, app khule to wahin se.
@@ -108,7 +108,7 @@ Technical me: "ek tech parchi" = category ka ek feed (ek key), likhna ek baar, p
 
 **9. Tech parchi ek dabbe me. 9 baje iPhone launch, 10 lakh request / sec, dabba (maan lo) 1 lakh sambhalta. Cricket wale dabbe khaali.**
 Arpan: Do tareeke: tech ke dabbe badha do, ya kal match nahi to cricket wale dabbon me bhi tech parchi daal do, aadhi request wahan se. World Cup hota to cricket dabba chahiye tha. Teeno aapas me baant lo.
-Technical me: "dabbe badha do" = aur Redis node, par us pe bhi tech ki copy (ek key ek hi node pe rehti, akela node load nahi baant-ta), "cricket dabbe me tech ki copy" = garam key ki copies, load baant.
+Technical me: parchi = tech feed ki key, dabba = Redis node · "dabbe badha do" = aur Redis node, par us pe bhi tech ki copy (ek key ek hi node pe rehti, akela node load nahi baant-ta), "cricket dabbe me tech ki copy" = garam key ki copies, load baant.
 
 **10. Tech parchi 3 dabbon me. iPhone khabar sirf A me pahunchi. Priya ko A se dikhi, refresh pe B se gayi to gayab.**
 Arpan: Garam khabar do-teen dabbon me daalo. A ke paas hai, B ke paas nahi, to B bhi rakhe. Do me likho, do se padho: A-B, A-C, B-C, koi bhi do.
@@ -116,7 +116,7 @@ Technical me: "do me likho, do se padho" = quorum (3 me W=2, R=2, kam se kam ek 
 
 **11. Worker / consumer ne khabar DB me likhi, parchi me daalne se pehle mar gaya. Doosra worker / consumer DB me dekh ke dupe samjha, hata di. Khabar kisi ko nahi dikhi.**
 Arpan: Gadbad parchi se pehle hui. DB se pehle mara to dikkat nahi, doosra daal dega, dupe check + unique constraint hai. To ek status rakh: "DB me daali", "parchi me daali". Beech me gira to agla status dekh ke kaam aage badha dega. Ek tarah ki logging.
-Technical me: "status" = khabar ka state (DB me -> feed me), agla worker / consumer adhoora kaam poora karta; "logging" = outbox wali soch (outbox = DB ki table, kaam ke saath usi transaction me likhi).
+Technical me: parchi = Redis feed · "status" = khabar ka state (DB me -> feed me), agla worker / consumer adhoora kaam poora karta; "logging" = outbox wali soch (outbox = DB ki table, kaam ke saath usi transaction me likhi).
 
 **12. App ko 6 mahine ho gaye. Roz 5000 site se ~1 khabar / sec, photo ke saath. "Khabar" table mota, disk ka bill har mahine badh raha, feed banate waqt itne bade table me chhaantna dheema. Par Ravi aur Priya 2-3 din se purani khabar kabhi kholte hi nahi.**
 Arpan: Sabse pehle FR me tay karo ki purani khabar kab tak rahegi. Jaise main akhbaar padhta hoon, ghar me akhbaar jama hote rehte hain. Aaj ka padh liya, wo dheere-dheere raddi ban jaata hai, phir raddi me bech dete hain, ghar me nahi rakhte. Same yahan: purani khabar mote register me rakhne ka matlab nahi. Shard karna sense nahi banata: shard tab karo jab dono hisse ka data kaam me aa raha ho. Ek mahine purani khabar kaun dobara padhta, koi nahi. Koi bolega partition kar do, usse bhi fayda nahi; jab tak DB me padi hai, matlab nahi. Ek saal purani khabar kaun padhega? Use mote register se nikaalo, panna nikaal ke alag rakh do.
@@ -131,7 +131,7 @@ Technical me: Elasticsearch = alag search index (black box, PSP jaisa) (bana-ban
 **Maan lo headline me ekdum "Kohli century" likha, khabar 9:00 pe register me gayi, feed me turant dikhi. Ravi ne 9:00:20 pe search kiya, kuch nahi mila; 9:02 pe mil gayi.**
 Arpan: Feed mote register se banti, isliye turant dikhi. Elasticsearch alag dabba hai, us tak abhi baat pahunchi nahi, isliye search me nahi aayi. Do raaste: (1) register aur Elasticsearch ko sync me rakho, khabar aaye to register me likho aur Elasticsearch me bhi bhar do, dono ek saath. (2) feed turant, Elasticsearch peeche-peeche, search me kuch second ki der; user 20 second ruk lega, dikkat nahi. Dono raaste sahi. Search kitna ruk sakta, FR me tay. Sync job fail ho jaaye to alert lagao, failover karo ya dobara bharo.
 Arpan (phir, wahi baat khol ke): Pehle mujhe laga Elasticsearch bas ek API service hai; diagram dekh ke pata chala ye alag dabba hai aur feed alag dabba, tab jawab apne aap aa gaya. Do raaste: (1) pehle dono ko sync me rakho, phir feed dikhao; 30-40 sec me dono sync, to khabar khulte hi search me bhi turant. (2) search pe gola ghuma do (user 10-15 sec ruk leta), peeche sync chalta rahe, sync hua aur result aa gaya. Kaunsa, ye requirement: user kitne second ruk sakta. Elasticsearch ko hum batate hain kya aur kaise dhoondhna; andar kaise karta, wo Elasticsearch jaane.
-Technical me: "dono me ek saath bharo" = dual write, "peeche-peeche" = async indexing (eventual consistency), "kitni der chalegi, FR me" = search lag tay, "sync fail to alert" = alert + reindex.
+Technical me: mota register = DB, alag dabba = Elasticsearch · "dono me ek saath bharo" = dual write, "peeche-peeche" = async indexing (eventual consistency), "kitni der chalegi, FR me" = search lag tay, "sync fail to alert" = alert + reindex.
 
 &nbsp;
 

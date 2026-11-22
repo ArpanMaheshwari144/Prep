@@ -82,7 +82,7 @@ Technical me: unique key + "IN_PROGRESS" bhi ek jawab (doosri request ruk jaaye,
 
 **3. Branch me do counter. Arpan ke khaate me 600. Ek hi pal me do parchi, Netflix 500 aur UPI 500, alag counter pe. Dono cashier ne 600 dekha, dono ne kaat diya, balance -400.**
 Arpan: Ise ek hi kram me kar lo, dekhna aur kaatna ek hi kram me. Jisne pehle 600 dekha, wo pehle kaat de: Netflix ke 500 turant kat gaye, ab account me 100 rupaye hain, to agla counter 600 nahi, 100 dekhega. Technical terms me jo bhi kehte hain wo mujhe pata nahi, lekin ek kar do, aur doosre wale ko 600 dikhne nahi chahiye.
-Technical me: "dekhna aur kaatna ek kram me" = ek query me check + kaato (`balance - 500 WHERE balance >= 500`), "doosre ko 600 dikhne nahi chahiye" = row lock.
+Technical me: counter = do alag request (server) · "dekhna aur kaatna ek kram me" = ek query me check + kaato (`balance - 500 WHERE balance >= 500`), "doosre ko 600 dikhne nahi chahiye" = row lock.
 
 **Maan lo ek hi pal me do parchi: counter 1 pe "Arpan se Ravi 500", counter 2 pe "Ravi se Arpan 300". Counter 1 ne Arpan ka khaata pakda, Ravi ka maang raha; counter 2 ne Ravi ka pakda, Arpan ka maang raha. Dono ek doosre ka intezaar, koi nahi hilta.**
 Arpan: Dono counter wale apna-apna khaata pakad ke khade, na ye chhodta na wo. Do raaste hain. Pehla: main Ravi se bolunga "chal bhai, hum dono ek hi line me lagenge, ek hi counter pe", to ek ke baad ek kaam hoga. Doosra: main bolunga "koi baat nahi, pehle mere khaate se kaat ke Ravi me daal de". Wo ho gaya to khaata free, phir doosri parchi bhi ho jaayegi. Aur ye atkan sirf ek hi bank ke DB ke andar hota hai, alag bank me nahi. User ko kabhi pata nahi chalta: DB khud tod deta hai, app dobara chala deta hai, Arpan ke 500 aur Ravi ke 300 dono chale jaate hain.
@@ -96,7 +96,7 @@ Technical me: "counter pe group ki line, kaam khatam to agla" = thode workers / 
 
 **4. Hafte baad Ravi aaya: "Arpan ke 500 mile hi nahi". Register me sirf aaj ka balance, purana number har baar kaat ke naya likha. Saabit kaise karein?**
 Arpan: Ek alag diary rakh lo, usme kaato mat, uske neeche bas likhte jao, jodte jao. Ya ek copy me do column bana lo: ek me update likhte ja rahe, koi dikkat nahi, lekin doosre me update mat karo, 500 kaato mat, neeche likhte jao: Ravi me +500 hua, yahan se -500 hua. To kabhi koi dikkat nahi. Main bol raha hoon do alag cheez rakho.
-Technical me: "alag diary, kaato mat, neeche likhte jao" = ledger (append-only), "+500 / -500" = double-entry, "ek column me update" = balance column, alag.
+Technical me: register = balance wali table · "alag diary, kaato mat, neeche likhte jao" = ledger (append-only), "+500 / -500" = double-entry, "ek column me update" = balance column, alag.
 
 **Maan lo pooche ledger kaunsi dikkat solve karta:** Arpan: Ledger kisi dikkat ko solve nahi kar raha; ledger ek audit record hai. Sab cheez DB me pehle se hai, logs me hai. Ledger ek book jaisa: kal RBI ka audit aaya to main DB me query chala-chala ke nahi dhoondhunga, ledger ki copy de dunga. RBI bank ka DB nahi maangta; RBI apna audit karta, bank apna, dono ledger milaate hain.
 Technical me: ledger = append-only audit trail (regulator / reconciliation ke liye), balance ka sach ussi se jodke milta.
@@ -134,7 +134,7 @@ Technical me: "replica khud bataye / chhotu poochhta rahe" = replica apni sync p
 
 **Maan lo main register kabhi band nahi hota, Priya, Ravi lagaatar likh rahe. Photocopy kabhi "poori sync" nahi hogi. To chhotu kya poochhe?**
 Arpan: Ek point rakh lo ki yahan tak sync hua. Maan lo 100 likhai aayi, Arpan ki 100vi hai, usme 500. Replication 99 tak pahuncha to mera 500 abhi nahi aaya, replica se nahi padhna. 100 tak pahuncha to mera 500 aa gaya. Mujhe apna 100 chahiye; mere peeche Ravi, Priya, Elon Musk kuch bhi kar rahe ho, lena-dena nahi. To replica bhai, jab tu Arpan tak pahunch jaaye to bata de; Ravi tak pahunche to Ravi ka, Priya tak to Priya ka. Jaise main primary hoon, register padhta ja raha aur peeche page pass karta ja raha; mera padhna tez, wo thoda peeche kyunki dene-lene me time lagta. Main poochhun "kahan tak padha?", main 500 page padh chuka, wo bole 450, koi dikkat nahi, padhta rahe. Maan le DB abhi 1000 pe hai aur replica bole "main 980 pe hoon", to pata lag gaya 20 peeche hai; agli baar poocha to 30 peeche, 40 peeche, bas yahi.
-Technical me: "replica bataye kahan tak pahunchi, 1000 me 980 = 20 peeche" = replication lag (replica apni position batati), "mujhe apna 100 chahiye" = Arpan ki likhai tak pahunchi to replica se, nahi to primary se (andaza nahi, seedha check). Log aur uska number DB apne andar khud rakhta, wo design ka hissa nahi.
+Technical me: register = primary DB · "replica bataye kahan tak pahunchi, 1000 me 980 = 20 peeche" = replication lag (replica apni position batati), "mujhe apna 100 chahiye" = Arpan ki likhai tak pahunchi to replica se, nahi to primary se (andaza nahi, seedha check). Log aur uska number DB apne andar khud rakhta, wo design ka hissa nahi.
 
 **Maan lo aur neeche chalein: photocopy khud "980 tak" bataye, ya chhotu poochhta rahe, dono me kaunsa? Photocopy hi atak gayi to?**
 Arpan: Dono sahi hain, dono me trade-off hai. Main DB me abhi 1000 likha hai. Chhotu replica se poochhe "main me 1000 hai, tu kahan tak?", replica bole "980 tak". Ya yahi baat replica khud bata de "main 980 tak pahunch gaya". Replica khud bataye to ek kadam kam, beech me koi nahi. Par replica beemar pad gaya, bahut zyada lag, kuch bhi hua aur wo khud bata hi nahi pa raha, to primary sochega replica theek chal raha hai. Chhotu ho to wo turant pakad lega "replica jawab nahi de raha, mar gaya", phir kisse poochh rahe. Chhotu wala ek extra kadam hai, aur chhotu beemar pade to doosra chhotu taiyaar rakhna padta.
@@ -154,7 +154,7 @@ Technical me: "head office me bhej do" = purana ledger S3 me (sasta, lambe samay
 
 **13. Head office me purani diary ek godown (almari wala kamra) me rakhi hai. Ijazat wala aadmi hi us godown me ja ke "Arpan -500" ko "Arpan -50" kar de.**
 Arpan: Uski multiple copies rakh lo. 3-4 copy alag-alag chupchap kahin aur kone me daba do, taaki wo sab na badal paaye, ek hi badal paaye. Usne ek file badal bhi di to doosri copy me same data hoga. Aakhir me paancho file milao: ek me hi -500 ki jagah -50 hai, baaki me nahi, matlab isne chhedchhaad ki hai. Aur ek aur kar sakte hain: version ka lock laga do, ki wo file koi change hi na kar sake. Maan le wo ek tarah se kohinoor heera hai: na koi chhoo sakta, na chhed sakta, na badal sakta. Use aisi jagah taala maar do: ye main data hai, ispe koi na badlega, wo chupchap wahin pada rahega.
-Technical me: "kai copy chhupa ke, milao" = copies (doosri jagah) se chhedchhaad pakadna, "version ka lock" = versioning, "kohinoor, koi badal na sake" = S3 Object Lock.
+Technical me: taala = koi badal na sake (lock) · "kai copy chhupa ke, milao" = copies (doosri jagah) se chhedchhaad pakadna, "version ka lock" = versioning, "kohinoor, koi badal na sake" = S3 Object Lock.
 
 &nbsp;
 
@@ -170,11 +170,11 @@ Technical me: "pehle se bana ke rakh do" = precompute (batch job), "peeche chhot
 
 **15. 28 Feb raat ka transaction der se aaya. Ravi ki Feb statement tab tak ban chuki thi, shayad bhej bhi di.**
 Arpan: Statement banane ke baad ek chhotu use bank ke record se milaye ki sach me sahi hai. Phir bhi koi transaction baad me aaya, to do raaste hain. Pehla: use jod ke nayi statement bana do aur Ravi ke account me daal do, wo dobara download kar lega. Doosra: statement thodi der se banao, 1 March ki subah nahi to thoda baad, taaki der wale bhi aa jaayen. Ekdam pakki chahiye to banao, verify karo ki kuch chhoota nahi, tab do.
-Technical me: "record se milaye" = reconciliation, "nayi statement, dobara download" = revised statement, "thodi der se banao" = cutoff + grace window, "turant ya ekdam pakki" = consistency vs immediacy.
+Technical me: chhotu = reconciliation job · "record se milaye" = reconciliation, "nayi statement, dobara download" = revised statement, "thodi der se banao" = cutoff + grace window, "turant ya ekdam pakki" = consistency vs immediacy.
 
 **16. Chhotu aadha kaam karke gir gaya.**
 Arpan: Ye Kafka me kai baar ho chuka. Chhotu jitna karta hai DB me likhta jaata hai, gira to naya chhotu wahin se utha leta hai.
-Technical me: "DB me likhta jaata, wahin se utha le" = checkpoint, jo ban chuka wo dobara nahi = idempotency.
+Technical me: chhotu = worker / consumer · "DB me likhta jaata, wahin se utha le" = checkpoint, jo ban chuka wo dobara nahi = idempotency.
 
 **17. 10 me se 9 chhotu kaam khatam karke baithe hain, ek bahut der se laga pada hai. Uske paas bahut saara kaam.**
 Arpan: Jab ladke khaali baithe hain to naye ladke kyun lane? Ek bhara pada hai, baaki khaali, to kaam baant lo. Idhar aao sab, is bande ki madad karo.
@@ -182,15 +182,15 @@ Technical me: "ek ke paas bahut kaam" = hot key / data skew, "khaali ladke madad
 
 **18. Wo bada kaam ek hi merchant ka hai: 5 crore transaction, aur statement ek hi banni hai.**
 Arpan: Ek parchi pe sab mat baitho, kaam baant do: 20 lakh tu le, 30 lakh tu le. Sab apna hissa karke laaye. Phir ek bada aadmi bulao jo isi kaam me expert hai, wo sabke tukde jod ke ek statement bana dega. Thoda time lagega, chalega.
-Technical me: "kaam baant do" = map, "bada aadmi jod ke ek banaye" = reduce, dono milke = MapReduce.
+Technical me: ek parchi = ek hi worker / ek jagah · "kaam baant do" = map, "bada aadmi jod ke ek banaye" = reduce, dono milke = MapReduce.
 
 **19. Statement me har line ke saath running balance. May wale chhotu ko 1 May ka opening balance chahiye, jo April wale ke khatam hone pe hi pata chalega.**
 Arpan: Tukde mahine ke hisaab se do: April wala April, May wala May. Andaze se balance nahi likh sakte, statement galat ho jaayegi. Aur balance to master register me pehle se likha hai. Intezaar kyun? May wala chhotu master register se 1 May ka balance utha le, apne notepad me likh le, aur kaam shuru kar de.
-Technical me: "mahine ke tukde" = mahine ke partition, "master register me likha balance" = balance snapshot (kadam 11 wala "pichhla jud gaya, likh do").
+Technical me: chhotu = us mahine ka worker, master register = balance snapshot · "mahine ke tukde" = mahine ke partition, "master register me likha balance" = balance snapshot (kadam 11 wala "pichhla jud gaya, likh do").
 
 **20. Raat 2 baje saare chhotu main register se arbon line padh rahe hain. Usi waqt log UPI kar rahe hain, aur ₹50 ki chai ki payment 20 second atak gayi.**
 Arpan: Iska jawab pehle bahut jagah de chuka hoon. Chhotu photocopy se padhein, main register asli payment ke liye khaali rahe.
-Technical me: "photocopy se padhein" = read replica (kadam 8 wala "photocopy ka alag desk"), "main register asli payment ke liye" = primary.
+Technical me: chhotu = statement / report job · "photocopy se padhein" = read replica (kadam 8 wala "photocopy ka alag desk"), "main register asli payment ke liye" = primary.
 
 **21. Bank bada ho gaya, ab Mumbai ke saath Frankfurt (Germany) me bhi branch. Dono ka apna register, raat ko dono mila liye jaate. Rahul ke khaate me 1000. Usi pal Mumbai me Rahul ne 1000 nikaale aur Frankfurt me uski card se 1000 ki payment hui. Dono cashier ne 1000 dekhe, dono ne de diye. Raat ko milaan hua to balance -1000.**
 Arpan: Sabse pehle dekho Rahul ne khaata kahan khulwaya tha, maan lo Mumbai me. Bank multi region hai (JP Morgan jaisa: Australia, Frankfurt, Delhi, Mumbai), har jagah hai. Dikkat kyun hui? Ek hi time pe yahan bhi aaya, wahan bhi aaya, na tune mujhe bataya na maine tujhe. Ek raasta: har baar dono ek doosre ko phone karke milaa lein (sync). Par uski keemat hai: har baar doosre ko phone karna, faltu time lagta, aur kabhi phone line vyast ho ya connection bekaar ho to dikkat; aur user ko rok bhi nahi sakte. Isliye: jis branch me khaata khula, uska har kaam wahi kare. Frankfurt me koi Rahul ke khaate se paisa nikaale to Frankfurt apni request Mumbai bhej de, Mumbai batayega. Dono taraf se request aayegi to bhi ek hi server pe jaayegi. Mumbai me 1000 nikle, balance 0. Usi waqt Frankfurt ne request bheji, Mumbai ne kaha "0 hai, mat nikalne de, koi Mumbai me nikaal ke le gaya".

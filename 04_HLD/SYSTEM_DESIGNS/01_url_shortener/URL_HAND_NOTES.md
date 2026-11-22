@@ -80,7 +80,7 @@ Technical me: Redis replica; dono gire to fail open (cache chhod ke seedha DB se
 
 **4. Chhota register bhar gaya. Naya token likhna hai, kisi purane ko hatana padega. Kise?**
 Arpan: Purana hata denge, hamare paas kuch tareeke hain. Time laga lo na, ki ye token itni der tak rahega register me, uske baad hata do. Ya jo sabse kam use hua, jo ab poochha hi nahi ja raha, wo token hata do. Wo likha hi kyun ja raha hai, hatao use.
-Technical me: "itni der tak rahega, phir hata do" = TTL, "jo poochha hi nahi ja raha, hatao" = LRU.
+Technical me: register (yahan chhota) = cache (Redis) · "itni der tak rahega, phir hata do" = TTL, "jo poochha hi nahi ja raha, hatao" = LRU.
 
 **5. Ek mashhoor token ka waqt theek 7 baje khatam, chhote register se hat gaya. Usi pal 1,000 log wahi token le ke aaye, saare ek saath mote register pe toot pade.**
 Arpan: Mere paas ek ladka hai, chhota ladka. Main kahunga: bhai chupchap bhaag ke ja, aur us mote register se wo information nikaal ke la, aur isme la kar rakh de, to sab yahin ruk jaayenge. Tu ja, patapat, jaldi se jaldi nikaal ke la aur turant chhote register me rakh de. Khatam kahani, ho gaya kaam.
@@ -88,7 +88,7 @@ Technical me: "ek ladka jaaye, sab yahin ruken" = lock (single flight), "la ke c
 
 **6. Ladka bhaaga aur raste me gir gaya, kabhi wapas nahi aayega. Baaki 999 "ladka laayega" soch ke ruke khade.**
 Arpan: Yahan thoda decision lena padega. Yahan hum purani information de sakte hain, unko baad me update kar denge. Main intezaar kab tak karunga? 999 me se ek aadmi ko bolunga: bhai le idhar aa, tu ek kaam kar, mote register me se information la ke mujhe de de, mera wo ladka pata nahi kahan chala gaya, uska koi naamo-nishaan nahi. Matlab main us ladke ki timeline rakhunga: agar itni der tak nahi aaya, to 999 me se jo bhi hai use bulaunga.
-Technical me: "ladke ki timeline, nahi aaya to agla" = lock TTL (umar khatam to lock khulta), "purani information do, baad me update" = soft / hard TTL.
+Technical me: ladka = wo ek request jo DB se laati (single flight), mota register = DB · "ladke ki timeline, nahi aaya to agla" = lock TTL (umar khatam to lock khulta), "purani information do, baad me update" = soft / hard TTL.
 
 **7. Ek counter se bheed nahi sambhli, 5 counter khol diye. Har counter apni ginti 1, 2, 3 chala raha. Counter 1 aur 2 dono ne apne 10ve aadmi ko token "10" de diya.**
 Arpan: Counter ko kahunga ki tum apni-apni range le lo. Un paanch counter ko tod dunga: tu 1 se 100 karega, tu 101 se 200, tu 201 se 300, tu 301 se 400. Aise sabko range me baant dunga.

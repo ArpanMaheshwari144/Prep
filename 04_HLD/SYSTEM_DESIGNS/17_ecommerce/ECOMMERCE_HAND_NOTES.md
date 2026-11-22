@@ -80,7 +80,7 @@ Technical me: sale ka alag raasta / alag service. Uski bheed baaki dukaan (norma
 
 **4. Sale dukaan me ek counter, ek parchi "ghee: 500". Ek waqt me ek hi aadmi parchi chhoota, line 50 hazaar ki.**
 Arpan: 10 counter bana do, har counter pe 50 ghee, line baant do. Har counter pe do aadmi: ek bechne wala, ek kaatne wala. Kaatna to haath chalane jitna tez, millisecond bhi nahi.
-Technical me: ek row pe sab toot pade = hot row. Ginti 10 tukdon me todo. Kaatna tez jagah pe (Redis me ginti, DECR).
+Technical me: counter = ginti ka ek tukda (sharded counter) · ek row pe sab toot pade = hot row. Ginti 10 tukdon me todo. Kaatna tez jagah pe (Redis me ginti, DECR).
 
 **Maan lo Redis me ghee ki ginti kat gayi (Ravi gate ke andar aaya), par DB me order likhne se pehle server gir gaya.**
 Arpan: Ab Redis kehta ek ghee kam hai, aur DB me koi order hi nahi. Sach DB hai, jaise Cache aur Banking me kaha tha. Ek banda peeche se Redis aur DB ko milata rahe: Redis me jitni ginti kati, utne order DB me hain ya nahi. Koi kati ginti bina order ke gate ki ghadi (5 minute) se zyada purani hai, matlab wo banda na pay kar paaya na order bana, to wo ghee wapas ginti me jod do, taaki doosra le sake. Jiska paisa aa gaya, uska dabba uska hi rahega.
@@ -88,7 +88,7 @@ Technical me: banda milata rahe = reconciliation job, DB sach = Redis sirf tez g
 
 **5. Counter 3 ke 50 khatam, uski line me 2000 log. Counter 7 pe abhi 30 pade.**
 Arpan: Jiska khatam hua wo counter band, aur line ko bolo jahan ghee bacha hai wahan jaao. "Khatam" tab bolo jab sabka zero ho jaaye.
-Technical me: ek tukda khaali to doosre tukde se lo. Sold out tabhi jab saare tukde 0.
+Technical me: counter = ginti ka tukda · ek tukda khaali to doosre tukde se lo. Sold out tabhi jab saare tukde 0.
 
 **6. 500 kat gaye, "sold out" dikh gaya, par 60 logon ne pay hi nahi kiya.**
 Arpan: Jab tak pay nahi hua, ginti nahi kategi. Cart me daalna sirf list hai. Cart kabhi khaali mat karo: Myntra pe joota daal ke mahine baad aao to bhi wahin dikhta. Blinkit pe mummy se list banwa raha hoon, 5 minute me sab gaayab ho gaya to kya baat hui? Galle pe panni le ke khada aadmi: jab tak paisa nahi diya aur bill nahi bana, maal uska nahi.
@@ -109,7 +109,7 @@ Technical me: "+1 ya 0" = hold ke beech dikhne wala stock (available vs reserved
 **7b. Rollback me bhi pech, 10 minute wale me bhi pech. Koi screwdriver?**
 (Yahan se sale ka maal ghee ki jagah iPhone: mausi ke mart me Diwali sale pe 500 iPhone aaye, Apple store jaisa, bahar 3000 log. Ghee ho ya iPhone, baat wahi: maal kam, log zyada.)
 Arpan: Jitne phone utne log andar, baaki bahar. Kisi ka card decline hua ya koi chala gaya to agla batch bulao, jitne bache utne. 3000 ko andar bula ke kya fayda. App pe poora app to rok nahi sakte, aata-daal wale bhi hain. To ghee ke liye ek alag counter lagao: sale wala maal us gate se guzrega, normal checkout chalta rahega. Us counter se sirf 500 ghee guzarne hain, to dikkat hi khatam.
-Technical me: sale gate (Buy now, cart me nahi jaata). Gate sirf utne logon ko Pay tak jaane deta jitna stock (Redis DECR). Fail / chala gaya = agla batch. Gate ke bahar walon ka paisa kabhi katta hi nahi, aur koi dabba bina bike nahi padta. Gate ek baar banta, har sale pe sirf list badalti (item + ginti + waqt).
+Technical me: alag counter = sale gate · sale gate (Buy now, cart me nahi jaata). Gate sirf utne logon ko Pay tak jaane deta jitna stock (Redis DECR). Fail / chala gaya = agla batch. Gate ke bahar walon ka paisa kabhi katta hi nahi, aur koi dabba bina bike nahi padta. Gate ek baar banta, har sale pe sirf list badalti (item + ginti + waqt).
 (Normal cart pe kadam 6 wahi: ginti pay pe. Sirf sale wale item pe gate ginti pehle kaatta, isliye yahan ghadi aur wapas jodna.)
 
 **Maan lo Ravi ne 4 tab khole, Buy now 4 baar.**
@@ -118,7 +118,7 @@ Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 
 **Maan lo gate se 500 andar, Ravi Pay page pe gaya aur chai peene chala gaya, na pay kiya na cancel. Uska phone Redis me "gaya" gina hai, bahar 2500 khade.**
 Arpan: Jab tak pay nahi karoge, phone bika nahi, stock me utna hi hai. Dukaan pe ghee ka dabba haath me pakad ke khada hoon, pay nahi kar raha, peeche wala dukaandar se bolta hai, to dukaandar kehta: ya to pay karke le ja, ya wapas rakh de. To andar aate hi ghadi, 5 minute. Pay kiya to phone uska, nahi kiya to wapas line me aur agla andar.
-Technical me: "ya pay kar ya rakh de" = reservation expiry (TTL, 5 min), "wapas line me, agla andar" = release (Redis INCR) + agla batch. TTL khatam hone se ginti apne aap wapas nahi badhti; ek job (ya expiry ki khabar) INCR karti hai.
+Technical me: ghadi = reservation ki umar (TTL) · "ya pay kar ya rakh de" = reservation expiry (TTL, 5 min), "wapas line me, agla andar" = release (Redis INCR) + agla batch. TTL khatam hone se ginti apne aap wapas nahi badhti; ek job (ya expiry ki khabar) INCR karti hai.
 
 **Maan lo Ravi ki ghadi 10:05 pe khatam, phone Priya ko gaya, aur 10:05 + 1 second pe Ravi lauta aur Pay daba diya.**
 Arpan: Saaf baat, 5 minute mera time. Andar pay kiya to phone Ravi ka. Code chalne me time lagta, to 1-2 second upar de sakte, zyada nahi. Uske baad pay dabaya to phone uska nahi, Priya ka; time window hai, cheez pakad ke baithe nahi reh sakte. BookMyShow me bhi aisa: seat rakh ke baitha raha to timer khatam, seat hat gayi, kisi aur ne le li, mujhe housefull. Aur agar time ke andar pay daba diya aur PSP dheema hai, to wo hamari zimmedari, user ki nahi.
@@ -132,7 +132,7 @@ Technical me: PAYMENT_PENDING (BMS jaisa) + status job PSP se poochta rahe. Pais
 
 **Maan lo PSP 30-50 second chup, Myntra ko pata nahi Ravi ka paisa kata ya nahi.**
 Arpan: Order ki khabar Myntra ki apni hai: Pay dabate hi apne paas order PENDING aur payment INITIATED likh diya, stock rok liya. Paisa kata ya nahi, ye PSP hi batayega, Myntra Ravi ka bank nahi dekh sakta. Razorpay kitni der lega, hamare haath me nahi; zyada der Ravi ko nahi rok sakte. Isliye ghadi hamari: 30-50 second, uske baad Ravi ko "time out, paisa kata to wapas aa jaayega, dobara pay karo" dikhao; dobara pay kare to Razorpay ki jagah doosre PSP pe bhejo, kyunki pata hai Razorpay abhi dheema hai. Baad me pata chala Razorpay pe bhi kata tha, to Razorpay ko bolo "lautao".
-Technical me: order PENDING + payment INITIATED (Myntra ka apna DB), paise ki khabar sirf PSP se (webhook / status API, din ka settlement report), hamara client timeout (50 sec), der se "success" aaya to DB me REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe -> isliye dobara pay doosre PSP pe chal jaata (PSP failover), do baar kata to ek wapas.
+Technical me: ghadi = hamara timeout · order PENDING + payment INITIATED (Myntra ka apna DB), paise ki khabar sirf PSP se (webhook / status API, din ka settlement report), hamara client timeout (50 sec), der se "success" aaya to DB me REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe -> isliye dobara pay doosre PSP pe chal jaata (PSP failover), do baar kata to ek wapas.
 Arpan: Payment fail hua to cart khaali mat karo. Amazon cart tabhi khaali karta jab payment SUCCESS ho; fail hua to cart wahin pada, bas bol do "dobara pay kar do". Raaste kai: dobara QR khulwa do doosre PSP pe, ya net banking, ya cash on delivery. Ek hi raasta nahi, bahut alag-alag ho sakte.
 Technical me: cart sirf payment SUCCESS pe khaali, fail pe cart + order wahin, retry options = doosra PSP (failover) / net banking / COD (payment method fallback).
 
@@ -164,7 +164,7 @@ Technical me: "B, C gire to ring pe aage wali chalti almari D, E pe likh do" = s
 
 **9b. Aadhe ghante baad B aur C wapas chalu. Rahul ka naya iPhone wala cart D aur E pe pada hai (jo Rahul ki almari nahi), B aur C ke paas purana cart, unhe pata hi nahi iPhone juda. Agla padhna R = 2 B aur C se hua to iPhone gayab.**
 Arpan: B aur C wapas aa gaye, par unhe pata nahi iPhone hai; iPhone D aur E pe hai, jo Rahul ki almari hai hi nahi. Isme do raaste. Ek: B aur C ko kahani se hata do, wapas aayenge to shuru se; aage D aur E hi poora karenge. Par phir sawaal: kal D aur E bhi gir gaye to? Isliye doosra: B C aur D E aapas me baat karein. Beech me ek chhotu laga denge: dekhega B aur C wapas aaye ya nahi; aa gaye to D ka chhotu B aur C ke paas jaayega, bolega "tum thodi der pehle gir gaye the, tumhara kaam D ne sambhal liya tha, ye Rahul hai, iska iPhone hai, ise tum dekh lo"; phir D apna aage kaam karega. Upar se ek job chal jaayegi jo sabko sync karti rahe, poora picture.
-Technical me: "D ka chhotu B, C ke wapas aate hi unhe Rahul ka iPhone de aaye" = hinted handoff (D ke paas maal + parchi / hint ki ye asal me B, C ka hai), "sabko sync karne wali job" = anti-entropy / read repair.
+Technical me: almari = DB ki machine (node) · "D ka chhotu B, C ke wapas aate hi unhe Rahul ka iPhone de aaye" = hinted handoff (D ke paas maal + parchi / hint ki ye asal me B, C ka hai), "sabko sync karne wali job" = anti-entropy / read repair.
 
 **Padhai (reel se, R aur W ka dial):** N = 10 pe W1 R1 = bahut tez, par purana bhi mil sakta (1 + 1 < 10). W6 R5 = 11 > 10, pakka naya, par sirf 1 almari gir sakti, aur gire to likhna ruk jaata. Isliye balance tab jab R aur W dono N ke aadhe ke paas. Yahi dial consistency aur availability ke beech khud chunne deta (C side ya A side).
 

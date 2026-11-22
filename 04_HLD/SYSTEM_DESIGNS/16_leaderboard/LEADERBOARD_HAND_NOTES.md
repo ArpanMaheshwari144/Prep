@@ -103,7 +103,7 @@ Technical me: score + outbox (hamare DB ki table) ki line ek hi DB transaction m
 
 **4. Main India wali line me 3,000 pe hoon. Screen pe poori duniya ka rank dikhana hai, aur lines 10 hain.**
 Arpan: Do nazar hain. Race me bhaagne wala sirf apne aage wale dekhta, peeche wale nahi: mera rank = mere upar kitne log. Referee sabko dekhta, ek ko nahi: scoreboard sabka dikhana hai to wo kaam chhotu ka, sab mila ke.
-Technical me: "mere upar kitne" = har shard se count (mere score se upar), sab jodo, +1. "Referee wala poora board" = background job jo har kuch minute me snapshot banata (thoda purana chalega).
+Technical me: chhotu = background job (aggregator) · "mere upar kitne" = har shard se count (mere score se upar), sab jodo, +1. "Referee wala poora board" = background job jo har kuch minute me snapshot banata (thoda purana chalega).
 Arpan: FR pe depend karta hai. Hum Arpan ke point of view se soch rahe the; Arpan ko shuru ke 5 aur neeche ke 5 nahi dikhane, hum leaderboard ki tarah soch rahe. Leaderboard me world rank banana, to sabka dekhna, sirf Arpan ka nahi: US me Pablo ka bhi, yahan iska, wahan uska. Sabka kaise dikhega? Time se. Upar se ranking dheere-dheere tay hoti aayegi; ho sakta Arpan ki rank thodi der galat lage, farak nahi padta. Leaderboard ka matlab yahi: thodi der galat, time poora hote-hote sab rank theek.
 
 **Aur neeche (world rank turant kyun nahi niklegi):** Arpan: World rank ekdum nahi niklegi, LeetCode bhi khatam hone ke baad thoda time leta. Pehle Arpan ko koi andaze wali rank dikhegi (maan lo 5000); jaise-jaise US, EU wale khatam karte, board pe judte, rank upar-neeche hoti, sab khatam hone ke 5-10 minute baad theek. Mujhe Arpan se lena-dena nahi, board sabka banta. LeetCode andar wo number kaise nikalta, mujhe nahi pata, aur galat nahi bolunga.
@@ -131,7 +131,7 @@ Technical me: contest ka din = shuru hone ki tareekh (contest id ke saath); duni
 
 **6. Main 4,52,318 pe hoon, top 10 me kabhi nahi aaunga. Screen pe mere aage ke 5 aur peeche ke 5 chahiye, par wo alag-alag dabbon me baithe hain (Kenji Japan me, Sara Europe me).**
 Arpan: Mera score 5200 hai, to mujhe 10,000 wale se kya lena-dena. Bheed me main apne aas-paas scan karta, poori bheed nahi dekhta. 5200 ke aas-paas wali range dekho; 4000 aur 6000 walon se matlab nahi. Jaise highway pe gaadi 300-350 km jaayegi to petrol pump usi area me dhoondhta hoon (yahi soch cache 4 me: key ring pe paas ke dabbe me).
-Technical me: "apne aas-paas scan" = har shard se mere score ke thoda upar aur thoda neeche wale (score range query), sab mila ke sort, mere upar ke 5 aur neeche ke 5.
+Technical me: dabba = shard · "apne aas-paas scan" = har shard se mere score ke thoda upar aur thoda neeche wale (score range query), sab mila ke sort, mere upar ke 5 aur neeche ke 5.
 
 **Maan lo dabbe region ke hisaab se: India, US, Europe. Is Sunday ke world contest me Arpan ki rank 50,000 (game wali 4,52,318 alag hai). World me uske upar ke 5 aur neeche ke 5 kaise?**
 Arpan: Ye ek sawaal nahi, pehle tod ke dekho kya maanga. Jaisa FR me tay kiya, kaam POORA world leaderboard banana hai; Arpan ke aas-paas wale to isi board ka ek hissa, Arpan jo dekhega wahi.

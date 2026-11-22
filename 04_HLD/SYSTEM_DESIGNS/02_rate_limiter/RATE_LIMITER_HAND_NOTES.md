@@ -83,7 +83,7 @@ Technical me: Lua chalte waqt Redis aur kuch nahi karta (single thread), isliye 
 
 **Maan lo counter wala tareeka (har request pe +1, pehli pe 60 sec ki umar). Ravi ki pehli request pe +1 ho gaya, umar lagane se pehle server gira.**
 Arpan: Counter bina umar ke pada rahega, kabhi khatam nahi hoga, Ravi ka hisaab hamesha ke liye bigad gaya. To +1 aur umar do alag kaam nahi, ek hi kaam: ya dono likhe jaayein ya kuch nahi. Ladke ko bula ke bolo "+1 aur 60 dono ek saath likhna, beech me gira to kuch mat likhna, sab pehle jaisa". Kuch nahi hua to dobara try kar lo.
-Technical me: "dono ek saath ya kuch nahi" = INCR + EXPIRE ek Lua script me (atomic, ya SET key 1 EX 60 NX + INCR); bina umar ka counter = key kabhi expire nahi, user hamesha block. (HANDS_ON 02 me chala ke dekha.)
+Technical me: ladka = Redis (usse ek hi baar me dono kaam karwao) · "dono ek saath ya kuch nahi" = INCR + EXPIRE ek Lua script me (atomic, ya SET key 1 EX 60 NX + INCR); bina umar ka counter = key kabhi expire nahi, user hamesha block. (HANDS_ON 02 me chala ke dekha.)
 
 **5. Limiter OTP Service ke andar. Script ki 1000 request LB se, beech ke server se hote hue OTP Service tak pahunchti, wahan mana. SMS nahi gaya, par raaste ke saare server bojh utha rahe.**
 Arpan: Mere ghar me ek security guard hai, wo kehta 10,000 log andar nahi aa sakte. Par wo main gate pe nahi, andar kamre me baitha hai. Ghar ke andar to 1000 log ghus gaye, galat ho gaya. Use bahar gate pe bitha de, ghar ke andar koi ghus hi na paaye, gate pe hi hata do.

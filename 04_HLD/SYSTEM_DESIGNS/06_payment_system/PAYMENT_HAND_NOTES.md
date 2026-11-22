@@ -95,7 +95,7 @@ Technical me: "pehle register me likho, phir bhejo" = PSP call se pehle INITIATE
 
 **Maan lo net atka, Arpan ne "Pay" do baar daba diya.**
 Arpan: Ye idempotency key hi hai. Phone Pay dabate hi key banaye, dono request me wahi key; server pehle key dekhe, purani hai to wahi parchi lauta de. Wahi Chat aur Banking wali key.
-Technical me: "phone ki key" = client idempotency key (app -> server), payment id = server -> PSP ki key. Do teer, dono pe key.
+Technical me: parchi = pehle wala jawab (key ke saath save) · "phone ki key" = client idempotency key (app -> server), payment id = server -> PSP ki key. Do teer, dono pe key.
 
 **Maan lo ek hi key ki do request bilkul ek saath pahunchi:** Arpan: Key client banayega, server nahi. Do request ek saath aayi to DB atomic constraint lenge: check then act, ek waqt me ek hi key process hogi. Wo key DB me pehle se hai to doosri process hi nahi hogi.
 Technical me: "atomic check then act" = key pe unique constraint (INSERT ... ek hi jeetega), doosri ko "process ho rahi / ho chuki" lautao.
@@ -104,7 +104,7 @@ Technical me: "atomic check then act" = key pe unique constraint (INSERT ... ek 
 Arpan: Ulta kar do, sab ulta kar do, sab wapas paise bhej do. Maan le main HDFC bank hoon, bagal wale bank ko bhejne gaya, usne mana kar diya: "nahi bhai, bank band ho gaya, kal aana, abhi server bekaar hai." Fail ho gaya, baatcheet khatam. To main apne register me sab kaat dunga: "maine yahan se paise liye the, ise wapas kar raha hoon", aur sab wapas paise bhej dunga.
 
 Arpan (aur neeche: wallet se 2000 Ravi ke ICICI me, ICICI ne FAILED bola): Agar Arpan ka account bhi usi ICICI me hai to badhiya, ek hi transaction me sab, fail hua to apne aap rollback, koi dikkat nahi. Worst case: Arpan ka account alag bank me hai, dono ke alag DB hain, to ek transaction nahi ban sakta. Tab saga: payment nahi hua to peeche jaate-jaate sab rollback kar do.
-Technical me: "ek hi bank = ek transaction me rollback" = ek DB ke andar @Transactional / ACID; "alag DB, ek transaction nahi" = isliye saga.
+Technical me: register = hamara DB · "ek hi bank = ek transaction me rollback" = ek DB ke andar @Transactional / ACID; "alag DB, ek transaction nahi" = isliye saga.
 Technical me: "sab ulta kar do" = saga (fail pe ulta kadam), "register me sab kaat diya" = ledger me ulti line, "wapas paise bhej dunga" = 500 wapas dukaan ke wallet me.
 
 **7. Wallet se 500 kaate, PSP ka jawab aane me 2 minute lage. Us 2 minute me 500 na dukaan ke wallet me, na ICICI me. Hisaab wala kahega 500 gayab.**
@@ -128,7 +128,7 @@ Technical me: "ladka 500 le ke us tukde me" = saga do shard ke beech, "diary" = 
 
 **11. Ravi ka wallet top-up 500, PSP-1 30 second se chup. Pata nahi PSP-1 mara hai ya bas dheema, aur Ravi ke bank se paisa kata ya nahi. Doosra PSP khada hai.**
 Arpan: Chhotu ko 500 de ke bheja, wo laut ke nahi aaya. Ho sakta hai bhaag gaya, ho sakta hai line me khada ho aur dukaan pe paise de bhi diye hon. Agar pehle se pata hai ki PSP-1 down hai, to payment wahan jaane hi mat do, seedha PSP-2. Par agar pata nahi aur paise shayad kat chuke hain, to PSP-2 ko bheja to wo bhi kaat lega. Isliye Ravi ko bolo "tumhara payment process ho raha hai", aur PSP-1 ko saaf bol do: chhotu, tere paas itna waqt hai, ya haan bol ya naa. Haan aaya to kaam ho gaya, naa aaya to Ravi ke paise wapas. Koi perfect raasta nahi hai, par Ravi ko bekaar me ghanton atka ke nahi rakhna.
-Technical me: "pehle se pata down hai" = circuit breaker OPEN, tab hi fallback PSP-2, "pata nahi kata ya nahi" = unknown state, PENDING (PSP-2 pe nahi, warna do baar katega) -> par user ko ghanton nahi rokte: 30-55 sec ke baad neeche wala "Maan lo PSP-1 chup" jawab (chain me 11b) (FAILED dikhao + PSP-2, kata nikla to REFUND_PENDING), "itna waqt, haan ya naa" = timeout + status job PSP-1 se poochhe, "naa to paise wapas" = refund (PSP bola "naa" matlab kata hi nahi, to bas FAILED, wapas kuch nahi; kata tha par haan der se aaya, to refund).
+Technical me: chhotu = PSP ko gayi payment request · "pehle se pata down hai" = circuit breaker OPEN, tab hi fallback PSP-2, "pata nahi kata ya nahi" = unknown state, PENDING (PSP-2 pe nahi, warna do baar katega) -> par user ko ghanton nahi rokte: 30-55 sec ke baad neeche wala "Maan lo PSP-1 chup" jawab (chain me 11b) (FAILED dikhao + PSP-2, kata nikla to REFUND_PENDING), "itna waqt, haan ya naa" = timeout + status job PSP-1 se poochhe, "naa to paise wapas" = refund (PSP bola "naa" matlab kata hi nahi, to bas FAILED, wapas kuch nahi; kata tha par haan der se aaya, to refund).
 
 **Maan lo PSP-1 chup hai, Ravi ko ghanton nahi rok sakte, aur PSP-2 pe bhejne se darr hai ki do baar na kat jaaye.** (BookMyShow 6c wala hi jawab)
 Arpan: PSP-1 kitni der lega, wo hamare haath me nahi, uska design hai. Zyada der Ravi ko nahi rok sakte. To 30 se 55 second rukte hain, phir Ravi ko saaf bolo: "payment abhi ho nahi pa raha, paisa kata hoga to apne aap wapas aa jaayega, dobara karo". Dobara wala PSP-2 pe. Pehla DB me FAILED, peeche PSP-1 se poochte raho aur uska event bhi aayega. Baad me pata chala PSP-1 pe bhi kata tha, to PSP-1 ko bolo "is user ka paisa lautao"; bank se poochhne ka haq PSP-1 ka hai, hamara nahi. Do baar kata bhi to ek wapas, Ravi ka nuksaan nahi.

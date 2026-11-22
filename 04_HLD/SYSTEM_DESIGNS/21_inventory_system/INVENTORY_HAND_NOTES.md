@@ -52,7 +52,7 @@ Technical me: "doosri inventory se de do" = doosre godown se sourcing (kadam 4 w
 
 **2. Diwali se pehle Delhi godown me 1000 naye iPhone aaye. Diwali sale, raat 12 baje, ek second me 2 lakh log "Pay", sab ek hi row pe "ek kam karo". DB taala laga ke ek-ek ko line me chalata, log 20 second se spinner dekh rahe.**
 Arpan: Ek counter pe lambi line lagi hai aur itna saamaan hi nahi. To 1000 ko baant do, 5 line kar lo, har counter ka apna dabba: 200 ek jagah, 200 ek jagah, 200 ek jagah. Log apne dabbe se uthayenge. Sab ek hi dabbe se uthayenge to DB pe taala dobara ek hi jagah lag jaayega, isliye alag-alag tukdon me baanto aur har counter apna dabba ghatata rahe.
-Technical me: stock ko tukdon me baanto (bucketing / sharded counter), har tukda alag row, taala ek row pe nahi.
+Technical me: dabba = ginti ka tukda (bucket) · stock ko tukdon me baanto (bucketing / sharded counter), har tukda alag row, taala ek row pe nahi.
 
 **Maan lo Ravi ki request dabba 3 pe gayi, wo khaali ho chuka, baaki dabbon me 150 pade.**
 Arpan: Out of stock tab dikhega jab 1000 ke 1000 khatam ho jaayein, ek counter khatam hone pe nahi. Ek banda ghee lene aaya, teesre counter pe ghee nahi bacha, par baaki counter pe hai, to main use mana thodi karunga; usse kahunga is counter pe aa ja, ya uski request khud us dabbe pe mod dunga. Grahak ko maal chahiye, use pata hi nahi wo kis dabbe me hai. Online me kisi ko kuch nahi dikhta, use bas iPhone chahiye.
@@ -75,7 +75,7 @@ Technical me: main warehouse + shehar ke godown = hub and spoke, kahan se maal u
 
 **5. Agli sale (Republic Day) se ek din pehle iPhone ka page 1 crore log khol rahe, "sirf X bache". Har page khulne pe DB se saare dabbon ka jod. Order koi nahi, sirf log dekh rahe, phir bhi DB pe bojh.**
 Arpan: Bahut log aa rahe aur bas daam / ginti pata karke chale jaate, dukaan me bheed aur faltu ka drama. To ek banner pe chhapwa ke bahar taang do, padh ke nikal jao, andar mat aao; kharidna ho tab andar aao. Ya chhotu ko baar-baar andar bhej raha "bata ye kitne hain", chhotu bina matlab thak raha; to chhotu ek baar copy pe sab likh ke de de, main copy saamne khol ke bata deta hoon. Chhotu aaram se ice cream kha raha, main bhi, DB pe koi nahi ja raha.
-Technical me: banner / copy = cache (Redis), page pe thodi purani ginti chalti hai, asli jaanch Pay pe (NFR 2).
+Technical me: chhotu = har baar DB se ginti poochhna · banner / copy = cache (Redis), page pe thodi purani ginti chalti hai, asli jaanch Pay pe (NFR 2).
 
 **6. Ravi ne iPhone return kiya, courier ne box godown pe chhoda, aate hi ginti +1. 10 minute me wahi iPhone Priya ko bika: box khula, screen tooti.**
 Arpan: Jaanch wahin darwaze pe: delivery wale ko bol do jis haalat me gaya usi haalat me phone chahiye. Phone khol ke dekh, kaisa hai; kuch dikkat hai to return wahin reject. Inventory me maan lene ke baad nahi, warna doosre user ko bik gaya to Priya naraaz. Badi company jhel le, chhoti company ke liye ye bahut badi dikkat. Jaise mere se koi ghee ka dabba le gaya, 2-3 ghante baad lautane aaya, seal khuli, thoda ghee nikla hua; nahi lunga, ise main kisi ko bech nahi sakta. Seal pack hai to lenge, nahi to nahi.

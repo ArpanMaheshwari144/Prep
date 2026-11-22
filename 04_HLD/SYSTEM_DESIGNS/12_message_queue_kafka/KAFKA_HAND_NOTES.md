@@ -100,7 +100,7 @@ Technical me: "check kar le ki pehle aaya hai" = idempotency (eventId se dobara 
 Arpan (pehli soch): Parchi pe likh lo "Ravi ko 10,000 dene hain", de diye to parchi pe DONE, aur paise dena + DONE likhna ek hi kaam bana do, ya dono ho ya koi nahi.
 Pench: paise dena (SMS company) aur parchi (hamara DB) do alag jagah hain, ek jhatke me nahi ho sakte. SMS chala gaya aur DONE likhne se pehle gira, ye beech ka pal kabhi nahi hatega. Is pal ko rok nahi sakte, isliye dobara aana maan ke chalo.
 Arpan (aakhri): Har message ki ek pakki id bana do. Is id se ek SMS chala gaya; wahi id dobara aaye to discard kar do, chahe naya worker / consumer laaye ya doosri SMS company se jaaye.
-Technical me: "rok nahi sakte, dobara aayega hi" = Kafka at-least-once, "pakki id, dobara aaye to discard" = idempotent consumer (idempotency key, eventId / order id se), wahi id SMS company ko bhi bhejo taaki wo bhi dobara na bheje.
+Technical me: parchi = DB me ye ho gaya ka record · "rok nahi sakte, dobara aayega hi" = Kafka at-least-once, "pakki id, dobara aaye to discard" = idempotent consumer (idempotency key, eventId / order id se), wahi id SMS company ko bhi bhejo taaki wo bhi dobara na bheje.
 
 **Maan lo pooche exactly once kyun nahi:** Arpan: Exactly once main scope ke bahar rakhta hoon; Kafka exactly once sirf Kafka se Kafka tak deta, SMS bahar ki cheez hai.
 Technical me: Kafka EOS = sirf Kafka ke andar (read-process-write), bahar ka SMS = at-least-once + pakki id se dohra phenko.
