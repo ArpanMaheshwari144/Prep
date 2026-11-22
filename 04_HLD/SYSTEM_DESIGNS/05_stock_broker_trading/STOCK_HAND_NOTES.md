@@ -102,7 +102,8 @@ Arpan: RAM me kyun rakh raha, sabko kisi permanent dabbe me rakh lo. Wo dheema p
 Aur adhoora order: bag pack kar raha, saara saamaan aaya nahi, to poora bag khaali karo aur dobara jamao. Subah ek parchi banayi, Bangalore ja raha, 10 kapde rakhne hain, 5 ye, 3 ye. Jo rakha us pe tick, to-do ki tarah. Bag se nikaalna ho to sab hata do, par wo parchi mere paas utni ki utni hai. Wo parchi dekh ke dobara jama lo.
 Technical me: "permanent dabba" = DB, "3-4 copy" = replica / standby, "numbers discuss nahi kiye, itni bheed nahi" = pehle numbers, phir RAM ya DB ka faisla, "subah se ek parchi, utni ki utni rehti" = order log (append-only), "parchi dekh ke bag dobara jamao" = log replay se book wapas.
 
-Isi pe ek aur raasta (RAM me daalne se pehle kahin aur likh lo): RAM fast hai isliye RAM me rakha, par RAM me daalne se pehle usse kahin aur bhi likh le. RAM udi, restart hui, to jo likha hai wo wapas RAM me aa jaayega, kyunki hamare paas sab likha hua hai.
+**Isi pe ek aur raasta (RAM me daalne se pehle kahin aur likh lo):**
+Arpan: RAM fast hai isliye RAM me rakha, par RAM me daalne se pehle usse kahin aur bhi likh le. RAM udi, restart hui, to jo likha hai wo wapas RAM me aa jaayega, kyunki hamare paas sab likha hua hai.
 Technical me: "RAM me daalne se pehle kahin aur likh le" = order log (pehle log me likho, phir RAM; append-only, sirf jodna), "restart pe wapas RAM me" = log replay se in-memory book rebuild.
 
 **Isi pe ek aur raasta (match ki book: har event likho, audit bhi):**

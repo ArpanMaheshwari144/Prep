@@ -111,7 +111,8 @@ Technical me: "Kafka se pattern" = request log events -> Kafka -> consumer (abus
 Arpan: User login ho gaya to uski saari information aa jaati, userId hamare paas, wahan koi dikkat nahi; kuch kare to ban kar do. Login se pehle ki dikkat hai, to login pe thodi dheeli had chhod do. Par itni dheeli nahi ki koi script hazaar baar chala de. Google pe password kitni baar guess karega, 2, 3, 5 baar. Hazaar baar koi haath se type nahi karta, karega to intention theek nahi. Ek banda roz hazaar baar password reset kar raha, kal dekha phir hazaar, ye insaan ke liye possible nahi, us IP ko WAF me daal do. Office me hazaar log hain par hazaar log ek saath password nahi bhoolte, bhoole bhi to ek-do din, isliye pattern notice karte hain. Ek second me login button pe 10,000 request, ek office WiFi bhi ye nahi kar sakta. 1 lakh me 50,000 bhool gaye to aisa to main har design tod dun, perfect design koi nahi, aaj bhi Google, YouTube toot-ta hai.
 Technical me: "login ke baad userId hamare paas" = userId pe kadi had, "login pe dheeli had" = login se pehle IP pe dheeli had, "insaan hazaar baar nahi, pattern notice" = script pattern pakadna, "IP ko WAF me daal do" = WAF.
 
-**Maan lo login ki had aur baaki ki had ek hi?** Arpan: Har user ki had: login pe uski apni had ki kitna login kar sakta, aur baaki pe baaki doosri had. Had paar hui to 429, thodi der baad aana.
+**Maan lo login ki had aur baaki ki had ek hi?**
+Arpan: Har user ki had: login pe uski apni had ki kitna login kar sakta, aur baaki pe baaki doosri had. Had paar hui to 429, thodi der baad aana.
 Technical me: per-endpoint limit (login ki alag kadi had, baaki API ki alag), had paar = 429 + Retry-After.
 
 **Maan lo had asli user pe hi bhaari padi:**

@@ -156,7 +156,8 @@ Technical me: "har worker / consumer ka status" = DB me hisson ki ginti, "tu hai
 Arpan: Uski wajah se mera kaam ruk raha. "Tu thoda rest le, ye tera replacement, bata kahan tak chhoda, ye wahin se karke dega."
 Technical me: "atka to replacement" = timeout pe slow worker / consumer ka hissa doosre ko, "kahan tak chhoda" = checkpoint.
 
-Isi Maan lo me aur neeche ("zinda hoon" kaafi nahi, kaam kahan tak hua): "zinda hoon" kaafi nahi. Chhotu tu zinda hai na? Haan. Kaam kahan tak hua? "Main zinda hoon, kaam kar raha hoon." Mujhe ye bata kaam kahan tak hua. "Abhi kuch feed reh rahi." In 10 ne kaam kar liya, tere paas aisa kya kaam? Ek aur chhotu ko bhej ke dekho: "Arpan bhai, iske paas bahut bada chunk hai, akele sambhal nahi pa raha, thak chuka." Kisi ke paas 10 newspaper the, kisi ke 20, is bande ke paas 50 aa gaye. To 2-3 chhotu extra bhej do, madad kar lein, feed taiyaar ho jaayegi aur log subah akhbaar padhne aayein to taaza mile.
+**Isi Maan lo me aur neeche ("zinda hoon" kaafi nahi, kaam kahan tak hua):**
+Arpan: "zinda hoon" kaafi nahi. Chhotu tu zinda hai na? Haan. Kaam kahan tak hua? "Main zinda hoon, kaam kar raha hoon." Mujhe ye bata kaam kahan tak hua. "Abhi kuch feed reh rahi." In 10 ne kaam kar liya, tere paas aisa kya kaam? Ek aur chhotu ko bhej ke dekho: "Arpan bhai, iske paas bahut bada chunk hai, akele sambhal nahi pa raha, thak chuka." Kisi ke paas 10 newspaper the, kisi ke 20, is bande ke paas 50 aa gaye. To 2-3 chhotu extra bhej do, madad kar lein, feed taiyaar ho jaayegi aur log subah akhbaar padhne aayein to taaza mile.
 Technical me: "zinda hoon != kaam ho raha" = heartbeat ke saath progress report, "bada chunk" = data skew (ek hisse pe zyada kaam), "2-3 chhotu madad" = hissa tod ke baanto (work stealing / split).
 
 **Maan lo worker / consumer 7 ke 50 me se 30 ban chuke, 2 naye chhotu bheje; unhe kaise pata 31 se shuru karna, warna pehle ke 30 do baar.**
@@ -191,10 +192,7 @@ Technical me: "ID se seedha page" = hydration (ID se poori post, key se lookup; 
 
 **Maan lo Arpan ne tweet delete kar diya, par 8000 logon ke dabbe me uska number (ID) abhi bhi pada hai.**
 Arpan: Tweet feed me push ho chuka tha to Ravi ko kuch second ke liye dikh sakta hai; Twitter ko baad me pata chala user ne delete kar diya, to wahan likh dega "the user has deleted this post". Ye aasaan cheez hai.
-Technical me: page pe deleted = tweet store me deleted flag (soft delete), dikhate waqt chhod do = hydration pe filter, 8000 dabbe saaf nahi karne padte.
-
-Arpan (isi Maan lo me aur neeche: Ravi ne usi pal khola to?): Arpan ka tweet Ravi ki feed me push ho chuka tha, Ravi ne ekdum khola to ho sakta hai kuch second dikhe. Phir Twitter ko pata chala user ne delete kar diya, to wahan likh deta "The user has deleted this post". Twitter me aisa hota bhi hai, cheez thodi der dikhti phir hat jaati.
-Technical me: kuch second purana dikhna = eventual consistency, "deleted" ki patti = tombstone / deleted placeholder.
+Technical me: tweet store me deleted flag (soft delete); kuch second purana dikhna = eventual consistency; "deleted" ki patti = tombstone; 8000 dabbe saaf nahi karne padte.
 
 **17. Ravi roz dost Amit ke tweet pe like / comment karta. Amit ka tweet 3 ghante pehle aaya, uske baad 40 aur, Amit ka neeche dab gaya; upar wo jinhe Ravi kholta bhi nahi.**
 Arpan: Ye ek tarah recommendation hi hai. Peeche kaunsa algorithm / machine learning, wo design ka hissa nahi. Par main roz Amit ki photo like kar raha, baaki 40 ko bas dekh ke chhod deta. Instagram roz dekh raha ki ye ladka Amit ko like karta, to pehli photo Amit ki dikhayega. YouTube me bhi same: MrBeast ki video roz dekhun to wahi suggest karega. Unka kaam hi yahi: main jitni der rahun, unki kamaai badhe.

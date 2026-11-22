@@ -95,7 +95,7 @@ Technical me: "pehle register me likho, phir bhejo" = PSP call se pehle INITIATE
 
 **Maan lo net atka, Arpan ne "Pay" do baar daba diya.**
 Arpan: Ye idempotency key hi hai. Phone Pay dabate hi key banaye, dono request me wahi key; wo key pehle se hai to server khud reject kar dega. Wahi Chat aur Banking wali key.
-Technical me: parchi = pehle wala jawab (key ke saath save) · "phone ki key" = client idempotency key (app -> server), payment id = server -> PSP ki key. Do teer, dono pe key.
+Technical me: key pehle se = server reject (duplicate) · "phone ki key" = client idempotency key (app -> server), payment id = server -> PSP ki key. Do teer, dono pe key.
 
 **Maan lo ek hi key ki do request bilkul ek saath pahunchi:**
 Arpan: Key client banayega, server nahi. Do request ek saath aayi to DB atomic constraint lenge: check then act, ek waqt me ek hi key process hogi. Wo key DB me pehle se hai to doosri process hi nahi hogi.
@@ -105,8 +105,8 @@ Technical me: "atomic check then act" = key pe unique constraint (INSERT ... ek 
 Arpan: Ulta kar do, sab ulta kar do, sab wapas paise bhej do. Maan le main HDFC bank hoon, bagal wale bank ko bhejne gaya, usne mana kar diya: "nahi bhai, bank band ho gaya, kal aana, abhi server bekaar hai." Fail ho gaya, baatcheet khatam. To main apne register me sab kaat dunga: "maine yahan se paise liye the, ise wapas kar raha hoon", aur sab wapas paise bhej dunga.
 
 Arpan (aur neeche: wallet se 2000 Ravi ke ICICI me, ICICI ne FAILED bola): Agar Arpan ka account bhi usi ICICI me hai to badhiya, ek hi transaction me sab, fail hua to apne aap rollback, koi dikkat nahi. Worst case: Arpan ka account alag bank me hai, dono ke alag DB hain, to ek transaction nahi ban sakta. Tab saga: payment nahi hua to peeche jaate-jaate sab rollback kar do.
-Technical me: register = hamara DB · "ek hi bank = ek transaction me rollback" = ek DB ke andar @Transactional / ACID; "alag DB, ek transaction nahi" = isliye saga.
-Technical me: "sab ulta kar do" = saga (fail pe ulta kadam), "register me sab kaat diya" = ledger me ulti line, "wapas paise bhej dunga" = 500 wapas dukaan ke wallet me.
+Technical me: "ek hi bank = ek transaction me rollback" = ek DB ke andar @Transactional / ACID; "alag DB, ek transaction nahi" = isliye saga.
+Technical me: register = hamara DB · "sab ulta kar do" = saga (fail pe ulta kadam), "register me sab kaat diya" = ledger me ulti line, "wapas paise bhej dunga" = 500 wapas dukaan ke wallet me.
 
 **7. Wallet se 500 kaate, PSP ka jawab aane me 2 minute lage. Us 2 minute me 500 na dukaan ke wallet me, na ICICI me. Hisaab wala kahega 500 gayab.**
 Arpan: Hum likh lenge na bhai: "wallet se 500 kate", sabse pehle kahin likh lo. Apne ek log ya ledger me kahin bhi likh lo, to wo gayab nahi honge. Koi kuch kahe to bata denge: "haan bhai, tere paise abhi yahan hain."
