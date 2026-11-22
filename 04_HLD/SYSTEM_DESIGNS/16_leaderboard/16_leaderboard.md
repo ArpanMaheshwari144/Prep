@@ -170,7 +170,7 @@ Russia + Belarus, India, Australia + NZ; India bada to aur baanto. Top 10: har d
 **Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
 
 **Doosri kahani:** sawaal ki ID saath bhejo; server atka to parchi pe likh ke baad me bhejo; retry me wahi ID to dobara nahi
-judega. **Asli naam:** idempotency key + outbox / retry.
+judega. **Asli naam:** idempotency key + outbox (DB ki table, relay baad me bheje) / retry.
 
 ```mermaid
 flowchart TB
@@ -264,7 +264,7 @@ ke register me hi nahi.
 
 **Doosri kahani (12:59:59 submit, server tak 1:00:03):** parchi pe submit ka waqt likh lo; server gira to wapas aate hi parchi se
 bhejo, ya doosre server pe. Bahut bheed ho to beech me Kafka, worker ek-ek karke uthaye (Kafka disk pe rakhta); itna data na ho
-to Kafka ka matlab nahi. **Asli naam:** event time, Kafka = buffer / queue.
+to Kafka ka matlab nahi. **Asli naam:** event time, parchi = outbox (DB ki table), Kafka = buffer / queue.
 
 **Doosri kahani:** mita mat, overwrite; aaj nahi aaya to 0; ya naya register, purana discard.
 

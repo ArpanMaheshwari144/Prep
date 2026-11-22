@@ -97,7 +97,7 @@ Arpan: ("ID jodna bas, sab me ID jodna; same ID to idempotency, server reject ka
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 
 **Isi dikkat ki doosri kahani:** Arpan: Sawaal ki ID saath bhejo. Server atka to parchi pe likh le, baad me bhej de. Retry me wahi ID aayi to dobara nahi judega; score hamesha ek hi baar.
-Technical me: sawaal ki ID = idempotency key, parchi pe likh ke baad me bhejo = outbox / retry.
+Technical me: sawaal ki ID = idempotency key, parchi pe likh ke baad me bhejo = outbox (hamare DB ki table, usi transaction me likho; chhotu / relay baad me bheje) + retry.
 
 **4. Main India wali line me 3,000 pe hoon. Screen pe poori duniya ka rank dikhana hai, aur lines 10 hain.**
 Arpan: Do nazar hain. Race me bhaagne wala sirf apne aage wale dekhta, peeche wale nahi: mera rank = mere upar kitne log. Referee sabko dekhta, ek ko nahi: scoreboard sabka dikhana hai to wo kaam chhotu ka, sab mila ke.
@@ -119,7 +119,7 @@ Arpan: LeetCode jaisa: Arpan ne contest diya, main parchi pe sab likh deta hoon:
 Technical me: "parchi pe contest id + khatam hone ka waqt" = event time, "usi din ke register me" = event time se bucket (pahunchne ke waqt se nahi), "purana register side me" = har din ka board history me rakho (discard nahi). "register kar ke aaye nahi" = contest ka sign-up; "mota register" = DB (kadam 7, score pehle DB me).
 
 **Isi dikkat ki doosri kahani (aakhri sawaal 12:59:59 pe, server tak 1:00:03):** Arpan: Parchi pe likh lo Arpan ne kis waqt khatam kiya. Server dheema / gira, wapas aaye to parchi se bhejo; ya doosre server pe bhejo. LeetCode crash hota tab bhi score kho nahi jaate, matlab kahin store karta. Bahut saare log ek saath to beech me Kafka, worker ek-ek karke uthaye (Kafka disk pe rakhta); itna data na ho to Kafka ka matlab nahi.
-Technical me: parchi pe submit ka waqt = event time, bheed me beech ka Kafka = buffer / queue (worker = consumer).
+Technical me: parchi pe submit ka waqt = event time, gira to parchi se baad me bhejo = outbox (DB ki table), bheed me beech ka Kafka = buffer / queue (disk pe, worker = consumer).
 
 **Isi dikkat ki doosri kahani:** Arpan: Mita mat, overwrite kar de. Aaj Arpan ke 10, Priya ke 10. Kal Arpan aaya +10, Priya nahi aayi to uska 0. Ya to ek alag register me rakh ke purana poora register discard kar de, ya overwrite kar de; ek-ek ko zero karne nahi baithna.
 Technical me: reset = naya key (din ki tareekh se) ya agla score aate hi overwrite; 80 lakh ko ek-ek zero karna nahi.
