@@ -116,12 +116,12 @@ liye bana hai, apni copies khud rakhta.
 **Asli naam:** bada bhai = Cassandra (likhai tez, apni copies, machine jodo to badhta; andar ring = consistent hashing, nayi machine jude to sirf paas ka hissa hile). Driver ki row driver_id pe,
 nayi jagah aate hi upar likh do (sirf taaza chahiye).
 
-**Doosri kahani (Zomato wali reel se):** location DB me likhna faltu; DB me sirf kaam ki cheez (order delivered, pending).
+**Aur neeche (Zomato wali reel se):** location DB me likhna faltu; DB me sirf kaam ki cheez (order delivered, pending).
 Abhi ki jagah ek parchi (Redis) pe, har 4 second purani kaat ke nayi, delivery ke baad hata do. Company ko poora raasta
 chahiye to saari location Kafka me (bheed ka jawab), wahan se batch me alag storage box me ("10 minute yahan khada tha").
 **Asli naam:** Redis me sirf aakhri jagah (overwrite), history = Kafka -> batch write alag storage, DB = sirf status.
 
-**Teesri kahani:** matching ko abhi ke abhi chahiye, Kafka -> Cassandra batch me der se, isliye matching Redis
+**Maan lo is doosri kahani me (location Kafka + batch se):** matching ko abhi ke abhi chahiye, Kafka -> Cassandra batch me der se, isliye matching Redis
 se (har baar kaat ke latitude-longitude). Ride book hui tab raasta pakka chahiye (SOS / support: "Whitefield se kahan le gaya"),
 isliye Cassandra me wo jo important hai. Khaali aur bhara (sawari wala) driver alag: bhare ka raasta Kafka se batch me Cassandra,
 khaali ka padhai ke liye alag. Aage purane raaston se "airport ka sabse achha 9va raasta" bhi nikaal sakte.
@@ -280,7 +280,7 @@ dikhti hai.
 jab tak koi accept na kare sabka phone bajta rahe. Uber asal me kaise, pakka nahi pata; dono raaste.
 **Asli naam:** request TTL (server ki ghadi), re-dispatch, TTL ke bina broadcast.
 
-Doosri kahani: aakhri ice-cream, do bachche daude, pehle shuru karne wala gir gaya; ice-cream usko jo pehle pahuncha.
+Isi pe ek aur raasta (sabke paas ek saath, jo pehle pahuncha): aakhri ice-cream, do bachche daude, pehle shuru karne wala gir gaya; ice-cream usko jo pehle pahuncha.
 Server pe Suresh ka accept pehle aaya to ride Suresh ki. Raju ko "request nahi pahunchi" nahi, bas "tumse pehle kisi aur
 ne le li".
 **Asli naam:** server pe pehle pahuncha accept jeeta (first-write-wins), Raju ko ride taken message.
@@ -416,7 +416,7 @@ banata to aise.)
 **Asli naam:** jo dikhaya wahi = upfront fare: quote ride ke saath save (lock), aakhir me wahi kaato; zyada mehnat =
 tip alag, rider ki marzi.
 
-**Doosri kahani:** concert se Whitefield, 900 dikha, traffic me 1 ghante ka raasta 2.5 ghante, 1400 kate.
+**Aur neeche (surge nahi, traffic se raasta lamba):** concert se Whitefield, 900 dikha, traffic me 1 ghante ka raasta 2.5 ghante, 1400 kate.
 Teen nazar: driver ka 1.5 ghanta gaya (3-4 ride ya ek airport wali), Uber ka nuksaan, customer ka gussa jaayaz. Aage ka traffic
 pehle se nahi pata (Bangalore bhida shahar), pehle hi 1400 bol diya aur traffic nahi laga to bharosa gaya. Normal laal batti
 pe nahi badhao (buffer), sach me der (1.5 ghante se upar) to har extra 30 minute +100 / 150.
@@ -616,7 +616,7 @@ sadak hai, signal buildings me ulajhta. Hamein pata hai Raju is building ke aas-
 chhat pe dikhe to use paas wali sadak pe wapas utaar do.
 **Asli naam:** paas wali sadak pe chipka do = map matching (GPS ka galat point sabse paas ki sadak pe, raaste ke hisaab se).
 
-**Doosri kahani (nadi):** GPS ne bike 1 second me nadi ke us paar dikha di. Network theek nahi to app kahin bhi phenk sakta,
+**Aur neeche (GPS ek second me nadi paar):** GPS ne bike 1 second me nadi ke us paar dikha di. Network theek nahi to app kahin bhi phenk sakta,
 ye rok nahi sakte (Uber, Rapido me hota); animation se use wapas isi road pe le aao. Wahi map matching.
 
 **Maan lo location har 4 second aati hai, beech me gaadi khadi, phir achanak aage koodti (teleport):** Har pal ki asli
@@ -627,7 +627,7 @@ Zomato, Swiggy sab me dikhta hai.
 **Asli naam:** gudde ko andaze se aage = dead reckoning (speed + sadak se andaza), nayi aayi to sahi jagah = correction,
 U-turn pe kooda = andaza galat nikla.
 
-**Doosri kahani (tunnel, flyover jaisi hi):** Raju raaste me tunnel me ghusa, net 1 minute gaya, phone ne 15 jagah note
+**Aur neeche (tunnel me net gaya, flyover jaisi hi):** Raju raaste me tunnel me ghusa, net 1 minute gaya, phone ne 15 jagah note
 ki par bhej nahi paaya; map pe bike ek jagah khadi (basement se alag: wahan pahunch chuka, yahan raaste me). Net poora
 gaya to driver ruka dikhega, chalta nahi dikha sakte (pata nahi kya kar raha); ya aage-aage badhao, par galat gudda nahi,
 mod ke peeche nikla to flyover jaisa seedha wahan. Dono ho sakte. Net aaya to Redis me aakhri jagah, aur bike

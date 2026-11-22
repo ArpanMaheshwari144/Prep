@@ -190,7 +190,7 @@ aur replica wali cheez. Aur thode-thode log andar jaao, zyada nahi. Sabse pehli 
 utne log andar. Maan lo mere hall me 1000 ki jagah aur saamne 5000 khade, to 1000 andar jaao, baaki 4000 ghar jaao. Aur
 wo line me lago: "le bhai, ye teri parchi, tu jaayega, phir agla number tera."
 
-Doosri kahani: bheed ko aane se pehle baant do. Avengers Doomsday 17 December ko aa rahi hai, par uski
+Isi pe ek aur raasta (ek saath aane hi mat do, booking pehle se khol do): bheed ko aane se pehle baant do. Avengers Doomsday 17 December ko aa rahi hai, par uski
 booking 17 November ko hi khul gayi, to log mahine bhar me dheere-dheere seat lete hain. GTA 6 ka pre-download release
 (19 November) se 9 din pehle khula, taaki release ke din server pe ek saath download na aaye. Interview me: "Sir, hum
 mahina pehle booking khol dete hain, to itna shor aata hi nahi."
@@ -236,7 +236,7 @@ do, seat agle ki.
 **Asli naam:** token = sirf gate ka pass, hold = seat ki ghadi (`hold_until`). Do alag ghadiyan: token gate ki, hold
 seat ki; pay ka faisla sirf hold ki ghadi karti.
 
-Doosri kahani: koi 9:59 pe seat chune to token ke hisaab se 1 minute hi milega, galat baat. Seat chunte hi grace (4-5
+Isi pe ek aur raasta (der se seat chuni to 4-5 min ka grace): koi 9:59 pe seat chune to token ke hisaab se 1 minute hi milega, galat baat. Seat chunte hi grace (4-5
 minute) do: 9ve minute pe chuni to 14 tak pay kar sakta, nahi to bahar. **Asli naam:** grace = hold_until.
 
 ```mermaid
@@ -353,7 +353,7 @@ jaise S3 bhejta), hum "mil gaya" bol dete. Baad me pata chala paisa kata tha, to
 lautao"; wo bank se poochh ke kata tha to wapas karega. Bank se poochhne ka haq Razorpay ka hai, BookMyShow ka nahi;
 paisa Razorpay ne kaata, lautayega bhi wahi. Badi film pe 3-4 company (Razorpay jaisi doosri service) line me.
 
-Doosri kahani: GPay se pay kar raha hoon. GPay ka gola hamare server pe nahi, to 1 minute ho ya 10
+Aur neeche (UPI app ka apna gola, user back daba de to): GPay se pay kar raha hoon. GPay ka gola hamare server pe nahi, to 1 minute ho ya 10
 minute, wo sawaal hi nahi. Back dabaya aur paise kate hi nahi = user khush. Do haal: (1) user app me ruka, 10 second me
 "fail" aaya -> wahin popup "seat tumhari, dobara pay karo", dobara pay doosre PSP pe. (2) user ne back daba ke app band
 kar diya: 1.5 minute rokenge, chhotu peeche dekhta, kata to seat book; uske baad khatam (peeche bheed, chhotu 10 minute
@@ -393,7 +393,7 @@ parchi wahin padi.
 **Asli naam:** SUCCESS + parchi ek saath = transactional outbox (hamare DB ki table, SUCCESS ke saath ek hi DB transaction me; server gire to bhi row bachi), parchi dekh ke book = relay (wo chhotu jo
 outbox ki row padh ke ticket service ko bhejta).
 
-Doosri kahani: payment aur ticket alag service, beech me ek dabba: "Arpan ka payment poora, ticket PENDING". Ticket
+Isi pe ek aur raasta (do service, beech ka dabba, ticket PENDING): payment aur ticket alag service, beech me ek dabba: "Arpan ka payment poora, ticket PENDING". Ticket
 service gire ya server gire, dabba wahin; jo bhi aaye pending padh ke ticket banaye, phir dabbe se hatao.
 **Asli naam:** outbox / pending table, consumer poll + retry.
 
@@ -451,7 +451,7 @@ job DB se utha ke parchi theek kare, ulta kabhi nahi.
 **Asli naam:** mota register = source of truth (DB), SUCCESS ke upar PENDING nahi = conditional update (sirf tab likho
 jab abhi PENDING ho), haalat sirf aage = state machine, DB se parchi theek = reconciliation / sync job.
 
-Doosri kahani: khabar pe number (PENDING 1, SUCCESS 2); 2 pehle aaye to 1 ka intezaar, phir kram se. 1 kho jaaye to
+Isi pe ek aur raasta (PENDING aur SUCCESS kram se): khabar pe number (PENDING 1, SUCCESS 2); 2 pehle aaye to 1 ka intezaar, phir kram se. 1 kho jaaye to
 1-2 second baad chhotu Razorpay se pooche "paisa kata?", kata hai to book. Ya dono status ek hi operation me.
 **Asli naam:** sequence number (out-of-order hold), timeout ke baad status poll, atomic update.
 
@@ -486,7 +486,7 @@ kabhi nahi (consumer court me ungli hum pe). Ek job 5 din se purane pending refu
 **Asli naam:** REFUND_PENDING -> REFUNDED / REFUND_FAILED = refund state (sirf refund.processed / refund.failed event pe),
 5 din se purane poochho = stuck refund job (reconciliation).
 
-Doosri kahani: paise dekar ladka bheja, wo bole "pahuncha diye", to uske bolne se nahi maante, saamne wale se poochhte.
+Aur neeche (refund ke do event: shuru, phir poora): paise dekar ladka bheja, wo bole "pahuncha diye", to uske bolne se nahi maante, saamne wale se poochhte.
 Waise hi "refund shuru" pe INITIATED, "refund poora" event pe hi REFUNDED.
 
 ```mermaid

@@ -181,7 +181,7 @@ Matlab sabko ek line me, ek hi jagah rakho, alag-alag mat baanto.
 ki book ek hi thread (single-threaded per symbol). Lock nahi chahiye, aur line ka kram hi "pehle aaya pehle mila".
 Cancel bhi isi line me: sauda pehle aaya to "bik chuka", cancel pehle to hold wapas.
 
-**Doosri kahani (hot IPO burst):** baanto mat, warna race; ek line, counter jaisa "10 share lo, niklo", ek thread,
+**Aur neeche (hot IPO pe sab ek saath burst):** baanto mat, warna race; ek line, counter jaisa "10 share lo, niklo", ek thread,
 engine lakhon / sec kar leta. **Asli naam:** per-symbol queue + single thread.
 
 ```mermaid
@@ -215,7 +215,7 @@ Aur adhoora order: bag pack kar raha, saara saamaan aaya nahi, to poora bag khaa
 parchi banayi, Bangalore ja raha, 10 kapde rakhne hain, 5 ye, 3 ye, jo rakha us pe tick, to-do ki tarah. Bag khaali
 kiya to bhi parchi utni ki utni hai, wo dekh ke dobara jama lo.
 
-Doosri kahani: RAM fast hai isliye RAM me rakha, par RAM me daalne se pehle kahin aur bhi likh lo. RAM
+Isi pe ek aur raasta (RAM me daalne se pehle kahin aur likh lo): RAM fast hai isliye RAM me rakha, par RAM me daalne se pehle kahin aur bhi likh lo. RAM
 udi, restart hui, to jo likha hai wo wapas RAM me aa jaayega (order log: pehle log me likho, phir RAM).
 
 **Maan lo replay me wo order bhi aa gaye jo crash se pehle trade ban chuke the:** Arpan ke 10 share Ravi ko bik chuke,
@@ -228,7 +228,7 @@ numbers se RAM ya DB ka faisla (bahut kam traffic pe DB pe hi chal jaata; RAM + 
 jaisi bheed ho), subah se parchi = order log (append-only, sirf jodna), parchi dekh ke bag dobara = log replay
 se book wapas, replay pe mota register = trade DB (source of truth), ho chuke trade book me wapas nahi.
 
-**Teesri kahani:** match me ek banda har ball book me likh raha, light gayi to book se wapas kaunsi ball, kitne run
+**Isi pe ek aur raasta (match ki book: har event likho, audit bhi):** match me ek banda har ball book me likh raha, light gayi to book se wapas kaunsi ball, kitne run
 (audit trail bhi). **Maan lo engine hi mara:** engine ki replica, barabar wali promote, gap log se replay.
 **Asli naam:** event log + replay, hot standby promote.
 

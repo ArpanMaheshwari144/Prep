@@ -316,7 +316,7 @@ flowchart TB
     style SH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-**Doosri kahani (state ke hisaab se):** mote register ko state ke hisaab se kaato (Delhi, Punjab, UP), har register pe
+**Isi pe ek aur raasta (hash ki jagah state ke hisaab se):** mote register ko state ke hisaab se kaato (Delhi, Punjab, UP), har register pe
 thappa. Token me state ka chhupa code (01 = Delhi); beech ka bada bhai shuru ke 2 digit list se mila ke sahi register
 pe bheje. DB = Cassandra: key-value, likhai bahut, data me bank jaisi consistency (paisa, transaction) chahiye hi nahi, apne aap scale + replica.
 **Asli naam:** geo-partition, shard id ID ke andar, router / shard map.
@@ -353,7 +353,7 @@ flowchart TB
     style CP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-**Doosri kahani (central authority):** copy Lajpat Nagar, ISBT, Kashmiri Gate; beech ki authority pehle likhe phir sabko bheje,
+**Aur neeche (poori building / shehar me aag to; central authority):** copy Lajpat Nagar, ISBT, Kashmiri Gate; beech ki authority pehle likhe phir sabko bheje,
 uski bhi ek copy. Copy peeche chale to baad me update. Save hi fail ho gaya (crash, rollback) to user ko "link bana nahi, dobara banao"; ek-do number bekaar gaye to naya number, arabon hain.
 **Asli naam:** central authority = coordinator (request leta, ring me aas-paas ki copies ko bhejta), copy peeche = async
 lag, authority gire to koi aur coordinator.
@@ -438,7 +438,7 @@ flowchart TB
     style PC fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-**Doosri kahani (alag dabba):** garam link server ke paas (local cache), aur uska alag Redis dabba + 1-2 copy, taaki
+**Isi pe ek aur raasta (Redis tak aane hi mat do: local cache + alag dabba):** garam link server ke paas (local cache), aur uska alag Redis dabba + 1-2 copy, taaki
 IPL ki bheed me baaki logon ke link na atkein. 3-4 counter phanse to ek chhotu laake sabke kaan me daale.
 Ye consistent hashing nahi: link badal nahi raha, bas Redis ki copiyan ek ring me, aas-paas koi gira to agli copy pe.
 **Asli naam:** hot key isolation, hot key replicas, request coalescing.
@@ -453,6 +453,10 @@ raha wo theek hai, galat ho to banane se hi mana kar do aur token radd.
 **Asli naam:** token radd = code band (DB me "band" nishaan, aur chhote register se bhi hatao, warna TTL tak purana pata
 deta rahega), dene se pehle khud check = kaali list
 (Google Safe Browsing).
+
+**Isi pe ek aur raasta (radd karne ki jagah banate waqt hi jaanch, library ki kitaab):** link banate waqt hi chupke se kholo, jaise kitaab library me rakhne se pehle
+dekhte; gandi nikle to mat do.
+**Asli naam:** create time pe URL safety check (reputation / kaali list).
 
 **Maan lo token radd kiya, par log counter pe aa hi nahi rahe, phone me likha pata seedha khol rahe:** pehla khayal:
 unke phone ka cache radd kar do, to agli request seedha hamare paas aayegi. Par phone uske haath me hai, main use mita
@@ -485,10 +489,6 @@ flowchart TB
     style CW fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-**Doosri kahani (library ki kitaab):** link banate waqt hi chupke se kholo, jaise kitaab library me rakhne se pehle
-dekhte; gandi nikle to mat do.
-**Asli naam:** create time pe URL safety check (reputation / kaali list).
-
 ## 13. Machine se har second hazaar chit (gate pe bhaga do + har aadmi pe had)
 
 Ek aadmi ne machine laga di, har second hazaar chit, sab nakli ya dhokhe wale pate. Counter ka number faltu khatam ho
@@ -512,7 +512,7 @@ block list me daal do.
 **Asli naam:** login laga do = auth zaroori (tab userId pe had + tracking), bina login IP pe dheeli had = anonymous
 rate limit per IP, IP ban, desh block = WAF block list / geo-block.
 
-**Doosri kahani (bodyguard):** ek aadmi script chala ke 1 lakh link le gaya, pata hi nahi laga. To gate pe bodyguard
+**Isi pe ek aur raasta (bodyguard: kuch bhi abnormal to roko):** ek aadmi script chala ke 1 lakh link le gaya, pata hi nahi laga. To gate pe bodyguard
 khada karo: kuch abnormal lage (script, ek aadmi laakhon request, ek IP se 1000 ek saath) to rok do; baar-baar aaye to
 jail, dobara nahi aayega. AWS ke gateway pe hi rok do, phir block list me.
 **Asli naam:** API gateway / WAF pe rate limit + anomaly check, jail = IP / user ban.

@@ -143,7 +143,7 @@ Koi dikkat hi nahi.
 pichhle op ke hisaab se aage (op jis version pe bana, uske baad lage op ke hisaab se position aage-peeche). Kram
 server tay karta, jo pehle pahuncha use agla version.
 
-**Isi dikkat ki doosri kahani (A B C D):** dono ke paas A B C D. Ravi ne B hataya, Arpan ne C se pehle E joda. Dono ke
+**Aur neeche (ek ne hataya, doosre ne usi pal joda, A B C D):** dono ke paas A B C D. Ravi ne B hataya, Arpan ne C se pehle E joda. Dono ke
 document bilkul same laga do: B hat jaayega, B ki jagah E aake lag jaayega, dono ke paas A E C D, na kisi ka kuch khoya.
 **Asli naam:** wahi OT (Ravi ka delete pehle laga, to Arpan ke E ki jagah ek peeche khiski).
 ```
@@ -241,7 +241,7 @@ maalik hoga, sab uske hisaab se chalega.
 **Asli naam:** centralized system, ek hi version = ek jagah kram aur OT, har doc ka alag centralized system, uska
 maalik = har doc ka ek owner server (LB `docId` dekh ke ring pe owner chunta = consistent hashing, server jude / gire to sirf paas ke doc hilein, ek doc ke saare editor wahin).
 
-Doosri kahani (Arpan Mumbai server se, Ravi Delhi server se): pehle saare op apne paas jama karo (Redis,
+Aur neeche (Arpan Mumbai server pe, Ravi Delhi server pe, centralized kaise): pehle saare op apne paas jama karo (Redis,
 abhi DB nahi). Arpan ne jagah 0 pe "ARPAN" likha, Ravi ne jagah 2 pe "RAVI". Dono op ek jagah aaye: pehle ARPAN, phir
 Ravi jagah 2 pe, jahan "P" hai. Arpan ka kaat ke Ravi ka likhna, ya "AR" + "RAVI" likh ke "PAN" kho dena, dono galat. To
 "P" ko khiska do, beech me poora "RAVI": "AR RAVI PAN". Jaise main Madhya Pradesh me beech me baitha, Ravi Delhi se, Arpan

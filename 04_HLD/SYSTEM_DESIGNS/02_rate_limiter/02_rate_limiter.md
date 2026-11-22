@@ -275,7 +275,7 @@ denge: tu ab kahin nahi ja sakta, yahan se hil hi nahi sakta, is site ke liye tu
 **Asli naam:** ek baar, do baar, teesri baar = baar-baar had todne ka pattern, alag dabba, yahan se hil nahi sakta =
 ban list, permanent band = ban wala gate pe bina gine lautta.
 
-**Doosri kahani:** pehle 1-2 baar chot khaayi to bouncer API gateway pe khada kiya. Ab bouncer bhi roz
+**Aur neeche (bouncer bhi roz 1000 se uljha, to pattern dekho):** pehle 1-2 baar chot khaayi to bouncer API gateway pe khada kiya. Ab bouncer bhi roz
 1000 logon se uljha hai. To pattern dekho: ye banda roz-roz aa ke yahi kar raha? Haan to ban karo, WAF me daal do,
 block, kahani khatam.
 **Asli naam:** roz ka pattern = abuse pattern, WAF me daal do = WAF block list (gateway tak bhi nahi pahunchta).
@@ -355,7 +355,7 @@ ek saanjhi had se (global had, Redis ka ek token bucket).
 **Maan lo OTP line me atka, der se nikla, tab tak bekaar:** Line me har OTP pe uski umar likh do. Line se nikalte waqt dekho, umar khatam to phenk do, bhejo mat; bachcha naya OTP maang lega.
 **Asli naam:** umar = message TTL / expiry (line se nikalte waqt jaancho), purana OTP SMS company tak jaata hi nahi.
 
-**Doosri kahani:** sab apni had me, phir bhi server bhar gaya: apne server ki global cap, upar 503 ("thodi der baad aana"),
+**Isi pe ek aur raasta (upar ek had: global cap, 503):** sab apni had me, phir bhi server bhar gaya: apne server ki global cap, upar 503 ("thodi der baad aana"),
 kam zaroori kaam pehle hatao, login / paisa chalta rahe.
 **Asli naam:** global limit + 503, load shedding (priority).
 

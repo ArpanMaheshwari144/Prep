@@ -193,7 +193,7 @@ try, phir doosri SMS company (failover, kadam 5).
 **Maan lo "Order placed" SMS bheed me atka (retry line), aur "Shipped" push jaane ko taiyaar hai; aise hi gaya to Arpan ko pehle Shipped dikhega:** Ek parchi rakhunga: Arpan ka order placed, chhotu ko bheja. Chhotu wapas nahi aaya, to parchi pe likha SMS abhi gaya nahi. Order pack hokar ship hua, parchi pe likha, par mujhe pata hai placed abhi gaya nahi. Chhotu aaya, bola SMS company bheed me hai. To ek saath bhej do: "aapka order placed aur ship ho gaya". Interviewer bole alag-alag dikhao, to retry mat karwao, placed wala doosri SMS company ko de do, phir shipped. SMS nahi ja raha to bagal me email wala khada hai, confirmation ek baar to chala jaayega.
 **Asli naam:** "order ki parchi" = har order ka status (order id pe), "pehle wala gaya nahi to dono saath" = khabar milana (coalesce, kram bachao), "doosri SMS company" = failover (kadam 5), "email wala" = channel fallback.
 
-Doosri kahani: SMS company ek nahi, teen-chaar; ek fail to doosri, teesri. Sab fail to WhatsApp se, wo
+Isi pe ek aur raasta (ek company nahi, teen-chaar, phir WhatsApp / email): SMS company ek nahi, teen-chaar; ek fail to doosri, teesri. Sab fail to WhatsApp se, wo
 bhi nahi to email se. Ek cheez fail hui to poora system nahi atakta. Order placed app pe to dikh hi jaayega; customer ko
 farak nahi padta SMS aaya ya email. SMS company down hai to DB me likh lo "abhi gaya nahi", wapas aayi to dobara bhejo.
 **Asli naam:** multi-provider failover, channel fallback (SMS -> WhatsApp -> email), in-app status, pending record + retry.

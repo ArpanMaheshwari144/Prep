@@ -65,7 +65,7 @@ ek-ek karke jao = khabar line me, padhne wale apni raftaar se (async). Spike aay
 isliye ek hi khabar SMS aur Fraud dono padh lete hain, aur peeche ja ke dobara bhi padh sakte hain (RabbitMQ me ack
 hote hi queue se hat jaati, dobara nahi padh sakte).
 
-**Doosri kahani (tube):** idhar se daalo = producer, line = Kafka, udhar se nikaalo = consumer. **Maan lo async thread kyun
+**Isi pe ek aur misaal (tube):** idhar se daalo = producer, line = Kafka, udhar se nikaalo = consumer. **Maan lo async thread kyun
 nahi:** thread gira to sab gaya, kaam disk pe chahiye. **RabbitMQ kyun nahi:** padhi to hata deta (cinema ka ticket phaad),
 hamein khabar rehni chahiye. **Kab nahi:** jab jawab turant chahiye (REST). **AWS pe:** broker, copy AWS sambhale.
 **Asli naam:** durable log vs in-process thread, RabbitMQ delete-on-ack, sync REST, managed Kafka.
@@ -140,7 +140,7 @@ mat bhejo, key se ek partition: A7 ki saari khabar ek line me, A8 ki ek me. Ek l
 shipped.
 **Asli naam:** partition key (message key = order id), kram sirf ek partition ke andar.
 
-**Doosri kahani (exam hall):** bahar kaise bhi, andar roll number ki fix seat = partition ke andar kram. **Maan lo ek user
+**Isi pe ek aur misaal (exam hall):** bahar kaise bhi, andar roll number ki fix seat = partition ke andar kram. **Maan lo ek user
 garam:** key me number jodo, alag tukde; keemat: us user ka kram sirf tukde ke andar. **Asli naam:** per-partition order, key salting.
 
 ```mermaid

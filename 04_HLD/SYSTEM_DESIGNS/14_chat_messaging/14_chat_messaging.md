@@ -300,7 +300,7 @@ to 5 ke baad wali jagah bithao. Register server ke paas, kuch khota nahi.
 **Asli naam:** har user ka delivery record (store-and-forward; group me har member ka bas ek number "yahan tak pahuncha", kadam 9), reconnect pe pending sab, sequence number se
 client-side ordering, ordering = requirement ka faisla.
 
-Doosri kahani (Priya metro me, #981 aaya #980 atka): chat server bahut hain aur har cheez ki copy hai, to
+Isi Maan lo me aur neeche (Priya metro me, #981 aaya #980 atka): chat server bahut hain aur har cheez ki copy hai, to
 message khoyega nahi. Server dekhega 2 aa gaya par 1 nahi, to poochhega "1 kahan rah gaya". Atka hai to kuch second, 10
 ghante nahi (WhatsApp ka server hi down ho wo alag baat). To 2 bhej do, 1 aate hi turant 1 bhej do; phone number se sort
 karke sahi jagah laga dega.

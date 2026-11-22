@@ -251,7 +251,7 @@ liye the, ise wapas kar raha hoon, aur sab wapas paise bhej dunga.
 **Asli naam:** sab ulta = saga (fail pe ulta kadam), register me sab kaat diya = ledger me ulti line (mitana nahi, nayi line), wapas paise =
 500 wapas dukaan ke wallet me.
 
-Doosri kahani (wallet se 2000 Ravi ke ICICI me, ICICI ne FAILED bola): Arpan ka account bhi usi ICICI me
+Aur neeche (wallet se 2000 Ravi ke ICICI me, ICICI ne FAILED bola): Arpan ka account bhi usi ICICI me
 ho to badhiya, ek hi transaction me sab, fail hua to apne aap rollback. Worst case: dono ke alag bank, alag DB, to ek
 transaction nahi ban sakta; tab saga, payment nahi hua to peeche jaate-jaate sab rollback.
 **Asli naam:** ek DB ke andar = @Transactional / ACID rollback, alag DB = saga (compensation).

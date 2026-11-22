@@ -291,7 +291,7 @@ id se baanto. Meri id har baar same, to mera saara data ek jagah.
 naam se nahi, id se baant do = partition key = user id, mera saara data ek jagah = ek partition (author id se hissa, andar tweet id se tweet, time ke kram me),
 follow ka track = graph DB Neo4j.
 
-**Cassandra kyun (doosri baat):** writes bhi zyada, reads bhi zyada, TB data; shard user ID se. **Maan lo har baar "Arpan
+**Aur neeche (Cassandra hi kyun, aur key kya):** writes bhi zyada, reads bhi zyada, TB data; shard user ID se. **Maan lo har baar "Arpan
 ke naye 500" poori table me:** roz follower wahi maangta (per day pattern), to author ke naye tweet thodi der apne paas rakh lo.
 **Asli naam:** write + read heavy = Cassandra (partition = user id); recent tweets cache (Redis, TTL).
 
@@ -475,7 +475,7 @@ yahan tak parchi = checkpoint.
 wajah se mera kaam ruk raha. "Tu thoda rest le, ye tera replacement, bata kahan tak chhoda, ye wahin se karke dega."
 **Asli naam:** atka to replacement = timeout pe slow worker / consumer ka hissa doosre ko, kahan tak chhoda = checkpoint.
 
-Doosri kahani: "zinda hoon" kaafi nahi, poochho kaam kahan tak hua. Ek chhotu ke paas 50 newspaper aa gaye, baaki ke
+Isi Maan lo me aur neeche ("zinda hoon" kaafi nahi): "zinda hoon" kaafi nahi, poochho kaam kahan tak hua. Ek chhotu ke paas 50 newspaper aa gaye, baaki ke
 10-20; 2-3 chhotu extra bhejo, madad karein. Naye chhotu pehle uski parchi dekhein ("30 khatam") aur 31 se lagein.
 **Asli naam:** heartbeat + progress report, bada chunk = data skew, madad = work stealing / split, parchi = checkpoint (DB / Redis).
 
