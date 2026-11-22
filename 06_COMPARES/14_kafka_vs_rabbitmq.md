@@ -1,80 +1,43 @@
-# Kafka vs RabbitMQ
-
-> Dono message-passing, par DO alag philosophy: Kafka = LOG (rakho + replay) · RabbitMQ = QUEUE (route + deliver + ack pe delete).
+# Kafka vs RabbitMQ — register ya daakghar
 
 ---
 
-## 1-Line
+## Koi poochhe to aise bolo
 
-```
-Kafka    = distributed LOG / event-stream -> messages RUKTE hain (retained), consumer PULL + offset, replay ho sakta. High-throughput.
-RabbitMQ = traditional QUEUE / broker    -> message deliver ho ke KHATAM (consume+delete), smart broker ROUTING karta, PUSH karta.
-```
+**Kafka** = register: har event likhta jaata, padhne se mitta nahi, kuch din rehta. Har padhne wala apni jagah (offset) yaad
+rakhta, isliye ek hi event kai jagah (search, notification, analytics) apni-apni raftaar se; galti ho to shuru se dobara padh lo;
+bahut badi bheed bhi jhel leta. **RabbitMQ** = daakghar: chitthi aayi, sahi dabbe (queue) me gayi, ek worker ne uthayi, "mil
+gaya" (ack) bola, chitthi khatam; ek kaam ek baar ek worker se, aur message ke hisaab se raasta badalna (routing) ho to achha.
+Niyam: ek event kai jagah / dobara padhna / bahut data = Kafka; ek kaam ek baar + routing ke niyam = RabbitMQ.
 
 ---
 
-## ANALOGY
+## Kahani
 
 ```
-Kafka = TAPE-RECORDER / newspaper archive
-   sab kuch RECORD hota rehta. koi bhi consumer baad me aa ke apni jagah (offset) se padhe,
-   dobara REPLAY kare. message delete nahi hota (retention tak). "stream + replay".
-
-RabbitMQ = POST-OFFICE / courier
-   message queue me daalo -> jise dena hai use DELIVER -> deliver ho gaya to GAYAB (ack).
-   smart routing (kaunsa exchange, kis address). "route + deliver + ack pe delete".
+Kafka    = stadium ka register / line: sab likha rehta, har gate (consumer group) apni jagah se padhe, dobara bhi
+RabbitMQ = daakghar: chitthi pahunchi, "mil gaya" bola, chitthi khatam
 ```
 
 ---
 
-## FARAK (side by side)
+## Tere design aur project se
 
-```
-┌──────────────────┬────────────────────────────┬────────────────────────────┐
-│  Feature         │  KAFKA                      │  RABBITMQ                  │
-├──────────────────┼────────────────────────────┼────────────────────────────┤
-│ Model            │ append-only LOG (retained)  │ QUEUE (consume -> delete)  │
-│ Message baad me  │ REHTA (replay ho sakta)     │ ack ke baad HAT jaata      │
-│ Consumer         │ PULL + offset (khud track)  │ PUSH (broker bhejta)       │
-│ Routing          │ simple (topic + partition)  │ SMART (exchange: direct/    │
-│                  │                             │ topic/fanout/headers)      │
-│ Throughput       │ BAHUT high (millions/sec)   │ medium (routing-flexible)  │
-│ Ordering         │ per-PARTITION               │ per-queue                  │
-│ Broker           │ "dumb broker, smart consumer"│ "smart broker, dumb consumer"│
-└──────────────────┴────────────────────────────┴────────────────────────────┘
-```
+- **Twitter, notification, news:** ek post / order ka event kai jagah (feed, search, SMS), isliye Kafka.
+- **mini_payment_ms:** payment event Kafka me, notification-service ne padha, event log me pada raha.
+- **Email / report banana:** ek kaam ek baar, yahan RabbitMQ bhi chal jaata.
+- Poora farak = `04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_ya_rabbitmq_kab_kaunsa.md`.
 
 ---
 
-## KAB KAUNSA
+## Dikkat se hal
 
-```
-KAFKA    -> event-streaming, log-aggregation, analytics, REPLAY chahiye, bahut zyada volume.
-            (mini_payment_ms: payment event bheja -> notification-service consume -> event log me raha)
-RABBITMQ -> task-queue, RPC, COMPLEX routing, per-message low-latency, transactional workflows.
-
-RULE: "stream / replay / high-volume"   -> Kafka
-      "route / deliver + ack pe delete / task-queue" -> RabbitMQ
-```
+Notification bug se 2 ghante galat SMS gaye. Kafka me event pade hain: bug theek karo, offset peeche le jao, dobara padh lo.
+RabbitMQ me ack ke baad chitthi mit chuki, dobara padhne ko kuch nahi.
 
 ---
 
-## INTERVIEW LINE
+## Trap
 
-```
-"Kafka ek distributed LOG hai -- messages retain hote, consumer PULL + offset se replay kar sakta,
- high-throughput event-streaming ke liye. RabbitMQ traditional broker/QUEUE hai -- smart routing
- (exchanges), message ack ke baad delete, task-queue/complex-routing ke liye.
- Kafka = 'stream + replay', RabbitMQ = 'route + deliver + ack pe delete'."
-```
-
----
-
-## Memory Hook
-
-```
-Kafka    = LOG  -> rakho + REPLAY (pull, offset, high-throughput)   -> "tape recorder"
-RabbitMQ = QUEUE -> route + DELIVER + ACK-DELETE (push, ack-delete, smart)  -> "post office"
-```
-
-[← COMPARES README](../README.md)
+Kafka me 10 consumer laga diye, par partition 3 hi the: 7 consumer khaali baithe. Ek consumer group me jitne partition, utne hi
+consumer kaam karte; pehle partition badhao.
