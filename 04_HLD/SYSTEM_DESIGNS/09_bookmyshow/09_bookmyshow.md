@@ -390,8 +390,8 @@ SUCCESS likhna aur ticket book karna do alag kaam nahi, ek jagah hon. SUCCESS ke
 paisa de diya, D5 book karna hai". Koi bhi aaye, kahin se bhi aaye, parchi dekh ke D5 book kar de. Server gire to bhi
 parchi wahin padi.
 
-**Asli naam:** SUCCESS + parchi ek saath = transactional outbox (hamare DB ki table, SUCCESS ke saath ek hi DB transaction me; server gire to bhi row bachi), parchi dekh ke book = relay /
-worker / consumer outbox padh ke ticket service ko bhejta.
+**Asli naam:** SUCCESS + parchi ek saath = transactional outbox (hamare DB ki table, SUCCESS ke saath ek hi DB transaction me; server gire to bhi row bachi), parchi dekh ke book = relay (wo chhotu jo
+outbox ki row padh ke ticket service ko bhejta).
 
 Doosri kahani: payment aur ticket alag service, beech me ek dabba: "Arpan ka payment poora, ticket PENDING". Ticket
 service gire ya server gire, dabba wahin; jo bhi aaye pending padh ke ticket banaye, phir dabbe se hatao.

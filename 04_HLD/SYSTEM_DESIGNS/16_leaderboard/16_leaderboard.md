@@ -86,7 +86,7 @@ badlega; jahan likhai zyada wahan index ka utna fayda nahi. Isliye sorted set, j
 **Asli naam:** index se bhi count scan, write-heavy pe index ka bojh, isliye Redis sorted set (log N).
 
 **Teesri kahani:** contest me log dheere-dheere aate (3, 10, 100, 1000); Postgres ko har baar "ab 100 sort
-kar, ab 2000" bolo to thak jaata, isliye tez sort karne wala chhotu (dabba).
+kar, ab 2000" bolo to thak jaata, isliye tez sort karne wala dabba.
 
 ```mermaid
 flowchart TB

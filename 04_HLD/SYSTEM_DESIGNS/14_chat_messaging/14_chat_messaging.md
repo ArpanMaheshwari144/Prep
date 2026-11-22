@@ -195,7 +195,7 @@ online walon ko map + pub/sub se bhejo, baaki wapas aayein to dabbe se (500 ka b
 1-2 chhotu extra rakh lo; ek bimar pada to doosra aayega. Par doosre ko pata kaise chale ki #980 bhejna baaki hai? Main
 nikal raha hoon aur chhotu baad me aayega, to parchi pe likh ke deewar pe chipka jaunga: "chhotu bhai ye message yahan
 jaana chahiye". Chhotu aayega, parchi padhega, message dene nikal jaayega.
-**Asli naam:** extra chhotu = backup server / kai worker / consumer, deewar ki parchi = outbox (hamare DB ki table, message ke saath ek saath, dono ya koi nahi (batch),
+**Asli naam:** extra chhotu = relay ki 1-2 copy (backup), deewar ki parchi = outbox (hamare DB ki table, message ke saath ek saath, dono ya koi nahi (batch),
 "ye bhejna hai" wali row), parchi padhne wala chhotu = relay jo outbox padh ke pub/sub pe daale.
 
 **5c. Maan lo pehla chhotu sirf der se tha, wo bhi aaya aur backup bhi, dono ne #980 bhej diya:** Status rakho. Bheja to

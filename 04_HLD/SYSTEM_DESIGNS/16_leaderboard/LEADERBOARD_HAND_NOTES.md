@@ -72,7 +72,7 @@ Arpan: 1 crore khiladi pe index kaise lagega: maan lo 5 lakh ka ek block, phir 5
 Technical me: "har block me jaake dekhna" = rank ke liye "mere upar kitne" gin-na (index se bhi count scan), "har likhai pe index badle" = write-heavy pe index ka bojh (har update pe index update), isliye sorted set (daalna, rank, top sab log N).
 
 **Isi dikkat ki teesri kahani:** Arpan: Ek dabba rakh do jo apne aap sort kar de, sabko us dabbe se guzaar do, baar-baar query na chalani pade. Contest me ek saath 1 crore nahi aate, dheere-dheere: 3, 10, 20, 100, 1000. Postgres ko har baar bolo "10 sort kar, ab 100, ab 2000" to wo thak jaata. Isliye ek chhotu bula liya jo tez sort karta, usko de do.
-Technical me: "apne aap sort wala dabba / tez chhotu" = Redis sorted set.
+Technical me: "apne aap sort wala dabba" = Redis sorted set (ek dabba jisme score daalte hi line apne aap kram me rehti).
 
 **2. Ravi aur Priya dono ke 9800. Line me aage kaun?**
 Arpan: LeetCode jaisa: time se sort kar do. Jisne ek second, ya 0.01 milli second, pehle submit dabaya wo upar. Pehle score dekho, score same ho to time dekho, jaise streams me thenComparing padha tha.
