@@ -1,0 +1,83 @@
+// ============================================================
+// PEHLE YE (har problem pe, 30 sec):
+//   1. INPUT dekho, story nahi: sorted? "K"? negatives? grid? tree/node? intervals? edges? -> family shortlist
+//   2. Shabd pakdo: SUBARRAY / SUBSEQUENCE / SUBSET ?  ·  MAX / MIN / COUNT / EXACT ?
+//   3. Kisi ka LABEL mat lo ("reel ne SW bola") -> khud dekho: sach me aisa hai?
+//   4. Pattern nahi aaya -> BRUTE likho -> "baar-baar SAME kya nikal raha?" -> use STORE karo -> wo DS = pattern
+//   5. "X jaisa hai, bas ye badla" laga -> poochho: X me jo THI HI NAHI, wo line kya hai? (edge wahin)
+//   6. Code ke BAAD, submit se pehle: us pattern block ki ★ EDGE line + ek chhota dushman-example chalao
+// ============================================================
+// 3 SUM   (LC-15 — REDO_3, khaali page)
+// ============================================================
+// Array diya. SAARE UNIQUE triplets [a,b,c] dhoondho jinka sum = 0.
+// Ek index ek triplet me ek hi baar. Duplicate triplets nahi chahiye.
+// Triplets ka order aur triplet ke andar ka order koi bhi chalega.
+//
+//   [-1,0,1,2,-1,-4] -> [-1,-1,2] [-1,0,1]
+//
+// Tests (neeche main() me, khud PASS/FAIL batayega):
+//   [-1,0,1,2,-1,-4]                    -> [-1,-1,2] [-1,0,1]
+//   [0,1,1]                             -> (none)
+//   [0,0,0]                             -> [0,0,0]
+//   [-2,0,1,1,2]                        -> [-2,0,2] [-2,1,1]
+//   [0,0,0,0]                           -> [0,0,0]          (ek hi baar)
+//   []                                  -> (none)
+//   [1,2]                               -> (none)
+//   [1,1,1]                             -> (none)
+//   [-1,-1,-1,2,2]                      -> [-1,-1,2]        (ek hi baar)
+//   [3,0,-2,-1,1,2]                     -> [-2,-1,3] [-2,0,2] [-1,0,1]
+//   [-5,5,0,10,-10]                     -> [-10,0,10] [-5,0,5]
+//   [-4,-2,-2,-2,0,1,2,2,2,3,3,4,4,6,6] -> [-4,-2,6] [-4,0,4] [-4,1,3] [-4,2,2] [-2,-2,4] [-2,0,2]
+// ============================================================
+
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> threeSum(vector<int> &nums)
+{
+    // yahan likh
+
+    return {};
+}
+
+// ---- test helper (ise mat chhed) — order-free compare ----
+string show(vector<vector<int>> v)
+{
+    if (v.empty())
+        return "(none)";
+    string s;
+    for (auto &t : v)
+        s += "[" + to_string(t[0]) + "," + to_string(t[1]) + "," + to_string(t[2]) + "] ";
+    return s;
+}
+void check(vector<int> nums, vector<vector<int>> exp, const string &label)
+{
+    vector<vector<int>> got = threeSum(nums);
+    for (auto &t : got)
+        sort(t.begin(), t.end());
+    for (auto &t : exp)
+        sort(t.begin(), t.end());
+    sort(got.begin(), got.end());
+    sort(exp.begin(), exp.end());
+    bool ok = (got == exp);
+    cout << label << " -> got " << show(got) << "| exp " << show(exp)
+         << (ok ? "   PASS" : "   *** FAIL ***") << "\n";
+}
+
+int main()
+{
+    check({-1, 0, 1, 2, -1, -4}, {{-1, -1, 2}, {-1, 0, 1}}, "case1");
+    check({0, 1, 1}, {}, "case2");
+    check({0, 0, 0}, {{0, 0, 0}}, "case3");
+    check({-2, 0, 1, 1, 2}, {{-2, 0, 2}, {-2, 1, 1}}, "case4");
+    check({0, 0, 0, 0}, {{0, 0, 0}}, "case5");
+    check({}, {}, "case6");
+    check({1, 2}, {}, "case7");
+    check({1, 1, 1}, {}, "case8");
+    check({-1, -1, -1, 2, 2}, {{-1, -1, 2}}, "case9");
+    check({3, 0, -2, -1, 1, 2}, {{-2, -1, 3}, {-2, 0, 2}, {-1, 0, 1}}, "case10");
+    check({-5, 5, 0, 10, -10}, {{-10, 0, 10}, {-5, 0, 5}}, "case11");
+    check({-4, -2, -2, -2, 0, 1, 2, 2, 2, 3, 3, 4, 4, 6, 6},
+          {{-4, -2, 6}, {-4, 0, 4}, {-4, 1, 3}, {-4, 2, 2}, {-2, -2, 4}, {-2, 0, 2}}, "case12");
+    return 0;
+}
