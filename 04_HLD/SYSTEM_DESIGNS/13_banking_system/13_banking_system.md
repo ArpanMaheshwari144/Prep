@@ -789,11 +789,10 @@ flowchart TB
 ```mermaid
 flowchart TB
     A(["Arpan"]):::pill --> LB["LB"]:::card --> C["Kai counter (app server)"]:::card
-    C --> DB[("DB: khaate, row lock")]:::pill
+    C --> DB[("DB: khaate + ledger (kaato mat, neeche likho)<br/>+ outbox, row lock")]:::pill
     DB -- "sync copy" --> REP[("Laptop (replica, Multi-AZ)")]:::card
     DB --> RR[("Photocopy (read replica)")]:::card
-    DB --> LG["Ledger: kaato mat, neeche likho"]:::card
-    DB --> OB["Outbox -> Ravi ko khabar"]:::card
+    DB --> OB["Relay: outbox padh ke<br/>Ravi ko khabar"]:::card
     DB --> ST(["Statement: raat ka batch,<br/>purana S3 me"]):::good
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5

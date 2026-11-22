@@ -394,7 +394,7 @@ url UNIQUE bacha leta; logging = outbox wali soch (outbox = DB ki table, kaam ke
 flowchart TB
     W1["Worker / consumer ne DB me likhi,<br/>parchi se pehle mara<br/>(Redis feed)"]:::bad
     subgraph ST["EK STATUS RAKH (logging)"]
-        D[("DB me daali / parchi me daali")]:::pill
+        D[("DB: khabar ki row,<br/>status = DB me daali / parchi me daali")]:::pill
     end
     W2["Agla worker / consumer status dekh ke<br/>kaam aage badhaye"]:::card
     P[("Parchi (Redis feed)")]:::good

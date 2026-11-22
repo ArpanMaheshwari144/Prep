@@ -547,8 +547,8 @@ flowchart TB
 ```mermaid
 flowchart TB
     A(["Arpan"]):::pill -- "WebSocket" --> S1["Chat server S1"]:::card
-    S1 --> DB[("DB: message store,<br/>pehle likho")]:::pill
-    DB --> OB["Outbox + chhotu<br/>(relay)"]:::card
+    S1 --> DB[("DB: message store + outbox table,<br/>pehle likho")]:::pill
+    DB --> OB["Chhotu (relay):<br/>outbox padh ke bheje"]:::card
     S1 --> SM[("Session map (Redis)<br/>Ravi kis server pe")]:::card
     OB --> PS["Redis pub/sub"]:::card --> S7["Ravi ka server S7"]:::card
     S7 -- "WebSocket" --> R(["Ravi"]):::good

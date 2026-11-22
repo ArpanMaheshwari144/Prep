@@ -67,7 +67,7 @@ Arpan: Shelf ka maal app pe mat dikhao, warna dikkat hogi. Aunty ke haath se che
 Technical me: har raaste ka alag stock. Online = godown ki ginti, counter = shelf. Dono kabhi ek dabbe pe nahi takraate.
 
 **Maan lo Lucknow ka store khaali, Kanpur me 20 dabbe.**
-Arpan: Lucknow wale ko Lucknow ka store dikhega. Dark store ka matlab hi aas-paas ka store. Whitefield me baithe ko Koramangala wala dikhta.
+Arpan: Lucknow wale ko Lucknow ka store dikhega. Dark store ka matlab hi aas-paas ka store. Whitefield me baithe ko Koramangala wala thodi dikhega, wahan se aane ka.
 Technical me: har store ka apna stock, app location dekh ke paas wala store chunta.
 
 **2. Ladka godown se 10 dabbe shelf pe le gaya, kahin likha nahi. App pe abhi bhi 40, sach me 30.**

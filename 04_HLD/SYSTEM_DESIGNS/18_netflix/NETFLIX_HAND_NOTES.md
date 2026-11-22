@@ -49,7 +49,7 @@ Numbers India me 2 crore log ek saath, saath me baaki duniya -> ek jagah se sabk
 &nbsp;
 
 **1. Saari episode US ke store me. 12:30 pe karodon log wahi file maang rahe, har tukda samundar paar se, Ravi ke TV pe buffering, data pahunchane wali company ka bill aasmaan pe.**
-Arpan: Main roz wahi file lene doosre shehar jaata hoon, bus me tel phoonk ke. File ghar nahi la sakta, par apne shehar me to la sakta hoon. CA doosre shehar me hai, to mera dost jo roz aata-jaata hai, wo file mere shehar le aaye. Main chupchaap jaao, sign karo, wapas aao. Bekaar me baar-baar shehar kyun.
+Arpan: Main roz wahi file lene doosre shehar jaata hoon, bus me tel phoonk ke. File ghar nahi la sakta, par apne shehar me to la sakta hoon. CA doosre shehar me rehta hai, roz sign karne bulata hai, to mera dost jo roz aata-jaata hai, wo file mere shehar le aaye. Main chupchaap jaaun, sign karun, wapas aa jaaun. Bekaar me baar-baar shehar kyun.
 Technical me: "file apne shehar me" = ISP ke andar Netflix ka dabba (Open Connect), "ghar nahi la sakta" = poora video phone pe nahi rakhte, "dost roz aata-jaata" = dabba US ke store se bharta rehta.
 
 **Maan lo pooche video cache (Redis) me kyun nahi:** Arpan: Cache me video thodi rakhenge, cache us kaam ka nahi. Video ek dabbe me rakh lo (CDN). Is design ki sabse badhiya baat: video ban gayi, ab update nahi hogi, isliye hum use apne paas rakh sakte. Jaise maine pen drive me Money Heist rakh liya aur sabko baant raha, baar-baar laptop leke nahi ja raha.

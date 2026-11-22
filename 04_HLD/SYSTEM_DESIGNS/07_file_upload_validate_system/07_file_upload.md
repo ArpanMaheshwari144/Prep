@@ -212,8 +212,8 @@ flowchart TB
     S3[("File S3 me aa gayi")]:::card
     subgraph SB["S3 KO BOL DO: AA JAAYE TO BATA DENA"]
         E(["S3 event"]):::pill
-        V[("UPLOADED ke saath vasiyat:<br/>iska scan karwana hai (outbox)")]:::pill
     end
+    V[("DB: UPLOADED + vasiyat 'iska scan karwana hai'<br/>(outbox = DB ki table, ek transaction)")]:::pill
     R["Baad me koi utha ke<br/>Kafka me daal dega (relay)"]:::card
     P{"Parchi: do baar ya ulta aaya?<br/>ho gaya to chhodo<br/>(idempotency)"}:::card
     W["Scan shuru"]:::good

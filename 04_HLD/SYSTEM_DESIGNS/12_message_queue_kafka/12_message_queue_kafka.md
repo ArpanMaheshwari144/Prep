@@ -306,10 +306,10 @@ to `eventId` pakad leta hai.
 ```mermaid
 flowchart TB
     T["Ticket dene wala<br/>(Order Service)"]:::card
-    subgraph VS["BAAP KI VASIYAT<br/>(outbox, DB ki table)"]
-        D[("Pehle kahin likh de: main ye<br/>daal dunga (outbox)")]:::pill
-        R(["Baad me vasiyat mil jaaye<br/>(relay)"]):::pill
+    subgraph VS["BAAP KI VASIYAT"]
+        D[("DB: order + vasiyat 'main ye daal dunga'<br/>(outbox table, ek transaction)")]:::pill
     end
+    R(["Baad me vasiyat mil jaaye<br/>(relay, alag program)"]):::pill
     K["Stadium gate<br/>(Kafka)"]:::good
     T --> D
     D --> R

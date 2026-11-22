@@ -393,9 +393,9 @@ parchi wahin padi.
 **Asli naam:** SUCCESS + parchi ek saath = transactional outbox (hamare DB ki table, SUCCESS ke saath ek hi DB transaction me; server gire to bhi row bachi), parchi dekh ke book = relay (wo chhotu jo
 outbox ki row padh ke ticket service ko bhejta).
 
-Isi pe ek aur raasta (do service, beech ka dabba, ticket PENDING): payment aur ticket alag service, beech me ek dabba: "Arpan ka payment poora, ticket PENDING". Ticket
-service gire ya server gire, dabba wahin; jo bhi aaye pending padh ke ticket banaye, phir dabbe se hatao.
-**Asli naam:** outbox / pending table, consumer poll + retry.
+Isi pe ek aur raasta (do service, beech ka dabba, ticket PENDING): payment aur ticket alag service, beech me ek dabba (DB): usme likh do "Arpan ka payment poora, ticket PENDING". Ticket
+service gire ya server gire, DB me entry wahin; jo bhi aaye pending padh ke ticket banaye, phir entry hatao.
+**Asli naam:** dabba = DB, PENDING wali entry = outbox / pending table ki row, consumer poll + retry.
 
 ```mermaid
 flowchart LR
