@@ -364,6 +364,8 @@ Instagram me "photo update ki, refresh pe purani" = replication lag (nayi photo 
 
 **Maan lo "thodi der" ke baad photocopy pe wapas bhejna hai, kaise pata chale Arpan ka 500 photocopy me aa gaya:** photocopy
 khud bata de "main sync ho gaya, mujh pe bhejo", ya ek chhotu poochhta rahe "tu sync hua?"; haan to Arpan wapas photocopy pe.
+**Doosri kahani (dono me se kaunsa):** dono sahi, par photocopy khud bataye wahi theek: chhotu kab tak poochhe, main
+register badalta hi ja raha, har baar poochha jawab purana. **Asli naam:** replica apni position khud bataye (replication lag), alag poll nahi.
 
 **Maan lo main register kabhi band nahi hota (Priya, Ravi lagaatar likh rahe), photocopy kabhi "poori sync" nahi:** to har
 likhai ka number rakho. 100 likhai aayi, Arpan ki 100vi me 500. Photocopy 99 tak pahunchi to Arpan ka 500 abhi nahi, main se
