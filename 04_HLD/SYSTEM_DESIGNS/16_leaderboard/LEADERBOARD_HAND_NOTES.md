@@ -27,8 +27,10 @@ match khatam (+50, match id)  -->  server  -->  Redis sorted set (apne aap sort)
 ```
 
 **FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
-Arpan: Score update FR hai. Top 10 FR nahi ho sakta, scoreboard aise kaam nahi karta: poochho top 10, 50 ya 100. "Mera rank" aur "mere aage-peeche ke 5" FR nahi, board sabke hisaab se banta, ye kisi ek user ka hai. Aaj / hafta / all-time, UTC, world ya India ka board: ye sab FR se pehle sawaal hain, pehle requirement clear kar lo, phir uske hisaab se FR me daalo. Score barabar to pehle wala upar = NFR. Rank milli second, score kuch second, Redis gira: inka yahan matlab nahi; asli rank to contest khatam hone ke baad hi pata chalti, beech me thodi purani chalegi.
+Arpan: Score update FR hai. Top 10 FR nahi ho sakta, scoreboard aise kaam nahi karta: poochho top 10, 50 ya 100. "Mere aage-peeche ke 5" FR nahi, board sabke hisaab se banta, ye kisi ek user ka hai. Aaj / hafta / all-time, UTC, world ya India ka board: ye sab FR se pehle sawaal hain, pehle requirement clear kar lo, phir uske hisaab se FR me daalo. Score barabar to pehle wala upar = NFR. Rank milli second, score kuch second, Redis gira: inka yahan matlab nahi; asli rank to contest khatam hone ke baad hi pata chalti, beech me thodi purani chalegi.
 Technical me: pehle sawaal = scope / requirement clarification, FR = score update + top N, NFR = tie-break + eventual consistency (contest ke beech).
+Arpan (FR pakka): Top 10 FR nahi ho sakta; LeetCode me top 10 / top 15 jaisa koi feature nahi, wo rank pe chalta, top 10 pe koi inaam nahi. Top 10 feature to top 11, top 100 bhi feature, iska matlab nahi. Feature = scoreboard: sab usi board pe dikhte, apni rank bhi usi me.
+Technical me: FR = score update + scoreboard (har user usi board me apni rank dekhe); "top kitne dikhane" sirf pehle sawaal (a), FR nahi.
 
 **FR / NFR ki doosri kahani:** Arpan: Pehla sawaal: world stage ya India? Koi India nahi bolega, world hi hoga, to time zone UTC. "Arpan ke upar ke 5, neeche ke 5" sawaal nahi banta; hum Arpan ya kisi ek ki nazar se nahi dekh rahe, LeetCode bhi aise nahi dekhta, board sabke score se banta, sab upar dekhte, apna bhi usi me aa jaata, design bhi us hisaab se nahi banta. FR: contest aaya, Arpan ne contest diya, uski rank dikhani; weekly, biweekly contest, aur mahine / hafte me top pe kaun. NFR: score barabar to time se, low latency, consistency (sabka score dikhe), crash na ho.
 
@@ -44,7 +46,7 @@ PEHLE SAWAAL (FR se pehle interviewer se poochho, jawab se FR badle):
         d  contest hai to waqt kis time zone me (UTC)?                            -> kadam 5, 6b
 
 FR      1  score update                                                     -> kadam 3
-        2  top N ka board (N, board aur region upar ke sawaal se)           -> kadam 1, 4, 5
+        2  scoreboard: sab ek board pe, har user usme apni rank dekhe     -> kadam 1, 4, 5
 
 NFR     1  score barabar to jisne pehle banaya wo upar (contest me: pehle khatam wala, phir milli second, phir naam)  -> kadam 2, 6b
         2  board / rank thodi der purana chalega; asli rank contest khatam hone ke baad   -> kadam 4, 6c, 6d
