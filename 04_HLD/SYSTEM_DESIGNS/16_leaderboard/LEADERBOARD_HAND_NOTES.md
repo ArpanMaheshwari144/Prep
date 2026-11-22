@@ -99,6 +99,10 @@ Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 **Isi dikkat ki doosri kahani:** Arpan: Sawaal ki ID saath bhejo. Server atka to parchi pe likh le, baad me bhej de. Retry me wahi ID aayi to dobara nahi judega; score hamesha ek hi baar.
 Technical me: sawaal ki ID = idempotency key, parchi pe likh ke baad me bhejo = outbox (hamare DB ki table, usi transaction me likho; chhotu / relay baad me bheje) + retry.
 
+**Maan lo server parchi pe likhne se pehle hi gir gaya, likh hi nahi paaya.**
+Arpan: Score aur parchi ek hi transaction me likh do, ek hi jagah. Dono likhe gaye ya koi nahi; aadha kabhi nahi hoga.
+Technical me: score + outbox ki line ek hi DB transaction me (dono ya koi nahi), isliye "score likha par parchi nahi" ho hi nahi sakta.
+
 **4. Main India wali line me 3,000 pe hoon. Screen pe poori duniya ka rank dikhana hai, aur lines 10 hain.**
 Arpan: Do nazar hain. Race me bhaagne wala sirf apne aage wale dekhta, peeche wale nahi: mera rank = mere upar kitne log. Referee sabko dekhta, ek ko nahi: scoreboard sabka dikhana hai to wo kaam chhotu ka, sab mila ke.
 Technical me: "mere upar kitne" = har shard se count (mere score se upar), sab jodo, +1. "Referee wala poora board" = background job jo har kuch minute me snapshot banata (thoda purana chalega).

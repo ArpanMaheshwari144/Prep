@@ -172,6 +172,9 @@ Russia + Belarus, India, Australia + NZ; India bada to aur baanto. Top 10: har d
 **Doosri kahani:** sawaal ki ID saath bhejo; server atka to parchi pe likh ke baad me bhejo; retry me wahi ID to dobara nahi
 judega. **Asli naam:** idempotency key + outbox (DB ki table, relay baad me bheje) / retry.
 
+**Maan lo server parchi pe likhne se pehle hi gira:** score aur parchi ek hi transaction me, dono ya koi nahi.
+**Asli naam:** score + outbox ek DB transaction me (atomic).
+
 ```mermaid
 flowchart TB
     X["Saare score ek Redis pe: dab gaya"]:::bad
