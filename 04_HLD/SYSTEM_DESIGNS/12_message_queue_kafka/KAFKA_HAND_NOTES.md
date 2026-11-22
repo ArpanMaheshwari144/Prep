@@ -50,7 +50,7 @@ do baar aaye to kaam ek baar = 6, 6b · ek service dheemi to baaki na rukein = 2
 **1. Stadium ke bahar bahut bheed, sab ek saath andar ghusna chahte hain.**
 Arpan: Kafka mere liye ek aisa banda hai jo bheed ko kaabu karta hai. Stadium ke bahar bahut bheed, sab ghus rahe. Ek admin ne bola: line banao, ek-ek karke jao, seat mili to baith jao. Bas ye hai Kafka mere liye: bheed ko rokne wala. Spike aaya, usne rok diya.
 Technical me: "bheed ko kaabu karne wala" = Kafka (beech ki queue), "line banao, ek-ek karke jao" = khabar line me, padhne wale apni raftaar se (async), "spike aaya, rok diya" = spike / load sambhalna.
-**Isi ki doosri kahani (tube):** Arpan: Ise tunnel samajh, ek tube samajh: tube me main idhar se kuch daal raha, wo producer. Wo jagah jahan line lag rahi, wo Kafka. Jo main udhar se nikaal lun, wo consumer, worker / consumer jo bhi kehna chaho.
+**Isi pe ek aur misaal (tube):** Arpan: Ise tunnel samajh, ek tube samajh: tube me main idhar se kuch daal raha, wo producer. Wo jagah jahan line lag rahi, wo Kafka. Jo main udhar se nikaal lun, wo consumer, worker / consumer jo bhi kehna chaho.
 
 **Maan lo pooche app ke andar hi async thread kyun nahi:** Arpan: Kaam disk pe rehna chahiye. Thread hai aur kuch gir gaya to thread sab kho dega, wo hum afford nahi kar sakte; email kisko gaya, kya gaya, kuch pata nahi lagega. Kafka apni cheez disk pe rakhta, consumer kahan tak hai, offset hai.
 
@@ -71,7 +71,7 @@ Technical me: "aur gate" = partition, "har gate ke andar apni line" = kram sirf 
 **Maan lo bahar ka ticket counter (Order Service) har order ki do khabar bhejta hai, pehle "paid" phir "shipped". Order #A7 ke dono wo koi bhi khaali partition me daal deta: paid partition 2 me, shipped partition 5 me. Partition 5 ka consumer tez, shipped pehle chal gaya.**
 Arpan: Alag-alag nahi bhej sakte. Key ke zariye ek hi partition me laayenge: A7 ki saari cheez ek partition me, A8 ki ek me. Main Kafka hoon: paid is line me ghusa, shipped us line me, shipped aage nikal gaya, paid peeche reh gaya, dikkat. Isliye ek key, ek tukda: A7, phir A8, phir A9. Tukde ke andar Kafka line follow karta hi hai: pehle paid phir shipped.
 Technical me: "key ke zariye ek partition" = partition key (message key = order id), "tukde ke andar line" = kram sirf ek partition ke andar.
-**Isi ki doosri kahani (exam hall):** Arpan: Class me bachche kaise bhi baithe hon, par exam hall me aaye to fix seat: tera roll number yahan, tera wahan. Cinema ke bahar bheed kaise bhi, andar ek ke baad ek. Kafka ka matlab hi line lagana; partition ke andar kram wo follow karega hi.
+**Isi pe ek aur misaal (exam hall):** Arpan: Class me bachche kaise bhi baithe hon, par exam hall me aaye to fix seat: tera roll number yahan, tera wahan. Cinema ke bahar bheed kaise bhi, andar ek ke baad ek. Kafka ka matlab hi line lagana; partition ke andar kram wo follow karega hi.
 
 **Maan lo ek user ki khabar bahut garam:** Arpan: Key me number jod deta hoon, jaise user 9 ya 4, to wo alag tukde pe chala jaata. Keemat ye ki us user ka poora kram nahi bachta, bas har tukde ke andar bachta.
 Technical me: "fix seat" = partition ke andar order guaranteed, "key me number jodo" = key salting (hot key ko kai partition me baanto), keemat = us key ka global order toota.

@@ -98,7 +98,7 @@ Technical me: "dono khule, bouncer 5-5 karke bheje" = Redis gira to fail-open, p
 **7. Script gate pe rukti, 429 khaati, par ruki nahi. Din-raat har second maarti, gate ko roz karodon "mana", Ravi ko farak nahi.**
 Arpan: Ek baar mana kiya, do baar mana kiya, teesri baar bhi aaya. "Ravi bhai, tum yahan aao, mere is dabbe se jaake baat karo, wo kuch samjhaayega, chhoti si toffee dega." Us dabbe me Ravi ka gala pakad ke wahin bitha denge: tu ab kahin nahi ja sakta, yahan se hil hi nahi sakta, is site ke liye tu permanent band.
 
-Arpan (doosri kahani): Pehle 1-2 baar chot khaayi to bouncer API gateway pe khada kiya. Ab bouncer bhi roz 1000 logon se uljha hai. To pattern dekho: ye banda roz-roz aa ke yahi kar raha? Haan to ban karo, WAF me daal do, block, kahani khatam.
+Arpan (aur neeche: bouncer bhi roz 1000 se uljha, to pattern dekho): Pehle 1-2 baar chot khaayi to bouncer API gateway pe khada kiya. Ab bouncer bhi roz 1000 logon se uljha hai. To pattern dekho: ye banda roz-roz aa ke yahi kar raha? Haan to ban karo, WAF me daal do, block, kahani khatam.
 Technical me: "ek baar, do baar, teesri baar" = baar-baar had todne ka pattern, "alag dabba, yahan se hil nahi sakta" = ban list, "permanent band" = ban wala gate pe bina gine lautta.
 
 **Maan lo pattern pakadna kaise:** Arpan: Kafka peeche chhod do, Kafka se pattern nikalo ki ye kitni baar aaya, kya kiya, kaunse endpoint jhaankne ki koshish kari; ye sab dekho, us pattern ke hisaab se WAF me daal do. Aur ban kuch der ka hota hai, aisa nahi ki wo permanent rahega, kyunki IP badalte rehte hain.
@@ -122,7 +122,7 @@ Technical me: "log badha do, server badha do" = apne server scale, "line lagwa, 
 Arpan: Line me har OTP pe uski umar likh do. Line se nikalte waqt dekho, umar khatam to phenk do, bhejo hi mat. Agar OTP ki umar khatam ho gayi to use bhej hi kyun rahe ho, rok do; wo 60 second baad dobara maang lega. Tumne kabhi dekha hai, OTP maangte hain to neeche second chalte hain, 60, 59, 58, ki 60 second me OTP aa jaayega; nahi aaya to "Resend OTP" ka button aata hai. Bahut se bank me aisa hi hota hai. Wahi cheez yahan jodni hai.
 Technical me: umar = message TTL / expiry (line se nikalte waqt jaancho), purana OTP SMS company tak jaata hi nahi.
 
-**Isi dikkat ki doosri kahani:** Arpan: Sale me 1 crore log aa gaye, har koi apni had me tha, phir bhi server gira, matlab hamara server bhar gaya. To apne server ke liye ek global cap rakh denge; uske upar jitni request aayein unhe 503 de denge: hum bhare hue hain, thodi der baad aana. Aur wahan jo kam zaroori kaam hai wo hatega; jo zyada zaroori hai, login, paise wala, wo chalta rahega.
+**Isi pe ek aur raasta (log badhane ki jagah upar ek had: global cap, 503):** Arpan: Sale me 1 crore log aa gaye, har koi apni had me tha, phir bhi server gira, matlab hamara server bhar gaya. To apne server ke liye ek global cap rakh denge; uske upar jitni request aayein unhe 503 de denge: hum bhare hue hain, thodi der baad aana. Aur wahan jo kam zaroori kaam hai wo hatega; jo zyada zaroori hai, login, paise wala, wo chalta rahega.
 Technical me: "global cap, upar 503" = global / server-wide limit (503 Service Unavailable), "kam zaroori pehle hatao" = load shedding (priority: login / payment pehle, recommendation / analytics baad).
 
 **10. App 3 region me: Mumbai, US, Europe, har region ka apna Redis. Ravi VPN badal-badal ke teeno se OTP maangta, har Redis sochta "5 hi hue", 15 OTP le gaya.**

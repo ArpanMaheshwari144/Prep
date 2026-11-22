@@ -114,7 +114,7 @@ Technical me: "likhai bahut, bada bhai" = Cassandra (write-heavy; andar ring = c
 **Maan lo har baar "Arpan ke naye 500" poori table me dhoondhna pad raha:** Arpan: Mujhe naye tweet chahiye, purane se koi matlab nahi. Main ek pattern note kar raha: har din ek banda aata, "Arpan ke naye 40, 50, 500" maangta; samajh gaya wo uska follower hai, use ye chahiye. To unhe thodi der ke liye apne paas rakh le, jo poori table na khojni pade. "Le bhai, Arpan ne aaj 50 kiye, rakh le"; "aaj Arpan ne kuch nahi kiya, sorry"; "aaj bas ek, le le". Har baari poori table pe mat jao, apne paas rakh lo, kyunki per day pattern hai, har din aayega.
 Technical me: "naye tweet thodi der apne paas" = author ke recent tweets ka cache (Redis, TTL), "per day pattern" = recent data hi garam (time-based: naye tweet baar-baar padhe jaate), poori table scan nahi.
 
-**Isi kadam ki doosri baat (Cassandra kyun):** Arpan: Twitter ke liye TB of data ho sakta hai; yahan writes bhi zyada hain aur read bhi zyada, aisa nahi ki sirf read hi zyada. Isliye Cassandra, aur Twitter har jagah hai to user ID se shard.
+**Aur neeche (Cassandra hi kyun, aur key kya):** Arpan: Twitter ke liye TB of data ho sakta hai; yahan writes bhi zyada hain aur read bhi zyada, aisa nahi ki sirf read hi zyada. Isliye Cassandra, aur Twitter har jagah hai to user ID se shard.
 Technical me: write-heavy + read-heavy + TB data = Cassandra, partition key = user id.
 
 **8. Saare server America me. Ravi Delhi me, har request samundar paar, har kaam me aadha second upar se. IPL pe India ke 10 crore America ki machine hila rahe.**
@@ -153,7 +153,7 @@ Technical me: "har worker / consumer ka status" = DB me hisson ki ginti, "tu hai
 Arpan: Uski wajah se mera kaam ruk raha. "Tu thoda rest le, ye tera replacement, bata kahan tak chhoda, ye wahin se karke dega."
 Technical me: "atka to replacement" = timeout pe slow worker / consumer ka hissa doosre ko, "kahan tak chhoda" = checkpoint.
 
-Isi dikkat ki doosri kahani: "zinda hoon" kaafi nahi. Chhotu tu zinda hai na? Haan. Kaam kahan tak hua? "Main zinda hoon, kaam kar raha hoon." Mujhe ye bata kaam kahan tak hua. "Abhi kuch feed reh rahi." In 10 ne kaam kar liya, tere paas aisa kya kaam? Ek aur chhotu ko bhej ke dekho: "Arpan bhai, iske paas bahut bada chunk hai, akele sambhal nahi pa raha, thak chuka." Kisi ke paas 10 newspaper the, kisi ke 20, is bande ke paas 50 aa gaye. To 2-3 chhotu extra bhej do, madad kar lein, feed taiyaar ho jaayegi aur log subah akhbaar padhne aayein to taaza mile.
+Isi Maan lo me aur neeche ("zinda hoon" kaafi nahi, kaam kahan tak hua): "zinda hoon" kaafi nahi. Chhotu tu zinda hai na? Haan. Kaam kahan tak hua? "Main zinda hoon, kaam kar raha hoon." Mujhe ye bata kaam kahan tak hua. "Abhi kuch feed reh rahi." In 10 ne kaam kar liya, tere paas aisa kya kaam? Ek aur chhotu ko bhej ke dekho: "Arpan bhai, iske paas bahut bada chunk hai, akele sambhal nahi pa raha, thak chuka." Kisi ke paas 10 newspaper the, kisi ke 20, is bande ke paas 50 aa gaye. To 2-3 chhotu extra bhej do, madad kar lein, feed taiyaar ho jaayegi aur log subah akhbaar padhne aayein to taaza mile.
 Technical me: "zinda hoon != kaam ho raha" = heartbeat ke saath progress report, "bada chunk" = data skew (ek hisse pe zyada kaam), "2-3 chhotu madad" = hissa tod ke baanto (work stealing / split).
 
 **Maan lo worker / consumer 7 ke 50 me se 30 ban chuke, 2 naye chhotu bheje; unhe kaise pata 31 se shuru karna, warna pehle ke 30 do baar.**
@@ -190,7 +190,7 @@ Technical me: "ID se seedha page" = hydration (ID se poori post, key se lookup; 
 Arpan: 8000 dabbe ek-ek karke saaf karna bhaari hai, zaroorat bhi nahi. Kadam 16 me screen pe dikhane se pehle hum ID se mote register ka page kholte hi hain. Page pe likha mile "ye tweet delete ho gaya", to bas use dikhao mat, chhod do. Dabbe me pada number apne aap purana hokar khisak jaayega.
 Technical me: page pe deleted = tweet store me deleted flag (soft delete), dikhate waqt chhod do = hydration pe filter, 8000 dabbe saaf nahi karne padte.
 
-Arpan (doosri kahani): Arpan ka tweet Ravi ki feed me push ho chuka tha, Ravi ne ekdum khola to ho sakta hai kuch second dikhe. Phir Twitter ko pata chala user ne delete kar diya, to wahan likh deta "The user has deleted this post". Twitter me aisa hota bhi hai, cheez thodi der dikhti phir hat jaati.
+Arpan (isi Maan lo me aur neeche: Ravi ne usi pal khola to?): Arpan ka tweet Ravi ki feed me push ho chuka tha, Ravi ne ekdum khola to ho sakta hai kuch second dikhe. Phir Twitter ko pata chala user ne delete kar diya, to wahan likh deta "The user has deleted this post". Twitter me aisa hota bhi hai, cheez thodi der dikhti phir hat jaati.
 Technical me: kuch second purana dikhna = eventual consistency, "deleted" ki patti = tombstone / deleted placeholder.
 
 **17. Ravi roz dost Amit ke tweet pe like / comment karta. Amit ka tweet 3 ghante pehle aaya, uske baad 40 aur, Amit ka neeche dab gaya; upar wo jinhe Ravi kholta bhi nahi.**
