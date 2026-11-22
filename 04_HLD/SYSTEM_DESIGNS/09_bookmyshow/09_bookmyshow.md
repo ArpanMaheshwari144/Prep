@@ -100,12 +100,12 @@ live dikhane ka matlab nahi. **Asli naam:** purana seat map = sirf UI baat, asli
 flowchart TB
     A["Arpan: ek seat chahiye,<br/>lo mere paise"]:::card
     L["Doosra ladka: D5"]:::card
-    C1["Mera counter"]:::card
-    C2["Doosra counter"]:::card
+    C1["Mera counter<br/>(server)"]:::card
+    C2["Doosra counter<br/>(server)"]:::card
     subgraph EK["DEKHNA + BOOK KARNA EK SAATH"]
         D[("D5 pe parchi: ye Arpan ki,<br/>kisi aur ko nahi (hold)")]:::pill
     end
-    X["Doosra counter: parchi lagi hai,<br/>tu ja bhai, seat book ho gayi"]:::bad
+    X["Doosra counter: parchi lagi hai,<br/>tu ja bhai, seat book ho gayi<br/>(hold)"]:::bad
     A --> C1
     L --> C2
     C1 --> D
@@ -134,8 +134,8 @@ keys ka kya. **Asli naam:** hold_until column, ek hi sach.
 
 ```mermaid
 flowchart TB
-    A["Arpan parchi laga ke<br/>chai peene gaya"]:::bad
-    subgraph PM["PARCHI THODI DER KE LIYE"]
+    A["Arpan parchi laga ke<br/>chai peene gaya<br/>(hold, bina expiry)"]:::bad
+    subgraph PM["PARCHI THODI DER KE LIYE<br/>(hold_until)"]
         D[("Counter wala 5 minute tak<br/>dekhta (hold_until)")]:::pill
     end
     F["Nahi aaya: parchi phaad di,<br/>seat agle ke liye (FREE)"]:::good
@@ -163,11 +163,11 @@ query me hi: `WHERE status = FREE OR (status = HELD AND hold_until < now)`, phaa
 
 ```mermaid
 flowchart TB
-    X["Parchi phaadne wala chhutti pe,<br/>parchi 20 minute se lagi"]:::bad
+    X["Parchi phaadne wala chhutti pe,<br/>parchi 20 minute se lagi<br/>(safai job band)"]:::bad
     N["Naya aadmi: D5 chahiye"]:::card
     subgraph DR["DO RAASTE"]
         B(["Chhota bhai / replacement<br/>(backup safai job)"]):::pill
-        U(["Parchi pe hi umar: 5 minute baad<br/>apne aap gayab"]):::pill
+        U(["Parchi pe hi umar: 5 minute baad<br/>apne aap gayab<br/>(TTL / expiry query me)"]):::pill
     end
     OK["Umar nikal chuki: D5 naye ki"]:::good
     X --> B
@@ -204,11 +204,11 @@ chand rows pe hai, ek row ek hi jagah lock hoti hai; bheed ko register tak pahun
 ```mermaid
 flowchart TB
     U["10 baje 10 lakh log,<br/>seat 50 hazaar"]:::bad
-    subgraph LN["CAPACITY JITNE ANDAR, BAAKI LINE ME"]
+    subgraph LN["CAPACITY JITNE ANDAR, BAAKI LINE ME<br/>(virtual queue)"]
         W(["Le bhai, ye teri parchi,<br/>agla number tera (token)"]):::pill
     end
-    S["Counter badha de, server badha de"]:::card
-    subgraph DY["ALAG DIARY"]
+    S["Counter badha de, server badha de<br/>(scale out)"]:::card
+    subgraph DY["ALAG DIARY<br/>(read replica)"]
         P[("Hilane wale ki diary<br/>(primary)")]:::card
         R[("Dekhne wale ki diary<br/>(read replica)")]:::pill
     end
@@ -242,10 +242,10 @@ minute) do: 9ve minute pe chuni to 14 tak pay kar sakta, nahi to bahar. **Asli n
 ```mermaid
 flowchart TB
     A["Arpan: token mila (10 min),<br/>8ve minute pe D5 chuni"]:::card
-    subgraph G1["GHADI 1: GATE"]
+    subgraph G1["GHADI 1: GATE<br/>(queue token TTL)"]
         T(["Token: andar aa gaya,<br/>authenticate ho chuka"]):::pill
     end
-    subgraph G2["GHADI 2: SEAT"]
+    subgraph G2["GHADI 2: SEAT<br/>(hold TTL)"]
         H(["Parchi 5 minute: seat ruk gayi,<br/>utne time me payment"]):::pill
     end
     OK["10ve minute token khatam,<br/>par parchi baaki: pay kar paayega"]:::good
@@ -312,7 +312,7 @@ lautao", wo bank se poochh ke lautata aur hume batata. 1 minute ke baad aaya "pa
 ```mermaid
 flowchart TB
     A["Arpan: Pay 4:30, PSP dheema"]:::card
-    subgraph SL["PARCHI PE STATUS LIKH LO"]
+    subgraph SL["PARCHI PE STATUS LIKH LO<br/>(PAYMENT_PENDING)"]
         D[("Pay chal raha, PSP ka jawab baaki:<br/>umar badha do (PAYMENT_PENDING)")]:::pill
     end
     P{"PSP (chhotu)"}:::card
@@ -401,8 +401,8 @@ service gire ya server gire, dabba wahin; jo bhi aaye pending padh ke ticket ban
 flowchart LR
     E["Event: paisa kata"]:::card --> T
     subgraph T["EK SAATH (ek DB transaction)"]
-        S[("Parchi: SUCCESS")]:::pill
-        O[("Parchi: D5 book karna hai")]:::pill
+        S[("Parchi: SUCCESS<br/>(DB status)")]:::pill
+        O[("Parchi: D5 book karna hai<br/>(outbox row)")]:::pill
     end
     T --> R["Chhotu parchi padhe<br/>(relay)"]:::card --> K["Ticket bana"]:::good
     linkStyle default stroke:#8fa3c7,stroke-width:2px

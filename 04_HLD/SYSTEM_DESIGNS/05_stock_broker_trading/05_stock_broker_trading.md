@@ -187,7 +187,7 @@ engine lakhon / sec kar leta. **Asli naam:** per-symbol queue + single thread.
 ```mermaid
 flowchart TB
     X["Copy door khadi: do thread,<br/>10 share 20 me bik gaye"]:::bad
-    subgraph EL["SABKO EK LINE ME, EK JAGAH"]
+    subgraph EL["SABKO EK LINE ME, EK JAGAH<br/>(1 thread per symbol)"]
         Q(["TCS ki book ek hi jagah<br/>(ek thread)"]):::pill
     end
     A["Arpan aaya: pehle bech diya,<br/>zero"]:::good
@@ -235,12 +235,12 @@ se book wapas, replay pe mota register = trade DB (source of truth), ho chuke tr
 ```mermaid
 flowchart TB
     X["Book RAM me, machine mari:<br/>adhoora order uda"]:::bad
-    subgraph PD["PERMANENT DABBA"]
+    subgraph PD["PERMANENT DABBA<br/>(DB)"]
         D[("Kaata-jodi DB me<br/>(primary DB)")]:::pill
         C[("3-4 copy<br/>(replica)")]:::card
     end
     L[("Subah ki parchi: to-do, utni ki<br/>utni rehti (order log)")]:::pill
-    B["Parchi dekh ke bag<br/>dobara jamao"]:::good
+    B["Parchi dekh ke bag<br/>dobara jamao<br/>(order log replay)"]:::good
     X --> D
     D --> C
     L --> B
@@ -306,11 +306,11 @@ katta.
 flowchart TB
     X["Paisa kata, portfolio DB band"]:::bad
     N["Rollback nahi: match ho gaya,<br/>warna consumer court"]:::bad
-    subgraph PA["PARCHI APNE PAAS"]
+    subgraph PA["PARCHI APNE PAAS<br/>(order log)"]
         K[("Ye kaam karna hai<br/>(Kafka me message)")]:::pill
     end
     U["Grahak: thodi der baad<br/>dikha denge (PENDING)"]:::card
-    D["DB aaya: le meri parchi,<br/>jaldi kar"]:::good
+    D["DB aaya: le meri parchi,<br/>jaldi kar<br/>(batch write)"]:::good
     X --> K
     X -.-> N
     K --> U

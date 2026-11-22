@@ -178,11 +178,11 @@ per second). DB tak sirf jinka mila.
 
 ```mermaid
 flowchart TB
-    X["Ek counter, ek parchi ghee 500:<br/>line 50 hazaar"]:::bad
-    subgraph TC["10 COUNTER, HAR PE 50 GHEE"]
-        C1(["Counter 1: 50"]):::pill
-        C2(["Counter 2: 50"]):::pill
-        CN(["... Counter 10: 50"]):::pill
+    X["Ek counter, ek parchi ghee 500:<br/>line 50 hazaar<br/>(hot row)"]:::bad
+    subgraph TC["10 COUNTER, HAR PE 50 GHEE<br/>(sharded counter)"]
+        C1(["Counter 1: 50<br/>(tukda)"]):::pill
+        C2(["Counter 2: 50<br/>(tukda)"]):::pill
+        CN(["... Counter 10: 50<br/>(tukda)"]):::pill
     end
     K["Kaatne wala: haath jitna tez<br/>(Redis DECR)"]:::good
     X --> C1
@@ -209,7 +209,7 @@ hua wo counter band, aur uski line ko bolo jahan ghee bacha wahan jaao. "Khatam"
 ```mermaid
 flowchart TB
     C3["Counter 3: 50 khatam,<br/>line me 2000"]:::bad
-    subgraph KB["KHAALI COUNTER BAND, BAAKI KHULE"]
+    subgraph KB["KHAALI COUNTER BAND, BAAKI KHULE<br/>(khaali tukda skip)"]
         C7(["Counter 7: abhi 30 pade,<br/>yahan jaao"]):::pill
     end
     S["Khatam tab hi bolo<br/>jab sabka zero"]:::good
@@ -326,9 +326,9 @@ PAYMENT_PENDING aur hold ruk jaata (kadam 8 / BMS jaisa).
 ```mermaid
 flowchart TB
     U["Bahar 3000 log"]:::card
-    subgraph AG["APPLE STORE JAISA SALE GATE"]
+    subgraph AG["APPLE STORE JAISA SALE GATE<br/>(sale gate)"]
         G(["Jitne phone utne andar<br/>(Redis DECR)"]):::pill
-        T(["Andar aate hi 5 min ghadi:<br/>ya pay kar, ya rakh de"]):::pill
+        T(["Andar aate hi 5 min ghadi:<br/>ya pay kar, ya rakh de<br/>(reservation TTL)"]):::pill
     end
     P["Pay kiya: phone uska"]:::good
     N["Card decline / chala gaya:<br/>wapas, agla batch andar"]:::card
@@ -432,11 +432,11 @@ flowchart LR
         A[("A chalu")]:::good
         B[("B: sale pe band,<br/>aadhe ghante baad wapas")]:::bad
         C[("C band")]:::bad
-        D[("D chalu<br/>parchi: ye B ka")]:::card
+        D[("D chalu<br/>parchi: ye B ka<br/>(hinted handoff)")]:::card
     end
     R -- "likho (W = 2)" --> A
     R -- "B gira, aage wali pe" --> D
-    D -. "B wapas aaya: chhotu<br/>Rahul ka iPhone de aaya" .-> B
+    D -. "B wapas aaya: chhotu<br/>Rahul ka iPhone de aaya<br/>(hinted handoff)" .-> B
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000

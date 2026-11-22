@@ -74,12 +74,12 @@ hamein khabar rehni chahiye. **Kab nahi:** jab jawab turant chahiye (REST). **AW
 flowchart TB
     T["Ticket counter<br/>(Order Service)"]:::card
     B["Stadium ke bahar bheed<br/>(sab ek saath)"]:::bad
-    subgraph GT["STADIUM GATE"]
+    subgraph GT["STADIUM GATE<br/>(partition)"]
         K(["Admin: line banao,<br/>ek-ek karke jao<br/>(Kafka)"]):::pill
     end
-    subgraph AN["STADIUM KE ANDAR"]
-        S["SMS counter"]:::good
-        F["Fraud counter"]:::good
+    subgraph AN["STADIUM KE ANDAR<br/>(consumer)"]
+        S["SMS counter<br/>(consumer group)"]:::good
+        F["Fraud counter<br/>(consumer group)"]:::good
     end
     T --> B
     B --> K
@@ -107,7 +107,7 @@ rukega.
 
 ```mermaid
 flowchart TB
-    subgraph LN["GATE KI LINE"]
+    subgraph LN["GATE KI LINE<br/>(partition ke andar kram)"]
         A["Aadmi ruk gaya,<br/>bahar chala gaya<br/>(consumer gira)"]:::bad
         P["Peeche wale"]:::card
     end
@@ -227,9 +227,9 @@ replica leader ban jaati. 2 pakki copy na hon to likhna band: khabar khone se be
 
 ```mermaid
 flowchart TB
-    T["Ticket counter"]:::card
-    L["Gate ka admin"]:::card
-    subgraph VC["VASIYAT KI COPY"]
+    T["Ticket counter<br/>(producer)"]:::card
+    L["Gate ka admin<br/>(broker)"]:::card
+    subgraph VC["VASIYAT KI COPY<br/>(acks=all, replica)"]
         R1(["Copy 1: likh liya<br/>(replica)"]):::pill
         R2(["Copy 2: likh liya<br/>(replica)"]):::pill
     end
@@ -306,7 +306,7 @@ to `eventId` pakad leta hai.
 ```mermaid
 flowchart TB
     T["Ticket dene wala<br/>(Order Service)"]:::card
-    subgraph VS["BAAP KI VASIYAT"]
+    subgraph VS["BAAP KI VASIYAT<br/>(outbox, DB ki table)"]
         D[("Pehle kahin likh de: main ye<br/>daal dunga (outbox)")]:::pill
         R(["Baad me vasiyat mil jaaye<br/>(relay)"]):::pill
     end

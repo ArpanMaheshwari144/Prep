@@ -113,7 +113,7 @@ join / transaction ki zarurat nahi, isliye Postgres nahi.
 flowchart TB
     U["Lakhon log dhadadhad save"]:::card
     S["Main hi Google Docs hoon"]:::card
-    subgraph CR["APNA CHHOTA REGISTER"]
+    subgraph CR["APNA CHHOTA REGISTER<br/>(Redis buffer)"]
         B[("Saari baatein likhta rahunga<br/>(Redis buffer)")]:::pill
     end
     D[("Kuch der baad DB me save<br/>(Cassandra, batch)")]:::good
@@ -292,7 +292,7 @@ paisa bhi do. Interviewer dekhna chahta hai main sochta kaise hoon, har copy gir
 ```mermaid
 flowchart TB
     O["Maalik gira: Saved dikha tha"]:::bad
-    subgraph DC["EK DABBA + USKI COPY"]
+    subgraph DC["EK DABBA + USKI COPY<br/>(Redis + replica)"]
         B[("Dabba: saari information<br/>(Redis buffer)")]:::card
         C[("Copy: tu bhi store kar le,<br/>Saved iske baad (replica)")]:::pill
     end
@@ -367,9 +367,9 @@ dekh lunga = reconnect pe chhoote hue badlaav copy (ya SQL) se le ke note theek,
 
 ```mermaid
 flowchart TB
-    P["Bachcha chillaya: Ravi editor nahi"]:::card
+    P["Bachcha chillaya: Ravi editor nahi<br/>(pub/sub)"]:::card
     S7["Server 7 bahar tha,<br/>awaaz nahi suni"]:::bad
-    subgraph CP["SERVER KI COPY SAATH KHADI"]
+    subgraph CP["SERVER KI COPY SAATH KHADI<br/>(standby server)"]
         C(["Note karke likh liya:<br/>Ravi editor nahi (standby)"]):::pill
     end
     W["Wapas aaya: kya hua?<br/>Ravi ki permission kaat do"]:::good
