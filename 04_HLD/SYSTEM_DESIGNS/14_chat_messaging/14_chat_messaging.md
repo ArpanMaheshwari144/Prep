@@ -221,7 +221,7 @@ baad dikhe.
 flowchart TB
     A["Arpan: kal party hai<br/>(500 logon ka group)"]:::card
     X["Har member ki alag copy:<br/>ek message, 500 kaam"]:::bad
-    subgraph ED["EK DABBE ME EK BAAR<br/>(group message ek baar save)"]
+    subgraph ED["EK DABBE ME EK BAAR"]
         D[("chat_id = college-gang<br/>(group message DB me)")]:::pill
     end
     M["500 log khud aayenge sunne"]:::good

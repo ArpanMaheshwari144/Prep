@@ -131,7 +131,7 @@ flowchart TB
         G[("Money Heist (craze)")]:::pill
     end
     BD[("Bada dabba (upar wala store)")]:::card
-    T["Purana season: bade dabbe se mangwa lo,<br/>garmaahat khatam to wapas<br/>(upar wala store)"]:::card
+    T["Purana season: bade dabbe se mangwa lo,<br/>garmaahat khatam to wapas"]:::card
     X --> G
     T --> BD
     BD -.-> GP
@@ -202,7 +202,7 @@ matlab aaj aage nahi badha.
 ```mermaid
 flowchart TB
     T["TV pe 27 minute, band"]:::card
-    subgraph AP["ACCOUNT PE PARCHI<br/>(watch position store)"]
+    subgraph AP["ACCOUNT PE PARCHI"]
         P(["Abhi parchi paas<br/>(fast store)"]):::pill
         R[("Ruk gaya to register<br/>(DB)")]:::pill
     end
@@ -248,7 +248,7 @@ flowchart TB
     subgraph GP["GAME PARLOUR WALA: GTA PEHLE SE LAGA KE"]
         L[("Raat ko list bana ke rakho<br/>(batch, Twitter feed jaisa)")]:::pill
     end
-    N(["Abhi dekhi Dhurandhar: turant parchi,<br/>dikhate waqt milao, lal patti<br/>(recent watch, merge at read)"]):::card
+    N(["Abhi dekhi Dhurandhar: turant parchi,<br/>dikhate waqt milao, lal patti"]):::card
     Pr["Priya naya: India ka garam maal"]:::card
     R["App khole: tayaar cheez saamne"]:::good
     X -.-> L
@@ -390,7 +390,7 @@ flowchart TB
     AWS --> WP[("Watch position: cache,<br/>DB kabhi-kabhi")]:::card
     AWS --> RC["Pasand: raat ka batch + abhi ki parchi"]:::card
     TV -- "video bytes" --> OC[("ISP ke andar Netflix ke dabbe<br/>(Open Connect)")]:::pill
-    OC -. "dabba band" .-> OC2[("Agla dabba<br/>(agla CDN box)")]:::card
+    OC -. "dabba band" .-> OC2[("Agla dabba")]:::card
     OC --> B(["Player buffer"]):::good
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5

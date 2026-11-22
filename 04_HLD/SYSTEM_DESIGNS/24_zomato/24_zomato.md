@@ -235,7 +235,7 @@ ki apni line; andar walon ko "order placed" dikhao aur Kafka me daalo, worker pe
 ```mermaid
 flowchart TB
     X["Diwali: 2 min me 500 order,<br/>seedha Postgres = app hang"]:::bad
-    subgraph G["CAPACITY GATE + LINE<br/>(capacity gate + Kafka)"]
+    subgraph G["CAPACITY GATE + LINE"]
         S(["Subah stock: Burger Singh 350"]):::pill
         K(["350 andar: order placed,<br/>Kafka line (key = restaurant)"]):::pill
     end

@@ -240,7 +240,7 @@ flowchart TB
         C[("3-4 copy<br/>(replica)")]:::card
     end
     L[("Subah ki parchi: to-do, utni ki<br/>utni rehti (order log)")]:::pill
-    B["Parchi dekh ke bag<br/>dobara jamao<br/>(order log replay)"]:::good
+    B["Parchi dekh ke bag<br/>dobara jamao"]:::good
     X --> D
     D --> C
     L --> B

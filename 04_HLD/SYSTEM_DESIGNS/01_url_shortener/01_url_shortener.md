@@ -222,7 +222,7 @@ information do, baad me update = soft / hard TTL (soft nikla to purana turant do
 
 ```mermaid
 flowchart TB
-    L["Ladka (lock wali ek request)<br/>raste me gira, wapas nahi aayega"]:::bad
+    L["Ladka (single flight)<br/>raste me gira, wapas nahi aayega"]:::bad
     subgraph TL["LADKE KI TIMELINE"]
         T(["Itni der tak nahi aaya?<br/>(lock TTL)"]):::pill
     end
@@ -300,7 +300,7 @@ flowchart TB
     H(["Hash se baanto:<br/>same token, same tukda"]):::pill
     subgraph SH["10 TB KE 9 TUKDE, ALAG-ALAG ALMARI (shard)"]
         direction LR
-        A1[("Almari 1<br/>(DB machine)")]:::card
+        A1[("Almari 1<br/>(sharding)")]:::card
         A2[("Almari 2")]:::good
         A9[("... Almari 9")]:::card
         A1 ~~~ A2 ~~~ A9

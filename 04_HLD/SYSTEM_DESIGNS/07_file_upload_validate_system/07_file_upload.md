@@ -100,7 +100,7 @@ scan = third party virus scan.
 flowchart TB
     A["Arpan: upload,<br/>10 minute spinner"]:::bad
     U["Server: file lo,<br/>upload chal raha, chai pi aao"]:::card
-    subgraph SL["STADIUM JAISA: LINE ME LAG JAO<br/>(Kafka queue)"]
+    subgraph SL["STADIUM JAISA: LINE ME LAG JAO"]
         K[("Line (Kafka)")]:::pill
         W(["Worker / consumer peeche: virus scan +<br/>chhota tukda dekho (magic bytes)"]):::pill
     end

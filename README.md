@@ -3,18 +3,22 @@
 Java / Spring backend interview prep — DSA, system design, projects, hands-on notes.
 **Har heading/link click → seedha wahi note ya folder khul jaata.** Har section ke saath **Kya hai** + **Kyu matter karta** likha hai — kholne se pehle hi pata chal jaaye.
 
-> ★ **Abhi (DELIVERY + APPLY phase, build done):** ROZ: DSA 1 redo + DSA grill 5 (5 alag pattern, sheet ka block saath). HLD: roz ki grill 5 BAND (18-Nov, dohraav ho rahi thi); ab roz ek design uthao, FR se ant tak khud bolo, Claude beech me kood sakta (sirf tere bole pe, nitpick zero). Naya maal (Zomato, Dropbox, Google Maps) = padhai -> scene-mock -> file. Padhai = ROTATION (Java / Spring / infra), 2-3 file, man ke hisaab se; Java shaam ko. Hafte me ek: THU PR drill · SUN STAR.
+> ★ **Abhi (DELIVERY + APPLY phase, build done):** ROZ: DSA 1 redo + DSA grill 5 (5 alag pattern, sheet ka block saath). HLD: roz ki grill 5 BAND (18-Nov, dohraav ho rahi thi); ab roz ek design uthao, FR se ant tak khud bolo, Claude beech me kood sakta (sirf tere bole pe, nitpick zero), ant me usi design ka API. Naya maal (Zomato, Dropbox, Google Maps) = padhai -> scene-mock -> file. Padhai = ROTATION (Java / Spring / infra), 2-3 file, man ke hisaab se; Java shaam ko. Hafte me ek: THU PR drill · SUN STAR.
 > Priority: HLD + Java / Spring ka gyaan gehra; DSA light (OA ka gate).
 > HLD = ek kahani: "main us situation me hota to kya karta", wahi jawab, naam baad me. FR = jo app aur user milke karte; NFR = peeche ka kaam; scope = pehle sawaal; bheed FR / NFR me nahi (HLD ka matlab hi bheed).
 
 ```
-SAFAR (March: khaali folder)  ->  aaj (18-Nov)
+SAFAR (March: khaali folder)  ->  aaj (22-Nov)
   Java + Spring poora · LLD 11 · 6 project
-  HLD: 24 design (kahani -> asli naam -> tasveer) + scene-mock + hand notes 24 + 19 foundation + dikkat chain 21 parivaar
-        23 / 23 design: upar Ek nazar (dhaancha + dikkat chain), FR / NFR har line kadam se judi (18-Nov), alag aankh se audit
+  HLD: 24 design (kahani -> asli naam -> tasveer) + scene-mock + hand notes 24 + 19 foundation
+        24 / 24 design: upar Ek nazar (dhaancha + dikkat chain), FR / NFR har line kadam se judi (18-Nov), alag aankh se audit
+        hand notes: har "Technical me" line shuru me batati is jawab me kahani ka shabd kya hai (parchi = Redis / outbox / hold ...)
+        main file: har kadam ke neeche diagram, kahani ka shabd + bracket me asli naam (chhotu (relay), parchi (Redis)), neeche poora dhaancha
+        outbox = hamare DB ki table; DB ki andar ki working (WAL / LSN) design me nahi
         round ho gaye: 01 URL (15-Nov) · 02 rate limiter (16-Nov) · 09 BMS (17-Nov) · naye 18-Nov: 23 Yelp, file upload dedup (kadam 9) · 19-Nov: 24 Zomato · 15 Uber (21-Nov) · 16 leaderboard (22-Nov, FR / NFR + dhaancha + API)
+        API ab tak: BMS, Uber, leaderboard (baaki design me us din ke round ke ant me)
         Kafka = stadium + tube: producer daale -> Kafka / queue line -> worker / consumer nikaale
-  DSA: 18 pattern · 183 problem + 159 REDO = 342 .cpp · pattern sheet folder (19 file, 178 sawaal + MATHS KA KHEL)
+  DSA: 18 pattern · 183 problem + 163 REDO = 346 .cpp · pattern sheet folder (19 file, 179 sawaal + MATHS KA KHEL)
   STAR 11 kahani · PR review framework · DB internals
 ```
 
@@ -31,7 +35,7 @@ SAFAR (March: khaali folder)  ->  aaj (18-Nov)
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
-| 08 | [**08_DSA**](08_DSA) | 18 pattern · 183 problem + 159 REDO + sheet (178 sawaal) | **Gate** — pass karna hai (ab revise-only) |
+| 08 | [**08_DSA**](08_DSA) | 18 pattern · 183 problem + 163 REDO + sheet (179 sawaal) | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | 11 STAR kahani + JP company + why JP | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase · index.lock | PR-review + daily workflow Qs |
@@ -56,7 +60,7 @@ SAFAR (March: khaali folder)  ->  aaj (18-Nov)
 
 - **[05_SOLID](01_JAVA/05_SOLID)** — design principles (LLD + code-review me) — [01 kya/kyun](01_JAVA/05_SOLID/01_solid_kya_hai_kyu.md) · [02 S](01_JAVA/05_SOLID/02_S_single_responsibility.md) · [03 O](01_JAVA/05_SOLID/03_O_open_closed.md) · [04 L](01_JAVA/05_SOLID/04_L_liskov_substitution.md) · [05 I](01_JAVA/05_SOLID/05_I_interface_segregation.md) · [06 D](01_JAVA/05_SOLID/06_D_dependency_inversion.md)
 
-- **[06_DESIGN_PATTERNS](01_JAVA/06_DESIGN_PATTERNS)** — GoF patterns (LLD ki bhasha) — [01 builder](01_JAVA/06_DESIGN_PATTERNS/01_builder.md) · [02 singleton](01_JAVA/06_DESIGN_PATTERNS/02_singleton.md) · [03 factory](01_JAVA/06_DESIGN_PATTERNS/03_factory.md) · [04 observer](01_JAVA/06_DESIGN_PATTERNS/04_observer.md) · [05 adapter](01_JAVA/06_DESIGN_PATTERNS/05_adapter.md) · [06 strategy](01_JAVA/06_DESIGN_PATTERNS/06_strategy.md)
+- **[06_DESIGN_PATTERNS](01_JAVA/06_DESIGN_PATTERNS)** — GoF patterns (LLD ki bhasha) — [00 ek nazar](01_JAVA/06_DESIGN_PATTERNS/00_ek_nazar.md) · [01 builder](01_JAVA/06_DESIGN_PATTERNS/01_builder.md) · [02 singleton](01_JAVA/06_DESIGN_PATTERNS/02_singleton.md) · [03 factory](01_JAVA/06_DESIGN_PATTERNS/03_factory.md) · [04 observer](01_JAVA/06_DESIGN_PATTERNS/04_observer.md) · [05 adapter](01_JAVA/06_DESIGN_PATTERNS/05_adapter.md) · [06 strategy](01_JAVA/06_DESIGN_PATTERNS/06_strategy.md)
   - **[practice](01_JAVA/06_DESIGN_PATTERNS/practice)** — chala ke dekhne wala code: [DP1 Singleton](01_JAVA/06_DESIGN_PATTERNS/practice/DP1_Singleton.java) (DCL · Holder · Enum — 100 thread pe 1 object, enum reflection se nahi tootta) · [DP2 Factory](01_JAVA/06_DESIGN_PATTERNS/practice/DP2_Factory.java) (switch wala · Map registry — naya type bina factory chhede) · [DP3 Observer](01_JAVA/06_DESIGN_PATTERNS/practice/DP3_Observer.java) (naya listener bina publisher chhede · ek toota to baaki chale · ArrayList pe CME, CopyOnWrite pe theek) · [DP4 Adapter](01_JAVA/06_DESIGN_PATTERNS/practice/DP4_Adapter.java) (purana logger / vendor API apne shape me · Arrays.asList trap) · [DP5 Strategy](01_JAVA/06_DESIGN_PATTERNS/practice/DP5_Strategy.java) (if-else ki jagah class · runtime swap · lambda · Factory+Strategy · Comparator)
 
 
@@ -112,7 +116,8 @@ SAFAR (March: khaali folder)  ->  aaj (18-Nov)
 **Kya:** 24 poore design (scene-mock se bane, hand notes = sach, main file unse; cross-question usi kadam me) + neev (19 foundations) + hands-on demo. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
 
 - ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — poora design, kahani format (har kadam: kahani -> asli naam -> tasveer; hand notes se bana)
-  - **FR / NFR + Ek nazar (18-Nov):** 23 / 23 DONE. Har FR / NFR line kadam se judi, upar Ek nazar; alag aankh se audit bhi ho gaya (FR = app + user ka kaam, NFR = peeche ka, bheed FR / NFR me nahi).
+  - **FR / NFR + Ek nazar (18-Nov):** 24 / 24 DONE. Har FR / NFR line kadam se judi, upar Ek nazar; alag aankh se audit bhi ho gaya (FR = app + user ka kaam, NFR = peeche ka, bheed FR / NFR me nahi).
+  - **Diagram (22-Nov):** har main file me kahani ka shabd + bracket me asli naam, jaise "Chhotu (fetcher)", "Baap ki vasiyat (outbox, DB ki table)". Bracket me sirf wahi naam jo us design ki hand notes me hai, apni taraf se koi naam nahi. Text purana hi, sirf diagram ke label.
   - [00_IMG](04_HLD/SYSTEM_DESIGNS/00_IMG) — jo mermaid se nahi banta (cache ki ring, Uber ka naksha + gaadi, PUBG ke dabbe + gudde), saari tasveer ek folder me
   - [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) (round ho gaya: Ek nazar dhaancha + FR / NFR design se, saancha baaki design ke liye)
   - [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) (round ho gaya: kadam 6 = dono khule, gateway pe kachchi ginti, sirf shaq wale ka OTP band)
@@ -139,7 +144,7 @@ SAFAR (March: khaali folder)  ->  aaj (18-Nov)
   - [23 Yelp search (5 km ke andar burger)](04_HLD/SYSTEM_DESIGNS/23_yelp_search/23_yelp_search.md) (reel se: geo filter + Elasticsearch fuzzy, Postgres -> ES change event, Closed dikhao, server-side sort)
   - [24 Zomato (Whitefield ke PG se Burger Singh)](04_HLD/SYSTEM_DESIGNS/24_zomato/24_zomato.md) (area list cache + grid cell, order status flow, prep-time dispatch, accept timeout, Diwali capacity gate + Kafka line, atomic decrement, reel se DLQ)
 
-- ★★ **HAND NOTES** — scene-mock ke baad, Arpan ke shabd. Har block = scene -> Arpan ka jawab -> Technical me (asli naam). Revision yahin se; main design file me bhi har kadam pe wahi scene line.
+- ★★ **HAND NOTES** — scene-mock ke baad, Arpan ke shabd. Har block = scene -> Arpan ka jawab -> Technical me (asli naam). "Technical me" ki shuruaat me hi likha ki is jawab me kahani ka shabd kya hai (chhotu = fetcher / relay / status poll job, design ke hisaab se). Kadam ke andar seedhi: Aur neeche · Isi pe ek aur raasta · Isi pe ek aur misaal · Maan lo. Revision yahin se.
   - [01 URL (token counter)](04_HLD/SYSTEM_DESIGNS/01_url_shortener/URL_HAND_NOTES.md)
   - [02 rate limiter (OTP button)](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/RATE_LIMITER_HAND_NOTES.md)
   - [03 twitter (Ravi + King Kohli)](04_HLD/SYSTEM_DESIGNS/03_twitter_feed/TWITTER_HAND_NOTES.md)
@@ -162,6 +167,8 @@ SAFAR (March: khaali folder)  ->  aaj (18-Nov)
   - [20 PUBG (Pochinki drop)](04_HLD/SYSTEM_DESIGNS/20_pubg/PUBG_HAND_NOTES.md)
   - [21 Inventory (teen godown)](04_HLD/SYSTEM_DESIGNS/21_inventory_system/INVENTORY_HAND_NOTES.md)
   - [22 Where Is My Train (patri, tower)](04_HLD/SYSTEM_DESIGNS/22_where_is_my_train/TRAIN_HAND_NOTES.md)
+  - [23 Yelp (5 km ke andar burger)](04_HLD/SYSTEM_DESIGNS/23_yelp_search/YELP_HAND_NOTES.md)
+  - [24 Zomato (Whitefield ke PG se Burger Singh)](04_HLD/SYSTEM_DESIGNS/24_zomato/ZOMATO_HAND_NOTES.md)
 
 
 - **[FOUNDATIONS](04_HLD/FOUNDATIONS)** — building-blocks (har design inhi se bante) — [01 hld-kya-hai](04_HLD/FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity-estimation](04_HLD/FOUNDATIONS/02_capacity_estimation.md) · [03 load-balancing](04_HLD/FOUNDATIONS/03_load_balancing.md) · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) · [05 replication](04_HLD/FOUNDATIONS/05_database_replication.md) · [06 sharding](04_HLD/FOUNDATIONS/06_database_sharding.md) · [07 message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) (16-Nov stadium + tube me: teen kaam, keemat, kram sirf partition me (2011 paper + docs se), delivery ke teen vaade, Kafka ya RabbitMQ, DLQ, backpressure, queue ne ulta gira diya ke 5 kisse) · [08 CAP](04_HLD/FOUNDATIONS/08_cap_theorem.md) · [09 db-what-when](04_HLD/FOUNDATIONS/09_databases_what_when.md) (+ interview me kaunsa DB: 4 sawaal) · [10 ms-communication](04_HLD/FOUNDATIONS/10_ms_communication.md) (+ 3 service se maal jodna: timeout · breaker · PARTIAL) · [11 reliability/SPOF](04_HLD/FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch](04_HLD/FOUNDATIONS/12_elasticsearch_search.md) · [13 snowflake-id](04_HLD/FOUNDATIONS/13_distributed_id_snowflake.md) · [14 jab-ilaaj-hi-bimari-bane](04_HLD/FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md) (HUB: LB, cache, limiter, queue, CAP, SPOF, CDN ki ek hi shakal) · [15 CDN](04_HLD/FOUNDATIONS/15_cdn.md) · [16 DNS](04_HLD/FOUNDATIONS/16_dns.md) · [17 WAF](04_HLD/FOUNDATIONS/17_waf.md) · [18 monitoring](04_HLD/FOUNDATIONS/18_monitoring.md) · [19 url-browser-journey](04_HLD/FOUNDATIONS/19_url_browser_journey.md)
@@ -233,10 +240,10 @@ SAFAR (March: khaali folder)  ->  aaj (18-Nov)
 
 ---
 
-## [08_DSA](08_DSA) — 18 pattern · 183 problem + 159 REDO = 342 .cpp
+## [08_DSA](08_DSA) — 18 pattern · 183 problem + 163 REDO = 346 .cpp
 **Kya:** pattern-wise solved problems (sirf C++) + pattern sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + redo.
 
-- ★ **[PATTERN_SHEET](08_DSA/00_PATTERN_SHEET)** — "gate ki chaabi", 19 chhoti file (ek badi file pe GitHub atakta tha). 178 sawaal. Har sawaal pe moti line, phir SAWAAL (poore vakya + e.g. + kyun) · SAAR (dry-run / tasveer) · CHAABI (baingani dabba) · WARNING (peela dabba, aaj ke code ka trap) · CODE (tera code, ★ sirf kick line pe). Teri purani galti wali line kabhi nahi kati. CHAABI = sawaal ki khaasiyat (jiske bina jawab galat); teri apni purani galti = WARNING (16-Nov).
+- ★ **[PATTERN_SHEET](08_DSA/00_PATTERN_SHEET)** — "gate ki chaabi", 19 chhoti file (ek badi file pe GitHub atakta tha). 179 sawaal. Har sawaal pe moti line, phir SAWAAL (poore vakya + e.g. + kyun) · SAAR (dry-run / tasveer) · CHAABI (baingani dabba) · WARNING (peela dabba, aaj ke code ka trap) · CODE (tera code, ★ sirf kick line pe). Teri purani galti wali line kabhi nahi kati. CHAABI = sawaal ki khaasiyat (jiske bina jawab galat); teri apni purani galti = WARNING (16-Nov).
   - [00 SHURU](08_DSA/00_PATTERN_SHEET/00_SHURU.md) (PEHLE YE · OA tools · DECISION · EDGE list · NAAM-SE-CONFUSE A-E · MATHS KA KHEL)
   - [01 two pointer](08_DSA/00_PATTERN_SHEET/01_TWO_POINTER.md) · [02 sliding window](08_DSA/00_PATTERN_SHEET/02_SLIDING_WINDOW.md) · [03 hashing](08_DSA/00_PATTERN_SHEET/03_HASHING.md) · [04 prefix sum](08_DSA/00_PATTERN_SHEET/04_PREFIX_SUM.md) · [05 matrix](08_DSA/00_PATTERN_SHEET/05_MATRIX.md) · [06 stack](08_DSA/00_PATTERN_SHEET/06_STACK.md) · [07 binary search](08_DSA/00_PATTERN_SHEET/07_BINARY_SEARCH.md) · [08 linked list](08_DSA/00_PATTERN_SHEET/08_LINKED_LIST.md) · [09 design](08_DSA/00_PATTERN_SHEET/09_DESIGN.md)
   - [10 kadane](08_DSA/00_PATTERN_SHEET/10_KADANE.md) · [11 bit](08_DSA/00_PATTERN_SHEET/11_BIT_MANIPULATION.md) · [12 trees](08_DSA/00_PATTERN_SHEET/12_TREES.md) · [13 graphs](08_DSA/00_PATTERN_SHEET/13_GRAPHS.md) · [14 heap](08_DSA/00_PATTERN_SHEET/14_HEAP.md) · [15 intervals](08_DSA/00_PATTERN_SHEET/15_INTERVALS.md) · [16 backtracking](08_DSA/00_PATTERN_SHEET/16_BACKTRACKING.md) · [17 DP](08_DSA/00_PATTERN_SHEET/17_DP.md) · [18 greedy](08_DSA/00_PATTERN_SHEET/18_GREEDY.md)
@@ -249,15 +256,15 @@ ROZ: us pattern ka sheet block padho → khaali page pe 1 REDO → grill 5 (disg
 
 | # | Pattern | Problems | REDO | | # | Pattern | Problems | REDO |
 |---|---------|----------|------|---|---|---------|----------|------|
-| 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 10 | | 10 | [KADANE](08_DSA/10_KADANE) | 9 | 11 |
+| 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 11 | | 10 | [KADANE](08_DSA/10_KADANE) | 9 | 12 |
 | 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 12 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 2 |
 | 03 | [HASHING](08_DSA/03_HASHING) | 16 | 17 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 6 |
 | 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 10 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 12 | 11 |
 | 05 | [MATRIX](08_DSA/05_MATRIX) | 4 | 6 | | 14 | [HEAP](08_DSA/14_HEAP) | 9 | 7 |
-| 06 | [STACK](08_DSA/06_STACK) | 13 | 7 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 4 |
-| 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 10 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 7 | 8 |
-| 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | 8 | | 17 | [DP](08_DSA/17_DP) | 16 | 17 |
-| 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 6 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 5 |
+| 06 | [STACK](08_DSA/06_STACK) | 13 | 7 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 5 |
+| 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 10 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 7 | 9 |
+| 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | 8 | | 17 | [DP](08_DSA/17_DP) | 16 | 18 |
+| 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 6 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 6 |
 
 ---
 

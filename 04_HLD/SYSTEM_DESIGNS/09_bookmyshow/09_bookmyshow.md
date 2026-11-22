@@ -134,7 +134,7 @@ keys ka kya. **Asli naam:** hold_until column, ek hi sach.
 
 ```mermaid
 flowchart TB
-    A["Arpan parchi laga ke<br/>chai peene gaya<br/>(hold, bina expiry)"]:::bad
+    A["Arpan parchi laga ke<br/>chai peene gaya<br/>(hold)"]:::bad
     subgraph PM["PARCHI THODI DER KE LIYE<br/>(hold_until)"]
         D[("Counter wala 5 minute tak<br/>dekhta (hold_until)")]:::pill
     end
@@ -163,11 +163,11 @@ query me hi: `WHERE status = FREE OR (status = HELD AND hold_until < now)`, phaa
 
 ```mermaid
 flowchart TB
-    X["Parchi phaadne wala chhutti pe,<br/>parchi 20 minute se lagi<br/>(safai job band)"]:::bad
+    X["Parchi phaadne wala chhutti pe,<br/>parchi 20 minute se lagi"]:::bad
     N["Naya aadmi: D5 chahiye"]:::card
     subgraph DR["DO RAASTE"]
         B(["Chhota bhai / replacement<br/>(backup safai job)"]):::pill
-        U(["Parchi pe hi umar: 5 minute baad<br/>apne aap gayab<br/>(TTL / expiry query me)"]):::pill
+        U(["Parchi pe hi umar: 5 minute baad<br/>apne aap gayab"]):::pill
     end
     OK["Umar nikal chuki: D5 naye ki"]:::good
     X --> B
@@ -207,7 +207,7 @@ flowchart TB
     subgraph LN["CAPACITY JITNE ANDAR, BAAKI LINE ME<br/>(virtual queue)"]
         W(["Le bhai, ye teri parchi,<br/>agla number tera (token)"]):::pill
     end
-    S["Counter badha de, server badha de<br/>(scale out)"]:::card
+    S["Counter badha de, server badha de"]:::card
     subgraph DY["ALAG DIARY<br/>(read replica)"]
         P[("Hilane wale ki diary<br/>(primary)")]:::card
         R[("Dekhne wale ki diary<br/>(read replica)")]:::pill
@@ -242,10 +242,10 @@ minute) do: 9ve minute pe chuni to 14 tak pay kar sakta, nahi to bahar. **Asli n
 ```mermaid
 flowchart TB
     A["Arpan: token mila (10 min),<br/>8ve minute pe D5 chuni"]:::card
-    subgraph G1["GHADI 1: GATE<br/>(queue token TTL)"]
+    subgraph G1["GHADI 1: GATE"]
         T(["Token: andar aa gaya,<br/>authenticate ho chuka"]):::pill
     end
-    subgraph G2["GHADI 2: SEAT<br/>(hold TTL)"]
+    subgraph G2["GHADI 2: SEAT"]
         H(["Parchi 5 minute: seat ruk gayi,<br/>utne time me payment"]):::pill
     end
     OK["10ve minute token khatam,<br/>par parchi baaki: pay kar paayega"]:::good
@@ -401,7 +401,7 @@ service gire ya server gire, dabba wahin; jo bhi aaye pending padh ke ticket ban
 flowchart LR
     E["Event: paisa kata"]:::card --> T
     subgraph T["EK SAATH (ek DB transaction)"]
-        S[("Parchi: SUCCESS<br/>(DB status)")]:::pill
+        S[("Parchi: SUCCESS")]:::pill
         O[("Parchi: D5 book karna hai<br/>(outbox row)")]:::pill
     end
     T --> R["Chhotu parchi padhe<br/>(relay)"]:::card --> K["Ticket bana"]:::good

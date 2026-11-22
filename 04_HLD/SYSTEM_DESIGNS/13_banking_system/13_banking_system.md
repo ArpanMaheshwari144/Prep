@@ -83,7 +83,7 @@ par yahan zaroorat nahi). **Sach:** asli bank me paisa 3-5 din baad wapas, peech
 
 ```mermaid
 flowchart TB
-    A["Parchi: Ravi ko 500 bhej do<br/>(transfer request)"]:::card
+    A["Parchi: Ravi ko 500 bhej do"]:::card
     X["Arpan ke 500 kate, Ravi me jodte<br/>waqt bijli gayi"]:::bad
     subgraph WD["MERE 500 WAPAS DE DO"]
         R(["Ya dono kaam, ya koi nahi<br/>(rollback)"]):::pill
@@ -126,7 +126,7 @@ flowchart TB
         K[("Log hamare paas: ye key pehle aa chuki?<br/>(idempotency key, UNIQUE)")]:::pill
     end
     X["Same parchi: nahi bhai,<br/>500 already bhej diye<br/>(idempotency key)"]:::good
-    N["Nayi parchi = nayi key:<br/>500 phir jaayenge<br/>(nayi idempotency key)"]:::good
+    N["Nayi parchi = nayi key:<br/>500 phir jaayenge"]:::good
     A --> K
     K -- "same key" --> X
     K -- "nayi key" --> N
@@ -161,8 +161,8 @@ bhi (Arpan, Ravi, Priya). Counter hisaab se chalta, itne counter koi nahi bithat
 
 ```mermaid
 flowchart TB
-    N["Counter 1: Netflix 500<br/>(request 1)"]:::card
-    U["Counter 2: UPI 500<br/>(request 2)"]:::card
+    N["Counter 1: Netflix 500"]:::card
+    U["Counter 2: UPI 500"]:::card
     subgraph EK["DEKHNA AUR KAATNA EK HI KRAM ME"]
         B[("Arpan ka khaata 600:<br/>jisne pehle dekha, pehle kaate<br/>(row lock)")]:::pill
     end
@@ -226,7 +226,7 @@ bhi nahi.
 ```mermaid
 flowchart TB
     C["Cashier ne paisa bheja"]:::card
-    X["Ladke ko bolne se pehle bijli gayi:<br/>kisko khabar deni hai, pata nahi<br/>(outbox nahi tha)"]:::bad
+    X["Ladke ko bolne se pehle bijli gayi:<br/>kisko khabar deni hai, pata nahi"]:::bad
     subgraph LK["JO YAAD NAHI REHTA, LIKH LO"]
         O[("Paise ke saath hi likh do:<br/>Ravi ko khabar deni hai (outbox)")]:::pill
     end
@@ -259,7 +259,7 @@ balancer (khaali machine pe bheje).
 flowchart TB
     U["Salary ka din: poora mohalla,<br/>line sadak tak"]:::bad
     LB(["Khaali counter pe bhejo<br/>(LB)"]):::pill
-    subgraph CC["10 CASHIER, 10 COUNTER<br/>(kai server)"]
+    subgraph CC["10 CASHIER, 10 COUNTER"]
         C1["Cashier 1"]:::card
         C2["Cashier 2"]:::card
         CN["... Cashier 10"]:::card
@@ -412,7 +412,7 @@ flowchart TB
     subgraph AS["ASLI SACH DIARY<br/>(ledger, append-only)"]
         L[("Ledger: -500 +500 sab likha<br/>(source of truth)")]:::pill
     end
-    C[("Balance column: bas copy<br/>(balance = ledger ka jod)")]:::card
+    C[("Balance column: bas copy")]:::card
     R["Raat ka milaan: column != diary,<br/>pakda (reconciliation)"]:::good
     X --> C
     L --> R
@@ -468,7 +468,7 @@ archive, phenka nahi.
 ```mermaid
 flowchart TB
     X["Diary almari me nahi samati,<br/>niyam: 10 saal rakho"]:::bad
-    B[("Branch ki almari:<br/>abhi ki diary<br/>(hot storage)")]:::card
+    B[("Branch ki almari:<br/>abhi ki diary")]:::card
     subgraph HO["HEAD OFFICE BHEJ DO"]
         S3[("Purani diary: wahan safe<br/>(S3, archive)")]:::pill
     end
@@ -498,7 +498,7 @@ na koi chhoo sakta, na chhed sakta, na badal sakta. Use taala maar do, wo chupch
 ```mermaid
 flowchart TB
     A["Ijazat wala: -500 ko -50 kar de"]:::bad
-    subgraph KC["3-4 COPY, CHUPCHAAP KONE ME<br/>(tamper check copies)"]
+    subgraph KC["3-4 COPY, CHUPCHAAP KONE ME"]
         C1[("Copy 1: -50")]:::bad
         C2[("Copy 2: -500")]:::card
         C3[("Copy 3: -500")]:::card
@@ -553,7 +553,7 @@ batch.
 flowchart TB
     X["31 March: 1 crore log,<br/>tab banni shuru, sab atke"]:::bad
     Q["Pehle poochho: turant chahiye?<br/>turant ban bhi sakti hai?"]:::card
-    subgraph PC["PEECHE CHHOTU: PEHLE SE BANA KE RAKHO<br/>(precompute job)"]
+    subgraph PC["PEECHE CHHOTU: PEHLE SE BANA KE RAKHO"]
         J(["Jan ki Jan me, Feb ki Feb me<br/>(precompute, batch)"]):::pill
     end
     OK["31 March: Ravi ho ya Shubham,<br/>utha ke turant de do"]:::good
@@ -610,7 +610,7 @@ gira to naya chhotu wahin se utha leta hai, shuru se nahi.
 
 ```mermaid
 flowchart TB
-    C["Chhotu aadha kaam karke gira<br/>(worker crash)"]:::bad
+    C["Chhotu aadha kaam karke gira"]:::bad
     subgraph DB["JITNA KARTA, DB ME LIKHTA JAATA"]
         P[("Yahan tak ho gaya<br/>(checkpoint)")]:::pill
     end
@@ -637,7 +637,7 @@ tukdon me, khaali worker / consumer agla tukda utha le). Naye worker / consumer 
 
 ```mermaid
 flowchart TB
-    subgraph LD["10 CHHOTU<br/>(kai worker)"]
+    subgraph LD["10 CHHOTU"]
         B["Ek pe bahut kaam<br/>(hot key)"]:::bad
         F1["Khaali baitha"]:::card
         F2["Khaali baitha"]:::card
@@ -771,7 +771,7 @@ flowchart TB
     R2["Frankfurt: card se 1000"]:::card
     F["Frankfurt branch"]:::card
     subgraph HR["KHAATA MUMBAI ME KHULA: HAR KAAM YAHIN"]
-        M[("Mumbai register<br/>1000 -> 0<br/>(home region DB)")]:::pill
+        M[("Mumbai register<br/>1000 -> 0")]:::pill
     end
     R1 --> M
     R2 --> F
