@@ -1,13 +1,11 @@
 # URL shortener: token counter ki kahani
 
-Ek token counter hai. Log aate hain aur bahut lamba pata likhi chit dete hain ("amazon.in/products/xyz/...").
-Counter wala unhe chhota token deta hai, jaise aB3x9. Kaam: jo bhi token dikhaye, use lamba pata turant mile, aur do
-logon ko kabhi same token na mile.
+_Ye file hand notes se banti hai (`04_HLD/build_main.py`): wahi dikkat, wahi jawab, wahi Technical, aur har kadam ke neeche diagram (kahani ka shabd, bracket me asli naam). Badlaav sirf hand notes me._
 
-Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (interview me yahi shabd) -> tasveer
-(kahani ka shabd, bracket me asli naam).
 
----
+Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpan ke shabd ka naam).
+
+**Scene:** Token counter. Log aate hain aur bahut lamba pata likhi chit dete hain ("amazon.in/products/xyz/..."). Counter wala unhe chhota token deta hai, jaise aB3x9. Jo bhi token dikhaye, use wo lamba pata mil jaata hai.
 
 **Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
 ```
@@ -37,9 +35,10 @@ User  -->  LB  -->  kai counter (app server)
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
+Arpan: Hum hamesha URL ki baat kar rahe, to FR me wahi jaayega ki lamba URL le ke chhota banana. Jo dikkat design me dekh rahe, wahi FR / NFR banti: do logon ko same token na mile, lambe ka chhota hamesha theek ho, garam (hot) URL sambhale, sab mote register pe na jaaye, machine se hazaar chit na aaye. NFR me: consistency kaise, jaldi kaise, copies, local kaise rakhein. Dikkat se hi FR bante, unse hi NFR bhi; ye aaj pakka ho gaya. Numbers tab jab sach me zaroorat ho; 1 million ho ya 1 billion, shard waise bhi lagana padega.
+Technical me: "do logon ko same token na mile" = uniqueness (counter / range), "lambe ka chhota hamesha theek" = consistency (quorum read / write), "garam URL sambhale" = hot key (cache, copies), "sab mote register pe na jaaye" = cache hit ratio, "machine se hazaar chit nahi" = rate limit, "jaldi" = low latency, "copies" = replication / availability.
 
-## FR / NFR / Numbers (interview me pehle 2 minute)
-
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
 FR      1  lamba URL do, chhota token lo                                  -> kadam 1, 2
         2  chhota token kholo to lambe pe bhejo                             -> kadam 3, 12
@@ -56,25 +55,20 @@ NFR     1  kholna turant, har baar mote register pe na jaaye                -> k
 Numbers sirf jahan faisla badle: saalon me itna data (~90 TB) ki ek almari me nahi aata -> tukde (kadam 8)
 ```
 
----
+&nbsp;
 
-## 1. Do logon ko same token (ek line ka counter)
+**1. Counter wala token apne man se bana raha, kuch bhi chhota likh deta. Ek din do alag logon ko same token de diya. Chhota bhi rahe aur do logon ko kabhi same na mile, kaise?**
+Arpan: Uska token ek line wala kar do. Jaise abhi number hai 9, to agla 10. Matlab ek line me wo token banayega. Counter kar do, counter: ye ban gaya to aage badhao, phir ye ban gaya to aage badhao. Aise wo number kabhi repeat nahi hoga. Counter service. Random ya hash me dono logon ko same code mil sakta hai aur har baar DB me jaanchna padta hai; counter me number kabhi same hoga nahi, to ye dikkat khatam.
+Technical me: "ek line me, aage badhao" = counter (har link ko agla number), "kabhi repeat nahi" = takrav nahi, "random / hash me same code" = collision, har baar DB check; counter me check ki zaroorat nahi.
 
-Counter wala token apne man se bana raha tha, kuch bhi chhota likh deta, aur ek din do alag logon ko same token de
-diya. To uska token ek line wala kar do: abhi number 9 hai to agla 10. Ye ban gaya to aage badhao, phir ye ban gaya to
-aage badhao, isliye number kabhi repeat nahi hoga. Counter kar do, counter service. Random ya hash me do logon ko same
-code mil sakta, har baar DB me jaanchna padta; counter me ye dikkat hi nahi.
+**Maan lo Arpan ne Delhi me YouTube ka ek gaana chhota kiya, Mumbai me kisi aur ne wahi link chhota kiya:** Arpan: URL shortener banane dega, uska link alag hoga. Duplicate link nahi banenge, par ek ke do link ho sakte hain, dikkat nahi, ye to design ka hissa hai; counter aage chalega hi chalega. (21-Nov Arpan ne bit.ly pe khud jaancha: ek hi YouTube link do baar chhota kiya, dono baar alag link mila, bit.ly/4AGUMOh aur bit.ly/4AKx7N1.)
+Technical me: same lamba link = har baar naya code (lambe link pe "pehle se hai?" ki jaanch nahi), ek lambe ke kai chhote chalte hain.
 
-**Asli naam:** ek line me, aage badhao = counter (har link ko agla number), kabhi repeat nahi = takrav kabhi nahi, random / hash = collision + DB check.
+**Maan lo do log bilkul ek hi pal me aayein:** Arpan: Ek aur pehra laga do: DB me code pe unique constraint, "insert if not exist". Ye DB me apne aap atomic kaam hai, do baar same code likha hi nahi jaayega.
+Technical me: "insert if not exist" = unique index / constraint on code (counter ke upar aakhri pehra).
 
-**Maan lo do log ek hi pal me aayein:** upar se ek pehra aur: DB me code pe unique, "insert if not exist", jo DB me
-apne aap atomic hai.
-**Asli naam:** unique index / constraint on code.
 
-**Maan lo do log same lamba link chhota karein (Delhi, Mumbai):** dono ko alag code, ek ke do link chalte, dikkat nahi;
-counter aage hi chalega. bit.ly pe jaancha (21-Nov): ek hi YouTube link do baar, dono baar alag link.
-**Asli naam:** same long URL = naya code, lambe link pe dedup nahi.
-
+<!-- diagram 1 -->
 ```mermaid
 flowchart TB
     L["Log: lamba pata likhi chit"]:::card
@@ -91,17 +85,14 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style CW fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+<!-- /diagram -->
 
-## 2. Counter 10 arab pe, token lamba (number plate jaise akshar bhi)
+**2. Saal bhar me counter 10 arab pe. Token "10000000000", 11 akshar, aur lamba hota jaayega. Number wahi rakhte hue token chhota kaise? (Sawaal: gaadi ki number plate "DL 3C AB 1234" me sirf number nahi, akshar bhi.)**
+Arpan: Uske peeche kuch laga do, kuch aisi algorithm set kar do ki wo number apna bhi chhota kar de. Technical terms me kuch hota hoga. Jaise DL 3C, phir agla aa jaayega 4C, 5C, phir 5D, phir A, AB ke baad CB, ye aata rahega. 1 2 3 4 ki jagah aisa kuch, hum combination bana sakte hain. 7 character hain to kaafi combination ho sakte hain.
+Technical me: "number plate jaise akshar bhi, combination" = base62 (0-9, a-z, A-Z), "7 character, kaafi combination" = 62^7, ~3.5 lakh crore code.
 
-Saal bhar me counter 10 arab pe pahunch gaya, token "10000000000", 11 akshar, aur lamba hota jaayega. Number wahi
-rakhna hai par token chhota chahiye. To gaadi ki number plate dekho: "DL 3C AB 1234" me sirf number nahi, akshar bhi
-hain. DL 3C, phir 4C, 5C, phir 5D, phir A, AB ke baad CB, aise aata rahega. 1 2 3 4 ki jagah combination bana lo, aur
-7 character hon to kaafi combination ho jaate hain.
 
-**Asli naam:** number plate jaise akshar bhi, combination = base62 (0-9, a-z, A-Z), 7 character, kaafi combination =
-62^7, ~3.5 lakh crore code.
-
+<!-- diagram 2 -->
 ```mermaid
 flowchart TB
     N["Counter 10 arab pe:<br/>token 10000000000 (11 akshar)"]:::bad
@@ -118,26 +109,24 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style NP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+<!-- /diagram -->
 
-## 3. Har baar mota register palatna (chhota pehla register)
+**3. Token lene kam aate, token dikha ke pata lene wale bahut: har second 1 lakh. Counter wala har baar mota register palat ke dhoondhta, line ruk jaati. Kuch token din me hazaar baar aate.**
+Arpan: Unhe chhote register me rakh lo. Jo bhi log dekhne aa rahe, bas usi register se wapas kar do. Mota register to rakh lo, koi dikkat nahi, ek chhota pehla register rakh lo, usme wahi wale token rakh lo. Jo log bahut baar poochhne aa rahe, wo wahin se chale jaayenge.
+Technical me: "chhota pehla register" = cache (Redis), "mota register" = DB, "bahut baar poochhe jaane wale" = garam / baar-baar padhe link.
 
-Token lene wale kam aate, par token dikha ke pata lene wale bahut, har second 1 lakh. Counter wala har baar mota
-register palat ke dhoondhta, isliye line ruk jaati. Aur kuch token din me hazaar baar aate. To mota register to rakho,
-koi dikkat nahi, par ek chhota pehla register bhi rakh lo, usme wahi baar-baar wale token. Jo log bahut baar poochhne
-aa rahe, wo wahin se chale jaayenge.
+**Maan lo pooche server ki memory me hi kyun nahi rakh lete, baar-baar DB kyun:** Arpan: Sabse seedha design ek server aur ek DB: link aaya to code banao, DB me likh do; kisi ne khola to DB se bada link de do, 302 redirect. Memory me rakhne ka sawaal aa sakta hai, par server restart ho gaya to link saare gaayab ho jaayenge, isliye memory me nahi rakh sakte.
+Technical me: "restart pe gaayab" = server ki memory volatile, link ko pakki jagah (DB) chahiye; tez padhne ke liye alag chhota register (Redis).
 
-**Asli naam:** chhota pehla register = cache (Redis), mota register = DB (Cassandra: data bas code -> link, na join na transaction, par 90 TB kai
-machine me baantna hai, isliye NoSQL key-value), bahut baar
-poochhe jaane wale = garam / baar-baar padhe link. Pehle Redis, nahi mila to DB se laake Redis me rakho (cache-aside).
+**Maan lo chhota register (Redis) gir gaya:** Arpan: Redis gira to copy (replica) rakh lo. Copy bhi giri to aakhri kaam fail open kar do: sab dobara DB se aa jaayega. DB to zinda hai, wahan se aa jaayega, itne me Redis dobara khada ho jaayega aur waise hi chal padega.
+Technical me: Redis replica; dono gire to fail open (cache chhod ke seedha DB se), Redis wapas aate hi phir cache se.
 
-**Maan lo server ki memory me hi rakh lo:** server restart hua to saare link gaayab, isliye pakki jagah DB, tez padhne
-ko alag Redis. **Maan lo Redis gira:** copy (replica); copy bhi giri to fail open, sab DB se, itne me Redis wapas khada.
-**Asli naam:** memory volatile -> durable DB; Redis replica; fail open (cache bypass).
 
+<!-- diagram 3 -->
 ```mermaid
 flowchart TB
     U["Har second 1 lakh log:<br/>token dikhao, pata do"]:::card
-    C["Counter wala"]:::card
+    C["Counter wala<br/>(app server)"]:::card
     subgraph RG["DO REGISTER"]
         R[("Chhota pehla register<br/>(baar-baar wale token, Redis)")]:::pill
         D[("Mota register<br/>(sab token, DB)")]:::card
@@ -152,15 +141,14 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style RG fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+<!-- /diagram -->
 
-## 4. Chhota register bhar gaya (kise hatayein)
+**4. Chhota register bhar gaya. Naya token likhna hai, kisi purane ko hatana padega. Kise?**
+Arpan: Purana hata denge, hamare paas kuch tareeke hain. Time laga lo na, ki ye token itni der tak rahega register me, uske baad hata do. Ya jo sabse kam use hua, jo ab poochha hi nahi ja raha, wo token hata do. Wo likha hi kyun ja raha hai, hatao use.
+Technical me: register (yahan chhota) = cache (Redis) · "itni der tak rahega, phir hata do" = TTL, "jo poochha hi nahi ja raha, hatao" = LRU.
 
-Chhota register bhar gaya aur naya token likhna hai, to kisi purane ko hatana padega. Hamare paas tareeke hain: time
-laga do ki ye token itni der tak register me rahega, uske baad hata do. Ya jo sabse kam use hua, jo ab poochha hi nahi
-ja raha, wo hatao, kyunki wo likha hi kyun ja raha hai.
 
-**Asli naam:** itni der tak rahega, phir hata do = TTL, jo poochha hi nahi ja raha, hatao = LRU.
-
+<!-- diagram 4 -->
 ```mermaid
 flowchart TB
     R["Chhota register bhar gaya,<br/>naya token likhna hai"]:::bad
@@ -180,25 +168,22 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style KH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+<!-- /diagram -->
 
-## 5. 7 baje 1,000 log mote register pe (chhota ladka)
+**5. Ek mashhoor token ka waqt theek 7 baje khatam, chhote register se hat gaya. Usi pal 1,000 log wahi token le ke aaye, saare ek saath mote register pe toot pade.**
+Arpan: Mere paas ek ladka hai, chhota ladka. Main kahunga: bhai chupchap bhaag ke ja, aur us mote register se wo information nikaal ke la, aur isme la kar rakh de, to sab yahin ruk jaayenge. Tu ja, patapat, jaldi se jaldi nikaal ke la aur turant chhote register me rakh de. Khatam kahani, ho gaya kaam.
+Technical me: "ek ladka jaaye, sab yahin ruken" = lock (single flight), "la ke chhote register me rakh de" = DB se laake Redis bharna.
 
-Ek mashhoor token ka waqt theek 7 baje khatam hua aur wo chhote register se hat gaya. Usi pal 1,000 log wahi token le
-ke aaye, aur saare ek saath mote register pe toot pade. To mere paas ek chhota ladka hai, main use bolunga: bhai
-chupchap bhaag ke ja, mote register se wo information nikaal ke la aur chhote register me rakh de. Baaki sab yahin ruk
-jaayenge. Patapat la, khatam kahani, ho gaya kaam.
 
-**Asli naam:** ek ladka jaaye, sab yahin ruken = lock (single flight), la ke chhote register me rakh de = DB se laake
-Redis bharna. Isse stampede rukta hai.
-
+<!-- diagram 5 -->
 ```mermaid
 flowchart TB
     U["7 baje 1,000 log wahi token<br/>(chhote register se hat gaya)"]:::bad
-    subgraph CW["COUNTER WALA"]
+    subgraph CW["COUNTER WALA (app server)"]
         K(["Chhota ladka: bhaag ke ja,<br/>baaki sab yahin ruko<br/>(single flight)"]):::pill
     end
-    D[("Mota register")]:::card
-    R[("Chhota register me rakh de")]:::good
+    D[("Mota register<br/>(DB)")]:::card
+    R[("Chhota register me rakh de<br/>(Redis)")]:::good
     U --> K
     K -- "sirf ek" --> D
     D --> R
@@ -209,20 +194,17 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style CW fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+<!-- /diagram -->
 
-## 6. Ladka raste me gir gaya (ladke ki timeline)
+**6. Ladka bhaaga aur raste me gir gaya, kabhi wapas nahi aayega. Baaki 999 "ladka laayega" soch ke ruke khade.**
+Arpan: Yahan thoda decision lena padega. Yahan hum purani information de sakte hain, unko baad me update kar denge. Main intezaar kab tak karunga? 999 me se ek aadmi ko bolunga: bhai le idhar aa, tu ek kaam kar, mote register me se information la ke mujhe de de, mera wo ladka pata nahi kahan chala gaya, uska koi naamo-nishaan nahi. Matlab main us ladke ki timeline rakhunga: agar itni der tak nahi aaya, to 999 me se jo bhi hai use bulaunga.
+Technical me: ladka = wo ek request jo DB se laati (single flight), mota register = DB · "ladke ki timeline, nahi aaya to agla" = lock TTL (umar khatam to lock khulta), "purani information do, baad me update" = soft / hard TTL.
 
-Ladka bhaaga aur raste me gir gaya, kabhi wapas nahi aayega, aur baaki 999 "ladka laayega" soch ke ruke khade hain.
-Yahan thoda decision lena padega, kyunki main intezaar kab tak karunga? Main us ladke ki timeline rakhunga: itni der
-tak nahi aaya to 999 me se ek ko bolunga, bhai le idhar aa, mote register se information la ke de de, mera ladka pata
-nahi kahan gaya. Aur tab tak logon ko purani information de sakte hain, baad me update kar denge.
 
-**Asli naam:** ladke ki timeline, nahi aaya to agla = lock TTL (umar khatam to lock khulta, agla le leta), purani
-information do, baad me update = soft / hard TTL (soft nikla to purana turant do, peeche se naya lao).
-
+<!-- diagram 6 -->
 ```mermaid
 flowchart TB
-    L["Ladka raste me gira,<br/>kabhi wapas nahi aayega"]:::bad
+    L["Ladka (lock wali ek request)<br/>raste me gira, wapas nahi aayega"]:::bad
     subgraph TL["LADKE KI TIMELINE"]
         T(["Itni der tak nahi aaya?<br/>(lock TTL)"]):::pill
     end
@@ -238,20 +220,17 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style TL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+<!-- /diagram -->
 
-## 7. 5 counter, dono ne token "10" diya (apni-apni range)
+**7. Ek counter se bheed nahi sambhli, 5 counter khol diye. Har counter apni ginti 1, 2, 3 chala raha. Counter 1 aur 2 dono ne apne 10ve aadmi ko token "10" de diya.**
+Arpan: Counter ko kahunga ki tum apni-apni range le lo. Un paanch counter ko tod dunga: tu 1 se 100 karega, tu 101 se 200, tu 201 se 300, tu 301 se 400. Aise sabko range me baant dunga.
+Technical me: "apni-apni range" = counter range (beech ka counter har app server ko number ka dabba deta).
 
-Ek counter se bheed nahi sambhli, to 5 counter khol diye. Har counter apni ginti 1, 2, 3 chala raha, isliye counter 1
-aur 2 dono ne apne 10ve aadmi ko token "10" de diya. To paanchon ko range me baant do: tu 1 se 100 karega, tu 101 se
-200, tu 201 se 300, tu 301 se 400. Aise sabko range me baant dunga.
+**Maan lo ek counter apni range ke beech, 400 pe, crash ho gaya:** Arpan: Dikkat ho sakti hai, us range ke baaki number bekaar gaye. Lekin hamare paas 62^7, 3.5 trillion aur bhi hain; kuch bekaar ho jaayenge, koi farak nahi padta, app chalta hi rahega.
+Technical me: range ke bache number kho jaate (gap), koi dikkat nahi; counter number wapas nahi maangta.
 
-**Asli naam:** apni-apni range = counter range (beech ka counter har app server ko number ka dabba deta, dabba khatam hone pe hi agla maangta, to us pe bojh bhi nahi), 5 counter =
-kai app server + aage load balancer.
 
-**Maan lo counter range ke beech (400 pe) crash:** us range ke baaki number bekaar, par 62^7 (~3.5 trillion) hain,
-koi farak nahi, app chalta rahega.
-**Asli naam:** range ke bache number = gap, counter wapas nahi maangta.
-
+<!-- diagram 7 -->
 ```mermaid
 flowchart TB
     X["5 counter, sab apni ginti 1, 2, 3:<br/>do ne token 10 diya"]:::bad
@@ -274,33 +253,37 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style RN fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+<!-- /diagram -->
 
-## 8. 90 TB, ek almari me nahi aata (tukde, hash se baanto)
+**8. 5 saal me mote register me itne token (90 TB) ki wo ek almari me aata hi nahi.**
+Arpan: Shard kar do, chhote-chhote tukde bana do. 90 TB kab tak sambhaal loge, wo bharta jaayega. 10 TB ke 9 tukde kar do, aur sab tukde alag-alag rakh do: ye yahan, ye yahan. Aur use hash se baant do, ki ab kabhi aayega to wo is tukde pe chala jaayega, phir same aayega to phir usi tukde pe.
+Technical me: "chhote tukde, alag almari" = shard, "hash se baant do, same aaye to usi tukde pe" = code ke hash se machine tay.
 
-5 saal me mote register me itne token, 90 TB, ki wo ek almari me aata hi nahi, aur bharta hi jaayega. To shard kar do,
-chhote-chhote tukde bana do: 10 TB ke 9 tukde, aur sab tukde alag-alag almari me. Aur hash se baanto, ki token aaya
-to is tukde pe gaya, phir same aaya to phir usi tukde pe.
+**DB kaunsa:** Arpan: Cassandra, kyunki likhai bahut hai; link pelam pel ban rahe, aur yahan poori consistency chahiye bhi nahi, nature of data hi aisa hai: key-value pair (token -> lamba link). MongoDB, DynamoDB, Cassandra jaisa; Cassandra 90 TB ke liye bhi aaram se scale ho jaayega, saalon tak dikkat nahi. Aur Cassandra apne andar copy (replica) aur node wali consistency khud sambhalta, hamein zyada lena-dena nahi.
+Technical me: key-value + bahut likhai + saalon ka data = Cassandra (wide-column, apne aap replica + scale). Cassandra kyun: data key-value, likhai bahut, aur data me bank jaisi consistency (paisa nikaalna, transaction) chahiye hi nahi.
 
-**Asli naam:** chhote tukde, alag almari = shard, hash se baant do, same aaye to usi tukde pe = code ke hash se
-machine tay.
+**Maan lo almari phir kam padi, 10vi lagani hai:** Cassandra khud sambhalta: token ke hash se tukda wahi tay karta, nayi machine lagao to apne aap thoda data baant deta. Uska andar ka kaam, hamara faisla nahi.
+Technical me: Cassandra andar token ring (consistent hashing) se baantta, official doc: https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html
+Arpan (jab 9 almari bhar gayi, 10vi aayi): Hum mod karte the na, to mod se ab har cheez badal jaayegi. To aisa karo ki in sabko gol chakkar me bitha do. Token ka hash aaya, maan lo 5vi aur 6vi ke beech gira, to jo sabse paas wali almari hai wahan chala jaayega.
+Technical me: "mod se har cheez badal jaayegi" = hash % N me N badla to lagbhag saare token nayi almari pe, "gol chakkar, sabse paas wali" = consistent hashing (ring pe agli machine).
 
-**Maan lo almari phir kam padi, 10vi lagani hai:** ye Cassandra khud sambhalta hai. Token ke hash se tukda wahi tay
-karta, nayi machine lagao to apne aap thoda data baant deta, baaki apni jagah. Ye uska andar ka kaam hai, hamara
-faisla nahi; interview me "Cassandra, partition key = token, machine jodte jao" kaafi.
-**Asli naam:** Cassandra andar token ring pe data baantta hai (official doc: "Dataset Partitioning: Consistent
-Hashing", https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html).
+**Isi pe ek aur raasta (hash ki jagah state ke hisaab se kaato).**
+Arpan: Register 100 page, phir 200, phir 10,000, phir 20,000; kitna mota karenge, ek limit to hogi. To mote register ko tod do: 50,000 page ka hai to 15,000 alag, 15,000 alag, 20,000 alag. Par ab 3 register hain, kisi ko data kahan milega, teeno me dhoondhne me pagal ho jaayenge. To baantte waqt har register ke upar thappa laga do ki isme ye pattern hai. Register baantna achhi baat, par trade-off: dhoondhne me samay lagega, isliye tabhi jab sach me bahut zaroorat ho; aur shard karna AWS ka kaam, hum utna gehra nahi padhte. Scene: mote register pe Delhi, Ambala, Chandigarh, Punjab sab ke log aa rahe. To Delhi wali information kaat ke Delhi ke office me rakh do, Punjab wali Punjab me, UP ki East UP aur West UP me. Ab Punjab ke log Punjab ke register pe, Delhi ke Delhi me, UP ke UP me; dhoondhne ki zaroorat nahi kyunki pata hai kaunsa kis ka.
+Technical me: "region ke hisaab se kaato" = sharding by region (geo-partition), "register pe thappa" = shard ka record (kaunsa data kahan).
 
-**Maan lo 10vi almari:** mod se sab token idhar-udhar ho jaate, isliye almariyan gol chakkar me; hash jahan gire, uske
-sabse paas wali almari.
-**Asli naam:** hash % N ki dikkat -> consistent hashing (ring).
+**Maan lo Ravi ne Delhi me link banaya, Delhi ke register me gaya. Mumbai wala dost kholta hai; counter ke paas bas token aB3x9. Use kaise pata Delhi ke register me jaana hai?**
+Arpan: Ek code bana lo: Delhi ka 01, Punjab ka 03, UP ka koi aur; state 25-30 hain to 30 number kaafi. Ye code link me sabko nahi dikhega, server chupchaap aage ya peeche jod dega. Ek bada bhai beech me baitha hai, uske paas list hai: 01 wali, 02 wali. Use bol diya: tere paas link aayega, uske shuru ke 2 digit uthaana, list se milana kis state ka hai, aur request wahin bhej dena. Mumbai se aaya, shuru me 01 likha, list me 01 = Delhi, to Delhi bhejo. Kahani khatam.
+Technical me: "token me state ka code" = shard key ID ke andar (shard id prefix), "bada bhai list dekh ke bheje" = router / lookup (shard map).
 
+
+<!-- diagram 8 -->
 ```mermaid
 flowchart TB
     T["Token aB3x9<br/>(90 TB, ek almari me nahi aata)"]:::card
     H(["Hash se baanto:<br/>same token, same tukda"]):::pill
     subgraph SH["10 TB KE 9 TUKDE, ALAG-ALAG ALMARI (shard)"]
         direction LR
-        A1[("Almari 1")]:::card
+        A1[("Almari 1<br/>(DB machine)")]:::card
         A2[("Almari 2")]:::good
         A9[("... Almari 9")]:::card
         A1 ~~~ A2 ~~~ A9
@@ -315,25 +298,22 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style SH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+<!-- /diagram -->
 
-**Isi pe ek aur raasta (hash ki jagah state ke hisaab se):** mote register ko state ke hisaab se kaato (Delhi, Punjab, UP), har register pe
-thappa. Token me state ka chhupa code (01 = Delhi); beech ka bada bhai shuru ke 2 digit list se mila ke sahi register
-pe bheje. DB = Cassandra: key-value, likhai bahut, data me bank jaisi consistency (paisa, transaction) chahiye hi nahi, apne aap scale + replica.
-**Asli naam:** geo-partition, shard id ID ke andar, router / shard map.
+**9. Almari number 3 me aag lagi, uske saare token jal gaye.**
+Arpan: Ek almari mat rakho, unhi ki copy bana do. 3 number ki almari gir gayi to uski ek aur copy hai. Ab isme dikkat ye aa sakti hai ki copy thodi si peeche ho sakti hai, to wahi acknowledge wala kar lo: jab tak acknowledge nahi hota wo wahin rahega, "haan bhai maine likh liya, tu acknowledge bhej". Same dikkat ka same solution ho gaya.
+Technical me: "almari ki copy" = 3 copy (replica), "acknowledge aaye tab pakka" = quorum write (W=2).
 
-## 9. Almari number 3 me aag (copy + acknowledge)
+**Aur neeche (poori building / shehar me aag to):** Arpan: Delhi me aag lage to Delhi ka register jal jaaye, pagal thodi hain. Copy alag-alag rakh do: building me Delhi ka register hai, mujhe pata wo bahut important hai, to socho is floor pe ya building me aag lag gayi to dikkat; isliye copy Lajpat Nagar, ISBT, Kashmiri Gate rakh do. Trade-off: copy peeche chal sakti hai, ek link copy tak pahunchte-pahunchte beech me gir gaya; koi baat nahi. Ek link bana, par kaise na kaise DB me save nahi hua: server gira, sab crash, rollback karna pada, link ka kuch ata-pata nahi. To user ko dikha do "tera link bana nahi, dobara banana padega"; aisa nahi ki "save" bol diya aur link khatam. Hamare paas arabon number hain, ek-do number aise bekaar ho bhi jaayein to dikkat nahi, doosra number le ke naya bana lo. Beech me ek central authority rakh dunga: jo bhi aaye pehle uske paas, wo apne paas likhe aur phir ISBT, Kashmiri Gate ko pass on kare. Wo bhi kabhi gir jaaye to uski jagah uski ek aur copy rakh do. Peeche kaam chalta rahega, copiyan update hoti rahengi.
+Technical me: "copy alag-alag jagah" = replica (alag zone), "central authority pehle likhe phir bheje" = coordinator (jo request leta, ring me aas-paas ki copies ko aage bhejta), "copy peeche chale, baad me update" = async replication lag (save fail to user ko "dobara banao", number bekaar gaya to naya number, arabon hain), "authority ki bhi copy" = wo gire to koi aur coordinator ban jaaye. Cassandra andar se kaise karta, wo uska kaam, design ka hissa nahi.
 
-Almari number 3 me aag lagi, uske saare token jal gaye. To ek almari mat rakho, unhi ki copy bana do: 3 gir gayi to
-uski ek aur copy hai. Par isme dikkat ye ki copy thodi peeche ho sakti hai, to acknowledge wala kar lo: "haan bhai
-maine likh liya, tu acknowledge bhej". Jab tak acknowledge nahi aata, tab tak pakka nahi.
 
-**Asli naam:** almari ki copy = 3 copy (replica, alag machine), acknowledge aaye tab pakka = quorum write (W=2).
-
+<!-- diagram 9 -->
 ```mermaid
 flowchart TB
     F["Almari 3 me aag lagi"]:::bad
     W["Naya token likho"]:::card
-    subgraph CP["ALMARI KI COPY"]
+    subgraph CP["ALMARI KI COPY (replica)"]
         A[("Copy A: likh liya")]:::good
         B[("Copy B: likh liya")]:::good
         C[("Copy C: thodi peeche")]:::card
@@ -352,24 +332,18 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style CP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+<!-- /diagram -->
 
-**Aur neeche (poori building / shehar me aag to; central authority):** copy Lajpat Nagar, ISBT, Kashmiri Gate; beech ki authority pehle likhe phir sabko bheje,
-uski bhi ek copy. Copy peeche chale to baad me update. Save hi fail ho gaya (crash, rollback) to user ko "link bana nahi, dobara banao"; ek-do number bekaar gaye to naya number, arabon hain.
-**Asli naam:** central authority = coordinator (request leta, ring me aas-paas ki copies ko bhejta), copy peeche = async
-lag, authority gire to koi aur coordinator.
+**10. Teen copy A, B, C. Arpan ne naya token banaya, A aur B ne haan bola, C peeche. Turant dost ne token dikhaya, counter wale ne C se padha, "nahi mila".**
+Arpan: Humne A, B pe likha na, to token ko do se hi padhwao. Agar do likh rahe hain to do hi padhenge, ek nahi padhega. Mere dost ne token maanga, to use B aur C se padhwao, ya A aur C se, single-single se nahi. Maan lo ek copy peeche bhi reh gayi, to atleast ek ke paas to hai na. C nahi hai to B ke paas to hai.
+Technical me: "do se hi padhwao" = R=2, "ek ke paas to hai" = W + R > 3, ek copy common.
 
-## 10. Dost ne C se padha, "nahi mila" (do se padhwao)
 
-Teen copy A, B, C hain. Arpan ne naya token banaya, A aur B ne haan bola, C peeche reh gaya. Turant dost ne token
-dikhaya, aur counter wale ne C se padha, "nahi mila". Humne do pe likha, to do se hi padhwao, single-single se nahi:
-B aur C se, ya A aur C se. Ek copy peeche reh bhi gayi to atleast ek ke paas to hai, C nahi hai to B ke paas hai.
-
-**Asli naam:** do se hi padhwao = R=2, ek ke paas to hai = W + R > 3, isliye ek copy hamesha common.
-
+<!-- diagram 10 -->
 ```mermaid
 flowchart TB
     W["Arpan ka naya token"]:::card
-    subgraph CP["TEEN COPY"]
+    subgraph CP["TEEN COPY (replica, quorum)"]
         A[("A: haan")]:::good
         B[("B: haan")]:::good
         C[("C: peeche, nahi mila")]:::bad
@@ -387,42 +361,38 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style CP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+<!-- /diagram -->
 
-## 11. Cricket ka token viral (register ki photocopy + counter ki parchi)
+**11. Cricket match ka token viral, 1 crore log ek saath. Sab counter wale us token ke liye ek hi chhote register ki taraf bhaag rahe, wo itna dheema ki uske baaki token bhi atke.**
+Arpan: Sabko wahi token chahiye. To us chhote register ko bahut saaron me baant do. Ek hi kyun hai wo register, 10 register bana de, uski photocopy bana de aur divide kar de. Ek hi chhote register pe ek saath itne log nahi aa rahe, wo bat gaya. 10 kar do, 100 kar do.
+Technical me: "chhote register ki photocopy, divide" = Redis replica (padhai copies me bantna).
 
-Cricket match ka token viral, 1 crore log ek saath. Sab counter wale us token ke liye ek hi chhote register ki taraf
-bhaag rahe, aur wo itna dheema ki uske baaki token bhi atke. Sabko wahi token chahiye, to ek hi register kyun? Uski
-photocopy bana do aur divide kar do, 10 kar do, 100 kar do, bheed bat jaayegi.
+**Maan lo copy 10 ho ya 100, har baar counter wale ko kursi se uth ke register tak jaana padta. 1 crore log, 1 crore chakkar.**
+Arpan: Us counter wale ko bol: ye information tu rakh le, baar-baar uth ke kyun ja raha hai. Ek chhoti parchi le, uska token aur information apne paas rakh. Maan le roz 100 log aaye, ek hi information maang rahe, aur wo mere se pachaas kadam door hai, mujhe har baar wahin jaana padta. Main wo information utha ke apne paas ek page pe likh lunga, aur apni kursi pe baith gaya. Ab koi poochhe to "le bhai, teri information ye rahi". Mujhe dobara kahin jaana nahi padta.
+Technical me: "counter wala apne paas parchi rakhe" = local cache (app server ki memory me garam link kuch second).
 
-**Asli naam:** chhote register ki photocopy, divide = Redis replica (garam key ki padhai copies me bant-ti).
+**Maan lo wahi cricket wala token roz ka garam hai, 10 photocopy pe pelam pel log. Theek 7 baje photocopy 7 pe uski umar khatam, wahan ek lakh log ek saath, ladke ko mote register se aane me 2 second. Aur purani information? Wo to umar khatam hote hi mit gayi.**
+Arpan: Sabse pehle to aisi parchi ko ek hi baar me khatam hone hi nahi dunga. Wo parchi bahut garam hai, us pe pel ke users aa rahe, 1000 nahi, 10 lakh, 20 lakh, pelam pel. To main us pe nazar rakhunga: chhotu dekh, sun idhar aa, iski umar abhi 20 second ki hai, badha de, 60 kar de, phir +60, phir +60. Aur 10 lakh log aa rahe to ek counter pe nahi, 10 pe baant do, aur sabki umar ek saath khatam nahi hogi, kisi me thoda jitter, kisi ki 20 second me, kisi ki 30 me, kisi ki 50 me. Maan lo kuch der ke liye meri nazar hat gayi aur counter 7 ki umar khatam ho gayi, wahan ek saath ek lakh request aa gayi. Kya wo ek lakh DB pe jaayengi? Nahi. Mote register pe bheed lag jaayegi, aur bhi log wahan apna kaam kar rahe, unke liye dikkat hogi. To main bolunga: sab ruko, chupchaap, ekdam shaanti. Chhotu bhai ja, yahan parchi ud gayi hai, mote register me ja, jo ye log maang rahe uska pata la, aur yahan likh de. Chhotu parchi le ke aaya, maine dekha kya likha hai, likh liya: aa jao sab, dobara aa jao. Ek parchi nahi hai. Mujhe pata hai 60 second me ye khatam ho gayi to sab log ek saath aa jaayenge, mujhe dikkat ho jaayegi. To main chupchaap ise ek aur parchi pe likh ke apne paas rakh leta hoon, jisme information pehle se hai. Asli wali khatam ho gayi to bolunga: bhai abhi ke liye ye le lo, thodi der purana dekh lo. Phir wahi chhotu jaayega, la ke parchi dega: le bhai, updated information, ab sab yahan se padh lo. Apni parchi maine phaad ke phenk di, khatam kahani. Purani information app ke cache se, browser ke cache se bhi de sakte; un pe thodi umar rakho, 60 second purana dekh lenge, koi baat nahi, phir wo udega aur log Redis pe aayenge, wahan naya mil jaayega. Chhotu gir gaya to ek aur chhotu laga do: yaar ye to 2 second ka kaam hai, use 10 second ho gaye, chhodo use, tu chala ja. Backoff tab, jab maine 10 chhotu bheje aur ek bhi nahi aaya; tab maanunga ki DB gira. Ek chhotu gira to DB nahi gira, baaki counter to chal rahe hain.
+Technical me: (jawab me "counter 7" = photocopy 7, "10 counter pe baant do" = 10 photocopy, "chhotu" = kadam 5 wala ladka.) "umar badhate raho" = hot key TTL extend (refresh-ahead), "photocopy ki umar alag" = TTL jitter, "chupchaap doosri parchi" = stale copy (soft / hard TTL, stale-while-revalidate; kadam 6 wali purani information yahi), "counter ki parchi chhoti umar" = local cache short TTL, "10 na aayein tab backoff" = backoff: ladka bheja, nahi aaya, thoda ruko, doosra bheja, nahi aaya, ab thoda zyada ruko, teesra bheja; har baar intezaar badhta (1, 2, 4 sec), mote register pe bombard nahi. 10 me se ek bhi na aaye tab maano mota register (DB) gira. Jitter iska hissa nahi: jitter upar wala "photocopy ki umar alag" hai, photocopy ki umar me thoda +1, +2 jod do taaki sab ek saath na mitein.
 
-**Maan lo copy 10 ho ya 100, par har baar counter wale ko kursi se uth ke register tak jaana padta, 1 crore log, 1
-crore chakkar:** to counter wale ko bolo, ye information tu apne paas rakh le, baar-baar uth ke kyun ja raha. Ek
-chhoti parchi pe uska token aur pata likh le aur kursi pe baith ja. Roz 100 log wahi information maangein aur wo
-pachaas kadam door ho, to har baar wahan jaane ki jagah apne page pe likh lo. Ab koi poochhe to "le bhai, teri
-information ye rahi", dobara kahin jaana hi nahi padta.
-**Asli naam:** counter wala apne paas parchi rakhe = local cache (app server ki memory me garam link kuch second).
+**Maan lo 50 counter hain, log kabhi kisi counter pe, kabhi kisi pe (LB). Photocopy 7 pe token nahi mila, to har counter wale ne apna-apna ladka bhej diya. Mote register pe ek ki jagah 50 ladke.**
+Arpan: Sahi baat hai, LB to round robin se bhej raha, kabhi kisi pe, kabhi kisi pe: pehla aaya counter 1 pe gaya, phir counter 10 pe, phir 17 pe, phir 20 pe, aur har counter ka apna chhotu mote register ki taraf bhaaga. To main bahar saamne khada hoon, sab counter ko dekh raha hoon. Ruko sab, hold on, chup, ekdam shaanti banaye rakho. Saare 50 counter ko roko, bas 1 second, kuch nahi. Chhotu log chup ho jao, shor nahi, sabke chhotu apne counter pe jaake chup khade ho jao. Ek counter ka chhotu bulaya: bhai chhotu sun, ye sab pagal hain, inki baat na sun, faltu ki baat kar rahe tere se, idhar aa, mote register pe ja, usme information padi hogi, padh ke sabko de de, khatam kahani. 50 chhotu ko jaane ki zaroorat hi nahi, 50 ki jagah 1 chhotu bhi kaam kar lega. Ek information hi to laani hai yaar, 50 chhotu kyun bhejne? Ek chhotu jaayega, 50 ka apne aap update ho jaayega.
+Technical me: (yahan "counter" = counter wala, yaani hamara server; "chhotu" = us counter ka ladka.) "sabke saamne ek banda, sirf ek ladka" = distributed lock (saajha lock, Redis me ek key: SET NX + umar). Kadam 5 ka ladka sirf ek counter ka ho to 50 counter ke 50 ladke jaate, isliye lock saajha.
+Isi ki doosri kahani: Arpan: 3-4 counter phans gaye to unke chhotu ko bol do: ek chhotu jaayega, information laake teeno chhotuon ke kaan me daal dega, wo apne register me khud update kar lenge; 3 chhotu ek saath nahi jaayenge. Waise 5-10 chhotu ek saath mote register pe jaayein to utna wo sambhal lega, AWS ke server itna sambhalte hain; dikkat ho tabhi.
+Technical me: "ek chhotu laake sabke kaan me" = request coalescing (ek fetch, baaki ko wahi jawab), saajha lock ke saath.
 
-**Maan lo wahi cricket token roz garam, photocopy 7 pe 7 baje umar khatam, aur purani information to mit chuki:** aisa
-token ek saath khatam hi mat hone do: nazar rakho, umar badhate raho (+60, +60), 10 photocopy ki umar alag. Photocopy 7
-pe sab ruko, ladka mote register se laaye. Purani ke liye chupchaap ek aur parchi apne paas; asli mite to wo do, ladka
-nayi laaye to purani phaad do. Counter wale ki apni parchi pe chhoti umar. Ladka gira to doosra; backoff tab jab 10
-ladke bhi na aayein (mota register gira).
-**Asli naam:** hot key TTL extend (refresh-ahead), TTL jitter, stale copy (soft / hard TTL, stale-while-revalidate; kadam 6
-wali purani information yahi), local cache short TTL, DB down pe retry with backoff (ladka gira to thoda ruk ke
-doosra, phir thoda zyada ruk ke teesra, 1, 2, 4 sec; bombard nahi). Jitter = upar wali "photocopy ki umar alag" (+1, +2), backoff se alag.
+**Isi pe ek aur raasta (Redis tak aane hi mat do: local cache + alag dabba):** Arpan: Sabse pehle, link badal nahi raha, to use local cache aur server ke cache me daal dunga, Redis tak aane hi nahi dunga. Redis dheema hua to copiyan jod do. Aur us link ke naam ka ek alag dabba, alag Redis rakh do: bheed wo jhelta rahe, apna baaki kaam chalta rahe. Saath rakha to kuch log apna important mail ya kaam dekh rahe, IPL ki request ke peeche unki dikkat ho jaayegi. 1 crore log aa rahe to ek alag dabba, wo yahin aayenge. Uski 1-2 copy aur rakh do, kharcha badhega, par DB ya poora app girne se bacha lenge. Ye consistent hashing nahi hai, isliye uska yahan koi matlab nahi: link update nahi ho raha, bas match dekhne ke liye. Main bas Redis ki copiyan ek ring me rakhta hoon: ek copy yahan, ek yahan, ek yahan; aas-paas koi gira to agli copy pe aake information pass on kar dega.
+Technical me: "server ke paas" = local cache, "us link ka alag dabba" = hot key isolation (alag Redis / alag pool, baaki link na atkein), "1-2 copy" = hot key replicas, "copiyan ring me, gira to agli copy" = replicas ring pe (failover agli copy pe), consistent hashing nahi.
 
-**Maan lo 50 counter, har counter wale ne apna ladka bheja, mote register pe 50 ladke:** saamne ek banda sabko rokta,
-sirf ek ladka jaata, ek hi information to laani hai.
-**Asli naam:** distributed lock (saajha lock, Redis me ek key: SET NX + umar); kadam 5 ka ladka ek counter ka ho to 50 ladke jaate.
 
+<!-- diagram 11 -->
 ```mermaid
 flowchart TB
     U["Cricket ka token viral:<br/>1 crore log ek saath"]:::bad
-    subgraph CW["COUNTER WALA"]
+    subgraph CW["COUNTER WALA (app server)"]
         P(["Apni parchi, kursi pe hi<br/>(local cache)"]):::pill
     end
-    subgraph PC["CHHOTE REGISTER KI PHOTOCOPY (10, 100)"]
+    subgraph PC["CHHOTE REGISTER KI PHOTOCOPY (Redis replica, 10, 100)"]
         R1[("Photocopy 1")]:::good
         R2[("Photocopy 2")]:::good
     end
@@ -437,45 +407,32 @@ flowchart TB
     style CW fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
     style PC fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+<!-- /diagram -->
 
-**Isi pe ek aur raasta (Redis tak aane hi mat do: local cache + alag dabba):** garam link server ke paas (local cache), aur uska alag Redis dabba + 1-2 copy, taaki
-IPL ki bheed me baaki logon ke link na atkein. 3-4 counter phanse to ek chhotu laake sabke kaan me daale.
-Ye consistent hashing nahi: link badal nahi raha, bas Redis ki copiyan ek ring me, aas-paas koi gira to agli copy pe.
-**Asli naam:** hot key isolation, hot key replicas, request coalescing.
+**12. Kisi ka idea: har aadmi pata apne phone me hi likh le, counter pe aaye hi nahi. Hafte baad pata chala ek token ka pata dhokhe wali site ka hai, use band karna hai, par log seedha phone wale pate pe ja rahe.**
+Arpan: Token radd kar do, ki ab wo galat site pe nahi jaayega. Doosri cheez, aisi kisi cheez ko hum pehle se hi dekh lenge ki wo theek bhi hai: user ko dene se pehle khud check kar lo ki jo wo bana raha hai wo theek bana raha hai ya nahi. Galat bana raha hai to mana kar do banane se, aur us token ko radd kar do.
+Technical me: "token radd" = code band, "dene se pehle khud check" = kaali list (Google Safe Browsing).
 
-## 12. Dhokhe wala pata, log phone se seedha (token radd + phone me likhne mat do)
+**Isi pe ek aur raasta (radd karne ki jagah banate waqt hi jaanch):** Arpan: Link banate hue chupke se khol ke dekh lo ki theek hai ya nahi. Koi mere paas kitaab rakhne aaya, cover chadha rakha; main chupke se dekh lunga kitaab sach me theek hai ya nahi, tab library me rakhunga, warna kal log aake kahenge "kaisi kitaab rakh rakhi, police case kar raha". Kitaab gandi nikli to "nikal beta, chal nikal". Site ka koi score-vagairah peeche hota hoga, wo check kar sakte. Theek hai to user ko do, nahi to mat do.
+Technical me: "banate waqt chupke se dekho" = create time pe URL safety check (reputation / kaali list), "gandi to mat do" = reject.
 
-Kisi ka idea tha ki har aadmi pata apne phone me hi likh le, counter pe aaye hi nahi. Hafte baad pata chala ek token
-ka pata dhokhe wali site ka hai, use band karna hai, par log seedha phone wale pate pe ja rahe. To token radd kar do,
-ki ab wo galat site pe nahi jaayega. Aur aage se pehle hi dekh lo: user ko dene se pehle khud check karo ki jo wo bana
-raha wo theek hai, galat ho to banane se hi mana kar do aur token radd.
+**Maan lo token radd kiya, par log counter pe aa hi nahi rahe. Unhe kaise pata chale? Shuru me phone me likhne dena tha ya nahi?**
+Arpan: Unke phone me wo cheez update kar do na. Wo cookies aur cache se aa rahe honge, to unka cache radd kar do, hata do, to agli request seedha yahan aayegi. Phir (jab poocha ki phone uske haath me hai, tu kaise mitayega): To phir phone pe likho mat na bhai. Phone pe likhega nahi to wo hamare counter pe dobara aayega, dobara hum use theek token de denge. Agar aisi phone wali dikkat hai to uske phone me likhna hi mat do, saaf baat hai.
+Baad me Arpan: aam taur pe phone ke cache ko TTL laga ke invalidate kar sakte hain, lekin hum technical nahi, aam dikkat ka solution bol rahe the, isliye thodi der me samjha.
+Technical me: "phone me likhna hi mat do, har baar counter pe aaye" = 302 + `Cache-Control: no-store` (save hi mat karna; 301 nahi), "phone me likh le" = 301 (browser cache), "phone cache pe TTL" = browser cache ki umar.
+**302 ka doosra fayda:** Arpan: Link ko track bhi karna ho to main 302 redirect kar sakta hoon, aur peeche apna dashboard bhi bana sakta hoon, koi dikkat wali baat nahi.
 
-**Asli naam:** token radd = code band (DB me "band" nishaan, aur chhote register se bhi hatao, warna TTL tak purana pata
-deta rahega), dene se pehle khud check = kaali list
-(Google Safe Browsing).
+**Maan lo dashboard banana hai, har click ginna hai, par user click karke khada na rahe:** Arpan: User ko link do, use free karo, wo chala jaayega. Peeche Kafka, worker, queue rakh do, ye sab peeche apna dashboard banate rahenge. Kuch fail ho jaaye to dead letter queue hai hi, wahan daal do, baad me investigate karke theek kar sakte hain.
+Technical me: "302 se har click hamare paas" = click tracking / analytics, "peeche queue, worker" = async click events (Kafka -> consumer -> dashboard), redirect dheema nahi hota, "fail to alag dabba" = DLQ.
 
-**Isi pe ek aur raasta (radd karne ki jagah banate waqt hi jaanch, library ki kitaab):** link banate waqt hi chupke se kholo, jaise kitaab library me rakhne se pehle
-dekhte; gandi nikle to mat do.
-**Asli naam:** create time pe URL safety check (reputation / kaali list).
 
-**Maan lo token radd kiya, par log counter pe aa hi nahi rahe, phone me likha pata seedha khol rahe:** pehla khayal:
-unke phone ka cache radd kar do, to agli request seedha hamare paas aayegi. Par phone uske haath me hai, main use mita
-nahi sakta. To phone pe likhne hi mat do. Likhega nahi to wo har baar hamare counter pe aayega, aur hum use theek
-token de denge. Agar phone wali dikkat hai to uske phone me likhna hi mat do, saaf baat hai. Aam taur pe phone ke
-cache ko TTL laga ke invalidate kar sakte, lekin hum technical nahi, aam dikkat ka solution bol rahe the.
-**Asli naam:** phone me likh le = 301 (browser cache, hamesha ke liye), phone me likhna hi mat do, har baar counter pe aaye = 302 + `Cache-Control: no-store` (save hi mat karna; 301
-nahi; har click hamare paas, control hamare paas), phone cache pe TTL = browser cache ki umar.
-
-**302 ka doosra fayda:** har click hamare paas aata hai, to link track karke dashboard bana sakte. **Maan lo har click
-ginna hai:** user ko turant link do, ginti peeche Kafka / worker se; fail ho to dead letter queue, baad me theek.
-**Asli naam:** click tracking / analytics, async click events (Kafka -> consumer), DLQ.
-
+<!-- diagram 12 -->
 ```mermaid
 flowchart TB
     T["Dhokhe wali site ka token"]:::bad
-    subgraph CW["COUNTER WALA"]
+    subgraph CW["COUNTER WALA (app server)"]
         K(["Dene se pehle khud check<br/>(kaali list)"]):::pill
-        R(["Token radd kar do"]):::pill
+        R(["Token radd kar do<br/>(code band)"]):::pill
     end
     PH["Phone me likhna hi mat do:<br/>har baar counter pe aaye (302)"]:::good
     T --> K
@@ -488,44 +445,38 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style CW fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+<!-- /diagram -->
 
-## 13. Machine se har second hazaar chit (gate pe bhaga do + har aadmi pe had)
+**13. Ek aadmi ne machine laga di, har second hazaar chit, sab nakli ya dhokhe wale pate. Counter ka number faltu khatam, register bhar raha, asli log atke.**
+Arpan: Jaanch padtaal karenge ki script laga di. Ek-do baar to aisa hoga hi, teen baar, chaar baar, phir pattern pata lag jaayega ki ye banda to har baar aa raha hai, har baar ye drama karke chala jaata hai. To us bande ko rok do, andar ghusne hi mat do, wo kamre me hi nahi aayega, use bahar gate pe hi bhaga do.
+Technical me: "pattern pata lag jaayega, gate pe bhaga do" = WAF block.
 
-Ek aadmi ne machine laga di, har second hazaar chit, sab nakli ya dhokhe wale pate. Counter ka number faltu khatam ho
-raha, register bhar raha, aur asli log atke. To jaanch padtaal karo ki script lagi hai. Ek-do baar, teen baar, chaar
-baar, phir pattern pata lag jaata ki ye banda har baar yahi drama karke chala jaata hai. To us bande ko rok do, kamre
-me ghusne hi mat do, bahar gate pe hi bhaga do.
+**Maan lo pakadne me 3-4 chakkar lagte, tab tak wo laakhon chit de chuka. Shuru se har aadmi ke liye kya niyam?**
+Arpan: Yahan thoda pench hai. Had ek user, ek aadmi pe rakhenge. Kyunki maan lo ek office hai, wahan wo log unke WiFi se aa rahe hain, to dikkat ho jaayegi. Ek group ek saath aa gaya, lekin wo sab legit users hain, unko to token dena padega. To per user pe lagao, group pe nahi: ye ek banda hai, ek baar me 5 hi lagayega, usse zyada nahi.
+Technical me: "per user had, group pe nahi" = rate limit user pe (IP pe nahi), "office ka WiFi" = ek IP ke peeche kai asli user, "5 se zyada nahi" = had paar pe 429.
 
-**Asli naam:** pattern pata lag jaayega, gate pe bhaga do = WAF block.
+**Maan lo bina login ke bhi link banta, script har second hazaar link bana rahi, userId hai hi nahi.**
+Arpan: Sabse pehle login laga do: bina login link nahi. Isse dashboard / tracking bhi chalega. Login nahi rakhna to tracking bhool ja, aur IP pe had: IP ki had thodi zyada, userId ki thodi kam. Script hazaar link nahi bana paayegi. Baar-baar aaye to IP ban. Naye-naye IP se phir bhi aaye to peeche investigate karo, aur ek hi desh se aa raha to us desh ko thodi der WAF ki block list me daal do.
+Technical me: "login laga do" = auth zaroori (tab userId pe had + tracking), "bina login IP pe dheeli had" = anonymous rate limit per IP, "IP ban, desh block" = WAF block list / geo-block.
 
-**Maan lo pakadne me 3-4 chakkar lagte, tab tak wo laakhon chit de chuka, to shuru se har aadmi ke liye kya niyam:**
-yahan thoda pench hai. Had ek aadmi pe rakhenge, group pe nahi, kyunki ek office ke log ek hi WiFi se aate, sab asli
-hain, unko token dena hai. To per user had: ye ek banda hai, ek baar me 5 hi lagayega, usse zyada nahi.
-**Asli naam:** per user had, group pe nahi = rate limit user pe (IP pe nahi), office ka WiFi = ek IP ke peeche kai
-asli user, 5 se zyada nahi = had paar pe 429.
+**Isi pe ek aur raasta (bodyguard: kuch bhi abnormal to roko):** Arpan: Ek aadmi ne script chala di aur lagbhag 1 lakh link le gaya, pata hi nahi laga kaise aaya kaise gaya. To ek bodyguard khada karo: kuch bhi suspicious lage to rok do. Suspicious matlab abnormal: koi script le ke aa raha, ek hi aadmi laakhon request, ek hi IP se 1000 request ek saath. Baar-baar aaye to gala pakad ke jail me daal do, dobara nahi aayega. AWS ke gateway pe hi rok denge, phir block list me.
+Technical me: "bodyguard" = API gateway / WAF pe rate limit + anomaly check, "jail" = IP / user ban.
 
-**Maan lo bina login ke bhi link banta, script har second hazaar link bana rahi, userId hai hi nahi:** sabse pehle
-login laga do, bina login link nahi, isse dashboard / tracking bhi chalega. Login nahi rakhna to tracking bhool ja, aur
-IP pe had lagao: IP ki had thodi zyada, userId ki thodi kam. Script hazaar link nahi bana paayegi. Baar-baar aaye to IP
-ban. Naye-naye IP se phir bhi aaye to peeche investigate karo, aur ek hi desh se aa raha to us desh ko thodi der WAF ki
-block list me daal do.
-**Asli naam:** login laga do = auth zaroori (tab userId pe had + tracking), bina login IP pe dheeli had = anonymous
-rate limit per IP, IP ban, desh block = WAF block list / geo-block.
+&nbsp;
 
-**Isi pe ek aur raasta (bodyguard: kuch bhi abnormal to roko):** ek aadmi script chala ke 1 lakh link le gaya, pata hi nahi laga. To gate pe bodyguard
-khada karo: kuch abnormal lage (script, ek aadmi laakhon request, ek IP se 1000 ek saath) to rok do; baar-baar aaye to
-jail, dobara nahi aayega. AWS ke gateway pe hi rok do, phir block list me.
-**Asli naam:** API gateway / WAF pe rate limit + anomaly check, jail = IP / user ban.
+Poora design = [01_url_shortener.md](01_url_shortener.md)
 
+
+<!-- diagram 13 -->
 ```mermaid
 flowchart TB
     S["Machine: har second hazaar chit"]:::bad
     L["Asli log (office ka WiFi bhi)"]:::card
-    subgraph GT["GATE"]
+    subgraph GT["GATE (API gateway)"]
         W(["Pattern pata laga:<br/>gate pe hi bhaga do (WAF)"]):::pill
         H(["Har aadmi pe had: ek baar me 5<br/>(per user, group pe nahi)"]):::pill
     end
-    C["Counter wala"]:::good
+    C["Counter wala<br/>(app server)"]:::good
     S -. "roka" .-> W
     L --> W
     W --> H
@@ -537,11 +488,12 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style GT fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+<!-- /diagram -->
 
----
 
 ## Poora dhaancha ek nazar me
 
+<!-- diagram poora -->
 ```mermaid
 flowchart TB
     U(["User"]):::pill --> LB["LB"]:::card --> C["Kai counter (app server)<br/>har counter ki apni range"]:::card
@@ -556,7 +508,6 @@ flowchart TB
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
 ```
+<!-- /diagram -->
 
----
-
-Notes (Arpan ke shabd) = [URL_HAND_NOTES.md](URL_HAND_NOTES.md)
+[Hand notes](URL_HAND_NOTES.md)
