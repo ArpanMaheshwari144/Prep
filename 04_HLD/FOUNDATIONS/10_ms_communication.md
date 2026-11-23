@@ -392,6 +392,18 @@ YAAD: saath me call · har service ka timeout + breaker + alag pool · PARTIAL s
 
 ## Service Discovery
 
+**Koi poochhe to aise bolo:**
+```
+Service ke pate badalte rehte hain, isliye service discovery: har service register me apna pata likhwati
+hai, baaki naam se poochte hain; K8s me service naam yahi kaam karta. Bahar se aane wala har request ek
+darwaze, API gateway, se aata hai: wahan login, rate limit, phir sahi service tak.
+```
+
+**Scene:** payment ke 10 server, naya khula, ek gira aur naye pate pe aaya; order service ko kaise pata? Register me har service khulte hi pata likhwaye aur "zinda hoon" bolti rahe; order service naam se poochhe. K8s: pod ek service naam ke peeche. Gateway = ek darwaza, login + rate limit (rate limiter ka gate wala guard), phir sahi service.
+
+**Trap:** gateway ek hi machine pe aur wo gira = poora app band. Gateway ki bhi kai copy, aage LB.
+
+
 ### Problem
 ```
 User Service ka IP kya hai?
