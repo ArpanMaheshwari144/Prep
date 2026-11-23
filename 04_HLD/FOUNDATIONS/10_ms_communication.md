@@ -265,6 +265,18 @@ ASYNC use karo jab:
 
 ## Resilience Patterns (Senior Signal)
 
+**Koi poochhe to aise bolo:**
+```
+Ek service dheemi ho to baaki ko bachane ke teen kaam: timeout, taaki koi zyada der na latke;
+retry with backoff, taaki girti service pe toot na padein; aur circuit breaker, taaki lagaataar fail
+aaye to kuch der call hi band, phir thoda-thoda try karke wapas.
+```
+
+**Scene:** order service sync me payment ko call karti, payment atki, har call 30 sec latak ke fail; order service ke saare thread phanse, jo sirf order dekhne aaye unka bhi kaam ruka. Timeout = 2-3 sec me "nahi hua" (e-com me PSP ki 60 sec had). Backoff = 1, 2, 4 sec ruk ke (URL / cache ka jitter). Circuit breaker = ghar ka fuse: lagaataar fail pe ud jaata, kuch der call band, phir 1-2 call bhej ke dekho, chali to wapas (News: site wapas aayi to thodi-thodi request).
+
+**Trap:** retry bina backoff, sab 3-3 baar turant maarne lage, bojh teen guna, service poori giri. Retry hamesha ruk-ruk ke aur had ke saath.
+
+
 ### 1. Circuit Breaker
 ```
 Problem:
