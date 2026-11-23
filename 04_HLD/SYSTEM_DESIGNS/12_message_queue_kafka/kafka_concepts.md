@@ -285,10 +285,10 @@ dekhenge, uske teen register: **Broker B = leader**, A aur C = copy. 40, 41 pehl
 
 **Chalta hua 3D model (play / pause, aage-peeche, raftaar):** https://claude.ai/artifact/CGG9cnwbxdXjqLQUT2pwZb
 
-![Kafka andar se: producer, teen broker (B leader, A aur C copy), consumer, controller](../00_IMG/12_kafka_andar_se_3d.png)
+![kadam 1](../00_IMG/12_kafka_k01.png)
 
 Baayein producer (send, serializer, partitioner, P1 ka dabba), beech me P1 ka register teen broker pe (peeli patti =
-leader), upar controller, daayein worker 2 aur group coordinator. Model me khabar isi naqshe pe chalti dikhti hai.
+leader), upar controller, daayein worker 2 aur group coordinator. Neeche har hisse me model ke usi kadam ki tasveer hai (tasveer ke daayein us kadam ki baat).
 
 ### 8.1 Producer ke andar: serializer, partitioner
 
@@ -298,15 +298,9 @@ to P1. Arpan ka hash har baar same, isliye Arpan ki har khabar (order, pay, canc
 andar kram bana rehta hai. P0, P1, P2 ke beech koi kram nahi, uski zaroorat bhi nahi. Key na ho to producer khud ek gate
 chun ke batch bharta hai, tab kram ki guarantee nahi.
 
-```mermaid
-flowchart LR
-    A["Order Service<br/>send(key = Arpan, order)"] --> B["serializer<br/>object -> bytes"]
-    B --> C{"partitioner<br/>hash(Arpan) % 3"}
-    C -- "= 1" --> P1[("P1 gate")]
-    C -. "Ravi -> 0" .-> P0[("P0 gate")]
-    C -. "Sita -> 2" .-> P2[("P2 gate")]
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
-```
+![kadam 2](../00_IMG/12_kafka_k02.png)
+![kadam 3](../00_IMG/12_kafka_k03.png)
+![kadam 4](../00_IMG/12_kafka_k04.png)
 
 **Trap:** baad me partition 3 se 4 kiye to `hash(Arpan) % 4` badal sakta hai: Arpan ki nayi khabar doosre gate pe, purani
 aur nayi ka kram toot sakta hai. Isliye partition shuru me soch ke rakhte hain.
@@ -318,14 +312,7 @@ Arpan-pay aur Neha-1 bhi P1 ke dabbe me aa gaye. Dabba tab nikalta hai jab **bha
 jaaye** (`linger.ms`), jo pehle ho. Bus jaisa: har sawari ke liye alag bus nahi, bhar ke chalti hai. `linger.ms` badhao to
 trip kam par har khabar thodi der se; 0 rakho to turant, par trip bahut.
 
-```mermaid
-flowchart LR
-    subgraph PR["Producer ke andar"]
-        D1["P1 ka dabba<br/>Arpan-order, Arpan-pay, Neha-1"]
-    end
-    D1 -- "bhar gaya (batch.size)<br/>ya waqt hua (linger.ms)<br/>tab EK trip me sab" --> B[("Broker B<br/>P1 ka leader")]
-    style D1 fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
-```
+![kadam 5](../00_IMG/12_kafka_k05.png)
 
 ### 8.3 Leader kahan hai (metadata)
 
@@ -334,15 +321,8 @@ kisi bhi broker se **naqsha (metadata)** maangta hai: P0 -> A, P1 -> B, P2 -> C,
 apne gate ke leader pe jaata hai, alag-alag dabbe ek saath, isliye bojh teen machine pe bant jaata hai. Leader badal gaya
 to purana broker bolega "main leader nahi", producer naya naqsha le lega; Order Service ke code me kuch nahi likhna.
 
-```mermaid
-flowchart LR
-    PR["Producer<br/>(pehli baar)"] -- "1. kaun gate ka leader kahan?" --> ANY[("koi bhi broker")]
-    ANY -- "2. naqsha<br/>P0 -> A, P1 -> B, P2 -> C" --> PR
-    PR -- "3. P0 ka dabba" --> A[("Broker A<br/>P0 leader")]
-    PR -- "3. P1 ka dabba" --> B[("Broker B<br/>P1 leader")]
-    PR -- "3. P2 ka dabba" --> C[("Broker C<br/>P2 leader")]
-    style ANY fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
-```
+![kadam 6](../00_IMG/12_kafka_k06.png)
+![kadam 7](../00_IMG/12_kafka_k07.png)
 
 ### 8.4 Leader register ke aakhir me jodta
 
@@ -351,14 +331,7 @@ Neha-1 **44**. Ye number **offset** hai; jo pehle aaya usko chhota number, kram 
 (hissa 7). Khabar pehle OS ki memory (page cache) me jaati hai, disk pe thodi der baad. Leader akela gire to ye khatre me,
 isliye agla kadam.
 
-```mermaid
-flowchart LR
-    D["P1 ka dabba"] --> L["Broker B (P1 leader)"]
-    L --> R["P1 register<br/>... 40, 41 | 42 Arpan-order | 43 Arpan-pay | 44 Neha-1"]
-    R --> M["OS ki memory (page cache)"]
-    M -. "thodi der baad" .-> DK[("disk (.log)")]
-    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
-```
+![kadam 8](../00_IMG/12_kafka_k08.png)
 
 ### 8.5 Copy khud maangti hai, producer ko OK kab
 
@@ -367,21 +340,8 @@ Leader dhakel ke nahi bhejta, **copy khud maangti hai**: A aur C bolte "41 tak h
 hain. Producer ko "OK" kab: `acks=1` = leader ne jodte hi OK (tez, par leader gira to khabar gayi); `acks=all` = ISR ki
 saari copy me likh gaya tabhi OK.
 
-```mermaid
-sequenceDiagram
-    participant P as Producer
-    participant B as Broker B (P1 leader)
-    participant A as Broker A (copy)
-    participant C as Broker C (copy)
-    P->>B: dabba: 42, 43, 44
-    Note over B: register me jod liya
-    A->>B: 41 tak hai, aage do
-    B-->>A: 42, 43, 44
-    C->>B: 41 tak hai, aage do
-    B-->>C: 42, 43, 44
-    Note over B: dono copy 44 tak (ISR poori)
-    B-->>P: OK (acks=all)
-```
+![kadam 9](../00_IMG/12_kafka_k09.png)
+![kadam 11](../00_IMG/12_kafka_k11.png)
 
 ### 8.6 High watermark: consumer ko kahan tak dikhta
 
@@ -389,18 +349,7 @@ Ek pal: B ke paas 44, A ke paas 44, C ke paas 43. **High watermark** = jahan tak
 Consumer ko sirf 43 tak dikhta, 44 chhupa. Kyun? 44 de diya, SMS chala gaya, usi pal B gira, C leader bana jiske paas 44
 hai hi nahi: padhi hui khabar register se gayab. Isliye padhai sirf pakke number tak. C ne 44 le liya to high watermark 44.
 
-```mermaid
-flowchart LR
-    subgraph P1["P1 ki teen copy, ek pal"]
-        direction TB
-        B["Broker B (leader): ... 42, 43, 44"]
-        A["Broker A (copy): ... 42, 43, 44"]
-        C["Broker C (copy): ... 42, 43"]
-    end
-    P1 --> HW["high watermark = 43"]
-    HW -- "sirf 43 tak" --> W["Consumer"]
-    style HW fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
-```
+![kadam 10](../00_IMG/12_kafka_k10.png)
 
 ### 8.7 Consumer: kis gate pe, poll, commit
 
@@ -409,17 +358,9 @@ gate group me ek hi worker ko, taaki kram na toote (hissa 3). Worker 2 leader B 
 B high watermark tak de deta: 42, 43, 44. Worker kaam karta hai (SMS), **kaam ke baad** commit: "44 tak ho gaya". Ye
 bookmark Kafka ke andar `__consumer_offsets` me (hissa 4). Restart ho to 45 se.
 
-```mermaid
-sequenceDiagram
-    participant W as Worker 2
-    participant G as Group coordinator
-    participant B as Broker B (P1 leader)
-    G-->>W: tujhe P1 mila
-    W->>B: poll: 41 ke baad kya?
-    B-->>W: 42, 43, 44 (HW tak)
-    Note over W: SMS bheja (kaam)
-    W->>G: commit 44 (__consumer_offsets)
-```
+![kadam 12](../00_IMG/12_kafka_k12.png)
+![kadam 13](../00_IMG/12_kafka_k13.png)
+![kadam 14](../00_IMG/12_kafka_k14.png)
 
 ### 8.8 Leader gira: Controller naya leader chunta
 
@@ -428,15 +369,8 @@ leader**. Peeche chal rahi copy ko leader nahi banate, warna pakki khabar kho ja
 worker 2 ab A se baat karte hain. Arpan ne cancel kiya: A pe **45**, C ne A se maang liya, worker 2 bookmark (44) se aage
 45 padh leta hai. Kuch nahi khoya, kram wahi.
 
-```mermaid
-flowchart LR
-    B[("Broker B<br/>GIRA")] -. "P1 leader gaya" .-> CT(("Controller"))
-    CT -- "ISR me se: A (44 tak sab)" --> A[("Broker A<br/>P1 naya LEADER")]
-    PR["Producer"] -- "Arpan-cancel = 45" --> A
-    A -- "C maangti: 45" --> C[("Broker C (copy)")]
-    A -- "poll: 44 ke baad" --> W["Worker 2"]
-    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
-```
+![kadam 15](../00_IMG/12_kafka_k15.png)
+![kadam 16](../00_IMG/12_kafka_k16.png)
 
 Pehle kahan dekha: producer -> leader -> copy -> bookmark me khabar kahan khoti = HANDS_ON 04 (event loss) · ek gate ek
 worker = hissa 3 · leader aur copy = hissa 5 · register = hissa 7.
