@@ -1,5 +1,17 @@
 # Microservices Communication
 
+**Koi poochhe to aise bolo:**
+```
+Jahan jawab abhi chahiye aur user ruka hai (login, payment confirm), wahan sync: REST ya gRPC.
+Jahan kaam peeche ho sakta hai (SMS, email, video banana) ya ek khabar kai service ko chahiye,
+wahan async: Kafka jaisi line. Isse ek service dheemi ho to baaki nahi rukti.
+```
+
+**Scene (e-com se):** Ravi ka ghee ka order pay hua. "Paisa kata?" payment service se = sync, jawab bina order aage nahi. SMS = async, 10 sec der chalegi; order service khabar line me daal ke aage (Kafka stadium).
+
+**Trap:** order service SMS ko bhi sync call kare aur SMS company dheemi ho, to Ravi ka "order ho gaya" bhi atka rahega (Kafka kadam 1: ek dheema to sab dheema). Jo kaam user ke rukne layak nahi, use sync mat banao.
+
+
 > **NAV** — KYA: services aur client baat kaise karte (sync/async, server-push real-time, saga, gateway). lagta hai: [payment](../SYSTEM_DESIGNS/06_payment_system/06_payment_system.md) · [notification](../SYSTEM_DESIGNS/04_notification_system/04_notification_system.md)
 
 > **HLD Topic 10 — How services talk in distributed systems**
