@@ -252,6 +252,9 @@ Mumbai se; dono ka mere paas aaya, merge karke dono ko ek jaisa dikha diya. Upar
 **Maan lo 1000 log ek doc pe:** OT sirf editors ka, 900 viewer ho to bhi dikkat nahi. **Asli naam:** editors pe transform,
 viewers ko fan-out.
 
+**Aur neeche (badlaav doosre server tak kaise):** 50 lakh connection ek server nahi jhelta, LB ke peeche kai server. Main server 1 pe likh raha, Ravi server 2 pe padh raha, to server 1 badlaav Redis pub/sub pe daale, wo saare server pe bhej de.
+**Asli naam:** WebSocket servers + Redis pub/sub fan-out.
+
 ```mermaid
 flowchart TB
     A["Arpan (server A)"]:::card
@@ -288,6 +291,11 @@ to disk se wapas (Kafka jaisa, line disk pe). Phir bhi sab gira to kuch second k
 likh lega. Aisa sochenge to design hi nahi banega: poori consistency chahiye to 2 kyun, 500 copy rakho, aur 500 ka
 paisa bhi do. Interviewer dekhna chahta hai main sochta kaise hoon, har copy girana design nahi.
 **Asli naam:** disk pe bhi = Redis AOF (persistence), kuch second chhoot = chhota data loss window, durability vs cost trade-off.
+
+**Aur neeche ("Saved" se pehle Redis gira):** Saved se pehle Redis gira to bhi kho nahi jaata, bhejne wale ke paas op id hai, Redis aaye to wahi dobara bhej dega; dobara aaya to 1b wala niyam.
+**Asli naam:** bina ack ke op dobara bhejo, op id se idempotency.
+**Isi pe ek aur raasta (thodi der local me):** Ya Redis gira to thodi der server ke local cache me rakh lo, phir Redis me daal do.
+**Asli naam:** temporary local buffer.
 
 ```mermaid
 flowchart TB

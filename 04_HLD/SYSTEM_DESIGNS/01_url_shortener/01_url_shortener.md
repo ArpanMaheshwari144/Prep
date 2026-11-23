@@ -134,6 +134,11 @@ poochhe jaane wale = garam / baar-baar padhe link. Pehle Redis, nahi mila to DB 
 ko alag Redis. **Maan lo Redis gira:** copy (replica); copy bhi giri to fail open, sab DB se, itne me Redis wapas khada.
 **Asli naam:** memory volatile -> durable DB; Redis replica; fail open (cache bypass).
 
+**Aur neeche (beech me Kafka kyun nahi):** Beech me Kafka nahi lagega. Kafka producer-consumer ke liye, cheez aage bhejne ke liye; yahan DB ka bhaar uthane wala dabba chahiye, to cache.
+**Asli naam:** read path pe cache, queue nahi.
+**Aur neeche (copy bhi giri, bheed seedha DB pe):** Redis ki copy bhi giri aur saari bheed DB pe aane lagi, to load shedding: jo link garam hain unhe pehle Redis me bharo, baaki ko thodi der roko.
+**Asli naam:** load shedding + garam keys pehle warm-up.
+
 ```mermaid
 flowchart TB
     U["Har second 1 lakh log:<br/>token dikhao, pata do"]:::card
@@ -294,6 +299,9 @@ Hashing", https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.
 sabse paas wali almari.
 **Asli naam:** hash % N ki dikkat -> consistent hashing (ring).
 
+**Isi pe ek aur misaal (toofan me paas wala shelter):** Gaadi chala raha hoon, toofan aaya, to sabse paas wala shelter dhoondhunga. Waise hi token ring pe ghoom ke sabse paas wali almari me jaata hai. 10vi almari aayi to sirf uske aas-paas ke token hilte hain, saari almari dobara nahi baantni padti.
+**Asli naam:** consistent hashing, sirf pados ki keys move.
+
 ```mermaid
 flowchart TB
     T["Token aB3x9<br/>(90 TB, ek almari me nahi aata)"]:::card
@@ -365,6 +373,9 @@ dikhaya, aur counter wale ne C se padha, "nahi mila". Humne do pe likha, to do s
 B aur C se, ya A aur C se. Ek copy peeche reh bhi gayi to atleast ek ke paas to hai, C nahi hai to B ke paas hai.
 
 **Asli naam:** do se hi padhwao = R=2, ek ke paas to hai = W + R > 3, isliye ek copy hamesha common.
+
+**Isi pe ek aur raasta (link banate hi Redis me):** Link banate hi use Redis me bhi daal do. Copy peeche chal rahi ho to bhi dost ka click Redis se mil jaayega, "nahi mila" nahi aayega.
+**Asli naam:** create pe hi cache me likho (write-through), replica lag se bachav.
 
 ```mermaid
 flowchart TB
@@ -469,6 +480,9 @@ nahi; har click hamare paas, control hamare paas), phone cache pe TTL = browser 
 **302 ka doosra fayda:** har click hamare paas aata hai, to link track karke dashboard bana sakte. **Maan lo har click
 ginna hai:** user ko turant link do, ginti peeche Kafka / worker se; fail ho to dead letter queue, baad me theek.
 **Asli naam:** click tracking / analytics, async click events (Kafka -> consumer), DLQ.
+
+**Aur neeche (band link pe chetavni):** 302 isliye ki har click pehle hamare paas aata hai, to band ya dhokhe wale link pe chetavni ka page dikha dete. 301 hota to browser yaad rakh leta aur seedha dhokhe wali site pe le jaata.
+**Asli naam:** 302 = har click server se, warning page dikha sakte; 301 = browser cache, control khatam.
 
 ```mermaid
 flowchart TB

@@ -92,6 +92,9 @@ lena-dena hi nahi. Jo ab use nahi ho raha aur RAM me pada hai, wo befaltu ki jag
 **Asli naam:** RAM khaali karo = eviction, jo purana aur kam use ho raha wo nikaalo = LRU (Least Recently Used; andar
 HashMap + doubly linked list, sab O(1), wahi LC 146).
 
+**Aur neeche (LRU kyun, LFU kyun nahi):** LRU chunta hoon, LFU nahi, kyunki banana aasaan aur jo der se nahi chhua wo kaam ka nahi.
+**Asli naam:** LRU = haal me kab chhua, LFU = kitni baar chhua.
+
 ```mermaid
 flowchart TB
     P["Priya viral: jagah nahi"]:::bad
@@ -287,6 +290,9 @@ To main parchi pe likh lunga "mere paas 1 se 10 tak hai", isse bada koi maange t
 Range ke andar wala, jaise 500, nahi mila to null de do; null ka kya karna wo uska engineer if-else lagaye. Aur koi 500 baar-baar maange (range ke andar, par hai nahi), to main parchi pe likh lunga "500 = null"; ab koi bhi 500 maange, DB jaaunga hi nahi.
 **Asli naam:** "nakli id, har baar andar (DB) bhaagna" = cache penetration. "parchi pe range, bahar wala wahin wapas" = request aate hi id range check (input validation), cache aur DB se pehle; galat id na cache tak pahunchti na DB tak. (Yahan parchi = range ki parchi, cache wali key nahi.) Range ke andar par nahi mila = null ko bhi cache me rakho (negative caching, thodi der ki umar), taaki baar-baar wahi nakli id DB tak na pahunche.
 
+**Aur neeche (beech ki id delete ho gayi to):** Beech ki row delete ho gayi to wo design ki dikkat nahi, engineering ki galti, script chala ke theek kar denge; MySQL me id kram se banti.
+**Asli naam:** auto-increment, isliye range check chalta; beech ka delete = data fix.
+
 ```mermaid
 flowchart TB
     U["Priya viral: 10,000 log,<br/>sab miss"]:::bad
@@ -343,6 +349,9 @@ ek server ke andar ho to 50 server ke 50 chhotu jaate.
 
 **Maan lo pehle se pata hai (Diwali sale, iPhone launch, World Cup):** dev pehle se cache taiyaar rakhte, isliye kam toot-ta.
 **Asli naam:** cache pre-warm.
+
+**Isi pe ek aur raasta (thodi der main se padhwao):** Priya ne naam badla to copy tak pahunchne me time lagta, thodi der Priya ko main machine se padhwa do.
+**Asli naam:** read-your-own-writes (thodi der primary se).
 
 ```mermaid
 flowchart TB

@@ -132,6 +132,9 @@ hata ke seat wapas FREE, pay aa gaya to HELD -> BOOKED.
 **Maan lo umar Redis TTL me kyun nahi:** DB column kaafi; Redis abhi early stage, ek aur system sambhalna, gira to
 keys ka kya. **Asli naam:** hold_until column, ek hi sach.
 
+**Aur neeche (5 minute hi kyun):** 5 minute isliye kyunki GPay se pay karne me itna waqt lagta; aur BMS sach me aisa karta, ek baar maine timer me pay nahi kiya to seat chali gayi.
+**Asli naam:** hold ki umar = aam pay ka waqt; BMS countdown = hold_until.
+
 ```mermaid
 flowchart TB
     A["Arpan parchi laga ke<br/>chai peene gaya<br/>(hold)"]:::bad
@@ -200,6 +203,9 @@ SQL primary (saari HOLD / BOOKED query yahin), dekhne wale ki alag diary = read 
 jitne andar baaki line me = virtual queue (waiting room), ye teri parchi agla number tera = token (andar aane ka pass, umar 10 minute). Replica thoda peeche ho to chalega: map
 sirf dikhata hai, faisla primary ki query karti hai. Server badhane se line wala kaam nahi hota, kyunki jhagda seat ki
 chand rows pe hai, ek row ek hi jagah lock hoti hai; bheed ko register tak pahunchne se pehle hi rokna padta hai.
+
+**Aur neeche (seat sirf dekhne wale bahut):** Bahut log sirf seat dekhte hain, book nahi karte; unke liye DB pe jaane ka matlab nahi, seat Redis se dikhao. Seat book hui to Redis se hata do, peeche job map saaf karti rahe. Job band ho to bhi dikkat nahi, shart query me hai (hold_until <= now), job bas map saaf karti. Redis sirf dekhne ke liye, faisla hamesha SQL ka: Ravi ko Redis me seat khaali dikh gayi tab bhi kadam 3 wali query chalegi aur SQL bolega seat book ho chuki.
+**Asli naam:** seat map Redis cache (book pe hatao + sync job), sach = SQL, faisla conditional UPDATE.
 
 ```mermaid
 flowchart TB
@@ -308,6 +314,9 @@ lautao", wo bank se poochh ke lautata aur hume batata. 1 minute ke baad aaya "pa
 **Maan lo PSP chup:** 30-55 sec ke baad FAILED; Razorpay bank se 3 din tak poochhta, der se kata to webhook
 (late_authorized). Alag column "kitni der baad kata" = refund job + Razorpay ki der ka saboot (roz ka pattern).
 **Asli naam:** polling vs webhook, late authorisation, auto-refund, late debit column.
+
+**Aur neeche (doosre PSP pe seedha kyun nahi):** Doosre PSP pe bhejne me paisa do baar kat sakta, use pata nahi pehla pending hai; isliye pehla FAILED likho, baad me kata to refund.
+**Asli naam:** failover me double charge ka khatra -> FAILED + der se kata to refund.
 
 ```mermaid
 flowchart TB

@@ -479,6 +479,9 @@ Isi Maan lo me aur neeche ("zinda hoon" kaafi nahi): "zinda hoon" kaafi nahi, po
 10-20; 2-3 chhotu extra bhejo, madad karein. Naye chhotu pehle uski parchi dekhein ("30 khatam") aur 31 se lagein.
 **Asli naam:** heartbeat + progress report, bada chunk = data skew, madad = work stealing / split, parchi = checkpoint (DB / Redis).
 
+**Isi pe ek aur raasta (jo khaali hai wahi utha le):** Ya naya banda lao, ya jo 9 apna kaam khatam kar chuke unme se ek ko bhejo; wo parchi dekh ke wahin se uthaye jahan 7 ruka tha.
+**Asli naam:** khaali worker kaam utha le (work stealing), checkpoint se aage.
+
 ```mermaid
 flowchart TB
     W7["Worker / consumer 7 beech me gira"]:::bad
@@ -558,6 +561,9 @@ link ki umar 5 minute, uske baad kisi ke liye nahi khulega. Leak bhi hua to 11wa
 jaati, wo AWS ka kaam.
 **Asli naam:** CDN ke paas bhi taala = CDN signature jaanchta (signed URL / cookie, AWS ka kaam), 10 user id = server allow list dekh
 ke hi link deta, 5 minute umar = short expiry. Hamara faisla: kisko aur kitni der ka.
+
+**Isi pe ek aur misaal (ghar ke darwaze pe papa):** Ghar mera, par main US me hoon, aur CDN bhai Mumbai me darwaze pe khada hai; log mere paas aayenge hi nahi. Isliye papa (CDN) ko bol diya: ye 10 dost andar aane do, saath aaye 100 nahi.
+**Asli naam:** origin door, check edge pe (signed URL / cookie).
 
 ```mermaid
 flowchart TB

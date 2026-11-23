@@ -102,6 +102,9 @@ mujhe bata, phir main bataunga kitni request hain. Ek ne bataya 1, doosre ne 2, 
 **Asli naam:** hisaab main rakhunga = central counter (Redis), har request pe ek hi jagah ginti +1. Redis isliye ki
 RAM me hai, ~1 ms, aur data sirf 500 MB.
 
+**Isi pe ek aur misaal (mall ka bodyguard, diary):** Aakhri had server tay nahi karta, peeche ek aadmi ki diary karti hai: har request pe ek ghatao, 0 hua to bas.
+**Asli naam:** sab server ek hi jagah shared atomic DECR.
+
 ```mermaid
 flowchart TB
     subgraph FA["5 AADMI (10 server), har ek ki apni ginti"]
@@ -136,6 +139,9 @@ burst allow. Sirf 2 number rakhne padte (kitne bache, aakhri baar kab), wahi 500
 
 **Maan lo aur tareeke:** fixed window, sliding window, leaky bucket bhi hain; token bucket popular, burst allow, simple.
 **Asli naam:** fixed / sliding window, leaky bucket, token bucket.
+
+**Aur neeche (token bharta kaun):** Token bharne ki koi background job nahi, 10 crore dabbe kaun bharega. Request aayi tab hisaab: pichhli baar se kitna time beeta, utne token jodo (had tak), phir ek nikaalo.
+**Asli naam:** lazy refill, tokens = min(max, tokens + (abhi - pichhla) x rate).
 
 ```mermaid
 flowchart TB
@@ -177,6 +183,9 @@ gira. Counter bina umar ke pada rahega, Ravi hamesha ke liye atka. Isliye +1 aur
 **Maan lo Lua hi atki:** Lua chalte waqt poora Redis atakta, isliye script chhoti, loop nahi; ek machine lakh command /
 sec, zyada to shard.
 **Asli naam:** Lua atomic par blocking, Redis cluster.
+
+**Isi pe ek aur misaal (10 chhotu, ek token):** Ravi ka ek hi token mere paas hai. 10 chhotu ek saath aaye to ek-ek karke jawab: pehle ko token, baaki ko "khatam, ghar jao".
+**Asli naam:** atomic check + DECR.
 
 ```mermaid
 flowchart TB
@@ -243,6 +252,9 @@ kaun ye system ka alag hissa dekhe.
 
 **Asli naam:** dono khule = fail-open; bouncer 5-5 karke bheje = har gateway apni memory me kachchi ginti se had lagaye
 (local fallback limiter: Redis jitni sahi nahi, thodi dheeli, par darwaza poora khula nahi). Redis ki replica pehle bachav. Shaq wala (2-3 sec me 5 OTP) = sirf us user pe block, sab pe nahi.
+
+**Isi pe ek aur misaal (club ka bodyguard):** Redis gira to bodyguard ko bolo: VIP ne reservation karwa rakha hai, unhe mat roko; aira-gaira nathu-khaira ko roko.
+**Asli naam:** had ke andar wala jaata, sirf shaq wala rukta.
 
 ```mermaid
 flowchart TB
@@ -320,6 +332,9 @@ dheeli had, insaan hazaar baar nahi, pattern notice = script pattern pakadna, IP
 **Maan lo login aur baaki ki had:** login ki apni had, baaki ki alag; paar hui to 429. **Maan lo had asli user pe bhaari
 (JP Morgan me 5 galat password pe khud atka):** permanent hal nahi; sabse achha passkeys / Authenticator, bot ke paas code hi nahi.
 **Asli naam:** per-endpoint limit, false positive lockout, MFA / passkeys.
+
+**Aur neeche (bot cloud machine se aata):** Bot cloud machine ki IP leke aata hai. AWS / Azure ki IP ka pattern ghar ya office ke WiFi se alag hota hai, aur unki list bhi public hai. Login / password page pe cloud ki IP WAF me band. Login pe IP ki kadi had kaam ki nahi: office me 100 log ek IP se, TCS jaise me lakhon.
+**Asli naam:** datacenter IP ranges WAF block list; IP had kamzor nishaan, asli deewar MFA / passkey.
 
 ```mermaid
 flowchart TB

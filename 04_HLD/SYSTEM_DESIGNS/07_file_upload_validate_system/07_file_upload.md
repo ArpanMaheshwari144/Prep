@@ -207,6 +207,11 @@ file VALIDATING pe atki:** sweeper job har minute, 10 min se status nahi badla t
 **DB kaunsa:** file S3 me, DB me sirf metadata (naam, type, waqt, size, status); seedhi row, NoSQL ka point nahi -> SQL (RDS Postgres).
 **Asli naam:** S3 + RDS Postgres (metadata / status).
 
+**Aur neeche (status poochhne wale bahut):** Padhna zyada hai to DB ki read replica bhi laga sakte, Redis ke saath.
+**Asli naam:** Redis + read replica.
+**Isi pe ek aur raasta (atki files dobara try):** Status DB me hai, yahi uska fayda. Ek worker VALIDATING pe atki files nikaale, dekhe kaunsi fail hui, aur unhe dobara try kare, file hamesha atki na rahe.
+**Asli naam:** atke VALIDATING (purana updated_at) pe retry job.
+
 ```mermaid
 flowchart TB
     S3[("File S3 me aa gayi")]:::card
@@ -291,6 +296,9 @@ faisla phir bhi hamara server karega. S3 aur CDN sirf rakhte aur dete hain. Kamr
 pehle ID dikha, server dekhe file kiski hai, tabhi token de. Bina token ke CDN file nahi deta.
 **Asli naam:** CDN pe bhi signed URL / signed cookie (hamara server sign kare, CDN signature jaanche, CloudFront signed URL).
 
+**Aur neeche (sirf link ki umar chhoti karna kaafi nahi):** Sirf link ki umar chhoti karne se fayda nahi, Ravi ne thodi der bhi dekh li to cheez uske paas chali gayi; isliye pehle haq dekho, tabhi token.
+**Asli naam:** expiry sirf leak ka nuksaan ghatata, asli rok = authorization.
+
 ```mermaid
 flowchart TB
     R["Ravi: 1043 maanga<br/>(Priya ka statement)"]:::bad
@@ -321,6 +329,9 @@ statement jaisi 1-2 minute, baaki 5-6 minute. Umar hamara faisla, S3 ka nahi. Us
 zimmedari, system pe har cheez nahi thop sakte.
 
 **Asli naam:** umar = presigned URL expiry (file ki sensitivity pe: bank statement jaisi 1-2 minute, baaki 5-6 minute). Umar hamara faisla, S3 ka nahi.
+
+**Aur neeche (app pehle hi bata de):** Private file ho to app bol de "ye private hai, link share mat karna"; phir bhi baante to chhoti umar sambhal legi.
+**Asli naam:** share warning (UI) + expiry backup.
 
 ```mermaid
 flowchart TB
@@ -361,6 +372,9 @@ lo hi mat = INFECTED -> file hatao (quarantine / delete) + user ko batao.
 
 **Maan lo complete aaya hi nahi:** file pehle temporary jagah, pass ho tab asli jagah.
 **Asli naam:** quarantine / temp prefix.
+
+**Isi pe ek aur raasta (scanner pe health check):** Scanner pe health check lagao, jaise LB me karte the: har 5-10 second dekho wo theek hai ya nahi. Teen baar jawab nahi aaya to use dead maan lo aur doosre scanner pe bhejo, taaki ek scanner pe sab na tike. Scanner wali company ko alert bhejo, aur kyun gira wo logs (CloudWatch / Papertrail) se pata chalega.
+**Asli naam:** health check + had (3 fail = dead), backup scanner, alert + logs.
 
 ```mermaid
 flowchart TB

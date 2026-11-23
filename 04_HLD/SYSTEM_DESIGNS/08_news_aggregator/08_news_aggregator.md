@@ -108,6 +108,9 @@ wo dobara malik nahi, leader wali baat (purana leader wapas aaye to leader nahi 
 **Maan lo koi site band / bahut dheemi:** har site ka fetch parallel, timeout + circuit breaker, peeche queue backlog jhele.
 **Asli naam:** per-source timeout + circuit breaker.
 
+**Aur neeche (site wapas aayi to):** Site 10 minute baad wapas aayi to ekdam poora load nahi daalna; pehle thodi-thodi request, chal gayi to dheere-dheere poora. Tab tak doosre source se khabar le aao.
+**Asli naam:** circuit breaker half-open, dheere-dheere load badhao.
+
 ```mermaid
 flowchart TB
     X["Chhotu akela: ek chakkar 3 ghante,<br/>8:55 wali 11 baje<br/>(fetcher)"]:::bad
@@ -212,6 +215,11 @@ scroll pe aur load. Login hai to pasand ki, login nahi to aam khabar.
 **Asli naam:** user preference store, keyword-based classification, fan-out on write, pagination / infinite scroll,
 logged-out default / trending feed.
 
+**Aur neeche (chunav ke din sab ek hi khabar padh rahe):** Server badhao, aage LB. Yahan likhna kuch nahi, sab wahi result padh rahe, to primary pe hit bekaar, replica se padhwao.
+**Asli naam:** read replica.
+**Aur neeche (chhotu kya laaye):** Chhotu ko sirf pasand wali khabar nahi bolunga, wo saari laata; chhaantna peeche, phir pasand se feed.
+**Asli naam:** fetcher pasand nahi dekhta, category baad me (ingest ke baad classification).
+
 ```mermaid
 flowchart TB
     U["9 baje 1 crore log"]:::card
@@ -245,6 +253,9 @@ rahengi.
 
 **Asli naam:** pehli baar DB, phir parchi = cache-aside, 5 sec, 10 sec baad dobara = retry + backoff, ek site band =
 baaki pe asar nahi.
+
+**Aur neeche (parchi khaali aur lakhon log ek saath):** Sab DB pe nahi jaayenge: ek hi request DB jaaye, saari khabar la ke parchi me rakh de, baaki ruk ke parchi se le lein.
+**Asli naam:** cache stampede -> single flight / lock.
 
 ```mermaid
 flowchart TB
@@ -359,6 +370,9 @@ A-C, B-C, koi bhi do.
 **Asli naam:** do me likho, do se padho = quorum, N=3, W=2, R=2 (W + R > N, isliye jo bhi do padho, kam se kam ek me
 taaza). Redis copies khud ye nahi karti; app do me likhe aur do se padhe (Cassandra jaisa DB ye khud karta).
 
+**Isi pe ek aur misaal (aunty aur teen bande):** Teen bande A, B, C. Khabar sirf A ko di, aunty B se poochh ke chali gayi, B ke paas thi hi nahi. A-B dono ko di to aunty C se poochh gayi. Isliye do me rakho, do se poocho: aunty kisi bhi do se poochhe, ek ke paas jawab zaroor.
+**Asli naam:** quorum, 3 me W = 2, R = 2.
+
 ```mermaid
 flowchart TB
     W["Garam khabar"]:::card
@@ -465,6 +479,9 @@ requirement se: user kitne second ruk sakta.
 jaise kitaab ke peeche ka index ("Kohli" -> khabar 3, 7, 9), isliye poori likhai nahi padhni padti (inverted index); sabki jad = stemming / synonyms (analyzer); ek baat
 ke 5 paper = clustering (kadam 3 jaisa); dono me ek saath = dual write; peeche-peeche = async indexing (eventual
 consistency); sync fail = alert + reindex.
+
+**Aur neeche (ES kya deta):** Worker khabar likhte hi ES ka index bhi update kare. Search pe ES sirf milti khabar ke number deta, poori khabar register ya parchi se.
+**Asli naam:** ES doc id lautata, content DB / cache se, index async.
 
 ```mermaid
 flowchart TB

@@ -70,6 +70,9 @@ nahi:** thread gira to sab gaya, kaam disk pe chahiye. **RabbitMQ kyun nahi:** p
 hamein khabar rehni chahiye. **Kab nahi:** jab jawab turant chahiye (REST). **AWS pe:** broker, copy AWS sambhale.
 **Asli naam:** durable log vs in-process thread, RabbitMQ delete-on-ack, sync REST, managed Kafka.
 
+**Aur neeche (seedha call karne me dikkat):** Order Service khud SMS, Fraud, Analytics ko call kare aur sabka jawab aane tak ruke, to ek dheema to sab dheema, SMS ka Fraud se lena-dena nahi; isliye beech me line.
+**Asli naam:** sync fan-out = coupling, beech me queue se alag karo.
+
 ```mermaid
 flowchart TB
     T["Ticket counter<br/>(Order Service)"]:::card
@@ -104,6 +107,9 @@ gum nahi hua, kuch dikkat nahi.
 offset (har padhne wale ka bookmark), line dobara shuru, koi gum nahi = restart ke baad offset se wahin se padhna,
 khabar padhne se mit-ti nahi, 7 din disk pe rehti hai (retention). Fraud dheema hua to bas wo peeche rahega, SMS nahi
 rukega.
+
+**Maan lo Fraud me bug tha, 2 din galat kaam kiya:** Khabar 7 din disk pe padi rehti, bug theek karo, Fraud ka bookmark 2 din peeche, dobara padh lega; baaki ka apna bookmark, nayi service shuru se padh legi.
+**Asli naam:** retention ke andar offset reset (replay).
 
 ```mermaid
 flowchart TB
@@ -142,6 +148,9 @@ shipped.
 
 **Isi pe ek aur misaal (exam hall):** bahar kaise bhi, andar roll number ki fix seat = partition ke andar kram. **Maan lo ek user
 garam:** key me number jodo, alag tukde; keemat: us user ka kram sirf tukde ke andar. **Asli naam:** per-partition order, key salting.
+
+**Maan lo baad me gate 10 se 20 karne pade:** Ginti badalte hi hash badalta, A7 ki khabar doosre gate pe, thodi der kram toot sakta; isliye shuru me hi zaroorat se zyada gate.
+**Asli naam:** partition badle to keys doosri jagah, isliye pehle se zyada partition.
 
 ```mermaid
 flowchart TB
@@ -270,6 +279,9 @@ bhejo taaki wo bhi dobara na bheje.
 **Maan lo exactly once:** Kafka sirf Kafka se Kafka tak deta, SMS bahar ki cheez, isliye pakki id se dohra phenko.
 **Asli naam:** EOS sirf Kafka ke andar, bahar at-least-once + dedup.
 
+**Aur neeche (pehle kaam ya pehle bookmark):** Pehle bookmark phir kaam aur beech me gira to khabar kho gayi (at most once); pehle kaam phir bookmark to dobara aayegi (at least once). Khona nahi, isliye pehle kaam, dobara aaye to pakki id se phenk do.
+**Asli naam:** at-most vs at-least once + idempotent consumer.
+
 ```mermaid
 flowchart TB
     C["Checker ne punch kiya,<br/>register se pehle gira<br/>(consumer, idempotency)"]:::bad
@@ -334,6 +346,9 @@ ko pehle hi rokna (validation: Order Service bhejne se pehle number aur format j
 
 **Maan lo Arpan ki "pay" khabar DLQ me gayi, peeche ki "cancel" chal gayi, kram toota:** Cinema hall ka ticket checker: 3 logon ka group aaya (order, pay, cancel). Ek gadbad nikla to use jaane nahi dunga. Ya to teeno mat jao, ya pehla (order) chala gaya to baaki do (pay, cancel) abhi mat jao; jab wo theek ho jaaye to pay aur cancel ek saath dobara jaayenge. Isse kram nahi tootega. Jaise ticket pe likha A1, A2, A3: A1 andar chala gaya, A2 ruk gaya, to A3 ko A2 ki seat pe nahi bhejunga. A2 jaayega to A3 jaayega, A2 cancel to A3 bhi ruka. Stadium me do saathi aaye, ek ki jeb me hathiyar nikla: dono bahar, ek nahi. Pehle PAY, phir CANCEL; PAY nahi hua to dono hi nahi, dono baad me line me.
 **Asli naam:** "3 logon ka group" = ek order ki khabar (key = order id, wahi 3b wali, ek partition), "gadbad wala atka to baaki do bhi ruko" = us key ki aage ki khabar bhi park karo (DLQ + same key ki parking), theek hone pe kram se dobara; baaki users chalte rahein. Kafka kram ek partition ke andar pakka deta hai; yahan kram humare consumer ne toda, jab pay ko DLQ bhej ke cancel pe aage badh gaya.
+
+**Isi pe ek aur misaal (bhandara):** Ek-do baar dobara dekh liya, teesri baar bhi wahi to bouncer ko de do "dobara line me na dikhe". Bhandare jaisa: mohalle ke ladke baar-baar prasad lene aate, do-teen baar notice karunga, phir apne bande ko bulaunga.
+**Asli naam:** backoff ke saath retry, phir DLQ.
 
 ```mermaid
 flowchart TB
@@ -407,6 +422,9 @@ peeche kyun ja raha hai."
 
 **Doosri baat:** bookmark aage mat khiskao; retention se pehle khabar kahin aur daal do, ya retention badhao.
 **Asli naam:** offset skip nahi, archive / alag topic, retention.ms.
+
+**Aur neeche (10 checker par gate ek):** Ek gate pe 10 checker bekaar, gate bhi baanto, 10 gate har pe ek checker, bahar admin sabko apne gate bheje.
+**Asli naam:** ek group me ek partition ek consumer; 1 partition + 10 consumer = 9 khaali.
 
 ```mermaid
 flowchart TB

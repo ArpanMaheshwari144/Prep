@@ -151,6 +151,13 @@ paaye = doosra order reject.
 cancel karo (poore 35,000 wapas, phir nikaalo), ya modify karke chhota karo (15,000 ka order, 20,000 free). Paisa uska hai, cancel ka raasta hamesha khula.
 **Asli naam:** withdraw sirf available se (balance - blocked), warna reject; cancel = hold wapas available me; modify order = hold chhota.
 
+**Isi pe ek aur misaal (IndMoney):** Maine IndMoney pe Adani ke share kharide; paisa hold dikha, "order processing", aur share agle din mile.
+**Asli naam:** funds block + PENDING, asli app me.
+**DB kaunsa: SQL ya NoSQL?** Paisa aur share ka mamla hai, consistent chahiye: paise kate to share aaye, dono saath, credit hoga to debit bhi. Isliye ACID wala DB; gire to replica.
+**Asli naam:** ACID = SQL (Postgres / MySQL); book RAM me tezi ke liye, sach trade DB me.
+**Isi pe ek aur misaal (Maggi ke 10 packet):** Dukaan pe 10 Maggi maangi, mere paas 4 hain. Turant 10 chahiye to "mere se mat le, kisi aur se le", hold wapas; intezaar kar sakta hai to "4 le ja, 6 aayenge to bata dunga".
+**Asli naam:** partial fill vs Fill-or-Kill.
+
 ```mermaid
 flowchart TB
     T["TCS order 35,000<br/>(book me pada)"]:::card

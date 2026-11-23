@@ -293,6 +293,9 @@ usi se guzrein. Main beech me baitha hoon: tune bhej diya, tu bhi bhej raha? Nah
 **Asli naam:** had apni taraf se = rate limit, saanjha dabba = shared token bucket (Redis, 100 token / sec, sab worker / consumer
 wahi se token lete), token nahi mila = khabar line me wait, khoti nahi.
 
+**Isi pe ek aur raasta (pehla jawab, har worker ki apni had):** Har worker / consumer pe rate limit: had ko workers me baant do, har ek 10 bheje, baaki line me ruke; lambi line koi dikkat nahi.
+**Asli naam:** had / N har worker ko (static split); worker kam-zyada hon to bigadta, isliye shared token bucket.
+
 ```mermaid
 flowchart TB
     X["20 worker / consumer apni raftaar:<br/>milake 300/sec, company ki had 100"]:::bad
@@ -413,6 +416,9 @@ OTP ka worker / consumer DB me pasand padhne jaaye kyun? Offer thodi bhej rahe. 
 
 **Maan lo SMS band tha phir bhi raat 2 baje chala gaya:** bhejne se pehle channel on + quiet hours bhi dekho.
 **Asli naam:** opt-in + quiet hours check.
+
+**Aur neeche (pasand DB se hi kyun):** Pasand user kabhi bhi badal sakta hai; ek ghante pehle band ki aur purani copy se padha to SMS chala jaayega, aur wo bolega "maine to band kar rakha tha, kyun aa raha". Isliye pasand DB se.
+**Asli naam:** cache me rakhi pasand purani ho sakti (opt-out ke baad bhi SMS), sach DB.
 
 ```mermaid
 flowchart TB
