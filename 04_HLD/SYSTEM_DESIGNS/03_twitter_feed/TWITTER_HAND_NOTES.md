@@ -202,6 +202,10 @@ Technical me: "ID se seedha page" = hydration (ID se poori post, key se lookup; 
 Arpan: Tweet feed me push ho chuka tha to Ravi ko kuch second ke liye dikh sakta hai; Twitter ko baad me pata chala user ne delete kar diya, to wahan likh dega "the user has deleted this post". Ye aasaan cheez hai.
 Technical me: tweet store me deleted flag (soft delete); kuch second purana dikhna = eventual consistency; "deleted" ki patti = tombstone; 8000 dabbe saaf nahi karne padte.
 
+**Isi pe ek aur misaal (Elon):**
+Arpan: Elon kabhi tweet karta hai, phir delete kar deta hai; thodi der ke liye dikh jaata hai, isi beech log screenshot le lete hain. Yahi hota hai.
+Technical me: delete ke baad kuch der dikhna = eventual consistency.
+
 **17. Ravi roz dost Amit ke tweet pe like / comment karta. Amit ka tweet 3 ghante pehle aaya, uske baad 40 aur, Amit ka neeche dab gaya; upar wo jinhe Ravi kholta bhi nahi.**
 Arpan: Ye ek tarah recommendation hi hai. Peeche kaunsa algorithm / machine learning, wo design ka hissa nahi. Par main roz Amit ki photo like kar raha, baaki 40 ko bas dekh ke chhod deta. Instagram roz dekh raha ki ye ladka Amit ko like karta, to pehli photo Amit ki dikhayega. YouTube me bhi same: MrBeast ki video roz dekhun to wahi suggest karega. Unka kaam hi yahi: main jitni der rahun, unki kamaai badhe.
 Technical me: "jisse zyada judta wo pehle" = ranking (kisse baat karta, post kitni nayi, likes), "algorithm design ka hissa nahi" = ranking model alag; hum list dete, ranked list lete. Netflix 6 ("tere liye") se juda.
