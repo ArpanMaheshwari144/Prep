@@ -77,6 +77,10 @@ Arpan: Saans phoolne wali baat, traffic baant do, ek dabba nahi. Money Heist ka 
 Technical me (TV ki taraf se): ek dabba dheema / band to TV ke paas 2-3 dabbon ke naam, doosre se le (client failover).
 Technical me: "2-3 dabbon ke naam" = server player ko kai CDN dabbon ki list deta, ek atka to player khud agle pe (client side failover).
 
+**Isi Maan lo me aur neeche (dabba slow ho to doosri copy se):**
+Arpan: Money Heist famous hai to use ek dabbe me mat rakho, aur dabbon me bhi rakh lo, paise ki kami thodi hai. Maan lo ek dabbe me bahut important paper hai jo sabko dikhana hai; bheed itni ki dikha nahi pa raha, to us dabbe ki bahut saari copy bana ke line se laga dunga, bheed baant di. Ab ek dabba slow hai to koi baat nahi, doosre dabbe se le le, intezaar kyun kar raha.
+Technical me: garam cheez kai CDN dabbon pe, player ke paas list, ek slow to agle se (client side failover).
+
 **5. Ravi ne TV pe 27 minute dekha, band kiya. Subah metro me phone pe khola, 27:00 se chahiye.**
 Arpan: Ravi ka account hai, Netflix account se yaad rakhta. Jaise kisi ke 10,000 rakhe, parchi pe uska naam likha, bus stand pe mila to pehchaan liya. TV, phone, kahin bhi khole, yaad wahi. Parchi DB me.
 Technical me: "account se yaad" = watch position user ke account pe server me, device me nahi, "parchi DB me" = persistent store.
