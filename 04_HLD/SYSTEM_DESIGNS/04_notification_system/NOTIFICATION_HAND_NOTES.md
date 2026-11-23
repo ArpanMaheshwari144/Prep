@@ -122,6 +122,10 @@ Arpan: Main SMS company ko nahi bol sakta ki had badha do, unhe baaki bhi dekhna
 Saanjha kar lo, ek jagah se sabko guzaaro. Mere paas 10 log hain, apna-apna kaam kar rahe: tumne kitna kara? +2. Tumne? +2. Tumne +3, +4. Ek saanjha rakh lo jise sab dekhenge. Main beech me baitha hoon: tune ek bhej diya, tu bhi bhej raha? Nahi, tu nahi bhejega. Ek aisa dabba hona chahiye jisme ye baat likhi ho.
 Technical me: "company ko had badhane nahi bol sakte" = had apni taraf se, "ruk-ruk ke, lambi kataar" = bachi khabar line me wait, "saanjha dabba, sab usi se guzrein, ginti likhi" = shared token bucket (Redis).
 
+**Isi pe ek aur raasta (pehla jawab, har worker ki apni had):**
+Arpan: Har worker / consumer pe rate limit: had ko workers me baant do, har ek 10 bheje, baaki line me ruke; lambi line koi dikkat nahi.
+Technical me: had / N har worker ko (static split); worker kam-zyada hon to bigadta, isliye shared token bucket.
+
 **7. Company ne turant "OK, le liya" bola, record me SENT likha. Par Arpan ka phone network se bahar, SMS pahuncha hi nahi. Support record dekh ke bolta "humne to bhej diya tha".**
 Arpan: Company bolegi "tera SMS le liya, abhi bheja nahi". Phir company dheere-dheere aage badhegi aur ek time ke baad humein batayegi: ya to bhej diya ya nahi bheja. Do hi raaste, teesra nahi, aur ye "le liya" ke baad hai: sent ya fail. Sent kara to apni parchi me likh lo "sent", fail hua to apni parchi me "fail" likh do.
 Technical me: "le liya, abhi bheja nahi" = ACCEPTED, "ek time ke baad company batayegi" = webhook, "sent ya fail" = DELIVERED / FAILED, "apni parchi me likh lo" = Tracking DB.
@@ -152,6 +156,10 @@ Technical me: Kafka me message priority nahi -> priority = alag topic + alag con
 Arpan: Wo baar-baar wahi cheez padh raha hai, use apne paas rakh lo. Diwali pe sabko ek hi offer jaata hai, "Diwali 50% off", sabko wahi message. Mote register pe baar-baar kyun jaun? Main apne paas rakh lunga: le, ye ek hi tera hai, isme bas naam badalna hai, bhejta ja.
 User ki pasand uski settings hai, wo DB me hai, DB se hi uthayenge. Hamari company bhi aise hi karti hai, email template banate waqt code DB se khud padh leta hai. Crore users hain, sabki setting cache me kaise rakhenge. OTP itna late nahi hoga, kyunki OTP ki priority pehle se set hai, worker / consumer bhi hain, rate limit bhi hai. Baad me kabhi lage ki faltu queries bahut badh gayi, tab sochunga cache me rakhun, aur tab har user ke liye.
 Technical me: mota register = DB · "ek hi saancha apne paas, bas naam badlo" = template cache, "settings DB se hi" = user preference DB se, "OTP ki priority pehle se" = OTP ki alag line, "queries badhi tab cache" = naap ke hi preference cache.
+
+**Aur neeche (pasand DB se hi kyun):**
+Arpan: Pasand user kabhi bhi badal sakta hai; ek ghante pehle band ki aur purani copy se padha to SMS chala jaayega, aur wo bolega "maine to band kar rakha tha, kyun aa raha". Isliye pasand DB se.
+Technical me: cache me rakhi pasand purani ho sakti (opt-out ke baad bhi SMS), sach DB.
 
 **Maan lo SMS band tha phir bhi raat 2 baje SMS chala gaya:**
 Arpan: Bhejne se pehle preference dekho: channel on hai ya nahi, quiet hours hain ya nahi, template; phir bhejo.

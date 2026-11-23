@@ -74,6 +74,10 @@ Technical me: "number plate jaise akshar bhi, combination" = base62 (0-9, a-z, A
 Arpan: Unhe chhote register me rakh lo. Jo bhi log dekhne aa rahe, bas usi register se wapas kar do. Mota register to rakh lo, koi dikkat nahi, ek chhota pehla register rakh lo, usme wahi wale token rakh lo. Jo log bahut baar poochhne aa rahe, wo wahin se chale jaayenge.
 Technical me: "chhota pehla register" = cache (Redis), "mota register" = DB, "bahut baar poochhe jaane wale" = garam / baar-baar padhe link.
 
+**Aur neeche (beech me Kafka kyun nahi):**
+Arpan: Beech me Kafka nahi lagega. Kafka producer-consumer ke liye, cheez aage bhejne ke liye; yahan DB ka bhaar uthane wala dabba chahiye, to cache.
+Technical me: read path pe cache, queue nahi.
+
 **Maan lo pooche server ki memory me hi kyun nahi rakh lete, baar-baar DB kyun:**
 Arpan: Sabse seedha design ek server aur ek DB: link aaya to code banao, DB me likh do; kisi ne khola to DB se bada link de do, 302 redirect. Memory me rakhne ka sawaal aa sakta hai, par server restart ho gaya to link saare gaayab ho jaayenge, isliye memory me nahi rakh sakte.
 Technical me: "restart pe gaayab" = server ki memory volatile, link ko pakki jagah (DB) chahiye; tez padhne ke liye alag chhota register (Redis).
@@ -81,6 +85,10 @@ Technical me: "restart pe gaayab" = server ki memory volatile, link ko pakki jag
 **Maan lo chhota register (Redis) gir gaya:**
 Arpan: Redis gira to copy (replica) rakh lo. Copy bhi giri to aakhri kaam fail open kar do: sab dobara DB se aa jaayega. DB to zinda hai, wahan se aa jaayega, itne me Redis dobara khada ho jaayega aur waise hi chal padega.
 Technical me: Redis replica; dono gire to fail open (cache chhod ke seedha DB se), Redis wapas aate hi phir cache se.
+
+**Aur neeche (copy bhi giri, bheed seedha DB pe):**
+Arpan: Redis ki copy bhi giri aur saari bheed DB pe aane lagi, to load shedding: jo link garam hain unhe pehle Redis me bharo, baaki ko thodi der roko.
+Technical me: load shedding + garam keys pehle warm-up.
 
 **4. Chhota register bhar gaya. Naya token likhna hai, kisi purane ko hatana padega. Kise?**
 Arpan: Purana hata denge, hamare paas kuch tareeke hain. Time laga lo na, ki ye token itni der tak rahega register me, uske baad hata do. Ya jo sabse kam use hua, jo ab poochha hi nahi ja raha, wo token hata do. Wo likha hi kyun ja raha hai, hatao use.
@@ -119,6 +127,10 @@ Technical me: "mod se har cheez badal jaayegi" = hash % N me N badla to lagbhag 
 Arpan: Register 100 page, phir 200, phir 10,000, phir 20,000; kitna mota karenge, ek limit to hogi. To mote register ko tod do: 50,000 page ka hai to 15,000 alag, 15,000 alag, 20,000 alag. Par ab 3 register hain, kisi ko data kahan milega, teeno me dhoondhne me pagal ho jaayenge. To baantte waqt har register ke upar thappa laga do ki isme ye pattern hai. Register baantna achhi baat, par trade-off: dhoondhne me samay lagega, isliye tabhi jab sach me bahut zaroorat ho; aur shard karna AWS ka kaam, hum utna gehra nahi padhte. Scene: mote register pe Delhi, Ambala, Chandigarh, Punjab sab ke log aa rahe. To Delhi wali information kaat ke Delhi ke office me rakh do, Punjab wali Punjab me, UP ki East UP aur West UP me. Ab Punjab ke log Punjab ke register pe, Delhi ke Delhi me, UP ke UP me; dhoondhne ki zaroorat nahi kyunki pata hai kaunsa kis ka.
 Technical me: "region ke hisaab se kaato" = sharding by region (geo-partition), "register pe thappa" = shard ka record (kaunsa data kahan).
 
+**Isi pe ek aur misaal (toofan me paas wala shelter):**
+Arpan: Gaadi chala raha hoon, toofan aaya, to sabse paas wala shelter dhoondhunga. Waise hi token ring pe ghoom ke sabse paas wali almari me jaata hai. 10vi almari aayi to sirf uske aas-paas ke token hilte hain, saari almari dobara nahi baantni padti.
+Technical me: consistent hashing, sirf pados ki keys move.
+
 **Maan lo Ravi ne Delhi me link banaya, Delhi ke register me gaya. Mumbai wala dost kholta hai; counter ke paas bas token aB3x9. Use kaise pata Delhi ke register me jaana hai?**
 Arpan: Ek code bana lo: Delhi ka 01, Punjab ka 03, UP ka koi aur; state 25-30 hain to 30 number kaafi. Ye code link me sabko nahi dikhega, server chupchaap aage ya peeche jod dega. Ek bada bhai beech me baitha hai, uske paas list hai: 01 wali, 02 wali. Use bol diya: tere paas link aayega, uske shuru ke 2 digit uthaana, list se milana kis state ka hai, aur request wahin bhej dena. Mumbai se aaya, shuru me 01 likha, list me 01 = Delhi, to Delhi bhejo. Kahani khatam.
 Technical me: "token me state ka code" = shard key ID ke andar (shard id prefix), "bada bhai list dekh ke bheje" = router / lookup (shard map).
@@ -134,6 +146,10 @@ Technical me: "copy alag-alag jagah" = replica (alag zone), "central authority p
 **10. Teen copy A, B, C. Arpan ne naya token banaya, A aur B ne haan bola, C peeche. Turant dost ne token dikhaya, counter wale ne C se padha, "nahi mila".**
 Arpan: Humne A, B pe likha na, to token ko do se hi padhwao. Agar do likh rahe hain to do hi padhenge, ek nahi padhega. Mere dost ne token maanga, to use B aur C se padhwao, ya A aur C se, single-single se nahi. Maan lo ek copy peeche bhi reh gayi, to atleast ek ke paas to hai na. C nahi hai to B ke paas to hai.
 Technical me: "do se hi padhwao" = R=2, "ek ke paas to hai" = W + R > 3, ek copy common.
+
+**Isi pe ek aur raasta (link banate hi Redis me):**
+Arpan: Link banate hi use Redis me bhi daal do. Copy peeche chal rahi ho to bhi dost ka click Redis se mil jaayega, "nahi mila" nahi aayega.
+Technical me: create pe hi cache me likho (write-through), replica lag se bachav.
 
 **11. Cricket match ka token viral, 1 crore log ek saath. Sab counter wale us token ke liye ek hi chhote register ki taraf bhaag rahe, wo itna dheema ki uske baaki token bhi atke.**
 Arpan: Sabko wahi token chahiye. To us chhote register ko bahut saaron me baant do. Ek hi kyun hai wo register, 10 register bana de, uski photocopy bana de aur divide kar de. Ek hi chhote register pe ek saath itne log nahi aa rahe, wo bat gaya. 10 kar do, 100 kar do.
@@ -172,6 +188,10 @@ Baad me Arpan: aam taur pe phone ke cache ko TTL laga ke invalidate kar sakte ha
 Technical me: "phone me likhna hi mat do, har baar counter pe aaye" = 302 + `Cache-Control: no-store` (save hi mat karna; 301 nahi), "phone me likh le" = 301 (browser cache), "phone cache pe TTL" = browser cache ki umar.
 **302 ka doosra fayda:**
 Arpan: Link ko track bhi karna ho to main 302 redirect kar sakta hoon, aur peeche apna dashboard bhi bana sakta hoon, koi dikkat wali baat nahi.
+
+**Aur neeche (band link pe chetavni):**
+Arpan: 302 isliye ki har click pehle hamare paas aata hai, to band ya dhokhe wale link pe chetavni ka page dikha dete. 301 hota to browser yaad rakh leta aur seedha dhokhe wali site pe le jaata.
+Technical me: 302 = har click server se, warning page dikha sakte; 301 = browser cache, control khatam.
 
 **Maan lo dashboard banana hai, har click ginna hai, par user click karke khada na rahe:**
 Arpan: User ko link do, use free karo, wo chala jaayega. Peeche Kafka, worker, queue rakh do, ye sab peeche apna dashboard banate rahenge. Kuch fail ho jaaye to dead letter queue hai hi, wahan daal do, baad me investigate karke theek kar sakte hain.

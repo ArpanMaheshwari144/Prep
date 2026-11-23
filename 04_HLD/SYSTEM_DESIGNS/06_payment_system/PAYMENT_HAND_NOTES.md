@@ -81,6 +81,10 @@ Technical me: "apne paas ek parchi" = payment table me status, "INITIATED ho gay
 Arpan: Beech me ek aisa banda bitha do jo humein batata rahe: PSP hua ya nahi hua, bata do. Beech me ek aisa system bithao jo permanent dono se baat karta rahe: haan bhai, hua, nahi hua.
 Technical me: "beech me banda jo batata rahe hua ya nahi" = poochne wala job (PENDING utha ke PSP se status poochhe), "permanent dono se baat karta rahe" = PSP aur hamare DB ka milaan.
 
+**Aur neeche (pakka jawab ke teen raaste):**
+Arpan: Pakka jawab ke teen raaste: PSP ka event, beech ka banda atki parchi pe PSP se poochhe, aur raat ko PSP ki file aur apne register ki file milao. Atka ya ulta mila to dobara bhejo ya paisa wapas.
+Technical me: webhook + status poll + raat ka milaan (settlement file vs payment table, nightly reconciliation).
+
 **Maan lo PSP ka message raste me kho gaya, ya beech wala banda bhi der se pahuncha.** (BookMyShow 6c wala hi jawab)
 Arpan: PSP ko onboard karte hi bol do: "jaise hi paisa kaato, mujhe ek chhota sa event bhej do", jaise S3 file aane pe event bhejta hai. Event aaya matlab paisa kata, hum haath utha ke bol dete "mil gaya". Event raste me kho gaya to wo PSP ka HLD hai, wo dobara bhejega; tab tak beech wala banda poochhta rahe. Na hum andhe, na wo.
 Technical me: "paisa katte hi chhota event" = webhook (PSP callback, sign jaanch ke), "mil gaya" = ack (2xx), "dobara bhejega" = webhook redelivery, beech wala banda = status job backup ke liye.

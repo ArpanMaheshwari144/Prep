@@ -152,6 +152,10 @@ Technical me: "kai machine, kaam baanto" = video ke hisse, transcoding workers /
 Arpan: Har worker / consumer ka status. 9 ne bata diya, ek nahi bata paaya to dekhunga, heartbeat: "tu hai kya?" Jawab nahi to ise ghar bhejo, naya banda. Uske paas parchi: "maine yahan tak kar liya", naya wahin se uthaye. Save se pehle gira to shuru se.
 Technical me: "har worker / consumer ka status" = DB me hisson ki ginti, "tu hai kya" = heartbeat, "naya banda" = job dobara (retry), "yahan tak parchi" = checkpoint.
 
+**Isi pe ek aur raasta (jo khaali hai wahi utha le):**
+Arpan: Ya naya banda lao, ya jo 9 apna kaam khatam kar chuke unme se ek ko bhejo; wo parchi dekh ke wahin se uthaye jahan 7 ruka tha.
+Technical me: khaali worker kaam utha le (work stealing), checkpoint se aage.
+
 **Maan lo worker / consumer 7 zinda hai, heartbeat aa rahi, par 1 ghante se ek hissa bana raha, baaki 2 minute me khatam.**
 Arpan: Uski wajah se mera kaam ruk raha. "Tu thoda rest le, ye tera replacement, bata kahan tak chhoda, ye wahin se karke dega."
 Technical me: "atka to replacement" = timeout pe slow worker / consumer ka hissa doosre ko, "kahan tak chhoda" = checkpoint.
@@ -181,6 +185,10 @@ Technical me: "copy paas me rakho" = CDN (edge cache).
 **Maan lo private video (10 dost), Ravi ne CDN link bade WhatsApp group me daal diya.**
 Arpan: Taala-chaabi mere paas. Kamra mera, 10 log hi aa sakte. 11wa aaye, dost ka dost ho, access nahi.
 Technical me: "taala-chaabi maalik ke paas" = har request pe access check, "10 log hi" = allow list (sirf link kaafi nahi).
+
+**Isi pe ek aur misaal (ghar ke darwaze pe papa):**
+Arpan: Ghar mera, par main US me hoon, aur CDN bhai Mumbai me darwaze pe khada hai; log mere paas aayenge hi nahi. Isliye papa (CDN) ko bol diya: ye 10 dost andar aane do, saath aaye 100 nahi.
+Technical me: origin door, check edge pe (signed URL / cookie).
 
 **Maan lo tukde CDN se seedha jaate hain, CDN ko allow list pata hi nahi, aur link leak ho gaya.**
 Arpan: CDN ke paas bhi taala-chaabi ho, har request US tak nahi jaayegi. In 10 ki user id do: ye 10 aayein to link do, nahi to mat do. Aur link ki umar 5 minute, uske baad kisi ke liye nahi khulega. Leak bhi hua to 11wa nahi ghusega. Mohar kaise jaanchi jaati, wo AWS ka kaam.

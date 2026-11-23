@@ -73,9 +73,25 @@ Technical me: "ek key laga de" = idempotency key (client_order_id), "chaabi ka t
 Arpan: Arpan ko ye paise kharch karne hi na de. Bank me EMI bharte hain na, bahut log bolte "bank ne mera paisa hold kar rakha, na kharch kar sakta na kahin kar sakta". Salary account pe EMI daal rakhi to wo paisa hold ho jaata hai. Same to same yahin kar lo, paisa hold kar lo, wo kahin bhi kharch nahi kar paayega.
 Technical me: "paisa hold kar lo, jaise EMI me bank" = funds block (available se kam, blocked me), "kharch hi na kar paaye" = doosra order reject.
 
+**Aur neeche (dekhna aur rokna ek hi query me):**
+Arpan: "Paise hain?" dekhna aur hold karna ek hi query me, taaki beech me doosra order na ghuse.
+Technical me: UPDATE ... available -= 35000, blocked += 35000 WHERE available >= 35000; 0 row = reject.
+
+**Isi pe ek aur misaal (IndMoney):**
+Arpan: Maine IndMoney pe Adani ke share kharide; paisa hold dikha, "order processing", aur share agle din mile.
+Technical me: funds block + PENDING, asli app me.
+
+**DB kaunsa: SQL ya NoSQL?**
+Arpan: Paisa aur share ka mamla hai, consistent chahiye: paise kate to share aaye, dono saath, credit hoga to debit bhi. Isliye ACID wala DB; gire to replica.
+Technical me: ACID = SQL (Postgres / MySQL); book RAM me tezi ke liye, sach trade DB me.
+
 **Maan lo Arpan ko 10 TCS chahiye, 35,000 hold; Ravi sirf 4 bech raha, 4 mile, 6 baaki.**
 Arpan: Main beech me baitha hoon. Arpan bola 10 TCS chahiye, Ravi sirf 4 bech raha. Yahan design choice hai, FR dekho: kya Arpan ko 10 abhi turant chahiye? Haan to 4 bhi mat do, sauda hi nahi, aur uska hold wapas kar do. Intezaar kar sakta hai to Ravi ke 4 abhi de do, baaki 6 ka hold rehne do; jab koi aur 6 bechne aayega, main use de dunga, Arpan ko kuch karna nahi.
 Technical me: "4 abhi, 6 baad me" = partial fill (order PARTIALLY_FILLED, baaki 6 order book me), "10 turant warna nahi" = all-or-nothing (Fill-or-Kill, hold wapas), FR tay kare. Partial me 4 ka paisa kata (14,000), baaki 6 ka hold (21,000) jaari.
+
+**Isi pe ek aur misaal (Maggi ke 10 packet):**
+Arpan: Dukaan pe 10 Maggi maangi, mere paas 4 hain. Turant 10 chahiye to "mere se mat le, kisi aur se le", hold wapas; intezaar kar sakta hai to "4 le ja, 6 aayenge to bata dunga".
+Technical me: partial fill vs Fill-or-Kill.
 
 **Maan lo Arpan ne 3500 pe 10 TCS ka order daala, TCS 3600 pe hi raha, 3:30 baje market band, order bika nahi, Arpan cancel bhool gaya.**
 Arpan: Main beech me baitha hoon. Bechne wale sab TCS 3600 maang rahe, Arpan bola mujhe 3500 ka chahiye, jab koi 3500 pe bechne aaye mujhe de dena. Theek hai, par pehle paise de ja, warna har koi aake bolega "mere liye rakh lena". Din bhar koi 3500 pe nahi aaya, koi baat nahi, paisa hold pe hi rahega, kyunki app usi liye bana hai. Wo order daal ke so gaya to bhi theek. Agle din TCS 4000 pe chala gaya, to saaf baat: lena hai to le, nahi lena to order cancel kar, paisa wapas tere paas. 3500 pe koi bechne aaya to tab de dunga.
