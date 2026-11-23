@@ -105,6 +105,8 @@ pe DB query nahi maarunga, warna DB baith jaayega.
 (Cassandra), har write pe DB query nahi = har akshar pe DB nahi. Cassandra kyun: op log me sirf aage jodna, padhna
 hamesha "is doc ke op, version ke kram se"; key `(docId, version)`; likhai bahut tez, machine jodo to data khud bat-ta;
 join / transaction ki zarurat nahi, isliye Postgres nahi.
+**DB kaunsa (Arpan):** Docs me padhna kam, likhna pelam pel, har banda har akshar pe likh raha. Cassandra me leader
+nahi, machine jodo to data apne aap bat jaata. Copy sirf padhai badhati, likhai ke liye tod ke baanto.
 
 **Maan lo trip plan doc 2 saal purana, op log me 50 lakh op; Ravi ne aaj khola to kya server saare op shuru se lagayega:** Ye Banking ke master register wali baat hai: May wale ko 1 May ka balance chahiye to shuru se nahi jodte, master register se uthate hain. Waise hi har kuch hazaar op pe poore doc ki ek photo save kar lo. Ravi doc khole to sabse nayi photo uthao aur sirf uske baad ke thode op lagao. Doc turant khulega.
 **Asli naam:** poore doc ki photo = snapshot, photo + baad ke op = snapshot + op log replay.
