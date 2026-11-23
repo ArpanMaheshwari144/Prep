@@ -43,6 +43,15 @@ Ravi  -->  LB  -->  normal dukaan (aata, daal)          sale ki alag dukaan (ghe
 Arpan: E-commerce ka matlab: stock dekho aur screen pe dikhao, phir cart me daalo, pay karo, order pakka. Stock pehle aana chahiye. "Ek order me kai cheez, ek khatam to baaki bhejo" FR me nahi, usse design nahi badalta (Hello Interview: FR / NFR me wahi jo design me farak laaye); sale wale se badalta hai. Sale me 500 hai to 500 ko hi (Apple store wali kahani, apni banayi isliye aaj bhi yaad).
 Technical me: FR = browse / stock -> cart -> checkout -> order; NFR = consistency (oversell nahi), alag sale service, payment latka na rahe.
 
+**Isi pe ek aur raasta (round me FR / NFR):** e-com ka kaam: stock dekho, cart me daalo, pay karo; sale aaye to sale ki
+bheed sambhaalo. NFR: har user ka cart alag, aur ek dabba do log na le paayein. Asli dhyaan inventory aur shelf pe. Har
+shehar ka apna store, Blinkit ke dark store jaisa, par apna physical store bhi. Dhaancha: user -> CDN -> LB -> kai server ->
+DB me stock -> cart -> alag pay service -> PSP (Razorpay) ya COD.
+**Asli naam:** cart user id pe, dark store = paas ka store, pay = alag service + PSP, COD = payment method.
+
+**API (Arpan):** API app pe hi, shelf pe koi nahi. `GET /stocks` (saara stock), `GET /stocks/{id}` (ghee ki id, uska
+stock), `POST /cart` (cart me +1), `POST /pay` (PSP ko; -1 tab jab paisa kate). Ye 4-5 main, aage aur bhi hongi.
+
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
@@ -83,8 +92,13 @@ se phir aa jaata hai. Godown me dabba hai to Ravi ko dikhega, nahi to out of sto
 pe nahi takraate.
 
 **Maan lo Lucknow ka store khaali, Kanpur me 20 dabbe:** Lucknow wale ko Lucknow ka store dikhega. Dark store ka
-matlab hi aas-paas ka store. Whitefield me baithe ko Koramangala wala dikhta.
+matlab hi aas-paas ka store. Whitefield me baithe ko Koramangala wala thodi dikhega.
 **Asli naam:** har store ka apna stock (store_id + item), app location dekh ke paas wala store chunta.
+
+**Aur neeche (shelf khaali ho gayi to):** app sirf inventory dikhata: inventory me 100, shelf pe 1, to app pe 100. Ravi
+le to inventory se jaayega, aunty shelf se. Shelf khaali ho to alert, inventory me hai to chhotu laake shelf pe rakh de;
+aunty ko mana nahi, kyunki dukaan me maal tabhi bikta jab shelf pe ho.
+**Asli naam:** online = inventory ki ginti, shelf alag · shelf khaali = alert (restock), laana + likhna = kadam 2 ka ek kaam.
 
 ```mermaid
 flowchart TB
@@ -143,6 +157,11 @@ liye aaya wo wahin aaye, wahin se nikle, badi dukaan me ghuse hi nahi.
 **Asli naam:** sale ka alag raasta / alag service (Flash Sale Service, apne server). Uski bheed normal orders tak nahi
 pahunchti, ek gira to doosra chalta.
 
+**Isi pe ek aur misaal (iPhone 50,000 ka 25,000 me):** socha 100-200 aayenge, aa gaye 1000, dukaan chhoti, TV wale bhi
+atke. iPhone alag dukaan me le jao, board laga do "iPhone lena hai to is gali me"; ghee ki alag line, aata-daal normal me.
+Har bikri pe -1 ek hi transaction me, to aakhri dabba ek ko hi; 500 hai to 500 hi bikenge.
+**Asli naam:** board / gali = sale traffic ko alag service pe route · -1 ek transaction me = atomic decrement.
+
 ```mermaid
 flowchart TB
     U["Diwali sale: 50 hazaar log ghee pe"]:::bad
@@ -176,6 +195,11 @@ per second). DB tak sirf jinka mila.
 **Maan lo Redis me ghee ki ginti kat gayi (Ravi gate ke andar aaya), par DB me order likhne se pehle server gir gaya:** Ab Redis kehta ek ghee kam hai, aur DB me koi order hi nahi. Sach DB hai, jaise Cache aur Banking me kaha tha. Ek banda peeche se Redis aur DB ko milata rahe: Redis me jitni ginti kati, utne order DB me hain ya nahi. Koi kati ginti bina order ke gate ki ghadi (5 minute) se zyada purani hai, matlab wo banda na pay kar paaya na order bana, to wo ghee wapas ginti me jod do, taaki doosra le sake. Jiska paisa aa gaya, uska dabba uska hi rahega.
 **Asli naam:** banda milata rahe = reconciliation job, DB sach = Redis sirf tez ginti, ghadi se purani bina order wali kati ginti wapas = compensation (gate ki 5 min ki ghadi ke baad hi, chalte hue pay ko nahi chhedna).
 
+**Isi pe ek aur raasta (5 line, main peeche hisaab ke saath):** 500 ko 100-100 me baant do, 5 line, har line apna
+kaat-ti (99, 98, 97). Main peeche 500 ki asli parchi lekar poochhta rahun kitne bike, apna kaat-ta rahun; ya computer
+rakh lun, jahan bill kata wahan mere 500 me se bhi -1.
+**Asli naam:** sharded counter (5 tukde) · peeche asli parchi / computer = DB sach + milaan (reconciliation).
+
 ```mermaid
 flowchart TB
     X["Ek counter, ek parchi ghee 500:<br/>line 50 hazaar<br/>(hot row)"]:::bad
@@ -205,6 +229,11 @@ flowchart TB
 hua wo counter band, aur uski line ko bolo jahan ghee bacha wahan jaao. "Khatam" tab bolo jab sabka zero.
 
 **Asli naam:** ek tukda (key) 0 ho gaya to agla tukda try karo. Sold out tabhi jab saare tukde 0.
+
+**Aur neeche (khaali counter ki line ka kya):** jinke counter pe khatam hua unhe us line me bhejo jahan maal bacha;
+wahan peeche lagna padega, ye trade-off hai, maal kam aur log zyada to hoga hi. Doosre counter se maal utha ke nahi la
+sakte, wahan bhi bheed.
+**Asli naam:** khaali shard ki request bache shard pe (re-route), keemat = wahan line me peeche.
 
 ```mermaid
 flowchart TB
@@ -236,6 +265,10 @@ query). Cart purana ho to checkout pe abhi ka daam + abhi ka stock dobara check 
 **Maan lo ek order me ghee, aata, daal, aur aata khatam:** poora order mat roko. Jo hai wo bhejo, aate pe out of
 stock dikha do. Wo chahe to baaki do le le.
 **Asli naam:** har cheez alag check, adhoora (partial) order chalta.
+
+**Isi pe ek aur misaal:** cart me 10, 30, 50 daalo, stock kam nahi hota. Ravi cart me daal ke masti kar raha, itne me
+Arpan dhadadhad pay karke sab le gaya; Ravi lauta to out of stock. Stock tab kam jab pay ho aur maal store se nikle.
+**Asli naam:** cart reserve nahi karta; stock pay pe katta (jo pehle pay kare wo le jaaye).
 
 ```mermaid
 flowchart TB
@@ -273,6 +306,13 @@ dabba mila; refund kam, par dabba ghadi tak kisi ke kaam nahi aata. Dono ki keem
 
 **Maan lo sabko nahi mil sakta:** Amazon, Flipkart bhi sale pe book karke baad me cancel karte; poora hal nahi, jitna stock
 utne log andar ya turant out of stock. **Asli naam:** available vs reserved stock, oversell ka 100% hal nahi.
+
+**Isi pe ek aur raasta (stock tab kaato jab paisa kate, par andar sirf 500):** cart ya Pay dabane pe -1 nahi; -1 tab
+jab PSP ka event aaye ki paisa kat gaya. Par 3000 ko PSP pe jaane hi mat do: 500 hai to 500 andar, PSP pe 500 request hi.
+Kuch ka pay fail ya kuch atke, to agla batch (Apple store Mumbai jaisa). -1 ek transaction me (SQL, lock), ek ek karke
+499, 498; 0 hua to out of stock aur Pay ka button hata do.
+**Asli naam:** sale gate (stock jitne andar, phir agla batch) · webhook pe -1 · conditional atomic update (`stock >= 1` ho
+tabhi -1) · SQL = transaction + row lock.
 
 ```mermaid
 flowchart TB
@@ -322,6 +362,10 @@ agla andar.
 andar Pay daba diya aur PSP dheema to hamari zimmedari.
 **Asli naam:** Pay pe reservation zinda hai ya nahi check (expiry check), chhota grace period, andar dabaya to
 PAYMENT_PENDING aur hold ruk jaata (kadam 8 / BMS jaisa).
+
+**Aur neeche (4 tab, ek se pay ho gaya):** user id ek, to 4 tab ho ya 10, ek hi katega. Ek tab se pay hua to baaki
+saare tab me cart 0, order ho gaya; cart hamesha sync.
+**Asli naam:** cart server pe user id pe (tab pe nahi) · ek user ek order = idempotency.
 
 ```mermaid
 flowchart TB
@@ -424,6 +468,11 @@ sab almari milaati rahe, taaki jo parchi kho jaaye wo bhi pakdi jaaye.
 
 **Padhai (reel, R aur W ka dial):** N = 10 pe W1 R1 = tez par purana mil sakta; W6 R5 = 11 > 10 pakka, par 1 hi almari
 gir sakti. Balance = R aur W dono N ke aadhe ke paas. Yahi dial consistency aur availability ke beech chunne deta.
+
+**Isi pe ek aur raasta (B, C ka purana saaf, kaam D, E ke paas):** chhotu dekhe B, C wapas aaye ya nahi; aaye to bolo
+"tum band the, tumhara kaam D, E ko de diya, chup raho, Rahul ka purana 0 kar do, line me aage khade ho jao, agla kaam
+milega". Company jaisa: ek employee gaya to company nahi rukti.
+**Asli naam:** chhotu = wapas aaye machine ko pakadne wali job · purana 0 + kaam D, E pe = ownership D, E ko (purani copy hatao).
 
 ```mermaid
 flowchart LR
