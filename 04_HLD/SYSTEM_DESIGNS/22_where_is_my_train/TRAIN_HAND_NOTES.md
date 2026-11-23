@@ -6,6 +6,8 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Ye design kaisa:** Where Is My Train bahut chhota app hai; iska HLD me LB, replica DB jaisa kuch bolna faltu. 100 me se ek app hoga jo ye karta, baaki har jagah net chalta. Kaam ki cheez iska tareeka hai: cell tower.
 
+Uber se farak (Arpan): Uber me tower wala design nahi chalta; Uber net pe hi chalta, net off kiya to error dikhata "net on karo". Yahan poora design tower pe tika hai.
+
 **Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
 ```
 phone (net / GPS band)  --kaunsa tower juda (cell ID)-->  phone me tower list (offline)  -->  "train yahan aas-paas, 5-10 km"
@@ -51,8 +53,8 @@ Numbers / API: baad me, saare design ke saath.
 
 **1. Train me Arpan ka net band, GPS band. Phir bhi app ko batana hai train kahan hai.**
 Arpan: Mera phone, maan le Delhi se kahin ja raha hoon. Where Is My Train dekhega mere phone se kaunsa tower juda hai. Jaise-jaise train chali, mere cellular me dande aa rahe; mere paas ka koi tower hai to mera phone aur aas-paas ka tower aapas me continuous baat kar rahe. Usne (app ne) mere cellular data se nikaal liya ki train aas-paas yahan kahin ho sakti hai. Mere phone ka net band hai, usse farak nahi padta; mera sim ka cellular tower connected hai, train ko wahi chahiye. Yahan WebSocket nahi, yahan cellular tower hai. Isliye Where Is My Train me kabhi train aa jaati hai par app dikhata hai abhi nahi aayi: wo andaza lagata hai ki train is 10 ya 5 km ke dayre me kahin bhi ho sakti hai, kyunki tower train se kitni door hai wo nahi pata. Where Is My Train niche likhta bhi hai ki ye cellular se aa raha.
-GPS kyun nahi: pehle socha GPS se connect kar dete hain, dikkat kya hai. Phir dekha GPS on-off hota rehta, battery ke saath chalta, gaon me pahunch gaye to dikkat, kahin net nahi. Tower to bhar-bhar ke aa rahe. Mujhe bas range chahiye, pakki jagah nahi: ye is station se pehle hai, to log taiyaar rahein.
-Technical me: "kaunsa tower juda" = cell ID (har tower ki pehchaan, bina net / GPS ke phone ko pata), "5-10 km ke dayre me" = tower ki range, pakki jagah nahi (accuracy trade-off), GPS = battery + band jagah pe kamzor.
+GPS kyun nahi: pehle socha GPS se connect kar dete hain, dikkat kya hai. Phir dekha GPS on-off hota rehta, battery ke saath chalta, gaon me pahunch gaye to dikkat, kahin net nahi. Tower to bhar-bhar ke aa rahe. Mujhe bas range chahiye, pakki jagah nahi: ye is station se pehle hai, to log taiyaar rahein. Train chalti hai to GPS aur net hilte-julte rehte hain, aur train lohe ka dabba hai, uske andar satellite ka signal achhe se aata hi nahi.
+Technical me: "kaunsa tower juda" = cell ID (har tower ki pehchaan, bina net / GPS ke phone ko pata), "5-10 km ke dayre me" = tower ki range, pakki jagah nahi (accuracy trade-off), GPS = battery + band jagah pe kamzor. · lohe ka dabba = GPS signal kamzor.
 
 **2. Train Rewari se nikli, agla station 40 km door. Beech me outer signal pe 25 minute ruki, phone poore 25 minute ek hi tower se juda. Timetable ke hisaab se is waqt tak agle station pahunch jaani thi.**
 Arpan: Main train me baitha, train bahar outer pe khadi, aur station pe mera dost khada. Aas-paas ka tower app pakad lega aur info update kar dega: ye abhi pahunchi nahi, abhi yahan khadi hai, aur neeche "train is delayed by 10 minutes", expected time 10 baje tha, ab 10:15 / 10:30. Zaroori nahi jo train ka data humne store kar rakha, train wahi pahunch jaaye; wo cheez hum update karenge jab train chalegi. Dost ko dikhega train ruki hui hai bahar outer pe, aur expected time, confirm time nahi.

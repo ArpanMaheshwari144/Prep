@@ -68,6 +68,10 @@ Technical me: dabba = CDN box (ISP ke paas) · "garam paas" = popularity se kya 
 Arpan: Akela bhaar kyun uthaun, 10 dost bulao, sabko dabba do, nikaal-nikaal ke do. Garam season ko zyada se zyada dabbon me rakho. Request hamare server pe aati hai, use pata hai kis dabbe me kya hai, wo mod dega. Hospital ka guard: wheelchair wale is line, mahila us line, buzurg us line.
 Technical me: "zyada dabbon me" = hot content ki kai copy, "server mod dega" = play pe server batata kaunse dabbe se lo (steering), "guard" = load + maal dekh ke sahi dabba.
 
+**Isi pe ek aur misaal (banner pe click):**
+Arpan: Ravi ne Money Heist ke banner pe click kiya to Netflix ko pata lag gaya ye Money Heist dekhne aaya; jaise bank me koi AC ki hawa khaane nahi aata.
+Technical me: play request me content id aata, server usi se dabba chunta (steering).
+
 **Maan lo aadhe episode pe dabba 3 band ya dheema.**
 Arpan: Saans phoolne wali baat, traffic baant do, ek dabba nahi. Money Heist ka garam season chal raha, pelam pel log dekh rahe, to use 20 dabbon me baant do. Ek dabbe me rakha aur dhadadhad log aaye ja rahe, haath badhata hoon nikaalta hoon, haath dukh gaya; to main apne 10 dost ko phone karunga: aao, ye dabbe lo, isme Money Heist hai, nikaal ke do. Ab akela bhaad nahi uthana padta. Ravi ke TV ko kaise pata 20 me se kis dabbe se maange? Hamein to pata hai Money Heist kis dabbe me hai, server use route kar dega.
 Technical me (TV ki taraf se): ek dabba dheema / band to TV ke paas 2-3 dabbon ke naam, doosre se le (client failover).
@@ -76,6 +80,10 @@ Technical me: "2-3 dabbon ke naam" = server player ko kai CDN dabbon ki list det
 **5. Ravi ne TV pe 27 minute dekha, band kiya. Subah metro me phone pe khola, 27:00 se chahiye.**
 Arpan: Ravi ka account hai, Netflix account se yaad rakhta. Jaise kisi ke 10,000 rakhe, parchi pe uska naam likha, bus stand pe mila to pehchaan liya. TV, phone, kahin bhi khole, yaad wahi. Parchi DB me.
 Technical me: "account se yaad" = watch position user ke account pe server me, device me nahi, "parchi DB me" = persistent store.
+
+**Aur neeche (parchi cache me ya DB me):**
+Arpan: Parchi cache me nahi, DB me rakhunga. Netflix andar kya use karta mujhe nahi pata, par main Netflix hota to yahi karta.
+Technical me: dekhne ki jagah = DB (pakka), cache sirf tez padhne ke liye.
 
 **Maan lo TV ka net gaya, TV ne "27:00" apne paas rakh liya. Subah phone pe 37 tak dekha, shaam ko TV on hote hi purana 27 pahuncha aur 37 ke upar likh gaya.**
 Arpan: Netflix phone, laptop, TV sab me sync rehta, alag nahi ho sakta. Main Netflix ka server hoon: tukde main hi bhej raha, to 27 ke baad agla tukda nahi maanga matlab 25-27 ke aas-paas band kiya. Phir usne phone pe 27 se 37 dekh liya, naya point 37, parchi pe 37. Shaam ko TV khula aur purana 27 aaya: nahi, isne to 37 tak dekh liya, 27 purana hai, discard; 37 se chalao. Account ek hi hai, kahin se bhi login karo wahi dikhe; TV khulte hi net se account ka sach padhta hai, apna purana nahi thopta. Naya 37 aaya to purana 27 kaat ke 37 likh do.

@@ -67,6 +67,10 @@ Technical me: "mere 500 wapas de do" = transaction rollback (ya dono kaam, ya ko
 
 **Maan lo pooche saga kyun nahi, aur DB kaunsa:**
 Arpan: Saga isliye nahi le rahe ki saga ke liye do alag DB chahiye; yahan sab same DB me kaam kar raha. Ek se kata, doosre ko mila, ye transactional hai, consistency bhi chahiye, log bhi. Isliye SQL DB prefer karunga, wo bahut cheezein free me deta: ACID, transaction. Aisa nahi ki NoSQL me transaction nahi hota, hota hai; par yahan itna likhna nahi chahiye, JSON type data nahi, row wala data hai: pehli row, doosri row.
+**Aur neeche (shard karoge?):**
+Arpan: Shard nahi karunga. Ek bank ka data itna bada nahi hota. Shard kiya aur Arpan ek machine pe, Ravi doosri pe chala gaya, to ek transaction me kaatna-jodna nahi hoga, jo "paisa na gum ho" wale NFR ke khilaf hai. Phir bhi kabhi likhai bahut badh jaaye to aakhri raasta: account id pe shard.
+Technical me: ek SQL DB = local ACID transaction; alag shard pe transfer = saga / 2PC; majboori me shard key = account_id (aakhri raasta).
+
 **Asli bank me (sach):**
 Arpan: Ye bolne me jitna aasaan lagta, utna aasaan nahi. Banking me aksar teen-chaar se paanch din baad paise wapas aate hain; peeche job chalti hongi.
 Technical me: ek DB = ek transaction (ACID), saga sirf alag DB pe; row data + transaction = SQL; asli refund / reversal = peeche ki reconciliation job (din lag sakte).
@@ -105,9 +109,17 @@ Technical me: register = balance wali table · "alag diary, kaato mat, neeche li
 Arpan: Ledger kisi dikkat ko solve nahi kar raha; ledger ek audit record hai. Sab cheez DB me pehle se hai, logs me hai. Ledger ek book jaisa: kal RBI ka audit aaya to main DB me query chala-chala ke nahi dhoondhunga, ledger ki copy de dunga. RBI bank ka DB nahi maangta; RBI apna audit karta, bank apna, dono ledger milaate hain.
 Technical me: ledger = append-only audit trail (regulator / reconciliation ke liye), balance ka sach ussi se jodke milta.
 
+**Aur neeche (ledger kahan, RBI ko kya):**
+Arpan: Ledger koi alag duniya nahi, isi DB me ek alag table hai, aur balance ke saath usi commit me likhi jaati hai. RBI ko na DB ki copy dete, na seedha +500 / -500 wali line; jaise teacher batata hai assignment kaisa banna chahiye, waise RBI ki guideline hoti hai, aur us format ki report ledger se bana ke dete hain.
+Technical me: ledger = usi DB me append-only table, same transaction; RBI report ledger se, RBI ke format me.
+
 **5. Paisa jaate hi Ravi ko khabar deni thi. Cashier ne paisa bheja, aur ladke ko "Ravi ko khabar do" bolne se pehle bijli chali gayi. Ladke ko pata hi nahi ki kisko khabar deni hai.**
 Arpan: Jo kuch yaad nahi rehta kisi ko, to likh lo na bhai. Hum bhi to yahan likh rahe hain kyunki mujhe kal yaad nahi hoga, same to same cashier ke saath hai. Kahin likh lo, logs me likh lo. Ab cashier kabhi bhi aaye ya jaaye, wo likha hai, agli baar koi bhi ladka aayega to wo pahuncha hi dega.
 Technical me: "jo yaad nahi rehta, likh lo" = outbox (hamare DB ki table, paise ke saath usi transaction me; bijli gaye to bhi row bachi), "koi bhi ladka aaye, pahuncha dega" = relay.
+
+**Aur neeche (outbox me kya likha):**
+Arpan: Outbox ek table hai: har transfer ke saath ek line "sms_sent = false". Relay baar-baar dekhta, jahan false hai wahan khabar bhejta aur true kar deta; SMS service giri ho to bhi line padi rahegi, wapas aayi to chala jaayega.
+Technical me: outbox row + status flag, relay uthata, at-least-once.
 
 **6. Mahine ki 1 tareekh, sabki salary, poora mohalla branch me. Roz ki bheed ke liye kadam 3 wale do counter kaafi the, aaj unhi do pe line sadak tak.**
 Arpan: Cashier badha do. Ek cashier tha, 10 cashier kar do, 10 counter kar do. Bheed badh gayi, kaam khatam, paisa hazam. Aam taur pe bhi yahi hota hai: bank me ek counter pe bheed hai to hum doosre counter pe jaate hain, movies me bhi same, har jagah same.
@@ -148,6 +160,10 @@ Technical me: replica khud bataye = replica apni position bhejti (kam kadam, par
 Arpan: Use main ledger se milwao na. Asli to ledger hai. Arpan ka balance koi bhi haath se update kar dega, wahan dikkat hai. Apna jo main hai wo ledger se hai: ledger me hum sab cheez likh rahe, -500 +500, ye hai asli sach, na ki wo column jo galti se koi bhi update kar de.
 Technical me: "ledger se milwao" = raat ka milaan (reconciliation), "asli sach ledger, column nahi" = ledger = source of truth, balance bas copy.
 
+**Aur neeche (milaan me farak mila to):**
+Arpan: Har raat ek job chalao, wo bhi replica pe taaki main register pe bojh na pade. Har account ka balance uske ledger ki saari plus-minus line jodke milao; poore bank ka jod zero aana chahiye. Farak mila to job khud theek nahi karegi: pehle alert bajao, us account ko roko, dekho kyun hua, aur aakhir me hamesha ledger hi jeetega, kyunki column to koi bhi galti se badal sakta hai. Scam me dekha, isliye har mahine audit hota.
+Technical me: replica pe reconciliation job, jod = 0 check; farak = alert + account freeze + jaanch (khud theek nahi); ledger = sach.
+
 **11. Arpan ka khaata 5 saal purana, ledger me hazaaron line. Har raat milaan ke liye 5 saal ki line shuru se jodna bhaari, raat khatam par jod poora nahi.**
 Arpan: Data tod do na bhai. 5 saal purana data thodi badlega, wo same hi rahega. Maan liya maine ek mahine me 10,000 ka kharcha kiya, wo 10 mahine purana hai, ab wo badlega thodi. Mahine ke mahine me tod do, kaam khatam. Arpan ne January se March tak itna kharch kiya, jud gaya, mil gaya. March se April tak itna kiya, use jod do. Pichhle mahine ka khaata thodi change kar sakte hain, agle mahine ka khaata hota rehta hai. Pichhle ka dekh ke tod do, tod ke likh do, dikkat khatam.
 Technical me: "mahine ke mahine tod do" = mahine ke partition, "pichhla jud gaya, likh do" = snapshot (mahine ka total), "purana data badlega nahi" = purani line immutable.
@@ -165,6 +181,10 @@ Technical me: taala = koi badal na sake (lock) · "kai copy chhupa ke, milao" = 
 ## Mahine ki statement (billions of records)
 
 (Ye alag sawaal hai, bade bank ka: crore khaate, arbon transaction. Upar wala 50 lakh account ka design yahan bada ho jaata.)
+
+**Aur neeche (godown ka pehla taala):**
+Arpan: Pehla taala: godown me har koi nahi ghusega, sirf jiske paas ijazat hai. Par ijazat wala bhi badal sakta hai, isliye upar wala copies + version lock.
+Technical me: pehle access control (IAM), andar wale ko Object Lock / versioning rokta.
 
 **Scene:** Bank ke crore khaate, arbon transaction. Har customer ki har mahine ki statement banni hai, aur 31 March ko sab ek saath maangte hain. Peeche kaam karne wale = chhotu.
 

@@ -105,6 +105,10 @@ Technical me: banda milata rahe = reconciliation job, DB sach = Redis sirf tez g
 Arpan: Ek hi aadmi parchi kaat raha to 500 ko 100-100 me baant do, 5 line. Har line ko bolo tere paas 100. Har line apna kaat-ti jaaye: 99, 98, 97. Main peeche 500 ki asli parchi lekar khada, poochhta rahunga kitne bike aur apna kaat-ta rahunga; kahin gadbad hui to asli parchi mere paas, main dekh lunga. Har line pe 1 bacha to mere paas total 5; agle aaye, sabke 0, khatam. Jaise 200 iPhone: 50-50, 4 line; tere kitne bike? 50 ke 50; tere? 40; tere? 30. Ya apne paas computer rakh lun: jahan bill kata, mere 500 me se bhi -1, 499, aur har line ka bacha dikhe.
 Technical me: sharded counter (5 tukde) · peeche asli parchi / computer = DB sach + milaan (reconciliation).
 
+**Aur neeche (ek phone wapas aaya to kis dabbe me):**
+Arpan: 1000 iPhone 5 line me isliye baante ki bheed kam ho, hai to 1000 hi. Ek phone wapas aaya (pay fail ya lauta) to mere stock me wapas, kisi ek dabbe ka nahi; jo pehle pay kare uska.
+Technical me: wapas aaya maal common pool me; sold out tabhi jab har tukda 0.
+
 **5. Counter 3 ke 50 khatam, uski line me 2000 log. Counter 7 pe abhi 30 pade.**
 Arpan: Jiska khatam hua wo counter band, aur line ko bolo jahan ghee bacha hai wahan jaao. "Khatam" tab bolo jab sabka zero ho jaaye. Counter 3 ke 0 hone pe sold out nahi: mere 500 me se 400 bache, sold out tab jab saare counter 0. Counter 3 wala aaya ki mere aage 50 aur khade hain, to unhe us line me bhejo jahan maal bacha (counter 7, counter 5). Wahan peeche lagna padega, ye trade-off hai: maal kam aur log zyada to ye hoga hi; doosre counter se maal utha ke nahi la sakte, wahan bhi bheed. Counter 7 pe 30 dabbe aur aage 10 log: 10 ko milega, 20 bachenge, aur counter 3 wale peeche lag ke apni baari ka intezaar karenge.
 Technical me: counter = ginti ka tukda · ek tukda khaali to doosre tukde se lo. Sold out tabhi jab saare tukde 0. · keemat = doosri line me peeche lagna (trade-off).
@@ -120,6 +124,10 @@ Technical me: har cheez alag check. Adhoora order chalta.
 **7. 3000 log ek hi second me Pay dabaate hain, ghee 500.**
 Arpan: Pay ki request hamare server pe aati hai, wahan line lagao: jo pehle aaya wo pehle paaya, duniya ka dastoor. Jiska paisa aaya, ginti kaato, dabba uska. 500 khatam hone ke baad jiska paisa aaya uska turant rollback, do minute me paisa wapas, aur "out of stock" bol do. Out of stock to dikhna hi hai, chahe pehle dikhe chahe baad me. Asli hal: sale ke liye stock pehle se zyada mangwao. Samsung pe discount lagaunga to 500 nahi, 10-20 hazaar laaunga.
 Technical me: paisa aane pe server pe ek-ek karke ginti kaato, 500 ke baad aaye paise ka refund (rollback). Doosra raasta: Pay dabaate hi dabba ghadi (10 min) ke saath rok do, refund kam, par dabba ghadi tak ruka. Dono ki keemat.
+**Aur neeche (line Pay se pehle kyun):**
+Arpan: 3000 logon ko seedha pay nahi karne dunga; paise kaat liye aur saamaan nahi bheja to consumer court me ghaseet lenge. Isliye pehle line, ek-ek karke.
+Technical me: oversell = kanooni / bharose ka khatra, isliye gate Pay se pehle.
+
 **Ghadi wale raaste ki ek aur keemat:**
 Arpan: Hold ke beech stock me us dabbe ko kya dikhaoge, +1 ya 0? Tumne stock me +1 dikhaya, aur wo uske cart me bhi hai, to kaun khareedega? Ek hi product hai aur do jagah dikh raha: ek ke cart me bhi, stock me bhi. Keemat to wahan bhi hai.
 
@@ -136,6 +144,10 @@ Technical me: line = queue · ">= 1 to -1 ek transaction me" = conditional atomi
 Arpan: Jitne phone utne log andar, baaki bahar. Kisi ka card decline hua ya koi chala gaya to agla batch bulao, jitne bache utne. 3000 ko andar bula ke kya fayda. App pe poora app to rok nahi sakte, aata-daal wale bhi hain. To ghee ke liye ek alag counter lagao: sale wala maal us gate se guzrega, normal checkout chalta rahega. Us counter se sirf 500 ghee guzarne hain, to dikkat hi khatam.
 Technical me: alag counter = sale gate · sale gate (Buy now, cart me nahi jaata). Gate sirf utne logon ko Pay tak jaane deta jitna stock (Redis DECR). Fail / chala gaya = agla batch. Gate ke bahar walon ka paisa kabhi katta hi nahi, aur koi dabba bina bike nahi padta. Gate ek baar banta, har sale pe sirf list badalti (item + ginti + waqt).
 (Normal cart pe kadam 6 wahi: ginti pay pe. Sirf sale wale item pe gate ginti pehle kaatta, isliye yahan ghadi aur wapas jodna.)
+
+**Aur neeche (ek order me sale ka ghee + normal aata):**
+Arpan: Kisi ne ek order me ghee aur aata dono liya to line nahi todunga. Checkout ek hi; ghee sale ka maal hai to sale counter se katega, aata normal counter se. Har sale pe naya counter nahi, bas us din kaunsa maal sale me hai wo badalta.
+Technical me: har item ka raasta alag (sale item Redis gate se, baaki DB stock se), checkout ek.
 
 **Maan lo Ravi ne 4 tab khole, Buy now 4 baar.**
 Arpan: (Arpan, 8-Nov: "ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Gate pe user id hi key: ek user ka ek hi ghee rukega, Ravi ka pehle se ruka hai to wahi lauta do, naya mat roko. User id ek hai, to 4 tab ho, 5 ya 10, ek hi katega, 4 nahi. Ek tab se Buy now karke pay kar diya to baaki saare tab me cart 0: "order successful", khatam. Cart ko hamesha sync rakho; ye login, sign up aur user id ka khel hai.
@@ -159,6 +171,10 @@ Technical me: PAYMENT_PENDING (BMS jaisa) + status job PSP se poochta rahe. Pais
 
 (Payment wala hissa Myntra ki misaal se: mausi ke mart ki app bhi online dukaan hai, aur paisa wahan bhi Razorpay jaisa PSP hi kaatta. Neeche "Myntra" = hamari online dukaan.)
 
+**Isi pe ek aur raasta (paisa kata to maal dena hamari zimmedari):**
+Arpan: Ravi ke paise kat gaye to use ghee dena hamari zimmedari, PSP se hum baat kar lenge, dabbe pe chipka do "ye Ravi ka hai". Bahut companies "stock khatam" bol ke der se refund karti, par kabhi order cancel dikh bhi gaya to bolunga "tera order cancel nahi hua, ye apne paise pakdo, ghee free me de denge". Amazon shuru me aisa hi karta hoga.
+Technical me: payment success = order nibhao; muavza = business ka faisla.
+
 **Maan lo PSP 30-50 second chup, Myntra ko pata nahi Ravi ka paisa kata ya nahi.**
 Arpan: Order ki khabar Myntra ki apni hai: Pay dabate hi apne paas order PENDING aur payment INITIATED likh diya, stock rok liya. Paisa kata ya nahi, ye PSP hi batayega, Myntra Ravi ka bank nahi dekh sakta. Razorpay kitni der lega, hamare haath me nahi; zyada der Ravi ko nahi rok sakte. Isliye ghadi hamari: 30-50 second, uske baad Ravi ko "time out, paisa kata to wapas aa jaayega, dobara pay karo" dikhao; dobara pay kare to Razorpay ki jagah doosre PSP pe bhejo, kyunki pata hai Razorpay abhi dheema hai. Baad me pata chala Razorpay pe bhi kata tha, to Razorpay ko bolo "lautao". Google Pay se itni baar pay kiya, 0 se 60 second me jawab aa hi jaata: ya fail, ya paisa kata; zyadatar 2 second me. Isliye had 60 second: peeche chhotu lagao jo PSP se poochhe, ya PSP ko bolo paisa katte hi event bhej de. 60 second me jawab nahi to DB me "payment fail" likh do, usse zyada wait nahi. PSP 2 minute baad bole paisa kat gaya, to ek alag column me likho kitni der me kata aur kitna, aur refund shuru karo.
 Technical me: ghadi = hamara timeout · order PENDING + payment INITIATED (Myntra ka apna DB), paise ki khabar sirf PSP se (webhook / status API, din ka settlement report), hamara client timeout (50 sec), der se "success" aaya to DB me REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe -> isliye dobara pay doosre PSP pe chal jaata (PSP failover), do baar kata to ek wapas.
@@ -172,6 +188,10 @@ Technical me: "paisa katte hi event" = webhook (PSP callback), "mil gaya" = ack 
 **Maan lo PSP ka "success" do baar aaya (ek retry se, ek status job se).**
 Arpan: (Arpan, 8-Nov: "ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Payment id hi key: pehli baar aaya to order pakka, doosri baar wahi id dekh ke chhod do. Do order nahi, ginti do baar nahi kategi.
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
+
+**Maan lo aakhri ek iPhone pe Ravi aur Arpan dono ne pay kar diya:**
+Arpan: Do raaste. Pehla: doosre store ki inventory dekho, Delhi me nahi to Haryana-Punjab wale store se mangwa ke Ravi ko de do, kyunki Ravi ko kya pata hamare paas ek hi tha. Doosra: kahin nahi hai to "out of stock" bol ke refund, bank ki timeline pe 2-7 din. Amazon jaisi badi company ko ek customer ke naraaz hone se farak nahi padta, wo cancel + refund karti; par chhota store hai ya naam banana hai to main kahin na kahin se arrange karke dunga.
+Technical me: oversell = doosre store se pura karo (cross-store fulfilment), warna cancel + refund; business ka faisla.
 
 **URL 10 / Twitter 19 se aaya:** teen copy A, B, C, do me likho do se padho (quorum, R + W > N). Neeche sirf naya. (Reel se: Amazon Dynamo, leader hi nahi.)
 

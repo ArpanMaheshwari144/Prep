@@ -191,6 +191,10 @@ Technical me: "traffic me fanse ka paisa" = time-based fare / waiting charge, "l
 Arpan: Kaatna hai to poora kaato, aadha mat kaato: 40 kaat ke chhod diya to log jaan-boojh ke 1 rupaya rakhenge. Wallet me 250 nahi to app me saaf dikhao "payment nahi hua", aur Raju ke phone pe bhi dikhe. Arpan GPay se de, warna cash, kaise bhi. Jab tak paisa nahi aaya, ride khatam hi nahi hogi.
 Technical me: "poora ya kuch nahi" = atomic charge (partial nahi), "ride tab tak khatam nahi" = ride status PAYMENT_PENDING jab tak SUCCESS, "GPay / cash" = fallback payment method, dono app pe dikhe.
 
+**Isi pe ek aur misaal (Uber me kaun Pay dabata):**
+Arpan: Uber me app apne aap paisa nahi kaatta, trip khatam pe rider khud Pay dabata. Jab tak pay nahi hua, driver utarne hi nahi dega.
+Technical me: rider khud payment shuru kare, SUCCESS tak PAYMENT_PENDING.
+
 **Maan lo 250 kaatne gaye, gateway chup, pata nahi kata ya nahi.**
 Arpan: (Arpan, 8-Nov: "ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Dobara kaatne pe ride id hi key: gateway pehchaan lega ki ye wahi charge hai, do baar nahi katega. Dobara bhejne se pehle gateway se poochh lo kya hua (Payment wala status job).
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
@@ -232,6 +236,10 @@ Technical me: "location aani band, ek-do baar dekha" = location timeout (phone p
 
 Arpan: Ek booking ko akele mat dekho. Do booking aayi aur do gaadi hain, to dono user aur dono gaadi ki jagah (latitude / longitude) rakh ke har jodi ki doori nikaalo: Arpan se Car A kitni, Car B kitni, Ravi se Car A kitni, Car B kitni. Phir jodi aisi do ki sabki milake doori kam aaye: Ravi ko beech wali Car A, Arpan ko bahar wali Car B. Doori km me naapo, minute me nahi, kyunki minute traffic se ghat-badh jaate hain. Aur ek baar driver ne accept kar liya to gaadi pakki, use todna nahi; driver khud cancel kare tabhi dobara doori nikaalo.
 Technical me: "dono ko saath milao, kul doori kam" = batch matching (kai booking aur kai gaadi ek saath, sabka milake pickup kam).
+
+**Aur neeche (asli Uber accept ke baad nahi todta):**
+Arpan: Asli Uber ka design public nahi. Customer ke naate itna dekha ki accept ke baad hamesha "driver ne cancel kiya" aata, "Uber ne cancel kiya" kabhi nahi; matlab accept ke baad Uber khud nahi todta. Par main Uber banata to accept se pehle dono ki doori dekh ke gaadiyan badal deta; ye do alag nazar hain, takraav nahi.
+Technical me: accept ke baad assignment pakka; batch se badalna sirf accept se pehle.
 
 **Maan lo Arpan ki booking 7:00:00 pe aayi aur Ravi ki 7:00:02 pe. Jab Arpan ki aayi tab Ravi ki thi hi nahi, to server ne turant Car A Arpan ko de di.**
 Arpan: Booking aate hi gaadi mat do. Maan lo 15-20 second ruko, user itna ruk lega (Uber me bhi driver dhoondhne me itna lagta hi hai). Us beech jitni booking aayi, sab ko saath milao, phir gaadi do. Jaldbaazi me kisi ko galat gaadi na de do. Main upar se dekh raha: Arpan ki booking aayi, gaadi paas thi; 5-10 second ruka, tabhi Ravi aaya aur wahi gaadi Ravi se 1 km. To wo gaadi Ravi ko, Arpan ko agli gaadi.
