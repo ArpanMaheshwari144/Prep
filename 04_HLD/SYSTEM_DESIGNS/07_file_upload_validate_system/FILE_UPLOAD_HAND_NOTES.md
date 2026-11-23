@@ -95,9 +95,17 @@ Technical me: "parchi" = idempotency (file id + version pe ek hi baar), "kaunsa 
 Arpan: User har second, har do-teen second baad poll kar raha, "meri file kahan hai", to read bahut zyada ho jaayenge. Cache use karo, user cache se hi laut jaayega, server pe load direct nahi. Par cache stale ho sakta hai: worker ne file validate kar di aur cache purana, user ko galat status. To TTL rakh sakte, ya jab validate ho jaaye tab cache bhi update kar do.
 Technical me: status poll = read-heavy -> status Redis me, "validate hote hi update" = write-through / invalidate on status change, TTL backup.
 
+**Aur neeche (status poochhne wale bahut):**
+Arpan: Padhna zyada hai to DB ki read replica bhi laga sakte, Redis ke saath.
+Technical me: Redis + read replica.
+
 **Maan lo worker beech me gira, file VALIDATING pe atki:**
 Arpan: Sweeper job chala sakte: har minute dekhe, VALIDATING / UPLOADING agar 10 minute se nahi badla to us file ko hata do, wo bekaar hai. S3 me lifecycle rule bhi purani temporary aur adhoori multipart files apne aap clean kar deta.
 Technical me: sweeper / reaper job (status + updated_at dekh ke), S3 lifecycle rule (adhoora multipart abort).
+**Isi pe ek aur raasta (atki files dobara try):**
+Arpan: Status DB me hai, yahi uska fayda. Ek worker VALIDATING pe atki files nikaale, dekhe kaunsi fail hui, aur unhe dobara try kare, file hamesha atki na rahe.
+Technical me: atke VALIDATING (purana updated_at) pe retry job.
+
 **DB kaunsa:** Arpan (21-Nov): File upload me main kaam to S3 karta hai, file wahin jaati hai. DB me hamein metadata chahiye: file ka naam, type (PDF, EXE, document), kab aur kitne baje upload hui, kitne GB ki, status. Iske liye NoSQL ka koi point nahi banta: JSON me kya store karna, MongoDB, DynamoDB, Cassandra ki zaroorat nahi, Cassandra to bahut badi baat. Requirement me bhi kya badlega. Isliye lean aaj bhi ACID / SQL wala: AWS RDS (Postgres / MySQL), jo chahiye wo SQL me mil jaata. (4-Oct bhi yahi: tracking aur status consistent chahiye.)
 Technical me: file = S3, metadata + status = SQL (RDS Postgres), seedhi row + consistency, NoSQL ki zaroorat nahi.
 
@@ -124,9 +132,17 @@ Technical me: "kiski hai" = owner / share check (authorization, JWT sirf pehchaa
 Arpan: Faisla hamara server karega, S3 / CDN sirf rakhte aur dete. Kamre ke bahar main khada: ID dikha, file kiski hai dekho, tabhi token; bina token CDN file nahi deta.
 Technical me: CDN pe bhi signed URL / signed cookie (server sign kare, CDN jaanche).
 
+**Aur neeche (sirf link ki umar chhoti karna kaafi nahi):**
+Arpan: Sirf link ki umar chhoti karne se fayda nahi, Ravi ne thodi der bhi dekh li to cheez uske paas chali gayi; isliye pehle haq dekho, tabhi token.
+Technical me: expiry sirf leak ka nuksaan ghatata, asli rok = authorization.
+
 **7. Ravi ne link 200 logon ke WhatsApp group me daal diya.**
 Arpan: Link ki umar chhoti (presigned URL expiry), file ke hisaab se: bank statement jaisi 1-2 minute, baaki 5-6 minute. Umar hamara faisla, S3 ka nahi. User khud baante to wo uski zimmedari, system pe har cheez nahi thop sakte.
 Technical me: "umar" = presigned URL expiry (file ki sensitivity pe).
+
+**Aur neeche (app pehle hi bata de):**
+Arpan: Private file ho to app bol de "ye private hai, link share mat karna"; phir bhi baante to chhoti umar sambhal legi.
+Technical me: share warning (UI) + expiry backup.
 
 **8. Scan me 10 minute baaki, Ravi ko download chahiye. Scan me virus nikla to?**
 Arpan: Scan ki alag tez line, jaise SMS me OTP ki (doctor line me nahi lagta = scan ka alag Kafka topic, baaki kaam ke peeche nahi rukta). Scan poora hone tak link hi nahi; ho gaya to user ko bata do. Paise ginne jaisa: kisi ne kaha "gin do", maine andaza bola 10,000, wo sabko bata aaya, par asal me 20-25 hazaar nikle; pehle poora gino, phir batao. Upload hote hi Priya ne manager ko link bheja to bhi manager ko "file jaanch me hai, thoda ruko" dikhe, file nahi. Virus nikla to file lo hi mat. Hum antivirus nahi, file system hain; mall vs airport ki security, hum utna jaanchte jitna system ko chahiye (magic bytes + virus scan, poora antivirus nahi). Zaroori ho to bahar wala (third party) pehle jaanche, phir hamare paas.
@@ -135,6 +151,10 @@ Technical me: "alag line" = scan ka alag Kafka topic (Kafka me priority nahi hot
 **Maan lo bahar wala scanner 1 ghante se jawab hi nahi de raha, Ravi ki file "scan baaki" pe atki.**
 Arpan: Ye wahi Notification wali company ki kahani hai. Scanner hamara nahi, bahar ka hai, to wo chup bhi ho sakta hai. Thodi der ruk ke dobara bhejo; do-teen baar bhi chup rahe to file ko dead letter queue me daal do aur insaan ko alert, investigate karo, taaki baaki files ki line na atke. Tab tak file "scan baaki" pe hi rahegi aur link band rahega, kyunki bina scan ke file kisi ko dena khatra hai. Ravi ko app pe dikhao "file jaanch me hai".
 Technical me: dobara try = retry with backoff, dead letter queue = DLQ + alert (scan wali tez line se alag), link band = CLEAN tak download nahi (fail-closed).
+
+**Isi pe ek aur raasta (scanner pe health check):**
+Arpan: Scanner pe health check lagao, jaise LB me karte the: har 5-10 second dekho wo theek hai ya nahi. Teen baar jawab nahi aaya to use dead maan lo aur doosre scanner pe bhejo, taaki ek scanner pe sab na tike. Scanner wali company ko alert bhejo, aur kyun gira wo logs (CloudWatch / Papertrail) se pata chalega.
+Technical me: health check + had (3 fail = dead), backup scanner, alert + logs.
 
 **Maan lo complete kabhi aaya hi nahi:**
 Arpan: Pehli baat, file ko temporary jagah rakho; jaanch pass ho tab asli jagah, phir complete bhejo. Aur complete nahi aaya to S3 ka lifecycle rule purani temporary aur adhoori multipart files apne aap clean kar dega, ya sweeper job chala sakte jo bekaar files khud hata de.

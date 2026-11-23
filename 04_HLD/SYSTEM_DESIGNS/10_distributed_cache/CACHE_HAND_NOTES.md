@@ -54,6 +54,10 @@ Technical me: "DB se pehle ek dabba" = cache (Redis), "padhi bahut, update kam" 
 Arpan: RAM ko thoda khaali kar do, usme se purana data nikaal do. Jo purana hai, jo kam use ho raha hai, wahan se nikaal do, use lena-dena hi nahi. Jo ab use nahi ho raha aur RAM me pada hai, wo befaltu ki jagah ghere hai, use hata do.
 Technical me: "RAM khaali karo" = eviction, "jo purana, kam use ho raha, nikaal do" = LRU (Least Recently Used).
 
+**Aur neeche (LRU kyun, LFU kyun nahi):**
+Arpan: LRU chunta hoon, LFU nahi, kyunki banana aasaan aur jo der se nahi chhua wo kaam ka nahi.
+Technical me: LRU = haal me kab chhua, LFU = kitni baar chhua.
+
 **3. Ab 10 crore users, roz khulne wale profile hi 1 TB. Ek machine me 64 GB, LRU kitna bhi chalao, 1 TB ek dabbe me nahi aata. Upar se ek machine ki request ki had, bheed usse kai guna.**
 Arpan: Tod do. 10 crore ko tod do, 2-2 crore ya 3-3 crore ek dabbe me rakh do. Wo bhi kam pade to aur tod do, un 2 crore ko bhi tod do, todte raho. Aur jo dikhta hai wo hash hai, same pe chala jaayega. Hash hum kai baar padh chuke hain.
 Technical me: "tod do, alag dabbe me" = sharding, "hash, same pe chala jaayega" = key ka hash batata machine, same key hamesha same machine.
@@ -118,6 +122,10 @@ To main parchi pe likh lunga "mere paas 1 se 10 tak hai", isse bada koi maange t
 Range ke andar wala, jaise 500, nahi mila to null de do; null ka kya karna wo uska engineer if-else lagaye. Aur koi 500 baar-baar maange (range ke andar, par hai nahi), to main parchi pe likh lunga "500 = null"; ab koi bhi 500 maange, DB jaaunga hi nahi.
 Technical me: "nakli id, har baar andar (DB) bhaagna" = cache penetration. "parchi pe range, bahar wala wahin wapas" = request aate hi id range check (input validation), cache aur DB se pehle; galat id na cache tak pahunchti na DB tak. (Yahan parchi = range ki parchi, cache wali key nahi.) Range ke andar par nahi mila = null ko bhi cache me rakho (negative caching, thodi der ki umar), taaki baar-baar wahi nakli id DB tak na pahunche.
 
+**Aur neeche (beech ki id delete ho gayi to):**
+Arpan: Beech ki row delete ho gayi to wo design ki dikkat nahi, engineering ki galti, script chala ke theek kar denge; MySQL me id kram se banti.
+Technical me: auto-increment, isliye range check chalta; beech ka delete = data fix.
+
 **7. Priya ki parchi cache me aa gayi, par ek second me 1 crore log. Ring pe uski key sirf machine 4 pe. Baaki 9 aaram se, akeli machine 4 pe poori bheed, dheemi hote-hote girne lagi.**
 Arpan: Baaki machine pe baant de. Machine 4 ka replica bana de, teen jagah ho gayi, to bat gaya. Ya ring me aur jagah bitha de: machine 8 tu bhi dekh le, machine 9 tu bhi dekh le. Jaise bheed zyada ho gayi to ek aur gaadi extra kar lo. Ek gaadi me sab nahi aa sakte, to ek-do chhoti gaadi kar lo.
 Technical me: "machine 4 ka replica, 8 aur 9 tu bhi dekh" = hot key ki copies kai machines pe, "ek aur gaadi" = padhne ki bheed copies me bat-ti.
@@ -129,6 +137,10 @@ Technical me: cache pre-warm (event se pehle garam key cache me bhar do), capaci
 **Maan lo Priya ki key machine 4, 8, 9 teeno pe hai (copies), usne naam badla, aur sirf machine 4 ki parchi kati.**
 Arpan: Refresh pe kabhi naya naam aayega, kabhi purana, kyunki 8 aur 9 pe abhi purani parchi padi hai. Kadam 5 wala niyam "pehle parchi kaato" sirf ek machine pe nahi, jitni copies hain sab pe lagao. Aur kadam 5 wala peeche ka banda (sync job) bhi sirf ek jagah nahi, saari copies jaanche.
 Technical me: parchi = copy wali machine pe cache key · copies pe bhi delete = hot key ki har replica invalidate, sync job copies bhi = reconciliation sab replicas pe.
+
+**Isi pe ek aur raasta (thodi der main se padhwao):**
+Arpan: Priya ne naam badla to copy tak pahunchne me time lagta, thodi der Priya ko main machine se padhwa do.
+Technical me: read-your-own-writes (thodi der primary se).
 
 **Maan lo Priya ab roz ki mashhoor hai, uski parchi machine 4, 8, 9 pe garam padi rehti, pelam pel log padhte. Aaj theek 8 baje parchi ki umar khatam, ek saath lakhon log, chhotu ko mote register se aane me 2 second.**
 Arpan: Sabse pehle to aisi parchi ko ek hi baar me khatam hone hi nahi dunga. Wo parchi bahut garam hai, us pe pel ke users aa rahe, 1000 nahi, 10 lakh, 20 lakh, pelam pel. To main us pe nazar rakhunga: chhotu dekh, sun idhar aa, iski umar abhi 20 second ki hai, badha de, 60 kar de, phir +60, phir +60. Aur 10 lakh log aa rahe to ek counter pe nahi, 10 pe baant do, aur sabki umar ek saath khatam nahi hogi, kisi me thoda jitter, kisi ki 20 second me, kisi ki 30 me, kisi ki 50 me. Maan lo kuch der ke liye meri nazar hat gayi aur counter 7 ki umar khatam ho gayi, wahan ek saath ek lakh request aa gayi. Kya wo ek lakh DB pe jaayengi? Nahi. Mote register pe bheed lag jaayegi, aur bhi log wahan apna kaam kar rahe, unke liye dikkat hogi. To main bolunga: sab ruko, chupchaap, ekdam shaanti. Chhotu bhai ja, yahan parchi ud gayi hai, mote register me ja, jo ye log maang rahe uska pata la, aur yahan likh de. Chhotu parchi le ke aaya, maine dekha kya likha hai, likh liya: aa jao sab, dobara aa jao.

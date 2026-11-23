@@ -68,6 +68,10 @@ Technical me: "chhota register, saari baatein likhta rahunga" = buffer (server k
 Arpan: Ye Banking ke master register wali baat hai: May wale ko 1 May ka balance chahiye to shuru se nahi jodte, master register se uthate hain. Waise hi har kuch hazaar op pe poore doc ki ek photo save kar lo. Ravi doc khole to sabse nayi photo uthao aur sirf uske baad ke thode op lagao. Doc turant khulega.
 Technical me: poore doc ki photo = snapshot, photo + baad ke op = snapshot + op log replay.
 
+**DB kaunsa:**
+Arpan: Cassandra, kyunki Docs me padhna kam, likhna pelam pel, har banda har akshar pe likh raha. Cassandra me leader nahi, machine jodo to data apne aap bat jaata. Ek doc ke badlaav doc id ke neeche time ke kram me. Copy sirf padhai badhati, likhai ke liye tod ke baanto.
+Technical me: partition key docId, clustering version, likhai bhaari, leaderless.
+
 **3. Doc me `Goa jaayenge`. Ek hi second me Arpan ne shuru me "Hum " joda, Ravi ne "Goa" ke baad (jagah 3) " kal" joda. Server pe Arpan ka pehle pahuncha, Ravi ka "jagah 3" lagaya to ban gaya `Hum kal Goa jaayenge`, Ravi ka kal galat jagah.**
 Arpan: Maine likha "Hum Goa jaayenge", usne likha "Goa kal jaayenge", to poora ban jaayega "Hum Goa kal jaayenge". Uska kal galat jagah nahi aur hamara Hum bhi galat jagah nahi. Humne shabdon ko khiska diya. Main yaad rakhun ki Arpan ne Goa se pehle Hum likha tha, to wahan Hum likh dun; Ravi ne Goa ke baad kal likha tha, to "Hum Goa kal jaayenge". Koi dikkat hi nahi.
 Technical me: "shabdon ko khiska diya" = OT (Operational Transformation), "yaad rakhun kisne kahan likha" = op ki jagah pichhle op ke hisaab se aage.
@@ -123,6 +127,14 @@ Par sabka ek nahi hoga: har doc ke liye alag. Main aur Ravi ek doc pe to hum don
 Arpan (aur neeche: Arpan Mumbai server pe, Ravi Delhi server pe, centralized kaise): Pehle saare operation apne paas jama kar lunga, Redis me ya kahin bhi, abhi DB me nahi (DB baith jaayega). Arpan ne index 0 pe "ARPAN" likha, Ravi ne index 2 pe "RAVI". Dono operation Google Docs ke andar ek jagah aayenge, wahan dekha jaayega: pehle ARPAN, phir Ravi index 2 pe, wahan "P" hai. Noob sochega Arpan ka kaat ke Ravi ka overwrite kar do, ya "AR" + "RAVI" likh ke "PAN" kho do; dono galat, phir sharing doc ka matlab hi khatam. To "P" ko khiska do, beech me poora "RAVI" daal do: "AR RAVI PAN". Jaise main Madhya Pradesh me beech me baitha hoon, Ravi Delhi se, Arpan Mumbai se likh rahe: dono ka mere paas aaya, merge karke poora sentence dono ko ek jaisa dikha dunga. Upar se aajkal Docs me har likhne wale ki rang wali vertical line (cursor) dikhti hai, Jira me bhi.
 Technical me: "centralized system, ek hi version" = ek jagah kram aur OT, "har doc ka alag centralized system, uska maalik" = har doc ka ek owner server.
 
+**Aur neeche (owner server kaun):**
+Arpan: LB ne Arpan ko server 1 aur Ravi ko server 3 bheja to dikkat; ek doc ek server pe hona chahiye, doc id se ring pe baanto.
+Technical me: docId pe consistent hashing.
+
+**Aur neeche (badlaav doosre server tak kaise):**
+Arpan: 50 lakh connection ek server nahi jhelta, LB ke peeche kai server. Main server 1 pe likh raha, Ravi server 2 pe padh raha, to server 1 badlaav Redis pub/sub pe daale, wo saare server pe bhej de.
+Technical me: WebSocket servers + Redis pub/sub fan-out.
+
 **Maan lo ek doc pe 1000 log aa gaye:**
 Arpan: Editor owner pe hai, OT sirf likhne walon ka hai; viewer koi bhi ho, 900 viewer hain to bhi koi dikkat nahi.
 Technical me: OT / transform sirf editors ke ops pe, viewers sirf broadcast sunte (fan-out), owner pe bojh likhne walon se.
@@ -131,13 +143,25 @@ Technical me: OT / transform sirf editors ke ops pe, viewers sirf broadcast sunt
 Arpan: Use ek chhoti memory me likh de. Chal maan le mere paas ek dabba hai, us dabbe me saari information store kar raha. Kal wo dabba mar jaaye ya gir jaaye, to us dabbe ki ek aur copy bana dunga. Ya main dabbe ko bolunga: ye meri information tu bhi store kar le. Kal mujhe kuch ho jaaye to tu hai, tujhe kuch ho jaaye to main hoon.
 Technical me: "ek dabba, saari information store" = Redis buffer, "us dabbe ki ek aur copy" = Redis ki copy (replica), "Saved" tab jab copy ne bhi likh liya (Redis copy apne aap thodi der baad likhti; "copy ne bhi likh liya" pakka karne ke liye WAIT); "mujhe kuch ho to tu hai" = owner gira to naya owner usi copy se uthaaye. DB (Cassandra) me batch waise hi.
 
+**Aur neeche (maalik server gira):**
+Arpan: Maalik server gira to kaam rukega, isliye uski copy saath: main chhutti pe jaun ya tabiyat kharab ho to thode din tu sambhal lena, tu meri copy hai. Aur doc DB me hai, naya server wahan se utha lega.
+Technical me: standby owner, state Redis buffer + DB se.
+
 **Maan lo dabba aur uski copy dono gir gaye, system restart, batch abhi DB me nahi gaya tha?**
 Arpan: Dabba apni disk pe bhi likh de, memory me bhi aur disk pe bhi; gire to disk se wapas aa jaayega, jaise Kafka me line disk pe rehti. Phir bhi sab gira diya to haan, kuch second ki lines chhoot sakti hain, user dobara likh lega. Aisa sochenge to design hi nahi banega: poori consistency chahiye to 2 kyun, 500 copy rakho, aur 500 ka paisa bhi do. Interviewer dekhna chahta hai main sochta kaise hoon, har copy girana design nahi.
 Technical me: "disk pe bhi likh de" = Redis AOF (persistence), "kuch second chhoot sakti" = chhota data loss window, trade-off: zyada durability = zyada copy / zyada paisa.
 
+**Aur neeche ("Saved" se pehle Redis gira):**
+Arpan: Saved se pehle Redis gira to bhi kho nahi jaata, bhejne wale ke paas op id hai, Redis aaye to wahi dobara bhej dega; dobara aaya to 1b wala niyam.
+Technical me: bina ack ke op dobara bhejo, op id se idempotency.
+
 **Maan lo poore data center ki bijli gayi, Redis aur uski copy dono ek hi jagah the, dono gaye.**
 Arpan: Ek jagah mat rakho. Main Google ka CEO hota to sochta: Mumbai ke data center me kabhi bijli ja sakti, to Arpan ka data Mumbai me, aur uski ek copy Delhi ke data center me. Mumbai gaya to copy Delhi se aa jaayegi, data safe. (Ye infra ka sawaal hai, aisa kam hi hota.)
 Technical me: "copy doosre shehar me" = multi-region replica (alag data center me copy).
+
+**Isi pe ek aur raasta (thodi der local me):**
+Arpan: Ya Redis gira to thodi der server ke local cache me rakh lo, phir Redis me daal do.
+Technical me: temporary local buffer.
 
 **6. Arpan doc ka maalik, usne Ravi ko hata diya. Par Ravi ke server ke paas permission ki purani copy, "Ravi = editor". Hatne ke baad bhi Ravi 2 minute likhta raha.**
 Arpan: Main apni memory me chhota note daal dunga: ye banda editor nahi, iska koi bhi operation aaye, accept nahi karunga. Ravi alag server pe hai, to main ek parchi rakhunga "Ravi ab editor nahi", aur wo parchi ek tez bhaagne wale bachche ko dunga: jahan bhi Ravi ki permission hai wahan sab ja aur bata de "Ravi ab editor nahi". Ek centralized authority hai jo sab likh rahi. Us centralized authority ne (main bande ne) mana kar diya ki Ravi ab edit nahi, to chhota banda building ke bahar khada hoke chilla de "suno, Ravi editor nahi", to Ravi jis bhi server pe ho wahan se uska editor note hat chuka hoga. Bahut se answer ho sakte, ek sahi answer nahi: Redis pub/sub bolo ya building ke bahar koi chilla de.

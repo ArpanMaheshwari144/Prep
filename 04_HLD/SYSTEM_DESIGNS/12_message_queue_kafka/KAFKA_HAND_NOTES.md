@@ -53,6 +53,10 @@ Technical me: "bheed ko kaabu karne wala" = Kafka (beech ki queue), "line banao,
 **Isi pe ek aur misaal (tube):**
 Arpan: Ise tunnel samajh, ek tube samajh: tube me main idhar se kuch daal raha, wo producer. Wo jagah jahan line lag rahi, wo Kafka. Jo main udhar se nikaal lun, wo consumer, worker / consumer jo bhi kehna chaho.
 
+**Aur neeche (seedha call karne me dikkat):**
+Arpan: Order Service khud SMS, Fraud, Analytics ko call kare aur sabka jawab aane tak ruke, to ek dheema to sab dheema, SMS ka Fraud se lena-dena nahi; isliye beech me line.
+Technical me: sync fan-out = coupling, beech me queue se alag karo.
+
 **Maan lo pooche app ke andar hi async thread kyun nahi:**
 Arpan: Kaam disk pe rehna chahiye. Thread hai aur kuch gir gaya to thread sab kho dega, wo hum afford nahi kar sakte; email kisko gaya, kya gaya, kuch pata nahi lagega. Kafka apni cheez disk pe rakhta, consumer kahan tak hai, offset hai.
 
@@ -69,6 +73,10 @@ Technical me: producer -> topic -> consumer (tube), in-process async thread = cr
 Arpan: Maan le stadium me line hai, ek aadmi ruk gaya, wahin se peeche sab disturb ho gaye. Wo line se nikla, bahar chala gaya. Uski seat booked hai, wahi baithega, uski seat pe koi aur nahi baith sakta. To line dobara shuru kari, koi gum nahi hua, kuch dikkat nahi.
 Technical me: "seat booked, wahi baithega" = offset (bookmark), "line dobara shuru, koi gum nahi" = restart ke baad wahin se padhna, khabar padhne se mit-ti nahi.
 
+**Maan lo Fraud me bug tha, 2 din galat kaam kiya.**
+Arpan: Khabar 7 din disk pe padi rehti, bug theek karo, Fraud ka bookmark 2 din peeche, dobara padh lega; baaki ka apna bookmark, nayi service shuru se padh legi.
+Technical me: retention ke andar offset reset (replay).
+
 **3. Bheed itni ki ek admin se nahi sambhal rahi.**
 Arpan: Bheed bahut hai, wo akela admin nahi sambhal pa raha, to inke liye aur gate khade karo. Har ek ke andar apni line. Yahi Kafka karta hai: broker, partition, aur unke andar line. Kaun kis gate pe jaaye, wahan hash aa gaya.
 Technical me: "aur gate" = partition, "har gate ke andar apni line" = kram sirf ek partition ke andar, "kaun kis gate pe, hash" = key ka hash se partition.
@@ -78,6 +86,10 @@ Arpan: Alag-alag nahi bhej sakte. Key ke zariye ek hi partition me laayenge: A7 
 Technical me: "key ke zariye ek partition" = partition key (message key = order id), "tukde ke andar line" = kram sirf ek partition ke andar.
 **Isi pe ek aur misaal (exam hall):**
 Arpan: Class me bachche kaise bhi baithe hon, par exam hall me aaye to fix seat: tera roll number yahan, tera wahan. Cinema ke bahar bheed kaise bhi, andar ek ke baad ek. Kafka ka matlab hi line lagana; partition ke andar kram wo follow karega hi.
+
+**Maan lo baad me gate 10 se 20 karne pade.**
+Arpan: Ginti badalte hi hash badalta, A7 ki khabar doosre gate pe, thodi der kram toot sakta; isliye shuru me hi zaroorat se zyada gate.
+Technical me: partition badle to keys doosri jagah, isliye pehle se zyada partition.
 
 **Maan lo ek user ki khabar bahut garam:**
 Arpan: Key me number jod deta hoon, jaise user 9 ya 4, to wo alag tukde pe chala jaata. Keemat ye ki us user ka poora kram nahi bachta, bas har tukde ke andar bachta.
@@ -109,6 +121,10 @@ Pench: paise dena (SMS company) aur parchi (hamara DB) do alag jagah hain, ek jh
 Arpan (aakhri): Har message ki ek pakki id bana do. Is id se ek SMS chala gaya; wahi id dobara aaye to discard kar do, chahe naya worker / consumer laaye ya doosri SMS company se jaaye.
 Technical me: parchi = DB me ye ho gaya ka record · "rok nahi sakte, dobara aayega hi" = Kafka at-least-once, "pakki id, dobara aaye to discard" = idempotent consumer (idempotency key, eventId / order id se), wahi id SMS company ko bhi bhejo taaki wo bhi dobara na bheje.
 
+**Aur neeche (pehle kaam ya pehle bookmark):**
+Arpan: Pehle bookmark phir kaam aur beech me gira to khabar kho gayi (at most once); pehle kaam phir bookmark to dobara aayegi (at least once). Khona nahi, isliye pehle kaam, dobara aaye to pakki id se phenk do.
+Technical me: at-most vs at-least once + idempotent consumer.
+
 **Maan lo pooche exactly once kyun nahi:**
 Arpan: Exactly once main scope ke bahar rakhta hoon; Kafka exactly once sirf Kafka se Kafka tak deta, SMS bahar ki cheez hai.
 Technical me: Kafka EOS = sirf Kafka ke andar (read-process-write), bahar ka SMS = at-least-once + pakki id se dohra phenko.
@@ -125,6 +141,10 @@ Technical me: outbox = DB ki table, alag dabba nahi; DB gira to DB ki replica (o
 Arpan: Use line se hata, usko ghusne hi mat de. Tu bahar, tu aayega hi nahi. Matlab mere paas ek aisi cheez ho jo uske gate pe hi rok de, andar hi na aane de. Matlab bouncer, hahaha.
 Technical me: "line se hata" = DLQ (alag line, baaki line chale), "bouncer gate pe hi rok de" = galat khabar ko pehle hi rokna (validation).
 
+**Isi pe ek aur misaal (bhandara):**
+Arpan: Ek-do baar dobara dekh liya, teesri baar bhi wahi to bouncer ko de do "dobara line me na dikhe". Bhandare jaisa: mohalle ke ladke baar-baar prasad lene aate, do-teen baar notice karunga, phir apne bande ko bulaunga.
+Technical me: backoff ke saath retry, phir DLQ.
+
 **Maan lo Arpan ki "pay" khabar DLQ me gayi, peeche ki "cancel" chal gayi, kram toota.**
 Arpan: Cinema hall ka ticket checker: 3 logon ka group aaya (order, pay, cancel). Ek gadbad nikla to use jaane nahi dunga. Ya to teeno mat jao, ya pehla (order) chala gaya to baaki do (pay, cancel) abhi mat jao; jab wo theek ho jaaye to pay aur cancel ek saath dobara jaayenge. Isse kram nahi tootega. Jaise ticket pe likha A1, A2, A3: A1 andar chala gaya, A2 ruk gaya, to A3 ko A2 ki seat pe nahi bhejunga. A2 jaayega to A3 jaayega, A2 cancel to A3 bhi ruka. Stadium me do saathi aaye, ek ki jeb me hathiyar nikla: dono bahar, ek nahi. Pehle PAY, phir CANCEL; PAY nahi hua to dono hi nahi, dono baad me line me.
 Technical me: "3 logon ka group" = ek order ki khabar (key = order id, wahi 3b wali, ek partition), "gadbad wala atka to baaki do bhi ruko" = us key ki aage ki khabar bhi park karo (DLQ + same key ki parking), theek hone pe kram se dobara; baaki users chalte rahein. Kafka kram ek partition ke andar pakka deta hai; yahan kram humare consumer ne toda, jab pay ko DLQ bhej ke cancel pe aage badh gaya.
@@ -136,6 +156,10 @@ Technical me: "sab DLQ me nahi, pehle check" = circuit breaker, "check karunga k
 **10. Koi line me 7 din se zyada peeche reh gaya, aur gate ki 7 din purani list ka panna phaad diya jaata hai.**
 Arpan: Wahan bheed bahut zyada hai, aur admin daalo wahan. Use itna peeche rehne hi mat do na, wahan aisa karo taaki wo bheed 7 din tak peeche na rahe.
 Technical me: "aur admin daalo" = pehle checker (consumer) badhao, gate (30) tak; gate bhar gaye tab gate (partition) bhi badhao, isliye shuru se zyada gate rakhe the, "itna peeche rehne hi mat do" = retention khatam hone se pehle lag pakadna.
+
+**Aur neeche (10 checker par gate ek):**
+Arpan: Ek gate pe 10 checker bekaar, gate bhi baanto, 10 gate har pe ek checker, bahar admin sabko apne gate bheje.
+Technical me: ek group me ek partition ek consumer; 1 partition + 10 consumer = 9 khaali.
 
 **Maan lo wo dheere-dheere peeche ja raha: aaj 1 din, kal 2 din. 7 din hone se pehle kaise pata chalega?**
 Arpan: Alert laga do. Wo peeche ja raha, alert aa gaya. Wo aise bolta: "abe ye bahut peeche hai, admin jaldi-jaldi kaam karo, itna peeche kyun ja raha hai."

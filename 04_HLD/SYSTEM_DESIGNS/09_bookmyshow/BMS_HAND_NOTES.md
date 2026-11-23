@@ -90,6 +90,10 @@ Technical me: purana seat map = sirf UI ("already booked" / refresh), design nah
 Arpan: Parchi ko thodi der ke liye wahin rehne de. Counter wala dekh raha: "ye payment kar raha, chal main 5 minute tak dekhta hoon. Aa gaya to theek, nahi to hata dunga yahan se." Usne 5 minute intezaar kiya, Arpan nahi aaya, to parchi phaad ke phenk di. Seat agle ke liye.
 Technical me: counter wala = hamara server · "5 minute tak dekhta hoon" = hold expiry (hold_until), "parchi phaad ke phenk di, seat agle ke liye" = hold hata ke seat wapas FREE.
 
+**Aur neeche (5 minute hi kyun):**
+Arpan: 5 minute isliye kyunki GPay se pay karne me itna waqt lagta; aur BMS sach me aisa karta, ek baar maine timer me pay nahi kiya to seat chali gayi.
+Technical me: hold ki umar = aam pay ka waqt; BMS countdown = hold_until.
+
 **Maan lo pooche parchi ki umar Redis TTL me kyun nahi:**
 Arpan: Main yahan DB column zyada prefer karta hoon. Redis abhi is waqt system me lagana thoda early stage hai, kyunki ye DB column se bhi manage ho sakta. Redis lagaya to ek aur system maintain karna padega; kisi din Redis gira to un keys ka kya hoga, stampede / avalanche wali dikkat, replica bhi chahiye. DB column se abhi itni dikkat nahi.
 Technical me: hold_until DB column (ek hi sach, ek system), Redis = aur ek cheez sambhalni (failover, replica); zaroorat pe baad me.
@@ -132,6 +136,10 @@ Technical me: parchi = seat ka hold, chhotu = status poll job · ghadi = client 
 
 Hum perfect system ke peeche nahi bhaag rahe. PSP hamare bas me nahi, wo dheema hai to na uski galti na hamari. Perfect consistency maango to ticket bechoge kaise; dikkat aayegi, bas user se saaf baat karo aur paisa wapas karo.
 Technical me: "1-2 baar ping" = status check retry (timeout), "payment FAILED dikha do, seat mat chhodo" = payment attempt FAILED, booking wapas HELD (hold_until tak, dobara pay), umar khatam to EXPIRED (paisa kata nikla to refund), "doosra ladka / naye log doosre PSP pe" = circuit breaker -> PSP-2, "id hamare paas" = payment id (idempotency key), "baad me kata nikla to wapas" = reconciliation job + refund.
+
+**Aur neeche (doosre PSP pe seedha kyun nahi):**
+Arpan: Doosre PSP pe bhejne me paisa do baar kat sakta, use pata nahi pehla pending hai; isliye pehla FAILED likho, baad me kata to refund.
+Technical me: failover me double charge ka khatra -> FAILED + der se kata to refund.
 
 **6c. 6b wala gola ghoom hi raha tha, popup aane se pehle hi Arpan ne thak ke back daba diya, app band. Thodi der baad Razorpay ne paisa kaat liya. Arpan ko lag raha: paisa gaya, seat bhi gayi. Ab?** (Myntra wala hi jawab; BookMyShow ka bhi apna PSP nahi, Razorpay hi hai)
 Arpan: Razorpay kitni der lega, wo hamare haath me nahi, uska design hai. User ko zyada der nahi rok sakte, itne me to Doomsday ka poora hall book ho jaayega. To 30 se 55 second gola ghumao, uske baad saaf bol do: "payment abhi ho nahi pa raha, paisa kata hoga to apne aap wapas aa jaayega, doosre tareeke se pay kar lo". Doosra pay doosre PSP pe (Razorpay jaisi doosri service), Razorpay pe nahi. Aur seat mat chhodo, wo parchi ki bachi umar tak Arpan ki HELD rahe (6b).

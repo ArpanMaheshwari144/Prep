@@ -65,6 +65,10 @@ Technical me: "bahut saare chhotu" = kai fetcher ek saath, "chhoti parchi" = Red
 **Maan lo koi site band hai ya bahut dheemi:**
 Arpan: Har site ka fetch parallel hoga, timeout hoga, aur har site ka circuit breaker: koi site fail ho gayi to circuit breaker hai hamare paas. Aur peeche queue hai jo backlog aur spike sambhal sakti hai.
 Technical me: per-source timeout + circuit breaker (ek dheemi site baaki ko na roke), queue = backlog / spike buffer.
+**Aur neeche (site wapas aayi to):**
+Arpan: Site 10 minute baad wapas aayi to ekdam poora load nahi daalna; pehle thodi-thodi request, chal gayi to dheere-dheere poora. Tab tak doosre source se khabar le aao.
+Technical me: circuit breaker half-open, dheere-dheere load badhao.
+
 **DB kaunsa:** Arpan (21-Nov): News me consistency honi chahiye: khabar kahan se laa rahe, title, URL, category, time, ye sab theek chahiye. Isliye shuruaat Postgres (ya MySQL) se karunga, Cassandra ekdum se nahi ghusa sakta. Kaunsa DB, iska jawab FR se milega: interviewer bole "likhai bahut hai, 50,000 fetcher, har fetcher 100-1000 khabar laa raha, har minute DB me update", tab write-heavy hai aur Cassandra ka sense banta. Bole "padhai zyada, likhai me itni dikkat nahi", to Cassandra lunga hi nahi, Postgres se kaam chal jaayega. Badi companiyan dono rakh sakti: ACID wala bhi aur NoSQL bhi (key-value / JSON me khabar ka title, khabar).
 Technical me: shuruaat = Postgres (row: title, url, category, time, consistency); FR me write-heavy aaye = Cassandra; dono saath = polyglot persistence.
 
@@ -92,13 +96,25 @@ Technical me: "isme daal, chalta rahe" = Kafka (chhotu = producer), "peeche work
 Arpan: Khabar category ke hisaab se baant do, jise jo pasand wahi do. 1 crore ke liye bahut saare server, aur ek banda jo sabko manage kare: tere pe 10 load, tere pe 5, agli request tere paas.
 Technical me: "category me baant" = har khabar pe category, user ki pasand DB me, "manage karne wala banda" = load balancer.
 
+**Aur neeche (chunav ke din sab ek hi khabar padh rahe):**
+Arpan: Server badhao, aage LB. Yahan likhna kuch nahi, sab wahi result padh rahe, to primary pe hit bekaar, replica se padhwao.
+Technical me: read replica.
+
 **Maan lo Priya ne teen category chuni: tech, cricket, business. Use EK feed dikhani, upar sabse nayi.**
 Arpan: Alag-alag teen parchi rakhne ka koi matlab nahi. Ek parchi pe sabki pasand likh lunga: Priya ko tech, business, cricket; Rahul ko ye teen. Khabar aayi, maine apna algorithm chala ke chhaant liya: ye tech ki, ye cricket ki, ye business ki. Shabdon ki list hogi (iPhone, AI), word by word dekhte hain, to kabhi non-tech bhi chali jaayegi, hota bhi hai. Khabar to sabki ek hi hai: AI launch hua to poori duniya ke liye, Rahul aur Priya ko alag khabar thodi. Pasand dekh ke us category ki khabar unki feed me push, Twitter jaisa, taaki app kholte hi turant dikhe; neeche scroll karo to apne aap load. Login hai to pasand ke hisaab se, category chunne ka option; login nahi to bas normal khabar. Ye FR me likh sakte.
 Technical me: "pasand ki ek parchi" = user preference store, "shabdon ki list se chhaanto" = keyword-based classification (category tag), "feed me push" = fan-out on write, "neeche scroll pe load" = pagination / infinite scroll, "login nahi to normal khabar" = logged-out default / trending feed.
 
+**Aur neeche (chhotu kya laaye):**
+Arpan: Chhotu ko sirf pasand wali khabar nahi bolunga, wo saari laata; chhaantna peeche, phir pasand se feed.
+Technical me: fetcher pasand nahi dekhta, category baad me (ingest ke baad classification).
+
 **6. Priya app kholti hai. Chhotu site pe jaata hai ya parchi se deta hai?**
 Arpan: Parchi bhi chhotu hi banata. Naya banda aaya, pehle din pasand poochi: tech. To pehli baar DB se laao (thoda time chalega) aur parchi me rakh do. Roz tech hi dekh raha to wahi pehle se saamne rakho, pasand badle to DB se. Aur jis site se khabar la rahe wo band ho to 5 sec, 10 sec baad dobara try; na khule to chhodo, baaki site chalti rahengi.
 Technical me: chhotu = fetcher, parchi = Redis feed · "pehli baar DB, phir parchi" = cache-aside, "5 sec, 10 sec baad dobara" = retry + backoff, ek site band = baaki pe asar nahi.
+
+**Aur neeche (parchi khaali aur lakhon log ek saath):**
+Arpan: Sab DB pe nahi jaayenge: ek hi request DB jaaye, saari khabar la ke parchi me rakh de, baaki ruk ke parchi se le lein.
+Technical me: cache stampede -> single flight / lock.
 
 **7. Priya ki parchi 8 baje bani. 9:05 iPhone ki khabar DB me gayi. 9:10 Priya ko parchi se purani feed, iPhone nahi.**
 Arpan: Nayi khabar aate hi tech walon ki feed me daal do. Aur milaan: har tech wale ki parchi me aaj ki badi khabar hai na? Chhoot gayi to DB se le ke seedha feed me.
@@ -116,6 +132,10 @@ Technical me: parchi = tech feed ki key, dabba = Redis node · "dabbe badha do" 
 Arpan: Garam khabar do-teen dabbon me daalo. A ke paas hai, B ke paas nahi, to B bhi rakhe. Do me likho, do se padho: A-B, A-C, B-C, koi bhi do.
 Technical me: "do me likho, do se padho" = quorum (3 me W=2, R=2, kam se kam ek me taaza). Redis copies khud ye nahi karti; app do me likhe aur do se padhe (Cassandra jaisa DB ye khud karta).
 
+**Isi pe ek aur misaal (aunty aur teen bande):**
+Arpan: Teen bande A, B, C. Khabar sirf A ko di, aunty B se poochh ke chali gayi, B ke paas thi hi nahi. A-B dono ko di to aunty C se poochh gayi. Isliye do me rakho, do se poocho: aunty kisi bhi do se poochhe, ek ke paas jawab zaroor.
+Technical me: quorum, 3 me W = 2, R = 2.
+
 **11. Worker / consumer ne khabar DB me likhi, parchi me daalne se pehle mar gaya. Doosra worker / consumer DB me dekh ke dupe samjha, hata di. Khabar kisi ko nahi dikhi.**
 Arpan: Gadbad parchi se pehle hui. DB se pehle mara to dikkat nahi, doosra daal dega, dupe check + unique constraint hai. To ek status rakh: "DB me daali", "parchi me daali". Beech me gira to agla status dekh ke kaam aage badha dega. Ek tarah ki logging.
 Technical me: parchi = Redis feed · "status" = khabar ka state (DB me -> feed me), agla worker / consumer adhoora kaam poora karta; "logging" = outbox wali soch (outbox = DB ki table, kaam ke saath usi transaction me likhi).
@@ -126,6 +146,10 @@ Technical me: "FR me tay kab tak" = data retention policy, "raddi, register se n
 
 **13. Ravi ne search me "Kohli century" likha. Server mote register me 7 din ki lakhon khabron ki poori likhai me ek-ek karke "Kohli" dhoondh raha, Ravi 8 second se gola dekh raha.**
 Arpan: Main Elasticsearch add kar dunga. Elasticsearch apne aap me alag design hai. 7 din me sach me bahut khabar, Kohli ki dhoondhne me bahut time lagega; aisa nahi ki har din ka partition karo. Elasticsearch search index bana ke khud dhoondh lega. Andar kaise kaam karta wo Elasticsearch jaane, uska design hum nahi bana rahe.
+
+**Aur neeche (ES kya deta):**
+Arpan: Worker khabar likhte hi ES ka index bhi update kare. Search pe ES sirf milti khabar ke number deta, poori khabar register ya parchi se.
+Technical me: ES doc id lautata, content DB / cache se, index async.
 
 **Maan lo headline alag-alag shabdon me:**
 Arpan: Koi "Kohli ne century maari", koi "aaj Kohli ki shatakiya paari". Hamari company khabar banati nahi, bahar se laati hai, aur sabki headline alag. To sabki jad nikaalo: Kohli century. Mere paas 10 paper aaye, 5 me almost wahi baat, likhne ka andaaz alag. Koi aaya "Kohli ki century?", maine kaha haan maari, ye le 5 paper, isme sab likha hai kab maari.
