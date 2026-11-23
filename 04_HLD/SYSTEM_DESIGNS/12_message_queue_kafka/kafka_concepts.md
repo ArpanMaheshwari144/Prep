@@ -364,7 +364,9 @@ bookmark Kafka ke andar `__consumer_offsets` me (hissa 4). Restart ho to 45 se.
 
 ### 8.8 Leader gira: Controller naya leader chunta
 
-Broker B gira. **Controller** (hissa 5) ISR me se naya leader chunta hai: A ke paas 44 tak sab hai, to **A = P1 ka naya
+Broker B gira. **Controller** (hissa 5) ISR me se naya leader chunta hai. Controller alag cheez nahi, Kafka ka hi ek broker
+hai jise ye kaam mila (purane Kafka me ek broker controller banta, ZooKeeper ki madad se; naye Kafka, KRaft, me 3 controller
+machine aapas me ek leader chunti). Group coordinator bhi isi tarah kisi broker ka kaam hai. Yahan: A ke paas 44 tak sab hai, to **A = P1 ka naya
 leader**. Peeche chal rahi copy ko leader nahi banate, warna pakki khabar kho jaati. Naqsha badla (P1 -> A), producer aur
 worker 2 ab A se baat karte hain. Arpan ne cancel kiya: A pe **45**, C ne A se maang liya, worker 2 bookmark (44) se aage
 45 padh leta hai. Kuch nahi khoya, kram wahi.
