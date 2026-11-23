@@ -284,6 +284,8 @@ dabbe me saari information store kar raha. Kal wo dabba mar jaaye ya gir jaaye, 
 Ya main dabbe ko bolunga: ye meri information tu bhi store kar le. Kal mujhe kuch ho jaaye to tu hai, tujhe kuch ho
 jaaye to main hoon.
 
+**Aur neeche (maalik server gira, Arpan):** Maalik server gira to kaam rukega, isliye uski copy saath: main chhutti pe
+jaun ya tabiyat kharab ho to thode din tu sambhal lena, tu meri copy hai. Aur doc DB me hai, naya server wahan se utha lega.
 **Asli naam:** ek dabba, saari information store = Redis buffer, us dabbe ki ek aur copy = Redis ki copy (replica),
 "Saved" tab jab copy ne bhi likh liya (Redis copy apne aap thodi der baad likhti; "copy ne bhi likh liya" pakka karne ke liye WAIT); mujhe kuch ho to tu hai = owner gira to naya owner usi copy se uthaaye. DB
 (Cassandra) me batch waise hi.
