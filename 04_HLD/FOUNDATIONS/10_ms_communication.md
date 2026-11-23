@@ -1,4 +1,10 @@
-# Microservices Communication
+# Microservices Communication — services aapas me kaise baat karti hain
+
+> **NAV** — KYA: services aur client baat kaise karte (sync/async, server-push real-time, saga, gateway). lagta hai: [payment](../SYSTEM_DESIGNS/06_payment_system/06_payment_system.md) · [notification](../SYSTEM_DESIGNS/04_notification_system/04_notification_system.md)
+
+---
+
+## 1. Sync ya async
 
 **Koi poochhe to aise bolo:**
 ```
@@ -11,259 +17,57 @@ wahan async: Kafka jaisi line. Isse ek service dheemi ho to baaki nahi rukti.
 
 **Trap:** order service SMS ko bhi sync call kare aur SMS company dheemi ho, to Ravi ka "order ho gaya" bhi atka rahega (Kafka kadam 1: ek dheema to sab dheema). Jo kaam user ke rukne layak nahi, use sync mat banao.
 
-
-> **NAV** — KYA: services aur client baat kaise karte (sync/async, server-push real-time, saga, gateway). lagta hai: [payment](../SYSTEM_DESIGNS/06_payment_system/06_payment_system.md) · [notification](../SYSTEM_DESIGNS/04_notification_system/04_notification_system.md)
-
-> **HLD Topic 10 — How services talk in distributed systems**
+**Checkout me dono saath:** pehle order bane (PENDING), phir stock roko, phir paisa kaato, ye sab sync kyunki Ravi screen pe ruka hai. "Order ho gaya" milte hi baaki sab (email, SMS, analytics, recommendation) ek "OrderPlaced" khabar se Kafka pe, koi bhi dheema ho Ravi ko farak nahi.
 
 ---
 
-## Why This Matters?
+## 2. Sync ke andar: REST ya gRPC
 
-### Monolith
+**Koi poochhe to aise bolo:**
 ```
-userService.create(user)  ← method call
-   ↓
-   Same JVM, same memory
-   = Instant, simple, reliable
-```
-
-### Microservices
-```
-User Service (Java)  ───?───  Order Service (Python)
-                     ───?───  Payment Service (Node)
-                     ───?───  Email Service (Go)
-
-Different processes
-Different machines
-Different networks
-   = HOW do they communicate?
+REST = JSON ki chitthi HTTP pe, har koi padh leta (browser, mobile, doosri company), isliye bahar ke liye.
+gRPC = andar ki services ke beech chhoti packed chitthi (protobuf) aur pakka contract (.proto file), HTTP/2 pe
+ek hi connection pe kai baat saath. Isliye andar tez aur chhota, par browser seedha gRPC nahi bolta.
 ```
 
-**Yeh foundation hai distributed systems ki — galat choice = production disaster.**
+**Scene:** Ravi ka phone order service se REST me baat karta (JSON, koi bhi padh le). Andar order service ko payment aur stock se baar-baar baat karni hai, wahan gRPC: chitthi chhoti, aur .proto me field ka naam badla to code compile hi nahi hoga, galti pehle hi pakdi jaati.
+
+**Trap:** frontend ko seedha gRPC service se jod diya, browser bol hi nahi paaya. Bahar REST (ya gateway pe badlo), andar gRPC.
 
 ---
 
-## STORY — Office Communication
+## 3. Server se phone tak khud bhejna (push)
 
-> 4-person office, 1 room (monolith):
->    "Bhai file de" → turn around → done.
->    = Fast, no overhead.
->
-> 50 employees, 5 floors (microservices):
->    Floor 2 needs data from Floor 4.
->    Options:
->       **Phone call** → wait for pickup, get answer (SYNC — REST/gRPC)
->       **Email** → drop message, continue work, reply later (ASYNC — Queue)
->
-> **Critical task?** Phone call (waiting OK).
-> **Non-urgent?** Email (don't block your work).
+**Koi poochhe to aise bolo:**
+```
+Phone baar-baar "naya kuch?" poochhe (polling) to crore request bekaar jaati, aur data phir bhi late.
+Isliye taar ek baar khula rakho aur naya aaye to server khud bheje: dono taraf baat = WebSocket,
+sirf server se = SSE. Bahut log hon to alag connection server, aur update sab tak pub/sub se.
+```
+
+**Scene (IPL score):** 50 lakh log score dekh rahe. Har 2 sec poochte to 25 lakh request har second, 99% baar jawab wahi purana. Taar khula rakha (score me user kuch bhejta nahi, isliye SSE bhi kaafi). Ek machine ~50k-100k taar pakadti hai, isliye alag connection server. Score badla to score service pub/sub pe daalta, har connection server apne logon ko bhej deta (Docs me bhi yahi tha: edit -> Redis pub/sub -> doosra server -> doosra user).
+
+**50 lakh tak ek update, teen alag dikkat, teen alag ilaaj (mila mat dena):**
+```
+1. data BADA hai          -> sharding (yahan lagti hi nahi, score 50 byte ka hai)
+2. user DOOR hai (US/UK)  -> connection server user ke paas, update ek baar har region me, wahan se local push
+3. BAHUT JAGAH bhejna     -> fanout tree: score service -> 3 region hub -> 100 connection server -> 50 lakh
+   + sirf jo badla wo bhejo { runs:156, wickets:3 } ~50 byte, poora scorecard ~5 KB nahi
+```
+
+**Trap:** WebSocket aur Kafka ko ek samajh liya. WebSocket = server aur user ke phone ka khula taar. Kafka = andar services ke beech ki line, phone tak nahi jaata. WhatsApp me dono: dono online = WebSocket se turant; net band tha = message DB me pada, online aaya to diya.
+
+Teeno raaste (WebSocket, SSE, long polling) = [Compares 12](../../06_COMPARES/12_websockets_vs_sse_vs_long_polling.md).
 
 ---
 
-## ★★ TEESRA RAASTA — SERVER SE CLIENT tak PUSH (real-time)
+## 4. Async ke andar: Kafka ya RabbitMQ
 
-> REST/gRPC aur queue ke alawa ek teesri zaroorat hoti hai: server ko KHUD client tak
-> data pahunchana ho. Live score, chat, notification, collab — sab yahin aate hain.
-
-```
-DIKKAT — POLLING:
-   app har 2 second me poochti hai "naya kuch hai?"
-   50 lakh user x har 2 sec = 25 lakh request/sec
-   aur 99% baar jawab WAHI hota hai jo pichhli baar tha
-   -> network bill phatta, CPU 100%, aur PHIR BHI data ~2 second tak late
-      (kyunki update agle poll ka intezaar karta hai, average ~1 sec)
-
-FIX — POLLING hatao, PUSH karo:
-   connection ek baar bane, aur naya data hone par SERVER khud bhej de
-   (WhatsApp me tu refresh nahi karta — message apne aap aata hai)
-```
-
-```
-★ WEBSOCKET vs SSE — kaunsa kab:
-     WEBSOCKET : DONO taraf baat (client bhi bhejta, server bhi)
-                 -> chat, collaborative editing, multiplayer, trading (order bhejna + price aana)
-     SSE       : sirf SERVER -> CLIENT stream, saada HTTP pe chalta, halka
-                 -> live score, notification feed, progress updates
-                 (client ko kuch bhejna hi nahi hai -> SSE kaafi hai)
-   ★ ye farak bolna depth dikhata hai — log default me WebSocket bol dete hain
-```
-
-```
-★ (drill se) WEBSOCKET vs KAFKA (confuse hota):
-     WEBSOCKET = server <-> USER ke browser ka khula pipe -> server jab chahe PUSH
-     KAFKA     = backend SERVICES ke beech (internal pub-sub) -> user ke browser tak NAHI jaata
-     WhatsApp me do alag cheez: dono online = WebSocket push ·
-                                net band tha = message DB / queue me save, online aaye to do (store-and-forward)
-```
-
-```
-★ TURANT AANE WALA SAWAAL: "50 lakh ZINDA connection kahan rahenge?"
-     ek machine ~50k-100k connection pakadti hai
-     -> alag CONNECTION TIER (~50-100 machine), apne se scale hota hua
-     -> connection STATEFUL hai -> jis server pe juda, wahi use pakde; toota to kisi bhi
-        server pe dobara jud jao, pub/sub update sab server tak pahunchata hai
-
-★ UPDATE SAB TAK PAHUNCHEGA KAISE? -> PUB/SUB
-     score/chat service ──► PUB-SUB ──► saare connection servers ──► unke clients
-     (yahi dhaancha google-docs me tha: edit -> Redis pub/sub -> doosra conn-server
-      -> doosra user. Cheez wahi, bheja hua data alag.)
-```
-
-```
-★★ 50 LAKH TAK EK UPDATE — teen alag dikkatein, teen alag ilaaj (inko mat mila do):
-
-   1. data BADA hai            -> SHARDING
-      (yahan lagti hi nahi — score to 50 byte ka hai, baantne ko kuch hai hi nahi)
-
-   2. user DOOR hai (US/UK)    -> GEO / EDGE
-      connection servers user ke paas rakho; update ek baar har region me jaaye,
-      phir wahan se local push -> 3-4 second wali der khatam
-      ★ ye sharding NAHI hai:  sharding = "data bada hai, baant do"
-                               geo      = "user door hai, uske paas le jao"
-
-   3. BAHUT JAGAH bhejna hai   -> FANOUT TREE
-         score service
-              |  3 message
-         3 region hub
-              |  100 message
-         100 connection server
-              |
-         50 lakh clients
-      -> koi ek machine 50 lakh ko nahi bhejti; har machine apne ~50,000 ko
-
-   + DELTA BHEJO, poora payload nahi:
-        { runs:156, wickets:3, balls:204 }  ~50 byte   <- sirf jo badla
-        poora scorecard + commentary        ~5 KB
-        50 lakh x 5 KB vs 50 lakh x 50 byte -> 100 guna farak
-```
+Ek khabar kai service ko (email, SMS, analytics) aur dobara padhni pade = Kafka (stadium ka register). Ek kaam ek baar ek worker = RabbitMQ (daakghar). Poora = [07 message queues](07_message_queues.md) + [Compares 14](../../06_COMPARES/14_kafka_vs_rabbitmq.md).
 
 ---
 
-## 2 BIG Categories
-
-```
-1. SYNCHRONOUS  → Caller WAITS for response
-                  "Bhai answer de phir aage badhunga"
-                  Tools: REST, gRPC
-
-2. ASYNCHRONOUS → Caller doesn't wait
-                  "Yeh kaam kar lo, mein chala"
-                  Tools: Kafka, RabbitMQ, SQS
-```
-
----
-
-## 1 SYNCHRONOUS — REST vs gRPC
-
-### REST (HTTP + JSON)
-```
-Order Service ──POST /users/123──→ User Service
-              ←───── JSON ────────
-
-Format: JSON
-Protocol: aksar HTTP/1.1 (HTTP/2 pe bhi chal sakta)
-Contract: OpenAPI/Swagger (loose)
-```
-
-```
-Pros:
-   • Simple, browser-friendly
-   • Easy debug (curl, Postman)
-   • Universal — every lang supports
-   • Human-readable
-
-Cons:
-   • JSON heavy (verbose)
-   • No strict contract
-   • Slower (JSON bada, padhna-likhna dheema)
-   • HTTP/1.1 = NO multiplexing: ek connection pe ek-time ek request
-     (head-of-line blocking). [keep-alive se connection reuse HOTA hai,
-      par ek-ek karke; HTTP/2 many streams ek connection pe multiplex karta]
-```
-
-### gRPC (HTTP/2 + Protobuf)
-```
-Order Service ──proto binary──→ User Service
-              ←──── binary─────
-
-Format: Protocol Buffers (binary)
-Protocol: HTTP/2 (multiplexed)
-Contract: .proto file (strict, code-generated)
-```
-
-```
-Pros:
-   • Faster, chhota payload (protobuf)
-   • Strict contract (compile-time errors)
-   • Streaming support (bidirectional)
-   • Smaller payload (binary)
-
-Cons:
-   • Browser unfriendly (needs grpc-web)
-   • Hard to debug (binary, not human-readable)
-   • Steeper learning curve
-```
-
-### When to use which?
-```
-External APIs (mobile, frontend, public):  REST
-                                            (universal, debug-friendly)
-
-Internal MS-to-MS:                          gRPC
-                                            (Google, Uber, Netflix)
-
-Hybrid (real production):                   REST gateway → gRPC internal
-```
-
----
-
-## 2 ASYNCHRONOUS — Message Queues
-
-```
-Order Service ──publish event──→ [Kafka/RabbitMQ]
-                                       ↓
-                                  Payment Service ── consume
-                                  Email Service   ── consume
-                                  Analytics       ── consume
-
-Order Service doesn't wait
-Each consumer processes at own pace
-```
-
-**Use kab:**
-```
-Order placed → email send (async, non-critical)
-Video uploaded → thumbnail generate (slow)
-Multiple consumers (analytics + email + audit)
-Spike absorption (queue buffers traffic burst)
-Loose coupling (services don't know each other)
-```
-
-> Detail: [07_message_queues.md](07_message_queues.md)
-
----
-
-## Sync vs Async Decision Matrix
-
-```
-SYNC use karo jab:
-   Response chaiye immediately
-   User waiting (login, payment confirm)
-   Failure ko handle karna hai right now
-   Strong consistency needed
-
-ASYNC use karo jab:
-   Background work (email, notification)
-   Slow processing (video, ML, reports)
-   Multiple consumers
-   Loose coupling chahiye
-   Spike absorption needed
-```
-
----
-
-## Resilience Patterns (Senior Signal)
+## 5. Ek service dheemi ho to baaki ko bachao
 
 **Koi poochhe to aise bolo:**
 ```
@@ -272,95 +76,17 @@ retry with backoff, taaki girti service pe toot na padein; aur circuit breaker, 
 aaye to kuch der call hi band, phir thoda-thoda try karke wapas.
 ```
 
-**Scene:** order service sync me payment ko call karti, payment atki, har call 30 sec latak ke fail; order service ke saare thread phanse, jo sirf order dekhne aaye unka bhi kaam ruka. Timeout = 2-3 sec me "nahi hua" (e-com me PSP ki 60 sec had). Backoff = 1, 2, 4 sec ruk ke (URL / cache ka jitter). Circuit breaker = ghar ka fuse: lagaataar fail pe ud jaata, kuch der call band, phir 1-2 call bhej ke dekho, chali to wapas (News: site wapas aayi to thodi-thodi request).
+**Scene:** order service sync me payment ko call karti, payment atki, har call 30 sec latak ke fail; order service ke saare thread phanse, jo sirf order dekhne aaye unka bhi kaam ruka. Timeout = kuch second me "nahi hua". Backoff = 1, 2, 4 sec ruk ke (URL / cache ka jitter). Circuit breaker = ghar ka fuse: aakhri kuch call me fail had se upar gaye (jaise 10 me 5) to fuse uda, kuch der call band; phir kuch call bhej ke dekho, chali to wapas (News: site wapas aayi to thodi-thodi request). Fuse ke teen haal: CLOSED (sab call jaati), OPEN (sab band, turant "nahi"), HALF-OPEN (kuch call bhej ke jaanch). Backoff me thoda random (jitter) bhi jodo, warna sab client ek hi pal dobara maarte.
+
+**Chauthi cheez, bulkhead:** har neeche wali service ke liye alag thread pool, jaise jahaz ke alag dibbe; payment ka pool bhar gaya to bhi stock wali call chalti rahe.
+
+Spring me ye sab Resilience4j se: `@CircuitBreaker`, `@Retry`, `@TimeLimiter`, `@Bulkhead`.
 
 **Trap:** retry bina backoff, sab 3-3 baar turant maarne lage, bojh teen guna, service poori giri. Retry hamesha ruk-ruk ke aur had ke saath.
 
-
-### 1. Circuit Breaker
-```
-Problem:
-   User Service down hai?
-   → Order Service har request fail karega
-   → Threads pile up
-   → Order Service bhi crash
-   = CASCADE FAILURE
-
-Solution: Circuit Breaker
-   fail ka hissa had se upar (jaise aakhri 10 me 50% fail)
-   ↓
-   Circuit "OPEN" → reject requests immediately for 30s
-   ↓
-   After 30s → Circuit "HALF-OPEN" → kuch call jaane do
-   ↓
-   Success? → Close circuit (resume normal)
-   Fail?    → Re-open for 30s
-```
-
-```
-States:
-   CLOSED      → All requests pass (normal)
-   OPEN        → All requests fail fast (broken)
-   HALF-OPEN   → kuch request bhej ke dekho (recovery check)
-
-Tools: Resilience4j (Spring Boot), Hystrix (legacy Netflix)
-```
-
-```
-★ (drill se):
-   OPEN kab hota: fail ek had paar (e.g. aakhri 10 me 50% fail)
-   naam-trick (bijli): CLOSED = taar juda, current behe = normal · OPEN = taar toota = call band
-   FAIL-FAST kyun: OPEN me call bhejo to har call TIMEOUT tak latke -> threads bhar jaate ->
-                   apni service bhi choke (cascade). turant error / fallback -> threads free.
-```
-
-### 2. Retry + Exponential Backoff
-```
-1st fail → wait 1s  → retry
-2nd fail → wait 2s  → retry
-3rd fail → wait 4s  → retry
-4th fail → wait 8s  → retry
-= Exponential backoff
-= Don't hammer a dying service
-= Give it room to recover
-
-Add jitter (randomness):
-   wait = base * 2^n + random(0, 1000ms)
-   = Prevents thundering herd (all clients retry at same instant)
-```
-
-### 3. Timeout
-```
-Default behavior:
-   No timeout = thread waits FOREVER
-   = Thread pool exhausted
-   = Service hangs
-
-Solution: Set explicit timeout
-   3 seconds max per call
-   = Fail fast
-   = Free up thread pool
-   = Other requests can proceed
-
-Spring Boot:
-   @HttpExchange (timeout neeche RestClient / WebClient pe set hota)
-   RestTemplate / WebClient configured
-```
-
-### 4. Bulkhead
-```
-Concept (ship analogy):
-   Ship hull divided into compartments
-   One compartment leaks ≠ ship sinks
-
-In MS:
-   Separate thread pools for each downstream service
-   User Service threads exhausted ≠ Order Service blocked
-```
-
 ---
 
-## 3 SERVICE SE MAAL JODNA (aggregator) — dikkat -> ilaaj
+## 6. Teen service se maal jodna (aggregator)
 
 ```
 DESIGN: 3 service (A KYC, B credit report, C bank statement) se maal lao, jodo, save karo.
@@ -390,7 +116,22 @@ YAAD: saath me call · har service ka timeout + breaker + alag pool · PARTIAL s
 
 ---
 
-## Service Discovery
+## 7. Kai service, kai DB, ek kaam (saga)
+
+**Koi poochhe to aise bolo:**
+```
+@Transactional sirf ek DB ka. Order, payment, stock alag DB me hon to saga: har service apna hissa commit
+karti jaati, beech me fail hua to pichhle kadam ka ULTA kaam (paisa wapas, stock wapas). Ya to har service
+khabar sun ke khud agla / ulta kare (choreography), ya ek boss sabko bataye (orchestration).
+```
+
+**Scene:** Ravi ka order bana, stock ruka, paisa katne pe fail. Order aur stock pehle hi commit ho chuke, rollback ho hi nahi sakta. Isliye "order cancel" + "stock wapas" ka ulta kaam chalao.
+
+**Trap:** socha DB rollback sab theek kar dega. Rollback sirf ek DB ka bina-commit wala kaam ulta karta; saga me har kadam commit ho chuka, ulta kaam khud likhna padta.
+
+---
+
+## 8. Service kahan hai + bahar ka darwaza
 
 **Koi poochhe to aise bolo:**
 ```
@@ -399,253 +140,16 @@ hai, baaki naam se poochte hain; K8s me service naam yahi kaam karta. Bahar se a
 darwaze, API gateway, se aata hai: wahan login, rate limit, phir sahi service tak.
 ```
 
-**Scene:** payment ke 10 server, naya khula, ek gira aur naye pate pe aaya; order service ko kaise pata? Register me har service khulte hi pata likhwaye aur "zinda hoon" bolti rahe; order service naam se poochhe. K8s: pod ek service naam ke peeche. Gateway = ek darwaza, login + rate limit (rate limiter ka gate wala guard), phir sahi service.
+**Scene:** payment ke 10 server, naya khula, ek gira aur naye pate pe aaya; order service ko kaise pata? Register me har service khulte hi pata likhwaye aur "zinda hoon" bolti rahe; order service naam se poochhe. K8s: pod ek service naam ke peeche, `http://payment-service:8080` bolo, K8s ka DNS use ek pakke ClusterIP pe le jaata, wahan se kisi zinda pod pe. Gateway = ek darwaza, login + rate limit (rate limiter ka gate wala guard), phir sahi service. CORS bhi gateway ek jagah sambhal leta.
+
+**CORS kya:** frontend `myapp.com` se API `api.myapp.com` ko bulaya, browser ne roka kyunki origin alag. Server jawab me `Access-Control-Allow-Origin: https://myapp.com` bheje tab chalta. Prod me pakka origin likho, `*` nahi (cookie ke saath `*` chalta hi nahi). Ye browser ka niyam hai, server se server ya Postman me CORS hota hi nahi.
+
+**Auzaar ke naam:** register = Eureka (Spring), Consul; K8s me service naam hi kaafi. Gateway = Spring Cloud Gateway, Kong, AWS API Gateway.
 
 **Trap:** gateway ek hi machine pe aur wo gira = poora app band. Gateway ki bhi kai copy, aage LB.
 
-
-### Problem
-```
-User Service ka IP kya hai?
-   Hardcode IP?     = brittle (IP changes)
-   Manual config?   = doesn't scale
-   Plain DNS?       = purana pata cache me (K8s me DNS ek stable ClusterIP pe, isliye chalta)
-```
-
-### Solution: Service Registry
-```
-1. Service starts → registers self
-   "I am 'user-service' at 10.2.3.4:8080"
-
-2. Caller queries registry
-   "Where is 'user-service'?"
-   ← "10.2.3.4:8080"
-
-3. Service dies → deregisters / health check fails
-```
-
-### Tools
-```
-Eureka       → Spring/Netflix ecosystem
-Consul       → HashiCorp
-Zookeeper    → Old school (still used)
-K8s Service  → BUILT-IN (free with K8s)
-```
-
-### K8s ka Magic
-```
-K8s mein Eureka ki zaroorat NAHI:
-   Service name = DNS hostname automatically
-
-   Order Service mein:
-      RestTemplate.getForObject(
-          "http://user-service:8080/api/users/123",
-          User.class
-      )
-
-   "user-service" = K8s Service name
-   K8s DNS -> Service ka ClusterIP -> kube-proxy aage kisi pod pe bhejta
-   = Built-in service discovery
-```
-
 ---
 
-## Real Production Pattern
+## 9. Monolith ya microservices
 
-### E-commerce Checkout Flow
-
-```
-User clicks "Buy Now":
-   ↓
-   API Gateway receives request
-   ↓
-   ┌──────────────────────────────────────┐
-   │  CRITICAL PATH (SYNC)                │
-   │  User waiting — must complete        │
-   ├──────────────────────────────────────┤
-   │  → Order Service (gRPC)              │
-   │      create order record             │
-   │  → Inventory Service (gRPC)          │
-   │      reserve stock                   │
-   │  → Payment Service (gRPC)            │
-   │      validate card, charge           │
-   └──────────────────────────────────────┘
-   ↓ (all sync done — user gets response)
-   ↓
-   Return 200 OK to user
-   ↓
-   ┌──────────────────────────────────────┐
-   │  SIDE EFFECTS (ASYNC)                │
-   │  User doesn't wait                   │
-   ├──────────────────────────────────────┤
-   │  → Kafka: "OrderPlaced" event        │
-   │      ↓ consumed by:                  │
-   │      • Email Service                 │
-   │      • SMS Service                   │
-   │      • Analytics Service             │
-   │      • Recommendation Engine         │
-   │      • Audit Log                     │
-   └──────────────────────────────────────┘
-```
-
-```
-Critical path SYNC:
-   Must complete before response
-   Failure = compensating action (SAGA: payment refund, stock wapas) — alag service, ek transaction nahi
-   User experience direct impact
-
-Side effects ASYNC:
-   Eventual processing fine
-   Failure = retry from queue
-   Multiple consumers benefit
-```
-
----
-
-## API Gateway (Bonus)
-
-```
-Without Gateway:
-   Mobile App → User Service
-              → Order Service     [10 different URLs/auth/etc.]
-              → Product Service
-              ...
-
-With Gateway:
-   Mobile App → API Gateway (single entry)
-                ├─ Auth
-                ├─ Rate limit
-                ├─ Routing
-                ├─ Logging
-                ├─ Aggregation (API composition)
-                └─→ User/Order/Product services internally
-
-Tools: Kong, AWS API Gateway, Spring Cloud Gateway
-```
-
-```
-★ (drill se) CORS — frontend(myapp.com) -> API(api.myapp.com) = alag origin -> browser BLOCK:
-   KYUN: browser ki SAME-ORIGIN POLICY -> alag origin ki request default block
-   FIX: server response me header -> Access-Control-Allow-Origin: https://myapp.com
-   ★ prod me SPECIFIC origin whitelist, "*" nahi (cookies/credentials ke saath "*" chalta hi nahi)
-   ★ BROWSER lagata hai -> server-to-server / Postman me CORS hota hi nahi
-   (gateway aksar CORS bhi ek jagah sambhalta — auth / rate-limit ki tarah)
-```
-
-```
-★ (drill se) SAGA — kai service, kai DB, ek "transaction":
-   @Transactional sirf EK DB. order + payment + inventory alag DB -> SAGA = LOCAL commits ki chain
-   fail -> pichhle step already COMMIT ho chuke -> rollback nahi hota -> COMPENSATING (ulta) action:
-     payment fail -> "cancel order" + "restore inventory"
-   2 tarike: CHOREOGRAPHY (har service event sun ke khud agla / ulta kare, koi boss nahi)
-             ORCHESTRATION (ek central orchestrator sabko bataye kya karna)
-   line: "A rollback only undoes uncommitted work in one DB. In a saga each service has already
-          committed, so you run a compensating action — an explicit reverse operation."
-
-★ (drill se) MONOLITH ya MS:
-   chhota app / kam log -> MONOLITH (simple, debug aasan)
-   bada / badhta -> MS (alag scale: payment 10 instance, baaki 2 · ek gira baaki chalu · alag deploy)
-   chhote app pe MS = OVER-ENGINEER (network call + distributed debug + cross-service consistency)
-   "monolith se shuru, scale aaye to todo."  (detail: ../../06_COMPARES/04_monolith_vs_microservices.md)
-```
-
----
-
-## TRAP — What NOT To Do
-
-```
-"Microservices = always async via Kafka"
-   = WRONG. User-facing critical path = sync.
-
-"Use REST everywhere internally"
-   = Andar ka traffic bahut zyada ho to gRPC behtar (chhota payload, tez).
-
-"Each service has its own DB but call each other directly"
-   = Side kaam (SMS, email) bhi sync = ek dheema to sab dheema. Side kaam events se; critical path sync theek.
-
-"No timeouts because it usually works"
-   = Production killer. Always timeout.
-
-"Retry forever until success"
-   = Hammers dying service. Use exponential backoff + max retries.
-
-"Hardcode service IPs"
-   = Restart breaks everything. Use service discovery.
-
-"No circuit breaker — handle errors with try-catch"
-   = Try-catch doesn't prevent thread pool exhaustion.
-```
-
----
-
-## Interview Power Phrases
-
-```
-"External APIs REST for universality, internal gRPC for perf"
-
-"Critical path sync, side effects async via Kafka"
-
-"Circuit breaker (Resilience4j) prevents cascade failures"
-
-"Exponential backoff + jitter — avoid thundering herd"
-
-"K8s Service = free service discovery, no Eureka in EKS"
-
-"Bulkhead pattern: per-downstream thread pool isolation"
-
-"API Gateway: single entry, auth + rate-limit + routing"
-
-"Polyglot communication: right protocol per use case"
-```
-
----
-
-## Memory Hooks
-
-```
-Phone call vs Email
-   = Sync (REST/gRPC) vs Async (Kafka)
-
-Office floors → networks
-   = Different process boundaries
-
-Restaurant slips
-   = Async queue decoupling
-
-Ship compartments
-   = Bulkhead isolation
-
-Electrical fuse
-   = Circuit breaker
-```
-
----
-
-## Spring me ye sab kya hota hai (stack mapping)
-
-```
-Spring microservices me har cheez ka auzaar:
-
-   Service-to-service:
-      Internal: gRPC (Spring gRPC)
-      External: REST (Spring Web)
-
-   Async events:
-      Kafka topics for OrderPlaced, PaymentDone
-
-   Resilience:
-      Resilience4j → Circuit breaker + retry
-      Spring Cloud → Timeout config
-
-   Discovery:
-      K8s Service (since deploying on EKS)
-
-   Gateway:
-      Spring Cloud Gateway → single entry
-
-= Production-grade architecture
-= Interview-ready talking points
-```
-
----
-
+Chhota app, kam log = monolith (simple, debug aasaan). Bada aur badhta = microservices (payment ke 10 instance, baaki 2; ek gira baaki chalu; alag deploy). Chhote app pe microservices = network call, bikhra debug, service-service ki consistency, sab faltu bojh. Monolith se shuru, bheed aaye tab todo. Poora = [Compares 04](../../06_COMPARES/04_monolith_vs_microservices.md).
