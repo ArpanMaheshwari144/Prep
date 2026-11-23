@@ -285,6 +285,11 @@ dekhenge, uske teen register: **Broker B = leader**, A aur C = copy. 40, 41 pehl
 
 **Chalta hua 3D model (play / pause, aage-peeche, raftaar):** https://claude.ai/artifact/CGG9cnwbxdXjqLQUT2pwZb
 
+![Kafka andar se: producer, teen broker (B leader, A aur C copy), consumer, controller](../00_IMG/12_kafka_andar_se_3d.png)
+
+Baayein producer (send, serializer, partitioner, P1 ka dabba), beech me P1 ka register teen broker pe (peeli patti =
+leader), upar controller, daayein worker 2 aur group coordinator. Model me khabar isi naqshe pe chalti dikhti hai.
+
 ### 8.1 Producer ke andar: serializer, partitioner
 
 Order Service ne bola `send(key = Arpan, order)`. Ye abhi bas Java object hai. **Serializer** use bytes me badalta hai,
