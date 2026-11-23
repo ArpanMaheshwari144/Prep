@@ -197,6 +197,9 @@ chahiye.
 **Asli naam:** main warehouse + shehar ke godown = hub and spoke, kahan se maal uthana = fulfilment / sourcing rule
 (FR se tay: pehle paas wala godown, phir hub, phir doosra shehar sirf agar FR maange).
 
+**Aur neeche (Delhi se Bangalore pahunchega kaise):** Maal Delhi se Bangalore kaise pahunchega, delivery ki baat yahan nahi karenge; delivery scope se bahar rakhte hain, kyunki ye design sirf inventory ka hai.
+**Asli naam:** delivery / logistics = alag system, inventory design ke scope se bahar.
+
 ```mermaid
 flowchart TB
     R["Ravi: Bangalore se order"]:::card

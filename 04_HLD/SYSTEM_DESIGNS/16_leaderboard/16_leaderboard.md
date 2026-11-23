@@ -173,6 +173,9 @@ judega. **Asli naam:** idempotency key + outbox (DB ki table, relay baad me bhej
 **Maan lo server parchi pe likhne se pehle hi gira:** score aur parchi ek hi transaction me, dono ya koi nahi.
 **Asli naam:** score + outbox (hamare DB ki table) ek DB transaction me (atomic).
 
+**Aur neeche (parchi pe kya likha, dobara aayi to):** Parchi pe likho "Ravi, contest 003, +40". Parchi raste me kho gayi, server ne dobara bheji, phir purani bhi ghoom ke pahunchi, to dekho Ravi ka contest 003 wala score lag chuka, us parchi ko phaad ke phenk do.
+**Asli naam:** idempotency key = user id + contest id (UNIQUE).
+
 ```mermaid
 flowchart TB
     X["Saare score ek Redis pe: dab gaya"]:::bad
@@ -272,6 +275,12 @@ to Kafka ka matlab nahi. **Asli naam:** event time, parchi = outbox (DB ki table
 **Maan lo contest 11 baje shuru, 1-3 baje khatam:** contest ka din = shuru wala din (9 tareekh). Leaderboard duniya bhar ke
 online contest ka, to ek hi time zone UTC, IST / Europe alag-alag nahi (ek room wala elite contest alag cheez, yahan nahi).
 **Asli naam:** reset = naya key / overwrite, contest date = start date, ek time zone.
+
+**Isi pe ek aur misaal (bank ki nayi kitaab):** Jaise bank me roz ka hisaab nayi kitaab me likhte aur bhari kitaab phenkte nahi, waise kal ka register side me rakh do, aaj naye pe likho.
+**Asli naam:** har din ki alag key, purani itihaas ke liye.
+
+**Isi pe ek aur misaal (class ke 10 bachche):** Class me 10 bachche, kal sabke 10 the. Aaj test me kisi ke 10 aaye to usi waqt pichhla 10 minus karo, aaj ka 10 plus. Aisa nahi ki pehle saare bachchon ko line me laga ke zero karun, phir class me bithaun.
+**Asli naam:** lazy reset, sabko ek saath zero nahi.
 
 ```mermaid
 flowchart TB

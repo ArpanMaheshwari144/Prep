@@ -471,6 +471,9 @@ raaste: Uber wallet / doosra PSP / cash. Table me "kitni der baad kata" column, 
 lautao. Kaise diya (cash / GPay + transaction id) bhi rakho. Wallet se kat gaya aur event aa gaya to Arpan ko mat roko.
 **Asli naam:** client timeout -> FAILED, PSP failover + cash fallback, late debit column -> reconciliation job, payment method + transaction id.
 
+**Isi pe ek aur misaal (Uber me kaun Pay dabata):** Uber me app apne aap paisa nahi kaatta, trip khatam pe rider khud Pay dabata. Jab tak pay nahi hua, driver utarne hi nahi dega.
+**Asli naam:** rider khud payment shuru kare, SUCCESS tak PAYMENT_PENDING.
+
 ```mermaid
 flowchart TB
     T["Trip khatam: 250 kaatne,<br/>wallet me 40"]:::bad
@@ -553,6 +556,9 @@ parchi "Arpan 5 minute ruka tha", 30 second ki umar; 30 second ke andar wapas aa
 warna parchi khatam aur line me peeche. Sabka dekhna hai: 30 second ke baad bhi Arpan aage rahe to beech me aaye logon ka
 nuksaan; cancel Arpan ne kiya, to peeche lagna uski galti ka nateeja, baaki koi pareshaan nahi.
 **Asli naam:** parchi = Redis me pehle tap ka waqt (intezaar pehle tap se gino), umar = TTL.
+
+**Aur neeche (asli Uber accept ke baad nahi todta):** Asli Uber ka design public nahi. Customer ke naate itna dekha ki accept ke baad hamesha "driver ne cancel kiya" aata, "Uber ne cancel kiya" kabhi nahi; matlab accept ke baad Uber khud nahi todta. Par main Uber banata to accept se pehle dono ki doori dekh ke gaadiyan badal deta; ye do alag nazar hain, takraav nahi.
+**Asli naam:** accept ke baad assignment pakka; batch se badalna sirf accept se pehle.
 
 ```mermaid
 flowchart TB

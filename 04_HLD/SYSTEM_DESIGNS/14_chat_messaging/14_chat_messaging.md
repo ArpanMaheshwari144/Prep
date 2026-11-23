@@ -104,6 +104,9 @@ message ek machine pe, kram me.
 galat tha, aisa hota nahi):** 2 saal purana upar scroll karke koi nahi dhoondhta. Photo kholte hi phone ki gallery me
 download, purani photo phone me hi; server pe sirf link.
 
+**Aur neeche (DB kaunsa, Cassandra kyun):** Chat me likhai bahut hai, roz TB ke hisaab se, to data todna padega. Isliye Cassandra: wo disk pe bas neeche likhta jaata, likhai me bahut tez, aur khud hi machine pe baant deta. Chat id se baantunga, to ek chat ke saare message ek machine pe saath rahenge, aur har cheez ki 3 copy.
+**Asli naam:** Cassandra = likhai bhaari (append-only commit log), partition key chat_id, 3 copy (RF 3).
+
 ```mermaid
 flowchart TB
     A["Arpan: kahan hai?"]:::card
@@ -134,6 +137,9 @@ lookup. Taar toota to server 71 map se Ravi ki entry mita deta.
 
 **Maan lo server gira, 1 lakh log ek saath judne aaye:** backoff + jitter, thodi-thodi request, warna server phir gire.
 **Asli naam:** reconnect storm, backoff + jitter.
+
+**Aur neeche (karodon taar, ek server ki memory):** Subah sabne ek saath app khol li, karodon taar khule hain, ek server ki memory jawab de degi. To bahut saare chat server laga do aur aage LB khada kar do. Har server pe bhi har taar ke liye alag aadmi nahi bithana: event loop jaisa, kuch hi thread hain aur jis taar pe message aaya bas usi ko sambhalte.
+**Asli naam:** event loop (Netty: kam thread, bahut connection) + LB ke peeche kai WebSocket server.
 
 ```mermaid
 flowchart TB
@@ -517,6 +523,12 @@ deta hai. Do alag dabbe: taar wala server = WebSocket gateway (jahan phone juda)
 number lagata).
 
 **Asli naam:** per-server fan-out, Redis pub/sub (har gateway group ka channel sunta, chat server ek baar daalta).
+
+**Aur neeche (ek server ya alag-alag, trade-off):** Isme trade-off hai. Ek chat ke saare message ek hi server se bhejo to kram pakka, par wo server dheema hua to saare message ruk jaayenge. Alag-alag server se bhejo to koi nahi rukta, par kuch message pehle pahunch sakte, unhe phone pe sort kar do. Jaise 3 ladke 3 message le ke aaye, main har ek se poochhunga "tere paas kab aaya", jo pehle aaya wo pehle.
+**Asli naam:** ek chat ek server = kram aasaan par ek dheema to sab ruke (head-of-line blocking); kai server = koi nahi rukta, phone number se sort kare.
+
+**Isi pe ek aur raasta (number Redis se):** Number Redis se le lo, har chat ka ek counter, 44 ke baad 45. Redis ek baar me ek hi number deta, to do message ko same number kabhi nahi milega. Message pe jo time dikhta hai wo server ki ghadi ka, par kram usi number se lagega.
+**Asli naam:** har chat ka seq = Redis INCR; dikhne wala time = server ki ghadi (NTP), kram = seq.
 
 ```mermaid
 flowchart TB

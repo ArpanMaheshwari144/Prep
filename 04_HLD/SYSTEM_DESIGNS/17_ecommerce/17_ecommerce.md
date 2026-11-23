@@ -191,6 +191,9 @@ per second). DB tak sirf jinka mila.
 **Isi pe ek aur raasta (5 line, main peeche hisaab ke saath):** Ek hi aadmi parchi kaat raha to 500 ko 100-100 me baant do, 5 line. Har line ko bolo tere paas 100. Har line apna kaat-ti jaaye: 99, 98, 97. Main peeche 500 ki asli parchi lekar khada, poochhta rahunga kitne bike aur apna kaat-ta rahunga; kahin gadbad hui to asli parchi mere paas, main dekh lunga. Har line pe 1 bacha to mere paas total 5; agle aaye, sabke 0, khatam. Jaise 200 iPhone: 50-50, 4 line; tere kitne bike? 50 ke 50; tere? 40; tere? 30. Ya apne paas computer rakh lun: jahan bill kata, mere 500 me se bhi -1, 499, aur har line ka bacha dikhe.
 **Asli naam:** sharded counter (5 tukde) · peeche asli parchi / computer = DB sach + milaan (reconciliation).
 
+**Aur neeche (ek phone wapas aaya to kis dabbe me):** 1000 iPhone 5 line me isliye baante ki bheed kam ho, hai to 1000 hi. Ek phone wapas aaya (pay fail ya lauta) to mere stock me wapas, kisi ek dabbe ka nahi; jo pehle pay kare uska.
+**Asli naam:** wapas aaya maal common pool me; sold out tabhi jab har tukda 0.
+
 ```mermaid
 flowchart TB
     X["Ek counter, ek parchi ghee 500:<br/>line 50 hazaar<br/>(hot row)"]:::bad
@@ -292,6 +295,9 @@ utne log andar ya turant out of stock. **Asli naam:** available vs reserved stoc
 **Isi pe ek aur raasta (stock tab kaato jab paisa kate, par andar sirf 500):** Mere raaste: (1) sabko line me lagao, ek ke baad ek, 499, 498; consistency rahegi, ek bhi zyada nahi bikega, bas user ko thoda time lagega. Kafka bhi laga sakte, par itni bheed me Kafka achhi cheez nahi. (2) bina line ke: har request ek hi transaction me dekhe ">= 1 hai?" aur -1 kare; ye sabse badhiya, kisi ko intezaar nahi, race kabhi nahi. Isliye SQL DB, jahan consistency aur transaction chahiye: 10 thread aaye to lock lagega, ek ek karke 499, 498. -1 tab hoga jab PSP se event aaye ki paisa kat gaya; cart me daalne ya Pay dabane se nahi. Par 3000 ko PSP pe jaane hi mat do: 500 hai to 500 ko andar lao, PSP pe 500 request hi jaayengi; Apple store Mumbai jaisa, kuch log andar, phir agla batch. 10-15 ka pay fail hua ya 50 log kuch nahi kar rahe (450 bike), to agle 50 bulao. Jo pehle pay kare use milega, ye general rule hai, Amazon Flipkart sab yahi karte. 0 hua to out of stock dikhao aur Pay ka button hata do. UI pe kya dikhana aur PSP andar kaise chalta, ye HLD ka hissa nahi.
 **Asli naam:** line = queue · ">= 1 to -1 ek transaction me" = conditional atomic update (stock >= 1 ho tabhi -1) · SQL = transaction + row lock · andar sirf stock jitne, phir agla batch = sale gate · paisa katne pe -1 = webhook pe kaatna.
 
+**Aur neeche (line Pay se pehle kyun):** 3000 logon ko seedha pay nahi karne dunga; paise kaat liye aur saamaan nahi bheja to consumer court me ghaseet lenge. Isliye pehle line, ek-ek karke.
+**Asli naam:** oversell = kanooni / bharose ka khatra, isliye gate Pay se pehle.
+
 ```mermaid
 flowchart TB
     U["3000 log ek second me Pay,<br/>ghee 500"]:::card
@@ -344,6 +350,9 @@ andar Pay daba diya aur PSP dheema to hamari zimmedari.
 **Asli naam:** Pay pe reservation zinda hai ya nahi check (expiry check), chhota grace period, andar dabaya to
 PAYMENT_PENDING aur hold ruk jaata (kadam 8 / BMS jaisa).
 
+**Aur neeche (ek order me sale ka ghee + normal aata):** Kisi ne ek order me ghee aur aata dono liya to line nahi todunga. Checkout ek hi; ghee sale ka maal hai to sale counter se katega, aata normal counter se. Har sale pe naya counter nahi, bas us din kaunsa maal sale me hai wo badalta.
+**Asli naam:** har item ka raasta alag (sale item Redis gate se, baaki DB stock se), checkout ek.
+
 ```mermaid
 flowchart TB
     U["Bahar 3000 log"]:::card
@@ -395,6 +404,12 @@ backup PSP (failover).
 **Maan lo PSP ka "success" do baar aaya (ek retry se, ek status job se):** Payment id hi key: pehli baar aaya to order pakka, doosri baar wahi id dekh ke chhod do. Do order nahi, ginti do baar nahi kategi.
 
 **Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
+
+**Isi pe ek aur raasta (paisa kata to maal dena hamari zimmedari):** Ravi ke paise kat gaye to use ghee dena hamari zimmedari, PSP se hum baat kar lenge, dabbe pe chipka do "ye Ravi ka hai". Bahut companies "stock khatam" bol ke der se refund karti, par kabhi order cancel dikh bhi gaya to bolunga "tera order cancel nahi hua, ye apne paise pakdo, ghee free me de denge". Amazon shuru me aisa hi karta hoga.
+**Asli naam:** payment success = order nibhao; muavza = business ka faisla.
+
+**Maan lo aakhri ek iPhone pe Ravi aur Arpan dono ne pay kar diya:** Do raaste. Pehla: doosre store ki inventory dekho, Delhi me nahi to Haryana-Punjab wale store se mangwa ke Ravi ko de do, kyunki Ravi ko kya pata hamare paas ek hi tha. Doosra: kahin nahi hai to "out of stock" bol ke refund, bank ki timeline pe 2-7 din. Amazon jaisi badi company ko ek customer ke naraaz hone se farak nahi padta, wo cancel + refund karti; par chhota store hai ya naam banana hai to main kahin na kahin se arrange karke dunga.
+**Asli naam:** oversell = doosre store se pura karo (cross-store fulfilment), warna cancel + refund; business ka faisla.
 
 ```mermaid
 flowchart TB

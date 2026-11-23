@@ -81,6 +81,9 @@ ek saath pakki badalni hain (ACID), aur 120 likhai / sec ke liye NoSQL ki kai-ma
 **Maan lo saga kyun nahi:** sab ek hi DB me, saga sirf do alag DB pe; row data + transaction = SQL (NoSQL me bhi transaction hota,
 par yahan zaroorat nahi). **Sach:** asli bank me paisa 3-5 din baad wapas, peeche job. **Asli naam:** ACID, saga sirf alag DB, reconciliation.
 
+**Aur neeche (shard karoge?):** Shard nahi karunga. Ek bank ka data itna bada nahi hota. Shard kiya aur Arpan ek machine pe, Ravi doosri pe chala gaya, to ek transaction me kaatna-jodna nahi hoga, jo "paisa na gum ho" wale NFR ke khilaf hai. Phir bhi kabhi likhai bahut badh jaaye to aakhri raasta: account id pe shard.
+**Asli naam:** ek SQL DB = local ACID transaction; alag shard pe transfer = saga / 2PC; majboori me shard key = account_id (aakhri raasta).
+
 ```mermaid
 flowchart TB
     A["Parchi: Ravi ko 500 bhej do"]:::card
@@ -193,6 +196,9 @@ ke liye. Dono usi transaction me likhe jaate hain, ledger isi DB ki ek alag tabl
 
 **Maan lo ledger kya solve karta:** koi dikkat nahi; wo audit record, RBI aaye to ledger ki copy, RBI DB nahi maangta, dono
 apna audit milaate. **Asli naam:** append-only audit trail.
+
+**Aur neeche (ledger kahan, RBI ko kya):** Ledger koi alag duniya nahi, isi DB me ek alag table hai, aur balance ke saath usi commit me likhi jaati hai. RBI ko na DB ki copy dete, na seedha +500 / -500 wali line; jaise teacher batata hai assignment kaisa banna chahiye, waise RBI ki guideline hoti hai, aur us format ki report ledger se bana ke dete hain.
+**Asli naam:** ledger = usi DB me append-only table, same transaction; RBI report ledger se, RBI ke format me.
 
 ```mermaid
 flowchart TB
@@ -406,6 +412,9 @@ galti se update kar de.
 **Asli naam:** diary se milao = raat ka milaan (reconciliation job, read replica pe: balance == ledger ka jod? nahi to
 ALERT, insaan ulti line se theek kare). Asli sach diary = ledger = source of truth, balance bas copy.
 
+**Aur neeche (milaan me farak mila to):** Har raat ek job chalao, wo bhi replica pe taaki main register pe bojh na pade. Har account ka balance uske ledger ki saari plus-minus line jodke milao; poore bank ka jod zero aana chahiye. Farak mila to job khud theek nahi karegi: pehle alert bajao, us account ko roko, dekho kyun hua, aur aakhir me hamesha ledger hi jeetega, kyunki column to koi bhi galti se badal sakta hai. Scam me dekha, isliye har mahine audit hota.
+**Asli naam:** replica pe reconciliation job, jod = 0 check; farak = alert + account freeze + jaanch (khud theek nahi); ledger = sach.
+
 ```mermaid
 flowchart TB
     X["Raat ko haath se balance<br/>100 ki jagah 600"]:::bad
@@ -494,6 +503,9 @@ na koi chhoo sakta, na chhed sakta, na badal sakta. Use taala maar do, wo chupch
 
 **Asli naam:** kai copy chhupa ke, milao = copies doosri jagah (doosra region) se chhedchhaad pakadna, version ka lock
 = versioning, kohinoor, koi badal na sake = S3 Object Lock (compliance mode, 10 saal, admin bhi badal ya mita na sake).
+
+**Aur neeche (godown ka pehla taala):** Pehla taala: godown me har koi nahi ghusega, sirf jiske paas ijazat hai. Par ijazat wala bhi badal sakta hai, isliye upar wala copies + version lock.
+**Asli naam:** pehle access control (IAM), andar wale ko Object Lock / versioning rokta.
 
 ```mermaid
 flowchart TB

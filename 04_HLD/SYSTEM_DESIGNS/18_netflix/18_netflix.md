@@ -156,6 +156,9 @@ dabbe se lo (steering). Guard = load + kis dabbe me kya hai, dono dekh ke sahi d
 **Maan lo aadhe episode pe dabba 3 band ya dheema:** Money Heist garam hai to ek dabbe me mat rakho, kai dabbon me copy (kadam 4 me hai hi). Aur TV ko ek dabba nahi, 2-3 ke naam do: ek dheema hai to intezaar kyon, doosre dabbe se le le.
 **Asli naam:** "2-3 dabbon ke naam" = server player ko kai CDN dabbon ki list deta, ek atka to player khud agle pe (client side failover).
 
+**Isi pe ek aur misaal (banner pe click):** Ravi ne Money Heist ke banner pe click kiya to Netflix ko pata lag gaya ye Money Heist dekhne aaya; jaise bank me koi AC ki hawa khaane nahi aata.
+**Asli naam:** play request me content id aata, server usi se dabba chunta (steering).
+
 ```mermaid
 flowchart TB
     R["Ravi ka TV: play"]:::card
