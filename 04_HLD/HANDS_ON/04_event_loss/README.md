@@ -2,6 +2,15 @@
 
 Design file: [12 Kafka](../../SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md)
 
+**Koi poochhe to aise bolo:**
+```
+Event teen jagah kho sakta hai, teeno band karte hain: bhejne se pehle crash -> paisa aur "bhejna hai" ki row
+ek transaction me (outbox); Kafka me leader gira -> acks=all, copy me likh gaya tabhi OK; consumer -> pehle
+kaam, phir offset commit, aur dobara aaye to eventId se chhodo. Chala ke dekha: bina iske 5 me se 3 khoye, iske saath 0.
+```
+
+**Trap:** commit baad me karwaya par eventId ka check nahi lagaya -> crash ke baad e2 dobara aaya, Ravi ko do SMS. Paise wale kaam me yahi do baar "paisa kata". "Commit baad me" aur "eventId se check" hamesha saath.
+
 Grill sawaal (bank): "paisa kata -> event SMS / fraud / statement tak. Ek bhi event kho na jaaye, kaise?"
 SAGA nahi: saga = fail hue kaam ko ULTA karna. Yahan ulta nahi, event RASTE me kho raha. Sahi soch jo thi:
 "pehle pakka likho" = OUTBOX. CODE: `04_HLD/HANDS_ON/04_event_loss/EventLossDemo.java` (nakli, Docker nahi)
