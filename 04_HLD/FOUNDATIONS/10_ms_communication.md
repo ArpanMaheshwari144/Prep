@@ -101,8 +101,8 @@ FIX — POLLING hatao, PUSH karo:
 ★ TURANT AANE WALA SAWAAL: "50 lakh ZINDA connection kahan rahenge?"
      ek machine ~50k-100k connection pakadti hai
      -> alag CONNECTION TIER (~50-100 machine), apne se scale hota hua
-     -> connection STATEFUL hai -> LB ko consistent routing karni padti
-        (user hamesha usi server pe wapas jaaye)
+     -> connection STATEFUL hai -> jis server pe juda, wahi use pakde; toota to kisi bhi
+        server pe dobara jud jao, pub/sub update sab server tak pahunchata hai
 
 ★ UPDATE SAB TAK PAHUNCHEGA KAISE? -> PUB/SUB
      score/chat service ──► PUB-SUB ──► saare connection servers ──► unke clients
@@ -162,7 +162,7 @@ Order Service ──POST /users/123──→ User Service
               ←───── JSON ────────
 
 Format: JSON
-Protocol: HTTP/1.1
+Protocol: aksar HTTP/1.1 (HTTP/2 pe bhi chal sakta)
 Contract: OpenAPI/Swagger (loose)
 ```
 
@@ -176,7 +176,7 @@ Pros:
 Cons:
    • JSON heavy (verbose)
    • No strict contract
-   • Slower (~5-10x vs gRPC)
+   • Slower (JSON bada, padhna-likhna dheema)
    • HTTP/1.1 = NO multiplexing: ek connection pe ek-time ek request
      (head-of-line blocking). [keep-alive se connection reuse HOTA hai,
       par ek-ek karke; HTTP/2 many streams ek connection pe multiplex karta]
@@ -194,7 +194,7 @@ Contract: .proto file (strict, code-generated)
 
 ```
 Pros:
-   • 5-10x faster than REST
+   • Faster, chhota payload (protobuf)
    • Strict contract (compile-time errors)
    • Streaming support (bidirectional)
    • Smaller payload (binary)
@@ -287,11 +287,11 @@ Problem:
    = CASCADE FAILURE
 
 Solution: Circuit Breaker
-   3 consecutive failures detected
+   fail ka hissa had se upar (jaise aakhri 10 me 50% fail)
    ↓
    Circuit "OPEN" → reject requests immediately for 30s
    ↓
-   After 30s → Circuit "HALF-OPEN" → try one request
+   After 30s → Circuit "HALF-OPEN" → kuch call jaane do
    ↓
    Success? → Close circuit (resume normal)
    Fail?    → Re-open for 30s
@@ -301,7 +301,7 @@ Solution: Circuit Breaker
 States:
    CLOSED      → All requests pass (normal)
    OPEN        → All requests fail fast (broken)
-   HALF-OPEN   → Test one request (recovery check)
+   HALF-OPEN   → kuch request bhej ke dekho (recovery check)
 
 Tools: Resilience4j (Spring Boot), Hystrix (legacy Netflix)
 ```
@@ -343,7 +343,7 @@ Solution: Set explicit timeout
    = Other requests can proceed
 
 Spring Boot:
-   @HttpExchange with timeout
+   @HttpExchange (timeout neeche RestClient / WebClient pe set hota)
    RestTemplate / WebClient configured
 ```
 
@@ -409,7 +409,7 @@ darwaze, API gateway, se aata hai: wahan login, rate limit, phir sahi service ta
 User Service ka IP kya hai?
    Hardcode IP?     = brittle (IP changes)
    Manual config?   = doesn't scale
-   DNS?             = slow propagation
+   Plain DNS?       = purana pata cache me (K8s me DNS ek stable ClusterIP pe, isliye chalta)
 ```
 
 ### Solution: Service Registry
@@ -463,12 +463,12 @@ User clicks "Buy Now":
    │  CRITICAL PATH (SYNC)                │
    │  User waiting — must complete        │
    ├──────────────────────────────────────┤
-   │  → Payment Service (gRPC)            │
-   │      validate card, charge           │
-   │  → Inventory Service (gRPC)          │
-   │      reserve stock                   │
    │  → Order Service (gRPC)              │
    │      create order record             │
+   │  → Inventory Service (gRPC)          │
+   │      reserve stock                   │
+   │  → Payment Service (gRPC)            │
+   │      validate card, charge           │
    └──────────────────────────────────────┘
    ↓ (all sync done — user gets response)
    ↓
@@ -517,7 +517,7 @@ With Gateway:
                 ├─ Rate limit
                 ├─ Routing
                 ├─ Logging
-                ├─ Aggregation (BFF pattern)
+                ├─ Aggregation (API composition)
                 └─→ User/Order/Product services internally
 
 Tools: Kong, AWS API Gateway, Spring Cloud Gateway
@@ -558,10 +558,10 @@ Tools: Kong, AWS API Gateway, Spring Cloud Gateway
    = WRONG. User-facing critical path = sync.
 
 "Use REST everywhere internally"
-   = Slow at scale. Internal traffic 100K+ rps = gRPC wins.
+   = Andar ka traffic bahut zyada ho to gRPC behtar (chhota payload, tez).
 
 "Each service has its own DB but call each other directly"
-   = Tight coupling reborn. Use events.
+   = Side kaam (SMS, email) bhi sync = ek dheema to sab dheema. Side kaam events se; critical path sync theek.
 
 "No timeouts because it usually works"
    = Production killer. Always timeout.
