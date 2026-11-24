@@ -154,9 +154,3 @@ do-chaar line aage padho, 501 mil gaya. Ye parchi **index** hai.
 
 Pehle kahan dekha: kaato mat, neeche likho = Banking 4 (ledger) · mahine ke mahine tod do = Banking 11 · ID se seedha
 page, 1 lakh panne nahi palatne = Twitter 16.
-
----
-
-## 8. Kafka andar se: ek khabar ka poora safar
-
-(Baad me, stadium wali kahani me.)
