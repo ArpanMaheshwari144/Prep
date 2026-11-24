@@ -117,3 +117,19 @@ jaati hai, pakki copies ki list = **ISR**. Agar sirf leader bacha ho aur koi pak
 
 Ek line me: disk pe likha (restart se bacha) + 3 copy (machine mari to bhi bacha) + acks=all (copy pe likhne ke baad hi
 "ho gaya").
+
+---
+
+## 6. Outbox
+
+Arpan ne ticket cancel kiya. Ticket counter (Order Service) ko do kaam karne the: apne DB me "order = cancel" likhna,
+aur gate (Kafka) ko khabar dena. Likhne se pehle gira to theek, kuch likha hi nahi. Par DB me likh liya aur khabar
+bhejne se pehle gir gaya, to checker (SMS) aur security (Fraud) ko kabhi pata hi nahi chalega.
+
+Isliye usi DB me ek table banao, **outbox**, aur cancel ke saath khabar bhi usi me likh do, ek hi transaction me: ya
+dono likhe jaayenge, ya kuch nahi. Phir ek chhotu (**relay**) outbox me dekhta hai ki kaunsi parchi sent = false hai,
+use gate tak le jaata hai, aur gate OK bole to sent = true. Chhotu bhejne ke baad aur sent = true likhne se pehle gira,
+to dobara bhejega, aur checker us dohri khabar ko eventId se pakad lega (hissa 4).
+
+Teeno jagah bachav: **bhejne wala (counter) = outbox · gate (Kafka) = 3 copy + acks=all · padhne wala (checker) = pehle
+kaam phir commit + eventId**.
