@@ -88,61 +88,6 @@ beech ka raasta: 3 lagaataar fail, aur har 5-10 sec check
 
 ---
 
-## ★★ LB KHUD BOJH BAN JAATA HAI — "LB laga diya, phir bhi dabaav aa gaya" (20-Sep deep-dive)
-
-> Upar wala section LB ke MAR JAANE ki baat karta hai (SPOF → redundancy).
-> Ye section usse aage ka hai: LB ZINDA hai, sab kuch "sahi" laga hai, aur phir bhi system baith gaya.
-
-### Pehle ek line jo poori soch badalti hai
-
-```
-LB traffic ko BAANTTA hai. GHATATA nahi.
-```
-
-10,000 request aa rahi hain, 4 server hain → LB ke baad bhi 10,000 hi hain, bas 2,500-2,500.
-Agar ek server 2,000 hi jhel sakta hai to LB kuch nahi bachayega — **wo LB ka kaam tha hi nahi.**
-Dabaav GHATANE wali cheezein alag hain: cache · rate limit · autoscaling · load shedding.
-
-### LB ki apni HAD — wo bhi ek machine hai, aur chaar jagah khatam hoti hai
-
-```
-1. NETWORK CARD      saari request AUR saara response isi ek taar se guzarta hai
-                     10 Gbps card = 10 Gbps, chahe peeche 50 server ho
-                     (video / file-download wale system me ye SABSE PEHLE bharta hai)
-
-2. CPU — TLS         har NAYI https connection pe handshake ka hisaab LB karta hai
-                     mehnga kaam hai; har request nayi connection khole to
-                     LB ka CPU 100% ja sakta hai jabki peeche server KHAALI baithe hain
-
-3. CONNECTION TABLE  LB har zinda connection ka hisaab rakhta hai (kaunsa client ↔ kaunsa server)
-                     ye table memory + file-descriptor leti hai, ginti limited hai
-
-4. PORT              LB peeche server se baat karne ko apne port kholta hai
-                     ek machine ke paas ~65,000 port — bahut high traffic pe sach me khatam
-```
-
-### Ilaaj — har had ka alag
-
-```
-TLS ka CPU bhara       ->  keep-alive ON (ek connection pe kai request)
-                           ya TLS ka kaam alag jagah karao (offload)
-
-card / bandwidth bhara ->  ek LB se kaam nahi chalega, KAI LB chahiye
-                           DNS se hi 2-3 LB ke IP baanto (DNS round-robin)
-                           ya ANYCAST — ek hi IP, alag sheher me alag machine
-
-connection / port bhara->  aage ek halka L4 LB, peeche kai L7 LB
-                           (AWS ka NLB -> ALB wala dhaancha yahi hai)
-                           L4 sirf packet aage badhata hai, HTTP padhta hi nahi -> bahut zyada jhelta
-```
-
-★ Isi wajah se bade system me LB **ek nahi hota — ek LAYER hota hai**:
-```
-DNS (kai IP)  ->  L4 LB  ->  L7 LB  ->  server
-```
-
----
-
 ## 5. Jo cheez bachane ke liye lagayi, wahi system maar de
 
 **Koi poochhe to aise bolo:**
@@ -166,6 +111,40 @@ Iska ilaaj LB me nahi hai, capacity me hai. Ek server girne pe bhi chalna hai, t
 **4. Slow start:** algorithm least connections hai. Naya server khada hua, uske paas 0 connection hain, to LB saari nayi request usi ko dene laga. Uska JVM garam nahi hai, cache khaali hai, aur wo pehle minute me hi gir gaya. Ilaaj: naye server ko dheere-dheere bojh do (maan lo 30 sec me 0 se poora). Iska ulta connection draining hai: server band karte waqt nayi request roko, aur purani poori hone do.
 
 **Trap (metastable):** bheed hat gayi, phir bhi system theek nahi hua, kyunki retry ki line khud naya bojh ban chuki hai. Aise me traffic rok ke, purani line phenk ke, system ko zabardasti wapas khada karna padta hai.
+
+---
+
+## 6. LB ki apni had, aur bade system me LB ek parat
+
+**Koi poochhe to aise bolo:**
+```
+LB bhi ek machine hai, to uski bhi had hai: network ka taar, TLS kholne ka CPU, aur kitne connection
+yaad rakh sakta hai. Bade system me isliye ek LB nahi hota, ek parat hoti hai: DNS kai LB ke IP baant deta hai,
+aage halka L4 LB hota hai jo bina padhe packet aage badhata hai, uske peeche L7 LB jo URL padh ke service chunta hai,
+aur phir server. (AWS me NLB ke peeche ALB wala dhaancha yahi hai.)
+```
+
+**LB chaar jagah bharta hai:**
+```
+1. network taar  saari request aur saara jawab isi se guzarta. 10 Gbps ka card = 10 Gbps, chahe peeche 50 server ho
+                 (video / file wale system me ye sabse pehle bharta)
+2. TLS ka CPU    har nayi https connection pe taala kholne ka hisaab LB karta. Har request nayi connection khole
+                 to LB ka CPU 100%, jabki peeche server khaali baithe hain
+3. connection    LB har khule connection ka hisaab rakhta (kaun client, kaun server). Ye ginti limited hai
+4. port          LB se peeche ek server tak ~65,000 port hi hote. Bahut zyada traffic pe sach me khatam ho jaate
+```
+
+**Ilaaj, har had ka alag:**
+```
+TLS ka CPU bhara          -> keep-alive (ek connection pe kai request), ya taala kholne ka kaam alag jagah
+taar bhara                -> ek LB se nahi chalega, kai LB. DNS se hi 2-3 LB ke IP baanto,
+                             ya anycast: ek hi IP, par alag sheher me alag machine jawab deti
+connection / port bhara   -> aage halka L4, peeche kai L7. L4 HTTP padhta hi nahi, isliye bahut zyada jhelta
+```
+
+**Scene (WhatsApp ke crore taar):** crore phone ke taar sabse pehle DNS se pata lete hain ki kis IP pe jaana hai, aur paas wale region ka IP mil jaata hai. Wahan aage L4 LB baitha hai, jo sirf taar aage badhata hai, chitthi nahi padhta. Uske peeche connection server (gateway) hain, jo taar pakad ke rakhte hain. Bojh har parat pe bant gaya, kisi ek machine pe nahi aaya.
+
+**Trap:** sirf DNS ko LB maan liya, ki DNS 3 IP de dega to bojh bant jaayega. Par phone aur ISP DNS ka jawab cache kar lete hain, to sab ek hi IP pakad ke baith sakte hain. Aur DNS ko ye pata hi nahi chalta ki koi server mara. Isliye DNS ke peeche bhi asli LB chahiye.
 
 ---
 
