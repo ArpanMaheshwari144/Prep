@@ -158,10 +158,10 @@ Isliye har gate ke register ki 3 copy rakhte hain, teen alag machine pe. Jis mac
 leader se poochti rehti hai "aage kya aaya". Leader mara to jo copy ekdum saath (sync) chal rahi thi, wo uski jagah le
 leti hai. Ye faisla stadium ka head admin karta hai, use **Controller** kehte hain.
 
-Pench: B ne ticket counter ko "aa gaya" bol diya aur copy tak khabar pahunchne se pehle hi mar gaya. Copy ke paas wo
-khabar thi hi nahi. Jab tak copy pe khabar na pahunche, "aa gaya" kyun bolna? Jaise baap ne bola "vasiyat likh di", par
+Pench: B ne ticket counter ko "likh di" bol diya aur copy tak khabar pahunchne se pehle hi mar gaya. Copy ke paas wo
+khabar thi hi nahi. Jab tak copy pe khabar na pahunche, "likh di" kyun bolna? Jaise baap ne bola "vasiyat likh di", par
 jab tak mujhe ye nahi pata ki kahan likhi aur kahan rakhi hai, main doosron ko "haan, hai" nahi bolunga. Isliye
-"aa gaya" tabhi bolte hain jab copy pe bhi likh jaaye: **acks=all**.
+"likh di" tabhi bolte hain jab copy pe bhi likh jaaye: **acks=all**.
 
 Jo copy peeche chal rahi ho, use leader nahi banate, warna aakhri khabar kho jaayegi. Poori taaza copy hi "pakki" maani
 jaati hai, pakki copies ki list = **ISR**. Agar sirf leader bacha ho aur koi pakki copy na ho, to likhna hi rok dete hain
@@ -172,7 +172,7 @@ Ek line me: disk pe likha (restart se bacha) + 3 copy (machine mari to bhi bacha
 
 ```mermaid
 flowchart LR
-    O["Ticket counter"] -- "acks=all: copy pe likh jaaye tab 'aa gaya'" --> L
+    O["Ticket counter"] -- "acks=all: copy pe likh jaaye tab 'likh di'" --> L
     subgraph T["gate P1 ke 3 register (3 machine)"]
         L[("machine B<br/>LEADER (disk mari)")]
         A[("machine A<br/>pakki copy -> naya LEADER")]

@@ -235,7 +235,7 @@ replica hai, replica ne bol diya "likh liya", sab bolein, tab.
 replica leader ban jaati. 2 pakki copy na hon to likhna band: khabar khone se behtar thodi der rukna.
 
 **Maan lo dono copy gir gayi, gate pe akela admin, aur Arpan ka "cancel" aaya.** Pehle socha: leader (bada bhai) 5 baar
-chhote ko phone karega, jawab nahi to faisla khud lega aur akele likh dega. Phir sawaal: akele likha, "aa gaya" bola, aur
+chhote ko phone karega, jawab nahi to faisla khud lega aur akele likh dega. Phir sawaal: akele likha, ticket counter ko "likh di" bola, aur
 admin bhi gir gaya (bade bhai ke ghar aag, vasiyat jal gayi), to cancel gaya, kyunki copy karne ko kuch tha hi nahi.
 Isliye: extra copy ho (D, E, jaise mummy saakshi) to unke saath likho; extra copy na ho to akele mat likho. Akele tabhi,
 jab pata ho ki gira to sambhalne ko sab hai.

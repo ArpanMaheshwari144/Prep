@@ -111,7 +111,7 @@ Technical me: "2-3 scanner / room" = group me zyada consumer (ek gira to uske pa
 Arpan: Bhai "likh di" aise bolna ki uski copy aur bana, aur wo likh de, tab "likh di". Matlab replica hai, replica ne bol diya "likh liya", sab bolein, tab. Ye raha connection.
 Technical me: "copy bhi likh de, tab likh di" = acks=all, "replica ne bol diya likh liya" = in-sync replica ki haan (min.insync.replicas = 2).
 
-**Maan lo dono copy wale gir gaye, gate pe akela admin bacha, aur usi waqt ticket counter Arpan ka "cancel" le ke aaya. Copy likhne wala koi nahi. Admin akele likh ke "aa gaya" bol de, ya mana kar de?**
+**Maan lo dono copy wale gir gaye, gate pe akela admin bacha, aur usi waqt ticket counter Arpan ka "cancel" le ke aaya. Copy likhne wala koi nahi. Admin akele list me likh ke ticket counter ko "likh di" bol de, ya mana kar de?**
 Arpan: Baap marne ki haalat me hai, bada bhai aa gaya, chhota nahi aaya. Bada bhai chhote ko phone karega, 2, 3, 4, 5 baar; 50 baar thodi karega. Jawab nahi aaya to faisla lena hi padega, warna vasiyat nahi likhi to aage court case. To leader (bada bhai) ko hi faisla lena padega.
 
 **Maan lo bade bhai ne akele vasiyat likhwa li aur sabko bol diya "likh gayi". Ek hi copy, bade bhai ke paas. Agle din bade bhai ke ghar aag lag gayi, copy jal gayi, chhote ke paas kuch nahi. Ab vasiyat kahan?**
