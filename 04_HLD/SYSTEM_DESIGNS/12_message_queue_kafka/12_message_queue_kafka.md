@@ -232,15 +232,8 @@ replica hai, replica ne bol diya "likh liya", sab bolein, tab.
 
 **Asli naam:** copy bhi likh de, tab likh di = `acks=all`, replica ne bol diya likh liya = in-sync replica ki haan
 (`min.insync.replicas = 2`). Vasiyat ki copy = replica (har partition ki 3 copy, alag broker pe), admin gira to in-sync
-replica leader ban jaati. 2 pakki copy na hon to likhna band: khabar khone se behtar thodi der rukna.
-
-**Maan lo dono copy gir gayi, gate pe akela admin, aur Arpan ka "cancel" aaya.** Pehle socha: leader (bada bhai) 5 baar
-chhote ko phone karega, jawab nahi to faisla khud lega aur akele likh dega. Phir sawaal: akele likha, ticket counter ko "likh di" bola, aur
-admin bhi gir gaya (bade bhai ke ghar aag, vasiyat jal gayi), to cancel gaya, kyunki copy karne ko kuch tha hi nahi.
-Isliye: extra copy ho (D, E, jaise mummy saakshi) to unke saath likho; extra copy na ho to akele mat likho. Akele tabhi,
-jab pata ho ki gira to sambhalne ko sab hai.
-Asli naam: zyada copy = replication factor, akele mana = `min.insync.replicas = 2` (producer ko error, wo baad me dobara
-bhejta), akele likh do = `min.insync.replicas = 1` (tez, par leader gira to khabar gayi).
+replica leader ban jaati. 2 pakki copy na hon to likhna band: khabar khone se behtar thodi der rukna. Ye `min.insync.replicas` ki setting hai:
+2 ho to sirf leader bachne pe Kafka likhna mana kar deta, 1 ho to leader akela likh leta.
 
 ```mermaid
 flowchart TB

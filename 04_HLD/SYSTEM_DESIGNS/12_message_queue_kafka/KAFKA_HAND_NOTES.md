@@ -109,14 +109,7 @@ Technical me: "2-3 scanner / room" = group me zyada consumer (ek gira to uske pa
 
 **5. Admin ne ticket counter ko "likh di" bol diya, phir wo gira, aur uski jagah lene wale ke paas aakhri kuch logon ki list hi nahi thi. Arpan ki vasiyat me: baap ne vasiyat ek hi copy me likhi, ghar walon ko bol diya "likh di", phir wo copy jal gayi. "Likh di" kab bolna tha?**
 Arpan: Bhai "likh di" aise bolna ki uski copy aur bana, aur wo likh de, tab "likh di". Matlab replica hai, replica ne bol diya "likh liya", sab bolein, tab. Ye raha connection.
-Technical me: "copy bhi likh de, tab likh di" = acks=all, "replica ne bol diya likh liya" = in-sync replica ki haan (min.insync.replicas = 2).
-
-**Maan lo dono copy wale gir gaye, gate pe akela admin bacha, aur usi waqt ticket counter Arpan ka "cancel" le ke aaya. Copy likhne wala koi nahi. Admin akele list me likh ke ticket counter ko "likh di" bol de, ya mana kar de?**
-Arpan: Baap marne ki haalat me hai, bada bhai aa gaya, chhota nahi aaya. Bada bhai chhote ko phone karega, 2, 3, 4, 5 baar; 50 baar thodi karega. Jawab nahi aaya to faisla lena hi padega, warna vasiyat nahi likhi to aage court case. To leader (bada bhai) ko hi faisla lena padega.
-
-**Maan lo bade bhai ne akele vasiyat likhwa li aur sabko bol diya "likh gayi". Ek hi copy, bade bhai ke paas. Agle din bade bhai ke ghar aag lag gayi, copy jal gayi, chhote ke paas kuch nahi. Ab vasiyat kahan?**
-Arpan: Vasiyat jal gayi, kyunki copy karne ke liye kuch tha hi nahi. To agar aur copy available hain (B, C gire to D, E), to unka use karo; jaise bade bhai ne mummy ke saath faisla liya, mummy saakshi hai, uske paas bhi ek copy, ghar jala to mummy bata degi. Agar extra copy nahi hai, to A akele faisla nahi lega, kyunki A ne likha aur A bhi gira to dikkat. A akele tabhi likhe jab use pata ho ki kal main gira to mujhe sambhalne ke liye sab hai.
-Technical me: "aur copy (D, E) / mummy saakshi" = replication factor badhao; "extra copy nahi to akele nahi likhega" = min.insync.replicas = 2 (sirf leader bacha to likhna mana, producer baad me dobara bheje); "akele likh do" = min.insync.replicas = 1 (tez, par leader gira to khabar gayi).
+Technical me: "copy bhi likh de, tab likh di" = acks=all, "replica ne bol diya likh liya" = in-sync replica ki haan (min.insync.replicas = 2). Dono copy gir jaayein aur sirf leader bache: min.insync.replicas = 2 ho to Kafka likhna mana kar deta (khabar khone se behtar rukna), 1 ho to leader akela likh leta. Ye config ki setting hai, scene nahi.
 
 **6. Checker ne fan ko seat pe baitha diya (ticket punch), par register me likhne se pehle gir gaya. Naya checker wahi fan dobara bhejega.**
 Arpan: Idempotency check kar le ki wo pehle aaya hai. Bas, samajh ja.
