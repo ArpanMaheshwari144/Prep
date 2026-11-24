@@ -133,3 +133,30 @@ to dobara bhejega, aur checker us dohri khabar ko eventId se pakad lega (hissa 4
 
 Teeno jagah bachav: **bhejne wala (counter) = outbox · gate (Kafka) = 3 copy + acks=all · padhne wala (checker) = pehle
 kaam phir commit + eventId**.
+
+---
+
+## 7. Register (partition disk pe kaise rakha jaata hai)
+
+Ye Kafka ka andar ka kaam hai, design ka faisla nahi.
+
+Gate pe admin ek register me har aane wale ka naam likhta hai. Beech ke panne pe nahi likhta, purana kaat ke dobara
+nahi likhta, bas aakhri line ke neeche agla naam jodta jaata hai. Kafka bhi disk pe yahi karta hai: naya message hamesha
+aakhir me judta hai. Aakhir me jodna sabse tez, isliye Kafka itna tez likh paata hai (**append-only log**).
+
+Register bhar jaaye to admin use almari me rakh deta hai aur naya khol leta hai. Har register ke cover pe likha hai ki
+wo kis number se shuru hua: "0 se", "500 se", "1000 se". Ek register = **segment**. 7 din purana maal hatana ho to panne
+nahi kaatta, poora purana register phenk deta hai (**retention**).
+
+Bookmark pe 501 likha hai, to 501 kaise milta hai? Pehle cover dekho: 501 "500 se" wale register me hai. Phir register
+ke saath lagi chhoti parchi dekho, kitaab ki vishay-suchi jaisi: "500 -> panna 1, 600 -> panna 4". Panna 1 pe jao,
+do-chaar line aage padho, 501 mil gaya. Ye parchi **index** hai.
+
+Pehle kahan dekha: kaato mat, neeche likho = Banking 4 (ledger) · mahine ke mahine tod do = Banking 11 · ID se seedha
+page, 1 lakh panne nahi palatne = Twitter 16.
+
+---
+
+## 8. Kafka andar se: ek khabar ka poora safar
+
+(Baad me, stadium wali kahani me.)
