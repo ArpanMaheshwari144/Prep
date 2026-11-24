@@ -24,73 +24,23 @@ Par LB request baantta hai, ghatata nahi. Aur LB khud gira to sab band, isliye L
 
 ---
 
-## OSI Model Refresher
+## 2. L4 vs L7 (LB request ko kitna padhta hai)
 
+**Koi poochhe to aise bolo:**
 ```
-Layer 7 — APPLICATION   (HTTP, FTP)
-Layer 6 — Presentation
-Layer 5 — Session
-Layer 4 — TRANSPORT     (TCP, UDP, ports)  ← important
-Layer 3 — Network       (IP addresses)
-Layer 2 — Data Link
-Layer 1 — Physical
+L4 LB sirf lifafa dekhta hai: kis IP se aaya, kis port pe jaana hai. Andar kya likha hai,
+wo nahi padhta, isliye bahut tez hai aur bahut zyada connection jhel leta hai (AWS NLB).
+L7 LB chitthi khol ke padhta hai: URL, header, cookie. Isliye /search ko search service pe
+aur /pay ko payment service pe bhej sakta hai (AWS ALB, Nginx). Aam web app me L7 hi lagta hai.
 ```
 
-**LB context:** Layer 4 (transport) vs Layer 7 (HTTP).
+**Scene (e-com):** Ravi ka phone ek hi darwaze (`shop.com`) pe teen request bhejta hai: `/api/search?q=ghee`, `/api/cart`, `/api/pay`. L7 LB URL padhta hai aur har request apni service pe bhejta hai: search wali search service pe, cart wali cart service pe, pay wali payment service pe. Bahar se ek hi darwaza dikhta hai, andar teen alag ghar hain.
 
----
+**L4 kahan lagta hai (PUBG):** game me phone har second dher saare chhote UDP packet bhejta hai. Unme URL hota hi nahi, aur yahan tez hona sabse zaroori hai. Isliye wahan L4 lagta hai, jo bina padhe packet aage badha deta hai.
 
-## Layer 4 vs Layer 7 — KEY DISTINCTION
+**HTTPS ka taala kahan khulta hai:** L7 ko chitthi padhni hai, to taala (TLS) LB pe hi khulta hai, aur LB peeche server ko request deta hai. Iska fayda ye hai ki certificate ek jagah rehta hai aur server ka CPU bachta hai. L4 taala nahi kholta, wo encrypted packet waise ka waisa aage bhej deta hai.
 
-### Layer 4 LB (TCP-level)
-**Sees:** IP address + port only.
-```
-Request: Source IP 192.168.1.5 → Port 443
-LB:      "Forward to Server-2" (based on round-robin/least-conn)
-         HTTP details NOT visible (URL/headers hidden)
-```
-**Speed:** Fast (less inspection). **Examples:** AWS NLB, HAProxy TCP mode.
-
-### Layer 7 LB (HTTP-level)
-**Sees:** Full HTTP request — URL, headers, body, cookies.
-```
-Request: GET /api/users/123
-         Authorization: Bearer eyJ...
-         User-Agent: Chrome
-
-LB:      "URL has /api → backend pool"
-         "URL has /static → CDN/static-pool"
-         "Header X-User=admin → admin-pool"
-```
-**Speed:** Slower (deep inspect). **Examples:** AWS ALB, Nginx, Traefik.
-
----
-
-### Postal Analogy
-
-```
-Layer 4 = Courier at sorting center
-   • Sees address + pincode only
-   • Fast, dumb routing
-
-Layer 7 = Office receptionist
-   • Asks "kya kaam mein aaye"
-   • Opens content, smart routing
-```
-
-### Comparison
-
-| | Layer 4 LB | Layer 7 LB |
-|---|---|---|
-| Sees | IP/port | Full HTTP |
-| Speed | Faster | Slower |
-| Routing | IP/port pe algo (round-robin, least-conn, hash) — URL/header nahi dekh sakta | URL-based, header-based, smart |
-| SSL termination | | |
-| Sticky sessions | Limited | Cookie-based |
-| Use | TCP services, gaming, IoT | Web apps (90% case) |
-| Examples | AWS NLB, HAProxy | AWS ALB, Nginx |
-
-**Modern apps = 90% Layer 7.**
+**Trap:** L4 (NLB) laga ke socha ki `/pay` ko alag server pe bhejenge. Ye ho hi nahi sakta, kyunki L4 URL dekhta hi nahi. Rasta URL se tay karna hai to L7 chahiye.
 
 ---
 
@@ -410,45 +360,6 @@ jis server pe bhaari wali padi wo doobta, ginti me sab barabar dikhta
 
 > Jo us file me tha aur yahan nahi tha, wahi laaya. Baaki (L4/L7, algo, health, active-active) upar pehle se hai.
 
-### CONCRETE EXAMPLE — Amazon.com
-
-```
-USER REQUEST:
-   "GET amazon.com/api/cart"  (HTTPS, port 443)
-
-   Envelope (L4 sees):
-      Source: User IP
-      Dest: amazon.com:443
-      Protocol: TCP
-
-   Letter (L7 sees):
-      Host: amazon.com
-      Path: /api/cart
-      Method: GET
-      Cookie: session=user123
-```
-
-```
-L4 LB decision:
-   "TCP to port 443 → koi bhi server"
-   Path-aware NAHI
-   Bas connection forward
-```
-
-```
-L7 LB decision:
-   /api/cart → cart-service cluster
-   /api/payment → payment-service cluster
-   /api/search → search-service cluster
-   /images/* → CDN/static servers
-   /admin → admin cluster (restricted)
-
-   CONTENT samjha → SMART routing
-   Microservices perfect
-```
-
----
-
 ### Sticky Sessions (Session Affinity)
 
 ```
@@ -494,36 +405,6 @@ SOLUTION 3: JWT (Stateless tokens)
      SESSION = visitor pass -> guard har baar reception ko CALL kare (= Redis lookup)
 ```
 
-
-### SSL Termination
-
-```
-SSL/TLS = encryption (HTTPS)
-```
-
-```
-OPTION A: Termination at LB (common)
-   ┌─────┐    HTTPS   ┌──────┐   HTTP   ┌────────┐
-   │USER │ ─────────► │  LB  │ ───────► │SERVERS │
-   └─────┘            └──────┘          └────────┘
-
-   LB decrypts → forwards plain HTTP to backend
-   Servers don't need SSL cert
-   CPU offload from servers
-   Cert management centralized
-   Internal traffic unencrypted
-
-OPTION B: Pass-through (end-to-end SSL)
-   ┌─────┐    HTTPS   ┌──────┐   HTTPS  ┌────────┐
-   │USER │ ─────────► │  LB  │ ───────► │SERVERS │
-   └─────┘            └──────┘          └────────┘
-
-   LB doesn't decrypt — forwards encrypted
-   End-to-end encryption
-   LB can't inspect (must be L4)
-```
-
----
 
 ### AWS Load Balancer Types
 
