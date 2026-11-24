@@ -25,7 +25,7 @@ Order Service  -->  DB + vasiyat (outbox)  -->  Kafka (stadium: gate = partition
  4   har ticket 3 baar punch                     ->  ek kamre me bitha do (consumer group)
  4b  security wale bhi usi kamre me              ->  alag room (alag consumer group)
  4c  scanner hang, talaashi bhi ruki             ->  nayi line ticket_ok; zyada consumer
- 5   admin ne "aa gaya" bola, phir gira          ->  copy bhi likhe, tab "likh di" (acks=all)
+ 5   admin ne "likh di" bola, phir gira          ->  copy bhi likhe, tab "likh di" (acks=all)
  6   punch ke baad, register se pehle gira       ->  pehle aaya hai? check (idempotency)
  6b  SMS gaya, bookmark se pehle gira            ->  pakki id, dobara aaye to phenko (idempotent consumer)
  7   Order Service gate tak bhejne se pehle gira ->  pehle vasiyat likh de (outbox, DB table)
@@ -223,9 +223,9 @@ flowchart TB
     style SK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 5. Admin ne "aa gaya" bola, phir gira (vasiyat ki copy)
+## 5. Admin ne "likh di" bola, phir gira (vasiyat ki copy)
 
-Admin ne ticket counter ko "aa gaya" bol diya, phir wo gira, aur uski jagah lene wale admin ke paas aakhri kuch
+Admin ne ticket counter ko "likh di" bol diya, phir wo gira, aur uski jagah lene wale admin ke paas aakhri kuch
 logon ki list hi nahi thi. Jaise baap ne vasiyat ek hi copy me likhi, ghar walon ko bol diya "likh di", phir wo copy
 jal gayi. To "likh di" aise bolna ki pehle uski copy aur bana, aur copy wala bhi likh de, tab "likh di". Matlab
 replica hai, replica ne bol diya "likh liya", sab bolein, tab.
