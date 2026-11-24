@@ -351,6 +351,18 @@ nahi dekhta) jiske paas 44 hai hi nahi: padhi hui khabar register se gayab. Isli
 
 ![kadam 10](../00_IMG/12_kafka_k10.png)
 
+**acks aur high watermark alag cheezein hain** (dono "copy" se judi, isliye mix ho jaati). `acks` batata hai **producer ko
+OK kab** mile: acks=1 pe B ne 44 jodte hi OK. High watermark batata hai **worker ko kahan tak dikhe**: C abhi 43 pe hai to
+worker ko 43 tak hi. Ye acks=1 ho tab bhi lagu hota hai, kyunki worker ki padhi khabar naye leader ke paas bhi honi chahiye.
+
+![kadam 10b](../00_IMG/12_kafka_k10b.png)
+
+**Ek copy bahut peeche reh gayi to sab ruk jaayenge?** Nahi. C der tak 41 pe atka raha to use pakki list (**ISR**) se
+nikaal dete hain. Ab ginti sirf B aur A ki: dono ke paas 44, to high watermark 44. C wapas pakad le to list me wapas aa
+jaata hai. Bahar wali copy kabhi leader nahi banti (8.8).
+
+![kadam 10c](../00_IMG/12_kafka_k10c.png)
+
 ### 8.7 Consumer: kis gate pe, poll, commit
 
 SMS service ke worker ek **consumer group** hain. **Group coordinator** (ek broker) bantwara karta hai: P1 = worker 2. Ek
