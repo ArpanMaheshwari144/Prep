@@ -346,8 +346,8 @@ saari copy me likh gaya tabhi OK.
 ### 8.6 High watermark: consumer ko kahan tak dikhta
 
 Ek pal: B ke paas 44, A ke paas 44, C ke paas 43. **High watermark** = jahan tak **saari** ISR copy pahunch chuki = 43.
-Consumer ko sirf 43 tak dikhta, 44 chhupa. Kyun? 44 de diya, SMS chala gaya, usi pal B gira, C leader bana jiske paas 44
-hai hi nahi: padhi hui khabar register se gayab. Isliye padhai sirf pakke number tak. C ne 44 le liya to high watermark 44.
+Consumer ko sirf 43 tak dikhta, 44 chhupa. Kyun? 44 de diya, SMS chala gaya, usi pal B gira, C leader bana (C bhi pakki list me hai, aur controller sabse taazi
+nahi dekhta) jiske paas 44 hai hi nahi: padhi hui khabar register se gayab. Isliye padhai sirf pakke number tak. C ne 44 le liya to high watermark 44.
 
 ![kadam 10](../00_IMG/12_kafka_k10.png)
 
@@ -366,8 +366,8 @@ bookmark Kafka ke andar `__consumer_offsets` me (hissa 4). Restart ho to 45 se.
 
 Broker B gira. **Controller** (hissa 5) ISR me se naya leader chunta hai. Controller alag cheez nahi, Kafka ka hi ek broker
 hai jise ye kaam mila (purane Kafka me ek broker controller banta, ZooKeeper ki madad se; naye Kafka, KRaft, me 3 controller
-machine aapas me ek leader chunti). Group coordinator bhi isi tarah kisi broker ka kaam hai. Yahan: A ke paas 44 tak sab hai, to **A = P1 ka naya
-leader**. Peeche chal rahi copy ko leader nahi banate, warna pakki khabar kho jaati. Naqsha badla (P1 -> A), producer aur
+machine aapas me ek leader chunti). Group coordinator bhi isi tarah kisi broker ka kaam hai. Controller sabse taazi copy dekh ke nahi chunta: pakki list (ISR) me jo bhi hai, usme se apne tay kram se ek. Yahan A aur C dono ke
+paas 44 hai, chuna A: **A = P1 ka naya leader**. Jo copy pakki list se bahar ho chuki (bahut peeche), wo leader nahi banti, warna pakki khabar kho jaati. Naqsha badla (P1 -> A), producer aur
 worker 2 ab A se baat karte hain. Arpan ne cancel kiya: A pe **45**, C ne A se maang liya, worker 2 bookmark (44) se aage
 45 padh leta hai. Kuch nahi khoya, kram wahi.
 
