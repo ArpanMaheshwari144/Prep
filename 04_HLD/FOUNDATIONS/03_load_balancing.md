@@ -148,16 +148,31 @@ connection / port bhara   -> aage halka L4, peeche kai L7. L4 HTTP padhta hi nah
 
 ---
 
-## (baad me saanche me) Sticky ka garam server
+## 7. Session kahan rakho, aur LB / reverse proxy / API gateway ka farak
 
-### 6. STICKY session ka garam server
+**Koi poochhe to aise bolo:**
+```
+Session server ki memory me rakha to user ko hamesha usi server pe bhejna padega (sticky). Isse bojh tedha hota hai,
+aur wo server gira to sabka login uda. Isliye session server se bahar nikaalo: Redis me rakho, ya JWT me
+(token khud saboot hai, koi bhi server sign check kar le). Phir koi bhi request kisi bhi server pe ja sakti hai.
 
-Sticky on → ek user hamesha ek hi server pe. Kuch bhaari user ek hi server pe baith gaye →
-wo 90% pe, baaki 30% pe. LB dekh raha hai par kuch kar nahi sakta — user ko hila nahi sakta.
-Aur wo server gira to unke session hi ud gaye.
+LB = kai jaise server me bojh baantna. Reverse proxy = server ke aage ka chehra (server chhupao, TLS kholo, cache).
+API gateway = reverse proxy + API ka kaam (login check, rate limit, kaunsi service). Nginx teeno ban sakta hai,
+isliye log confuse hote hain. Nginx ek tool hai, ye teeno kaam hain.
+```
 
-**Ilaaj sticky ko theek karna NAHI hai — sticky ki ZAROORAT khatam karo.**
-Session server ki memory se nikaal ke Redis ya token me daal do → har request kisi bhi server pe.
+**Scene (sticky ka garam server):** sticky on hai, aur kuch bhaari user (badi company ke admin, jo din bhar report chalate) server 1 pe chipak gaye. Server 1 90% pe hai, baaki 30% pe. LB dekh raha hai par kuch kar nahi sakta, kyunki user ko hila diya to unka session gaya. Ilaaj sticky ko theek karna nahi hai. Sticky ki zaroorat hi khatam karo: session Redis me ya JWT me.
+
+**Tera project:** usercrud aur todoapp me JWT hai. Login pe server token deta hai jisme user ki jaankari aur sign hota hai. Har request pe koi bhi server sirf sign check karta hai, Redis tak jaane ki bhi zaroorat nahi. Misaal: JWT = ID card pe office ka stamp, guard stamp dekh ke andar jaane deta hai. Session = visitor pass, guard har baar reception ko phone karta hai.
+
+**Nginx vs ALB:**
+```
+Nginx   free software, khud install karo (EC2 pe, laptop pe, kahin bhi). Poora control, par chalana bhi khud ka
+ALB     AWS ka bana hua LB. Tum sirf niyam dete ho (kaunsa URL kis group pe, health check), chalata AWS hai
+```
+LB koi scratch se nahi banata. Use karte hain aur config karte hain: listener (80 / 443), target group, routing ke niyam, health check, certificate.
+
+**Trap:** "Nginx = reverse proxy" bol diya. Reverse proxy ek kaam hai, aur Nginx wo tool hai jo ye kaam (aur LB, web server, gateway bhi) kar sakta hai. Jaise translator ek kaam hai aur wo kaam karne wala insaan alag.
 
 ---
 
