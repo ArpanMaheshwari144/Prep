@@ -44,41 +44,22 @@ aur /pay ko payment service pe bhej sakta hai (AWS ALB, Nginx). Aam web app me L
 
 ---
 
-## LB Algorithms
+## 3. LB kisko de, ye kaise chunta hai (algorithm)
 
-### 1. **Round Robin** (simplest)
+**Koi poochhe to aise bolo:**
 ```
-Req 1 → Srv-1, Req 2 → Srv-2, Req 3 → Srv-3, Req 4 → Srv-1...
+Round robin = baari-baari: 1, 2, 3, phir 1. Sabse seedha hai, par har request ko barabar ginta hai.
+Least connections = jis server ke paas abhi sabse kam kaam chal raha hai, use do. Production me yahi zyada chalta hai.
+Weighted = bade server ko zyada hissa, chhote ko kam.
+IP hash = ek IP hamesha ek hi server pe jaaye. Ye tab chahiye jab session server ki memory me ho.
+Stateless app (JWT / Redis) me iski zaroorat hi nahi padti.
 ```
-**Pros:** Simple. **Cons:** Doesn't consider load.
 
-### 2. **Least Connections** (production preferred)
-```
-LB tracks active connections per server.
-New request → server with FEWEST active connections.
-```
-**Pros:** Better load distribution.
+**Scene (e-com):** ek request "ghee dikhao" hai jo 10 ms me ho jaati hai. Doosri "pichhle saal ke saare order ki report" hai jo 5 second leti hai. Round robin dono ko "1 request" ginta hai. Jis server pe teen report aa gayi wo doob raha hai, par ginti me sab barabar dikhta hai. Least connections dekhta hai ki us server pe abhi 3 kaam atke hue hain, to nayi request doosre server ko de deta hai.
 
-### 3. **Weighted Round Robin**
-```
-Server-1 (powerful):  weight 5
-Server-2 (medium):    weight 2
-Server-3 (weak):      weight 1
-→ Server-1 gets 5/8 traffic
-```
-**Use:** Heterogeneous servers.
+**IP hash ka jaal:** poora office ya college bahar ek hi IP (NAT) se nikalta hai. Hash same aayega, to 500 log ek hi server pe gir jaayenge. Isliye sticky chahiye to IP se nahi, cookie se karo. Usse bhi behtar ye ki session Redis me rakho, taaki sticky ki zaroorat hi na pade.
 
-### 4. **IP Hash** (sticky)
-```
-Hash(client IP) → always same server
-```
-**Use:** Session affinity needed (legacy stateful apps).
-**Avoid in modern stateless (JWT) apps.**
-
-### 5. **Least Response Time**
-```
-Track avg response time per server → route to fastest
-```
+**Trap (chat, WebSocket):** LB **connection** baantta hai, har request alag se nahi. Chat me ek WebSocket ghanton khula rehta hai aur usi pe hazaaron message aate hain. Bheed badhi, tune 4th server joda, par purane log purane taar pe hi chipke rahe aur naya server khaali baitha raha. Ilaaj: connection ki umar fix kar do (kuch der baad client dobara jude, tab LB use naye server pe bhi bhej sakta hai). Aam HTTP me L7 LB har request alag baant deta hai.
 
 ---
 
