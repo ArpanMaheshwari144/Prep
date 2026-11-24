@@ -1,6 +1,6 @@
 # DNS — Domain Name System
 
-> **NAV** — KYA: DNS (resolution, records, TTL, Route 53, anycast). saath: [load-balancing](03_load_balancing.md) · lagta hai: [browser-journey](19_url_browser_journey.md)
+> **NAV** — KYA: DNS (naam se IP, cache + TTL, Route 53 se region chunna). saath: [LB](03_load_balancing.md) · [CDN](15_cdn.md)
 
 ---
 
@@ -28,157 +28,18 @@ CNAME  naam -> doosra naam  (www.shop.com -> shop.cloudfront.net, CDN pe bhejne 
 
 ---
 
-## 7 Route 53 Routing Policies (AWS)
+## 2. DNS se region kaise chunte hain (Route 53)
 
+**Koi poochhe to aise bolo:**
 ```
-Route 53 = AWS DNS service
-Different routing POLICIES based on need:
-```
-
-```
-1. SIMPLE ROUTING
-   google.com → single IP
-   = Basic A record
-   = No logic, just resolve
+DNS sirf IP nahi batata, ye bhi tay kar sakta hai ki kaunsa IP de. Route 53 me chaar kaam ke tareeke:
+latency = user ko sabse paas wala region, geo = desh ke hisaab se (data India me hi rahe),
+weighted = 10% log naye version pe (canary), failover = primary ka health check fail to doosra region.
+Par DNS ka jawab TTL tak cache rehta hai, isliye DNS se badlaav seconds me nahi, minute me pahunchta hai.
 ```
 
-```
-2. WEIGHTED ROUTING
-   google.com →
-      Server A (70% traffic)
-      Server B (30% traffic)
+**Scene (do region, Mumbai aur Singapore):** Arpan Bangalore se khole to latency routing Mumbai ka IP deti hai. Naya version aaya to weighted routing se 10% logon ko naye IP pe bheja, kuch toota nahi to dheere-dheere 100%. Mumbai region poora gira, to Route 53 ka health check fail hua aur ab sabko Singapore ka IP milne laga.
 
-   = A/B testing
-   = Canary deployments
-```
+**Anycast (ek line):** ek hi IP, par duniya ke kai sheharon me alag machine us IP pe jawab deti hai, aur net khud paas wali tak le jaata hai. DNS ke root server aur Cloudflare aise hi chalte hain.
 
-```
-3. LATENCY-BASED ROUTING
-   User in India → Mumbai region (low latency)
-   User in USA → Virginia region (low latency)
-
-   = Multi-region apps
-   = Auto-routes to nearest data center
-```
-
-```
-4. GEOLOCATION ROUTING
-   User from India → Hindi content server
-   User from Japan → Japanese content server
-
-   = Location-based content
-   = Compliance (data residency)
-```
-
-```
-5. FAILOVER ROUTING
-   PRIMARY healthy → route to primary
-   PRIMARY down → route to SECONDARY automatically
-
-   = Disaster recovery
-   = Active-passive setup
-```
-
-```
-6. MULTI-VALUE ROUTING
-   google.com → returns multiple IPs
-   Client picks one (or rotates)
-
-   = Simple DNS-based load balancing
-```
-
-```
-7. GEOPROXIMITY ROUTING
-   Bias traffic by geographic location
-   "Send 60% of India traffic to Mumbai, 40% to Singapore"
-
-   = Fine-grained geographic control
-```
-
----
-
-## 8 DNS-Based Load Balancing
-
-```
-google.com → A record returns:
-   142.250.190.46
-   142.250.190.78
-   142.250.190.110
-   142.250.190.142
-
-Client picks first (or rotates)
-= Simple load balancing via DNS
-
-Limitations:
-   • Simple round-robin DNS me health check nahi (Route 53 jaisi managed DNS me hai)
-   • TTL caching = dead server kept being tried
-   • No advanced routing logic
-
-When to use:
-   • Geographic distribution
-   • Multi-region failover
-```
-
----
-
-## Anycast (Advanced)
-
-```
-Same IP advertised from MULTIPLE locations.
-User's request routed to NEAREST one.
-
-   142.250.190.46 advertised from:
-      Mumbai server
-      London server
-      Tokyo server
-
-   User in India → automatically routed to Mumbai
-   User in UK → automatically routed to London
-
-= How root DNS servers work (13 IPs, 100s of locations)
-= Cloudflare, Google DNS use this
-= Built-in geographic load balancing
-```
-
----
-
-## INTERVIEW LINE
-
-```
-"DNS translates human-readable domains to IP addresses.
- Hierarchical system: Root → TLD → Authoritative.
-
- Records: A (IPv4), AAAA (IPv6), CNAME (alias),
- MX (mail), TXT (verification), NS (delegation).
-
- Caching at browser, OS, resolver levels with TTL.
-
- Route 53 routing policies — simple, weighted, latency,
- geolocation, failover, multi-value, geoproximity.
-
- DNS-based LB is simple but TTL-limited;
- Anycast for geographic auto-routing."
-```
-
----
-
-## Memory Hooks
-
-```
-DNS = Internet phonebook (name → IP)
-
-Hierarchy: ROOT → TLD (.com) → AUTHORITATIVE
-
-8-step flow: Browser → OS → Resolver → Root → TLD → NS → IP
-
-Records: A (IPv4), AAAA (IPv6), CNAME, MX, TXT, NS
-
-Route 53 policies (7):
-   Simple, Weighted, Latency, Geolocation,
-   Failover, Multi-value, Geoproximity
-
-Caching: Browser → OS → Resolver → NS (TTL-based)
-
-Anycast = Same IP, many locations (auto-nearest)
-```
-
+**Trap:** "region gira to DNS failover turant". Nahi, jinke resolver ke paas Mumbai ka IP TTL tak pada hai, wo tab tak Mumbai pe hi jaate rahenge. Isliye failover wale record pe TTL chhota rakho (maan lo 60 sec), aur ye maan ke chalo ki failover me ek-do minute lagenge. Aur DNS ko LB mat samjho, region ke andar asli LB chahiye ([LB tukda 6](03_load_balancing.md)).
