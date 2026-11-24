@@ -1,6 +1,6 @@
 # CDN — Content Delivery Network
 
-> **NAV** — KYA: CDN (edge cache, invalidation, CDN kaise system girata). saath: [caching](04_caching.md) · lagta hai: [file-upload](../SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload.md) · [twitter-feed](../SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md)
+> **NAV** — KYA: CDN (edge cache, kya rakhein, purana kaise hatayein, Open Connect). saath: [caching](04_caching.md) · lagta hai: [file-upload](../SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload.md) · [twitter-feed](../SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md)
 
 ---
 
@@ -61,61 +61,6 @@ Purge: CDN ko bolo "ye file har edge se hatao", emergency ke liye, seconds se mi
 
 ---
 
-## 8 Real CDN Providers
-
-```
-┌────────────┬─────────────────────────────┐
-│ Provider   │  Strength                    │
-├────────────┼─────────────────────────────┤
-│ CloudFront │ AWS native, easy integration │
-│ Akamai     │ Largest network (oldest)     │
-│ Cloudflare │ Free tier + DDoS protection  │
-│ Fastly     │ Real-time purge, Instagram   │
-│ Open Connect│ Netflix's OWN CDN          │
-└────────────┴─────────────────────────────┘
-```
-
----
-
-## 9 Netflix Open Connect (case study)
-
-```
-Netflix didn't use someone else's CDN —
-THEY BUILT THEIR OWN.
-
-Open Connect:
-   • Netflix servers PHYSICALLY in ISP data centers
-   • Direct fiber to ISP
-   • Same network = ZERO transit
-
-   = Movie jaldi shuru, buffering kam
-   = ISP saves bandwidth (no peering cost)
-   = Netflix saves money
-
-   Win-win architecture
-```
-
----
-
-## 11 Benefits Summary
-
-```
-┌──────────────────┬─────────────────────────┐
-│  Benefit          │  How                     │
-├──────────────────┼─────────────────────────┤
-│ Low latency    │ Edge near user           │
-│ Origin offload│ Edge serves majority      │
-│ Cost savings  │ Less bandwidth from origin│
-│ DDoS defense  │ Edges absorb attacks      │
-│ Global scale  │ 100s of POPs worldwide    │
-│ Uptime         │ Origin down = edge serves │
-│                │ (sirf jo cached hai, TTL  │
-│                │  ya stale-if-error tak)   │
-└──────────────────┴─────────────────────────┘
-```
-
----
-
 ## 4. Bas itna yaad (CDN gira / sab miss)
 
 ```
@@ -126,40 +71,20 @@ Andar ki baarik baatein (cache key, error cache) design ka faisla nahi, CDN wale
 
 ---
 
-## INTERVIEW LINE (memorize)
+## 5. Netflix Open Connect + CDN ke naam
 
+**Koi poochhe to aise bolo:**
 ```
-"CDN is geographically distributed caching.
- Content served from edge nearest to user —
- reduces latency, offloads origin, scales globally.
-
- Static content cached aggressively;
- dynamic content bypasses CDN or uses short TTL.
-
- Cache invalidation via TTL, versioning, or active purge.
-
- Examples: CloudFront, Akamai, Cloudflare;
- Netflix built Open Connect — placed servers
- directly inside ISP data centers."
+Netflix ne kisi aur ka CDN nahi liya, apna banaya: Open Connect. Apne dabbe seedha ISP (Jio, Airtel) ke
+data center me rakhe. Raat ko jab net khaali hota hai, tab naya maal un dabbon me bhar diya jaata hai, aur
+din me video ISP ke andar se hi chal jaata hai. Isse Netflix ka bandwidth bachta hai, ISP ka bhi, aur video jaldi shuru hota hai.
 ```
 
----
-
-## Memory Hooks
-
+**Naam:**
 ```
-CDN = Pizza chain (branches close to you)
-
-Cache HIT  = "Mere paas hai" → 20ms
-Cache MISS = "Origin se mangwa" → 800ms first time
-
-3 invalidation:
-   TTL    → expiry timer
-   Version → naam change
-   Purge  → emergency delete
-
-Push vs Pull:
-   PULL = lazy (first user pays)
-   PUSH = eager (pre-warm)
+CloudFront   AWS ka, AWS ke saath aasaan
+Akamai       sabse purana aur bada
+Cloudflare   free tier + DDoS se bachaav
+Fastly       turant purge
+Open Connect Netflix ka apna
 ```
-
