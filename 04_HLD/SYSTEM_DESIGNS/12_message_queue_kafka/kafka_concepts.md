@@ -283,7 +283,7 @@ Ye bhi design ka faisla nahi, Kafka ka andar ka kaam hai. Upar ke hisse (partiti
 saath chalte dikhte hain: Arpan ka order producer se nikal ke consumer tak kaise pahunchta hai. Hum sirf ek gate **P1**
 dekhenge, uske teen register: **Broker B = leader**, A aur C = copy. 40, 41 pehle se likhe hain.
 
-**Chalta hua 3D model (play / pause, aage-peeche, raftaar):** https://claude.ai/artifact/CGG9cnwbxdXjqLQUT2pwZb
+**Chalta hua 3D model (play / pause, aage-peeche, raftaar):** https://claude.ai/artifact/J52i616esPEr1ib5uD7Wmv
 
 ![kadam 1](../00_IMG/12_kafka_k01.png)
 
