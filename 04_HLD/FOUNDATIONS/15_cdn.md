@@ -27,26 +27,21 @@ push  hum pehle se saari edges pe daal dete hain. Bada din pata ho tab: naye sea
 
 ---
 
-## 5 Kya Cache Hota Hai?
+## 2. CDN pe kya rakhein, kya nahi
 
+**Koi poochhe to aise bolo:**
 ```
-STATIC content (high cache):
-   • Images (logo, banners, thumbnails)
-   • CSS files
-   • JavaScript files
-   • Videos (Netflix shows)
-   • PDFs, documents
-   • Font files
-
-DYNAMIC content (NO cache or short TTL):
-   • User-specific data (account page)
-   • Real-time prices (stock ticker)
-   • Search results (personalized)
-   • Cart contents
-
-= STATIC = perfect for CDN
-= DYNAMIC = origin se hi
+Jo sabke liye ek jaisa hai (poster, JS, CSS, video, font), wo CDN pe lambi der tak. Jo ek user ka apna hai
+(account page, cart, order) ya har second badalta hai (share ka daam), wo cache nahi hota, origin se aata hai.
+Ye origin header se batata hai: public, max-age = CDN rakh le; private = sirf browser; no-store = koi nahi.
+Paid / private file bhi CDN se chahiye to signed URL: file + kab tak valid + sign, galat ya purana link = 403.
 ```
+
+**Signed URL (file upload kadam 6b se):** Ravi ki bank statement PDF CDN se tez aaye, par sirf Ravi ko mile. Server 10 minute ka signed link banata hai. CDN sign check karta hai, theek hai to file de deta hai. 10 minute baad wahi link 403 deta hai.
+
+**Dynamic bhi CDN se guzar sakta hai:** cart cache nahi hoti, par request phir bhi paas wali edge se guzarti hai. TLS ka taala Bangalore me hi khul jaata hai, aur edge ka origin tak pehle se khula, garam taar hota hai. Isse raasta tez hota hai, bina kuch cache kiye.
+
+**Trap (galat user ko galat data):** account page pe `private` lagana bhool gaye. CDN ne Arpan ka "My Account" rakh liya, aur Ravi ko Arpan ka page dikh gaya. Steam ke saath Christmas 2015 pe yahi hua tha: caching ki setting badli, aur logon ko doosron ke account page dikhe. Isliye user ke apne data pe hamesha `private` / `no-store` lagao, aur login wale jawab kabhi cache mat karo.
 
 ---
 
@@ -137,17 +132,6 @@ Open Connect:
 
 ---
 
-## 12 When NOT to use CDN
-
-```
-Highly dynamic content (user-specific)
-Frequently changing data (real-time stock prices)
-Internal-only apps (no global users)
-Very low traffic (cost > benefit)
-```
-
----
-
 ## ★★ DEPTH-PASS (25-Sep) — CDN andar se + CDN KHUD kaise maarta hai
 
 > Upar = CDN KYA hai. Ye section = andar ki mashine (cache key, headers, signed URL) aur
@@ -173,25 +157,6 @@ app.js  ->  app.3f9a.js     (content ka hash naam me — build tool khud karta)
 versioned files (js / css / image)   ->  TTL 1 SAAL  (naam hi badlega, purana kabhi galat nahi)
 index.html (jo naye naam batata)     ->  TTL chhota / no-cache
 => purge ki zaroorat lagbhag khatam. Purge = emergency ke liye.
-```
-
-### C. Private file — SIGNED URL
-
-```
-paid video / bank statement PDF bhi CDN se chahiye, par sirf us user ko
-server ek URL banata: file + expiry (10 min) + signature
-CDN signature check karta -> galat / expire -> 403
-(S3 pre-signed URL jaisa, bas CDN level pe — CloudFront signed URL / signed cookie)
-```
-
-### D. Dynamic bhi CDN se GUZAR sakta hai (cache nahi, raasta tez)
-
-```
-upar likha "DYNAMIC = origin se hi" — CACHE ke liye sahi.
-par dynamic request bhi CDN se guzar sakti hai, bina cache hue:
-   TLS handshake paas wali edge pe (door ke origin se nahi)
-   edge -> origin pehle se khula, garam connection
-=> "dynamic site acceleration". Cloudflare / CloudFront dono karte hain.
 ```
 
 ### E. ★★ CHHE TARIKE JINSE CDN KHUD SYSTEM KO MAARTA HAI
