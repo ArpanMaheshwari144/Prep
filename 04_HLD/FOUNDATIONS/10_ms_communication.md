@@ -57,6 +57,8 @@ sirf server se = SSE. Bahut log hon to alag connection server, aur update sab ta
 
 **Trap:** WebSocket aur Kafka ko ek samajh liya. WebSocket = server aur user ke phone ka khula taar. Kafka = andar services ke beech ki line, phone tak nahi jaata. WhatsApp me dono: dono online = WebSocket se turant; net band tha = message DB me pada, online aaya to diya.
 
+**Crore taar kaun sambhalta (WhatsApp / Slack / Teams):** taar phone kholta hai, server nahi, aur ek phone ka ek hi taar hota hai (saari chat usi pe). Khula taar jab chup hai to bas memory me kuch KB ki entry hai, CPU nahi; isliye ek machine lakhon pakad leti (WhatsApp blog 2012: ek machine pe 20 lakh+). Kam thread, bahut connection (event loop, Netty). Kaun kis machine pe = Redis me session map (chat notes). Net gaya to taar toota, entry hati; heartbeat band = mara maano. App background me ho to apna taar aksar band, phone ka ek hi taar Google / Apple ke paas (push notification), wahi app ko jagata. Ginti trillion nahi: duniya me ~8 arab log, WhatsApp ~3 arab mahine me.
+
 Teeno raaste (WebSocket, SSE, long polling) = [Compares 12](../../06_COMPARES/12_websockets_vs_sse_vs_long_polling.md).
 
 ---
