@@ -6,74 +6,21 @@
 
 ---
 
-## STORY — Airport Security
+## 1. LB kya hai aur kyun
 
-> Imagine **airport pe security check**:
->
-> **1 counter only:**
-> 1000 log line — 3 ghante wait. Counter wala thak gaya, slow.
->
-> **5 counters open:**
-> Sab counter parallel — 30 min mein nikal jaate.
->
-> But agar passengers seedha kisi bhi counter pe jaye → chaos. Koi empty, koi over-crowded.
->
-> **Solution:** **Coordinator** — *"Aap counter 3 pe jaayein"*. **Traffic distribute** karta intelligently.
->
-> **Coordinator = Load Balancer**
-> - Counters = Servers
-> - Passengers = Requests
-> - Distribution logic = Algorithm
-
----
-
-## Why Load Balancer?
-
-### Without LB
+**Koi poochhe to aise bolo:**
 ```
-   1M requests/sec
-        │
-        ▼
-   ┌─────────┐
-   │ Server  │  ← can't handle
-   │      │     CPU 100%, OOM, crash
-   └─────────┘
+LB server ke aage ek darwaza hai. Saari request pehle isi pe aati hai, aur ye har request
+kisi zinda aur khaali server ko de deta hai. Isse ek server ki had paar nahi hoti, ek server
+gira to baaki chalte rehte, aur bheed badhe to peeche naya server jod do.
+Par LB request baantta hai, ghatata nahi. Aur LB khud gira to sab band, isliye LB bhi ek nahi rakhte.
 ```
 
-**3 fatal problems:**
-1. **Throughput limit** — single server max ~10K-50K RPS
-2. **Single Point of Failure** — server down = whole app down
-3. **No scaling** — vertical (bigger CPU/RAM) limited + expensive
+**Scene (Netflix):** raat 8 baje sab log app kholte hain. Peeche 3 server hain aur aage LB. LB har request baari-baari teeno ko deta hai. Server 2 gir gaya to LB usko bhejna band kar deta hai, aur Arpan ko pata bhi nahi chalta. Bheed badhi to 4th server jod diya, LB use bhi dene lagta hai. App ke code me kuch nahi badla.
 
-### With LB
-```
-   1M requests/sec
-        │
-        ▼
-   ┌──────────────┐
-   │ LOAD BALANCER│
-   └──────┬───────┘
-          │
-   ┌──────┼───────┐
-   ▼      ▼       ▼
- Srv-1  Srv-2  Srv-3
- (333K) (333K) (333K)
-```
+**LB khud gira to:** saare server zinda hain par unke paas request pahunchane wala koi nahi bacha. Isliye LB do rakhte hain: ek chalta hai, doosra taiyaar baitha rehta hai, ya dono saath kaam karte hain. AWS ALB lete ho to ye kaam AWS khud karta hai, kyunki wo andar se kai machine pe chalta hai. Ye hamara faisla nahi hai.
 
-**Benefits:** Throughput multiplied, fault tolerance, horizontal scaling, zero-downtime deploys.
-
----
-
-## LB Position in Architecture
-
-```
-   USER → DNS → CDN → LOAD BALANCER → App Servers → DB/Cache
-                          │
-                  ┌───────┴───────┐
-                 App-1   App-2   App-3
-```
-
-**LB sits between client and app servers.** Sab traffic LB ke through.
+**Trap:** 10,000 request aa rahi hain aur ek server sirf 2,000 jhel sakta hai. 4 server lagaye to LB ke baad bhi har server pe 2,500 hi padengi, aur sab doobenge. LB ka kaam baantna hai. Bojh ghatane wali cheezein alag hain: cache, rate limit, aur zyada server (autoscaling).
 
 ---
 
@@ -233,30 +180,6 @@ Server-2 bypassed until recovers
    HEALTH CHECK = LB PULL karta   -> LB har kuch second GET /health, threshold, recover pe wapas pool
    HEARTBEAT    = server PUSH karta -> server khud LB / registry ko "main zinda" bhejta; signal band = mara
    (analogy threshold pe: ek scratch pe joota nahi phenkte)
-```
-
----
-
-## LB Redundancy — LB Khud SPOF (DEPTH)
-
-**Problem:** saari traffic LB se guzarti. LB **KHUD** crash → poora system DOWN (servers zinda, par koi unhe traffic route nahi kar raha). LB ban gaya **Single Point of Failure**. (Ek hi guard, woh beemar = poora gate band.)
-
-**Fix — LB bhi REDUNDANT (1 nahi, 2+):**
-```
-   ACTIVE-STANDBY  — ek ACTIVE (traffic handle), ek STANDBY (backup, idle)
-                     active mar gaya → standby TAKE OVER
-   ACTIVE-ACTIVE   — dono LB kaam karte (load share)
-                     ek gira → doosra poora sambhaal le
-   HEARTBEAT       — dono ek-doosre ko monitor (pulse)
-                     active ka heartbeat band → standby detect → take over
-   TRAFFIC SHIFT   — floating/virtual IP ya DNS → standby pe redirect
-                     (clients ko pata bhi nahi chalta)
-   MANAGED LB      — AWS ALB/NLB yeh internally handle (built-in redundant)
-```
-
-```
-   = "guard ka backup guard" — ek gira, doosra turant sambhaal le
-   = no downtime (LB ab SPOF nahi raha)
 ```
 
 ---
