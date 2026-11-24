@@ -48,6 +48,10 @@ sirf ek checker ko milta hai:
 P0 -> banda-A     P1 (Arpan) -> banda-B     P2 -> banda-C
 ```
 
+Kyun ek gate pe ek hi checker? P1 ki line me Arpan ki teen khabar kram se khadi hain: order, pay, cancel. P1 pe do
+checker hote to ek "order" uthata, doosra "cancel". Cancel wala tez nikla to cancel pehle ho jaata, order baad me. Jo
+kram hissa 2 me key laga ke bachaya tha, wo toot jaata. Isliye ek gate pe ek hi checker.
+
 Arpan ka ticket sirf banda-B punch karega, to Arpan ko ek hi SMS jaayega. banda-B ne dekh liya, to banda-A aur banda-C
 use nahi dekhte.
 
@@ -60,3 +64,29 @@ Aur agar banda-B gir gaya, to Kafka uska gate P1 banda-A ya banda-C ko de deta h
 **Maan lo Diwali sale me tune SMS team me 2 checker aur bitha diye, ab 5 checker aur 3 gate:** ek gate ek hi checker
 ko milta hai, to naye do khaali baithenge. Isliye gate bhi badha do: P0, P1, P2, P3, P4. Ab 5 checker 5 gate pe, line
 aur bat gayi, kaam tez. (Technical me: pehle partition badhao, phir consumer; consumer partition se zyada ho to khaali.)
+
+---
+
+## 4. Commit
+
+Checker banda-B ka kaam teen kadam ka hai:
+
+```
+1. P1 ki line se agli khabar uthao ("2 cancel")
+2. Arpan ko SMS bhejo
+3. register me likho "agli baar 3 se bhejna"
+```
+
+Teesra kadam, yaani register me bookmark aage karna, **commit** kehlata hai.
+
+Ek din banda-B ne SMS bheja aur register me likhne se pehle gir gaya. Bookmark abhi 2 pe hi tha. P1 banda-A ko mila,
+usne register dekha aur "2 cancel" dobara uthaya. Arpan ko 2 SMS chale gaye.
+
+Ulta karte (pehle register, phir SMS) to aur bura hota: bookmark 3 pe chala jaata, aur "2 cancel" ka SMS kabhi jaata hi
+nahi.
+
+Isliye **pehle kaam, phir commit**. Khabar kabhi khoti nahi, bas kabhi dobara aa jaati hai.
+
+Dobara aayi khabar pakadne ke liye har khabar ka apna number hota hai (eventId), jaise har ticket ka. SMS bhejne se pehle
+checker dekhta hai ki ye number pehle aa chuka ya nahi (Redis ya DB me likha rehta hai). Aa chuka to chhod do, nahi aaya
+to SMS bhejo aur number likh do. Ye pehchaanna checker (SMS Service) ka kaam hai, gate (Kafka) ka nahi.
