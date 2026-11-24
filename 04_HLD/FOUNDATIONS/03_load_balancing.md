@@ -63,55 +63,28 @@ Stateless app (JWT / Redis) me iski zaroorat hi nahi padti.
 
 ---
 
-## Health Checks (CRITICAL)
+## 4. Health check (LB ko kaise pata ki server zinda hai)
 
+**Koi poochhe to aise bolo:**
 ```
-Every 30 sec:
-   GET /health → Server-1: 200 healthy
-   GET /health → Server-2: 503 mark unhealthy
-   GET /health → Server-3: 200 healthy
-
-Server-2 bypassed until recovers
-```
-
-**Without health checks**, LB sends traffic to dead servers → user errors.
-
-### Slow/Late Server Handling — TIMEOUT + THRESHOLD (DEPTH)
-
-**Concern:** server thoda LATE/slow respond kare (busy, blip) — kya LB turant DEAD maan le? **NO** — warna healthy-but-slow server galat se mar jaaye (**FALSE POSITIVE**).
-
-**Fix = TIMEOUT + THRESHOLD:**
-```
-   TIMEOUT             — har check ki deadline (e.g. 2s).
-                         Late beyond timeout = woh EK check failed.
-   unhealthy_threshold — DEAD tabhi maane jab N CONSECUTIVE fails (e.g. 3).
-                         Ek blip = SURVIVE (agla check pass → count reset).
-   healthy_threshold   — wapas ZINDA tabhi jab N consecutive OK (e.g. 2)
-                         (flaky server turant wapas na aaye).
-   INTERVAL            — har N sec check (e.g. 5-10s).
+LB har kuch second har server ko GET /health bhejta hai. Jawab nahi aaya ya der se aaya,
+to wo ek fail gina jaata hai. Server ko mara tab maante hain jab lagaataar kuch baar fail ho
+(maan lo 3 baar), taaki ek baar ki dheemi pe zinda server na nikal jaaye. Wapas tab lete hain
+jab lagaataar kuch baar theek jawab de. Aur check aisa ho jo sach bole, sirf "process chal raha" nahi.
 ```
 
+**Scene (Netflix):** server 2 pe ek pal ke liye GC ruka, aur ek check 2 second late aaya. Agar LB isi pe use mara maan le, to bina wajah ek theek server hat jaata hai. Agla check pass hua, to ginti wapas 0 ho gayi, aur server bacha raha. Server 3 sach me gira, to teeno check fail hue, aur LB ne use list se hata diya.
+
+**Kitna tez pakde (trade-off):**
 ```
-   Server 1 baar late  → 1 fail count → agla pass → reset (zinda rehta)
-   Server 3 baar fail   → sach mein down → DEAD mark (failover)
-   = transient slowness tolerated; sustained failure = dead
+1 fail pe hata do, aur jaldi-jaldi check karo  -> mara server jaldi pakda, par dheema-zinda bhi hat sakta
+5 fail tak ruko, aur der-der se check karo      -> galti kam, par mara server der se pakda, tab tak request usi pe
+beech ka raasta: 3 lagaataar fail, aur har 5-10 sec check
 ```
 
-**Tuning trade-off (interview-depth):**
-```
-   AGGRESSIVE (threshold 1, fast interval)
-      → dead jaldi pakda, PAR false-positive risk (healthy-slow ko maar de)
-   LENIENT (threshold 5, slow interval)
-      → stable, kam false-positive, PAR dead detect slow
-   = sweet spot: ~3 consecutive fails + 5-10s interval
-```
+**Do tareeke:** health check me LB khud jaake poochta hai (pull). Heartbeat me server khud batata rehta hai "main zinda hoon" (push), aur awaaz band hui to maan lo mar gaya.
 
-**★ (drill se) — HEALTH CHECK (pull) vs HEARTBEAT (push):**
-```
-   HEALTH CHECK = LB PULL karta   -> LB har kuch second GET /health, threshold, recover pe wapas pool
-   HEARTBEAT    = server PUSH karta -> server khud LB / registry ko "main zinda" bhejta; signal band = mara
-   (analogy threshold pe: ek scratch pe joota nahi phenkte)
-```
+**Trap (jhootha check):** `/health` sirf "OK" bol deta hai, kyunki process chal raha hai. Peeche DB ke connection khatam ho chuke hain. LB ko sab hara dikhta hai, wo request bhejta rehta hai, aur har request 500 ban ke lautti hai. Ilaaj: check me wo cheez dekho jo sach me kaam rokti hai, jaise "pool me connection bacha hai?". Par har check pe DB ko query mat maaro. 50 server, har 5 sec me ek query, to DB pe faltu bojh padega.
 
 ---
 
