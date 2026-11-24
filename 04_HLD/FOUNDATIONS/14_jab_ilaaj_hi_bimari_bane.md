@@ -137,3 +137,14 @@ GUESS  "interview me aisa poocha JAATA hai" — ye writeups se hai.
 ---
 
 [← FOUNDATIONS](.) · [← Home README](../../README.md)
+
+---
+
+## Asli kahaniyan kahan padho (postmortem)
+
+Company me kuch toota, kyun toota, kaise theek kiya, aage kya badla = postmortem. Ek jagah sab:
+```
+github.com/danluu/post-mortems   saari companies ke postmortem, kism ke hisaab se (config galti, DB, time ...)
+postmortems.app                  isi list ka saaf roop, category ke filter ke saath
+```
+Tareeka: ek line padho, jo design se jude wahi kholo, sirf teen cheez: kya toota, kyun, ab kya badla.

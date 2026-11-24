@@ -45,35 +45,19 @@ Paid / private file bhi CDN se chahiye to signed URL: file + kab tak valid + sig
 
 ---
 
-## 6 Cache Invalidation (TRICKY)
+## 3. Purana maal CDN se kaise hatayein
 
+**Koi poochhe to aise bolo:**
 ```
-Problem:
-   Netflix logo change kiya origin pe
-   Lekin Mumbai Edge mein PURANA logo cached
-   → User ko purana dikhega
-
-   "There are only two hard things in CS:
-    cache invalidation and naming things"
+Teen raaste hain. TTL: itni der baad edge khud purana phenk de, simple hai par tab tak purana dikhega.
+Versioned naam: app.3f9a.js, file badli to naam badla, to naya cache, purana kabhi galat dikhega hi nahi.
+Isliye aise file pe TTL 1 saal, aur sirf index.html (jo naye naam batata hai) pe chhota TTL.
+Purge: CDN ko bolo "ye file har edge se hatao", emergency ke liye, seconds se minute lagte hain.
 ```
 
-```
-SOLUTION 1: TTL (Time To Live)
-   Logo.png: TTL = 1 hour
-   1 hour baad edge khud purge karega
-   = Simple, but stale window exists
+**Scene (Netflix logo badla):** naya logo daala, par Bangalore edge ke paas purana rakha hai. TTL 1 ghanta hai to 1 ghante tak purana dikhega. Agar naam `logo-v2.png` kar diya to naya page naya naam maangega, aur edge ke paas wo hai hi nahi, to wo origin se naya le aayega. Galat logo pe legal ka notice aaya to purge karo.
 
-SOLUTION 2: VERSIONING
-   logo-v1.png → logo-v2.png
-   Naam change = naya file = naya cache entry
-   = Clean, common technique
-
-SOLUTION 3: ACTIVE PURGE
-   CloudFront API call → "purge logo.png"
-   All edges se cached copy hatao
-   = CloudFront pe seconds-minutes lagte (Fastly lagbhag turant), aur API cost
-   = Use for emergencies
-```
+**Trap (deploy ke baad page toota):** naya HTML aa gaya, par CDN pe purana JS pada hai, jisme naya function hai hi nahi, to page toot gaya. Ilaaj: versioned naam. Tab purge ki zaroorat lagbhag khatam ho jaati hai.
 
 ---
 
@@ -147,16 +131,6 @@ Origin header se batata hai:
    Cache-Control: public, max-age=86400   ->  CDN + browser 1 din rakho
    Cache-Control: private                 ->  sirf browser, CDN NAHI (user ka apna data)
    Cache-Control: no-store                ->  koi nahi rakhe
-```
-
-### B. Versioned URL + TTL ki jodi (industry ka asli tareeka)
-
-```
-app.js  ->  app.3f9a.js     (content ka hash naam me — build tool khud karta)
-
-versioned files (js / css / image)   ->  TTL 1 SAAL  (naam hi badlega, purana kabhi galat nahi)
-index.html (jo naye naam batata)     ->  TTL chhota / no-cache
-=> purge ki zaroorat lagbhag khatam. Purge = emergency ke liye.
 ```
 
 ### E. ★★ CHHE TARIKE JINSE CDN KHUD SYSTEM KO MAARTA HAI
