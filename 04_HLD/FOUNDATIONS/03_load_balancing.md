@@ -143,81 +143,33 @@ DNS (kai IP)  ->  L4 LB  ->  L7 LB  ->  server
 
 ---
 
-## ★★ CHHE TARIKE JINSE LB KHUD SYSTEM KO MAARTA HAI
+## 5. Jo cheez bachane ke liye lagayi, wahi system maar de
 
-> Har ek me LB ne "galat" kuch nahi kiya — usne apna kaam hi kiya.
-> Yahi in sawaalon ka maza hai.
-
-### 1. JHOOTHA health check
-
-Server `/health` pe `200 OK` bhejta hai kyunki wo endpoint sirf itna kehta hai "main zinda hoon".
-Peeche DB connection pool khatam ho chuka hai. LB ko sab HARA dikhta hai, traffic bhejta rehta hai,
-har request 500 ban ke lautti hai.
-
+**Koi poochhe to aise bolo:**
 ```
-shallow check   GET /health -> return "OK"                 <- sirf process zinda hai
-deep check      GET /health -> DB ping + cache + downstream
+LB ki har bachane wali cheez ka apna failure hai. Health check sabko mara maan le to koi request
+hi nahi jaati, isliye panic mode. Ek server gira aur uska bojh baaki pe gira to wo bhi girte hain,
+isliye pehle se jagah chhod ke chalo (N+1). Retry har layer pe jude to bojh 3-4 guna ho jaata hai,
+isliye retry ki had + backoff + jitter. Naya server khaali dikhe to sab usi pe gir jaata hai, isliye slow start.
 ```
 
-Deep check sahi lagta hai par uski keemat hai — har 5 sec × har server × ek DB query.
-50 server = DB pe faltu bojh. **Asli practice: check HALKA rakho par SACH bolne wala** —
-"pool me connection bacha hai?" ye to memory me pada hai, DB tak jaane ki zaroorat hi nahi.
+**1. Panic mode (Netflix):** DB gira, to saare server ka health check fail ho gaya, aur LB ne sabko mara maan liya. Ab continue watching wali request bhi nahi chal rahi, jo Redis se chal sakti thi. Aadhi kharabi poori kharabi ban gayi. Ilaaj: aadhe se zyada server ek saath mare dikhein to LB check ko nazarandaaz karke sabko request bhejta hai. Soch ye hai ki "sab mar gaye" ka matlab aksar ye hota hai ki check galat hai. (Envoy me ye setting isi naam se hai.)
 
-### 2. Health check ne hi POORA system maar diya — (PANIC MODE)
-
-DB down hua → **saare** server ka deep health check fail → LB ne SABKO dead mark kar diya →
-kisi ko traffic nahi bheja. Jo 20% request DB ke bina bhi chal sakti thi (cache se, static),
-wo bhi nahi chali. **Aadhi kharabi ko LB ne POORI kharabi bana diya.**
-
+**2. Ek gira, sab gire (cascading):**
 ```
-ILAAJ = PANIC MODE
-   agar ek had se zyada server unhealthy ho jaayein (maan le 50%),
-   to LB health-check ko NAZARANDAAZ karke sabko traffic bhejne lagta hai
-
-   soch: "sab dead hai" ka matlab aksar ye hota hai ki CHECK GALAT hai,
-         na ki sach me sab mar gaye
-   (Envoy me ye setting seedhe isi naam se hai)
+3 server, har ek 70% pe  ->  ek gira  ->  bache 2 pe 105%  ->  wo bhi gire  ->  sab band
 ```
+Iska ilaaj LB me nahi hai, capacity me hai. Ek server girne pe bhi chalna hai, to aam din me har server ko itna khaali rakho ki uska hissa baaki jhel lein (3 server = har ek ~66% se neeche). Isko N+1 kehte hain. Saath me load shedding: girne se pehle kuch request seedha mana kar do.
 
-### 3. Ek mara, baaki bhi mar gaye — (CASCADING)
+**3. Retry ka toofan:** server dheema hua, request timeout hui. LB ne retry ki, phone ne bhi ki, upar wali service ne bhi ki. Ek request 3-4 ban gayi, theek us waqt jab system pehle se doob raha tha. Ilaaj wahi hai jo notification me padha tha: retry ki had (kul ka ~10%), backoff + jitter taaki sab ek saath dobara na maarein, aur retry sirf wahan jahan dobara chalana safe ho (idempotent).
 
-```
-3 server x 70%  ->  ek gira  ->  bache 2 pe 105%  ->  dono gire  ->  sab khatam
-```
+**4. Slow start:** algorithm least connections hai. Naya server khada hua, uske paas 0 connection hain, to LB saari nayi request usi ko dene laga. Uska JVM garam nahi hai, cache khaali hai, aur wo pehle minute me hi gir gaya. Ilaaj: naye server ko dheere-dheere bojh do (maan lo 30 sec me 0 se poora). Iska ulta connection draining hai: server band karte waqt nayi request roko, aur purani poori hone do.
 
-Ilaaj LB me hai hi nahi — **jagah chhod ke chalo**. Ek server ke marne pe bhi jeena hai to
-normal haalat me har server `100/(N-1)` se KAM pe chalna chahiye (3 server = ~66% se neeche).
-Isko **N+1 capacity** kehte hain. Saath me circuit breaker + load shedding — taaki server
-marne ki jagah kuch request seedha MANA kar de.
+**Trap (metastable):** bheed hat gayi, phir bhi system theek nahi hua, kyunki retry ki line khud naya bojh ban chuki hai. Aise me traffic rok ke, purani line phenk ke, system ko zabardasti wapas khada karna padta hai.
 
-### 4. RETRY ka toofan
+---
 
-Server slow hua → request timeout → LB ne retry ki → client ne bhi → upar wali service ne bhi.
-Ek asli request 3-4 ban gayi — **theek us waqt jab system pehle se dooba hua tha.**
-
-```
-normal      100 req/s  ->  100 request
-degraded    100 req/s  ->  300-400 request    (har layer apni retry jod rahi hai)
-```
-
-Teen cheezein chahiye:
-```
-RETRY BUDGET              kul ka ~10% se zyada retry nahi
-BACKOFF + JITTER          sab ek saath dobara mat maaro, warna har 2 sec pe nayi LAHER
-RETRY SIRF SAFE JAGAH     jahan dobara chalana theek ho (idempotent)
-```
-
-### 5. Naya server boot hua aur usi pe SAB gir gaya — (SLOW START)
-
-Algorithm least-connections hai. Naya server khada hua → uske paas **0** connection → LB
-**saari** nayi request usi ko bhejne laga. JVM garam nahi, JIT ne compile nahi kiya, local cache
-khaali, pool khaali. Pehle hi minute me gir jaata hai, restart, phir wahi chakkar.
-
-```
-SLOW START            naye server ko DHEERE bojh do — maan le 30 sec me 0 se poora
-CONNECTION DRAINING   band karte waqt: nayi request roko, purani poori hone do
-                      (warna deploy ke waqt request BEECH me katti hai)
-```
+## (baad me saanche me) Sticky ka garam server
 
 ### 6. STICKY session ka garam server
 
