@@ -4,200 +4,27 @@
 
 ---
 
-## 1 Problem Without DNS
+## 1. Naam se IP kaise milta hai
 
+**Koi poochhe to aise bolo:**
 ```
-Without DNS, har site ke liye IP yaad karna:
-
-   Google     → 142.250.190.46
-   Facebook   → 157.240.0.35
-   Netflix    → 54.230.123.45
-   YouTube    → 142.251.40.46
-
-   IMPOSSIBLE to remember
-   Server change ho jaaye IP = sab tut jaaye
+DNS = internet ki phonebook. Hum netflix.com likhte hain, machine ko IP chahiye. Phone pehle apne cache me
+dekhta hai, phir ISP ke resolver se poochta hai. Resolver ke paas na ho to wo upar se neeche poochta hai:
+root ("com walon se poocho"), phir .com ("netflix ka register ye hai"), phir Netflix ka apna DNS, jo IP batata hai.
+Jawab har jagah TTL tak cache rehta hai, isliye agli baar ye poora safar nahi hota.
 ```
 
----
+**Scene:** Arpan ne pehli baar netflix.com khola. Jio ka resolver root se poochta hai, phir .com se, phir Netflix ke DNS se, aur IP mil jaata hai. Ye pehli baar ~100 ms laga. TTL 5 minute hai, to agle 5 minute tak PG ke sab log Jio resolver ke cache se turant IP paate hain.
 
-## 2 Phonebook Analogy
-
+**Do record yaad rakho, baaki naam hain:**
 ```
-Old days:
-   Phonebook kholo
-   "Ramesh Mumbai" search karo
-   → 9876543210 mil gaya
-   → Dial karo
-
-Internet:
-   Browser kholo
-   "google.com" type karo
-   DNS phonebook check:
-   → 142.250.190.46 mil gaya
-   → Connect karo
-
-= Domain name = Human friendly name
-= IP address = Machine readable number
-= DNS = Translator (name → number)
+A      naam -> IP          (netflix.com -> 54.x.x.x)
+CNAME  naam -> doosra naam  (www.shop.com -> shop.cloudfront.net, CDN pe bhejne ke liye yahi lagta hai)
 ```
 
----
+**Browser cache clear kiya to site dheere kyun:** browser site ki JS, CSS, photo, font apne paas rakhta hai. Clear kiya to pehli baar sab dobara net (CDN) se aata hai, aur kai baar DNS ka sawaal aur naya TLS connection bhi dobara. Ek baar khuli to cache phir bhar gaya, agli baar tez. (Cookies bhi saaf ki to login dobara, wo session mitna hai, dheema-tez nahi.)
 
-## 3 DNS Hierarchy
-
-```
-   ┌──────────────────────┐
-   │   ROOT (.)           │  ← Top of hierarchy
-   │   13 root servers     │     globally
-   └──────────┬───────────┘
-              │
-   ┌──────────┴───────────┐
-   │   TLD                 │  ← Top Level Domain
-   │   .com .org .in .net  │     "Country / category"
-   └──────────┬───────────┘
-              │
-   ┌──────────┴───────────┐
-   │   AUTHORITATIVE       │  ← Domain owner's servers
-   │   google.com NS server│     "Where this domain lives"
-   └──────────┬───────────┘
-              │
-              ▼
-       Actual IP: 142.250.190.46
-```
-
-```
-Real example: www.google.com
-   .              → Root server
-   com            → TLD server (handles .com)
-   google.com     → Authoritative server (Google's NS)
-   www.google.com → Final answer (IP)
-```
-
----
-
-## 4 DNS Resolution Flow (8 STEPS)
-
-```
-User types "www.google.com" in browser
-
-1. Browser cache check
-   Not found
-
-2. OS cache check
-   Not found
-
-3. Browser asks LOCAL RESOLVER (ISP DNS)
-   "google.com ka IP do"
-
-4. Resolver asks ROOT server
-   Root: "I don't know exact IP,
-          but ask .com TLD server at X"
-
-5. Resolver asks TLD (.com) server
-   TLD: "google.com ka NS is ns1.google.com at Y"
-
-6. Resolver asks Google's NS (authoritative)
-   NS: "www.google.com → 142.250.190.46"
-
-7. Resolver returns IP to browser
-   + CACHES it (TTL)
-
-8. Browser connects to 142.250.190.46
-   Page loads
-```
-
-```
-Visual:
-   USER → BROWSER → OS → LOCAL RESOLVER
-                              │
-                              ▼
-                            ROOT (.)
-                              │
-                              ▼
-                          TLD (.com)
-                              │
-                              ▼
-                       AUTHORITATIVE
-                       (ns.google.com)
-                              │
-                              ▼
-                       IP: 142.250.190.46
-                              │
-                              ▼
-                          BROWSER
-```
-
----
-
-## 5 DNS Record Types
-
-```
-┌─────────┬──────────────────────────────────────┐
-│  Type   │  Purpose                              │
-├─────────┼──────────────────────────────────────┤
-│  A       │ Domain → IPv4 address                 │
-│          │ google.com → 142.250.190.46           │
-├─────────┼──────────────────────────────────────┤
-│  AAAA   │ Domain → IPv6 address                 │
-│          │ google.com → 2607:f8b0:4005:80a::200e │
-├─────────┼──────────────────────────────────────┤
-│  CNAME  │ Alias to another domain               │
-│          │ www.example.com → example.com          │
-│          │ (canonical name)                       │
-├─────────┼──────────────────────────────────────┤
-│  MX     │ Mail server                            │
-│          │ example.com mail → mx.example.com      │
-├─────────┼──────────────────────────────────────┤
-│  TXT    │ Text data (SPF, verification)         │
-│          │ "v=spf1 include:_spf.google.com"       │
-├─────────┼──────────────────────────────────────┤
-│  NS     │ Name server for domain                 │
-│          │ example.com → ns1.example.com         │
-├─────────┼──────────────────────────────────────┤
-│  SOA    │ Start of Authority                     │
-│          │ Zone metadata (admin email, refresh)  │
-├─────────┼──────────────────────────────────────┤
-│  PTR    │ Reverse lookup (IP → domain)          │
-│          │ 142.250.190.46 → google.com           │
-└─────────┴──────────────────────────────────────┘
-```
-
----
-
-## 6 TTL + Caching Levels
-
-```
-TTL (Time To Live) — kitne der cache valid
-
-  CACHING LAYERS:
-
-  ┌──────────────────────┐
-  │  BROWSER cache       │  TTL: record wala (browser aksar ~1 min tak kaat deta)
-  └──────────┬───────────┘
-             ▼
-  ┌──────────────────────┐
-  │  OS cache (DNS)      │  TTL: wahi record wala
-  └──────────┬───────────┘
-             ▼
-  ┌──────────────────────┐
-  │  LOCAL RESOLVER (ISP)│  TTL: wahi record wala (TTL record ka maalik tay karta, har layer ulti ginti)
-  └──────────┬───────────┘
-             ▼
-  ┌──────────────────────┐
-  │  AUTHORITATIVE (NS)  │  Source of truth
-  └──────────────────────┘
-```
-
-```
-TTL trade-off:
-   Short TTL  → Fresh data, more DNS lookups
-   Long TTL   → Less load, but slower propagation
-
-   Common values:
-      300 sec (5 min)   = quick updates
-      3600 sec (1 hr)   = balance
-      86400 sec (1 day) = stable, less load
-```
+**Trap:** IP badla, par log purane IP pe hi ja rahe hain, kyunki unke resolver ke paas purana jawab TTL tak pada hai. Isliye bade badlaav se ek din pehle TTL ghata ke 60 sec kar do. Badlaav ke baad sab jaldi naye IP pe aa jaate hain, aur kaam ho jaaye to TTL wapas badha do.
 
 ---
 
@@ -290,41 +117,6 @@ Limitations:
 When to use:
    • Geographic distribution
    • Multi-region failover
-```
-
----
-
-## 9 DNS Propagation
-
-```
-Naya domain register kiya / IP change kiya?
-World mein sab DNS servers update hote hain
-= "Propagation"
-
-Time: 1 min to 48 hours
-Depends on TTL of records
-
-   ┌─────────────────────────────────────────┐
-   │ Authoritative NS updated (instant)      │
-   └────────────┬────────────────────────────┘
-                │
-                ▼
-   ┌─────────────────────────────────────────┐
-   │ ISP resolver: TTL expire wait           │
-   └────────────┬────────────────────────────┘
-                │
-                ▼
-   ┌─────────────────────────────────────────┐
-   │ Browser/OS cache: TTL expire wait       │
-   └────────────┬────────────────────────────┘
-                │
-                ▼
-            Update visible to user
-```
-
-```
-Tip: Before big change, REDUCE TTL to 60 sec
-     a day before — faster propagation when needed
 ```
 
 ---
