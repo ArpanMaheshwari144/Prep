@@ -16,6 +16,14 @@ Stadium me jo line lagti hai, wahi **topic** hai (naam: order-events).
 Dono kamre isi line se padhte hain. Padhne se khabar mitti nahi. Kal koi naya kamra khule, to wo bhi isi line se padh
 lega, counter me kuch nahi badalta.
 
+```mermaid
+flowchart LR
+    O["Ticket counter<br/>(Order Service)"] -- "Arpan ki khabar" --> T[("line = topic<br/>order-events")]
+    T --> S["checker<br/>(SMS Service)"]
+    T --> F["security<br/>(Fraud Service)"]
+    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
+```
+
 ---
 
 ## 2. Partition
@@ -33,6 +41,19 @@ teeno khabar P1 pe, aur kram se.
 
 Jaise teen dost: alag-alag line me ghuse to andar kaun pehle pahunchega, koi kram nahi. Ek hi line me saath ghuse to
 pehle main, phir wo, phir wo.
+
+```mermaid
+flowchart LR
+    O["Ticket counter<br/>key = user id"] --> P0 & P1 & P2
+    subgraph T["line order-events (topic)"]
+        P0[("gate P0 · Ravi")]
+        P1[("gate P1 · Arpan<br/>order, pay, cancel (kram se)")]
+        P2[("gate P2 · Sita")]
+    end
+    style P0 fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
+    style P1 fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
+    style P2 fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
+```
 
 ---
 
@@ -54,6 +75,26 @@ kram hissa 2 me key laga ke bachaya tha, wo toot jaata. Isliye ek gate pe ek hi 
 
 Arpan ka ticket sirf banda-B punch karega, to Arpan ko ek hi SMS jaayega. banda-B ne dekh liya, to banda-A aur banda-C
 use nahi dekhte.
+
+```mermaid
+flowchart LR
+    subgraph T["line order-events"]
+        P0[("P0")]
+        P1[("P1 · Arpan")]
+        P2[("P2")]
+    end
+    subgraph S["TEAM sms (consumer group)"]
+        A["banda-A"]
+        B["banda-B<br/>Arpan ko 1 SMS"]
+        C["banda-C"]
+    end
+    P0 --> A
+    P1 --> B
+    P2 --> C
+    T -. "poori line alag se" .-> X["TEAM fraud<br/>(security)"]
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
+    style X fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
+```
 
 Security (Fraud) alag kamra hai aur uski alag team hai. Use apni poori line alag se milti hai. Har team apne register me
 likhti hai ki line me kahan tak dekh liya (ye **offset** hai). Isliye security dheemi chale to bhi checker nahi rukta,
@@ -91,6 +132,17 @@ Dobara aayi khabar pakadne ke liye har khabar ka apna number hota hai (eventId),
 checker dekhta hai ki ye number pehle aa chuka ya nahi (Redis ya DB me likha rehta hai). Aa chuka to chhod do, nahi aaya
 to SMS bhejo aur number likh do. Ye pehchaanna checker (SMS Service) ka kaam hai, gate (Kafka) ka nahi.
 
+```mermaid
+flowchart LR
+    K["banda-B ne uthayi:<br/>khabar 2 cancel (number E-6)"] --> R{"E-6 pehle aa chuka?<br/>(Redis / DB)"}
+    R -- "haan" --> X["chhod do, dobara SMS nahi"]
+    R -- "nahi" --> S["1. SMS bhejo, E-6 likh do"]
+    S --> C["2. commit: bookmark 3"]
+    X --> C
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
+    style X fill:#d3f9d8,stroke:#2f9e44,stroke-width:2px,color:#000
+```
+
 ---
 
 ## 5. Leader aur copy
@@ -118,6 +170,22 @@ jaati hai, pakki copies ki list = **ISR**. Agar sirf leader bacha ho aur koi pak
 Ek line me: disk pe likha (restart se bacha) + 3 copy (machine mari to bhi bacha) + acks=all (copy pe likhne ke baad hi
 "ho gaya").
 
+```mermaid
+flowchart LR
+    O["Ticket counter"] -- "acks=all: copy pe likh jaaye tab 'aa gaya'" --> L
+    subgraph T["gate P1 ke 3 register (3 machine)"]
+        L[("machine B<br/>LEADER (disk mari)")]
+        A[("machine A<br/>pakki copy -> naya LEADER")]
+        C[("machine C<br/>copy")]
+    end
+    A -- "aage kya aaya?" --> L
+    C -- "aage kya aaya?" --> L
+    CT(("Controller<br/>head admin")) -. "naya leader chuna" .-> A
+    style L fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
+    style A fill:#d3f9d8,stroke:#2f9e44,stroke-width:2px,color:#000
+    style CT fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
+```
+
 ---
 
 ## 6. Outbox
@@ -133,6 +201,16 @@ to dobara bhejega, aur checker us dohri khabar ko eventId se pakad lega (hissa 4
 
 Teeno jagah bachav: **bhejne wala (counter) = outbox · gate (Kafka) = 3 copy + acks=all · padhne wala (checker) = pehle
 kaam phir commit + eventId**.
+
+```mermaid
+flowchart LR
+    O["Ticket counter"] -- "ek transaction" --> DB[("DB<br/>order = cancel<br/>+ outbox: E-6, sent = false")]
+    RL["chhotu (relay)"] -- "sent = false padhta" --> DB
+    RL -- "gate tak le jaata,<br/>OK pe sent = true" --> K[("Kafka gate P1")]
+    K --> B["checker banda-B<br/>pehle SMS, phir commit"]
+    style DB fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
+    style RL fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
+```
 
 ---
 
@@ -151,6 +229,18 @@ nahi kaatta, poora purana register phenk deta hai (**retention**).
 Bookmark pe 501 likha hai, to 501 kaise milta hai? Pehle cover dekho: 501 "500 se" wale register me hai. Phir register
 ke saath lagi chhoti parchi dekho, kitaab ki vishay-suchi jaisi: "500 -> panna 1, 600 -> panna 4". Panna 1 pe jao,
 do-chaar line aage padho, 501 mil gaya. Ye parchi **index** hai.
+
+```mermaid
+flowchart LR
+    B["Bookmark: 501"] --> C{"cover dekho<br/>0 se · 500 se · 1000 se"}
+    C --> S2
+    subgraph S2["register '500 se' (segment)"]
+        I[("parchi (index)<br/>500 -> panna 1<br/>600 -> panna 4")]
+        L[("panne<br/>500, 501, 502 ...<br/>aakhir me hi judta")]
+    end
+    I -- "panna 1, do line aage" --> L
+    style S2 fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
+```
 
 Pehle kahan dekha: kaato mat, neeche likho = Banking 4 (ledger) · mahine ke mahine tod do = Banking 11 · ID se seedha
 page, 1 lakh panne nahi palatne = Twitter 16.
