@@ -62,6 +62,8 @@ ek gate ki line ke andar pakka hota hai.
 
 Isliye ticket counter har khabar ke saath ek **key** deta hai: user ki id. Kaun kis gate pe jaaye, ye key ke hash se
 tay hota hai, aur same key hamesha same gate pe jaati hai. Arpan ki teeno khabar P1 gate pe, aur wahan kram se.
+Jaise teen dost: alag-alag line me ghuse to andar kaun pehle pahunchega, koi kram nahi; ek hi line me saath ghuse to
+pehle main, phir wo, phir wo.
 
 Gate ban gaye. Par ab checker ke kamre ko bhi bheed jhelni thi, to wahan 3 checker bitha diye.
 
