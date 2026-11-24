@@ -38,7 +38,8 @@ Bade match me har second hazaaron ticket (~5,000) katne lage. Saare isi ek line 
 line ek hi gate (ek machine) pe thi. Akela admin itni bheed nahi sambhal paaya, line lambi hoti gayi, Arpan bhi atak gaya.
 
 To humne topic nahi badla. Isi order-events ke liye aur gate khol diye: 3 gate, har gate ki apni line, har gate
-alag machine pe. Ek gate (tukde) ko **partition** kehte hain.
+alag machine pe. Ek gate (tukde) ko **partition** kehte hain. Jaise 1000 ki ek line thi, use 300, 300 aur 400 ki
+teen alag line me baant diya; line (topic) wahi rahi, bas gate badh gaye.
 
 ```mermaid
 flowchart LR
