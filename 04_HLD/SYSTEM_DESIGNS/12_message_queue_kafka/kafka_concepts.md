@@ -90,3 +90,30 @@ Isliye **pehle kaam, phir commit**. Khabar kabhi khoti nahi, bas kabhi dobara aa
 Dobara aayi khabar pakadne ke liye har khabar ka apna number hota hai (eventId), jaise har ticket ka. SMS bhejne se pehle
 checker dekhta hai ki ye number pehle aa chuka ya nahi (Redis ya DB me likha rehta hai). Aa chuka to chhod do, nahi aaya
 to SMS bhejo aur number likh do. Ye pehchaanna checker (SMS Service) ka kaam hai, gate (Kafka) ka nahi.
+
+---
+
+## 5. Leader aur copy
+
+P1 gate ka register machine B pe rakha hai. Kafka ki har machine ko **broker** kehte hain. Broker khabar disk pe
+register ke aakhir me jodta jaata hai, isliye machine restart ho to bhi register wahin rehta hai. Padhne se khabar nahi
+mitti, kuch din baad (aam taur pe 7 din) hi hat-ti hai (**retention**).
+
+Ek din machine B ki disk mar gayi. Agar P1 ka register sirf wahin hota, to Arpan ki khabar hamesha ke liye chali jaati.
+
+Isliye har gate ke register ki 3 copy rakhte hain, teen alag machine pe. Jis machine pe likhna-padhna hota hai wo
+**leader** hai, baaki do copy hain. Kafka me leader hota hai, Cassandra jaisa sab barabar wala system nahi. Copy khud
+leader se poochti rehti hai "aage kya aaya". Leader mara to jo copy ekdum saath (sync) chal rahi thi, wo uski jagah le
+leti hai. Ye faisla stadium ka head admin karta hai, use **Controller** kehte hain.
+
+Pench: B ne ticket counter ko "aa gaya" bol diya aur copy tak khabar pahunchne se pehle hi mar gaya. Copy ke paas wo
+khabar thi hi nahi. Jab tak copy pe khabar na pahunche, "aa gaya" kyun bolna? Jaise baap ne bola "vasiyat likh di", par
+jab tak mujhe ye nahi pata ki kahan likhi aur kahan rakhi hai, main doosron ko "haan, hai" nahi bolunga. Isliye
+"aa gaya" tabhi bolte hain jab copy pe bhi likh jaaye: **acks=all**.
+
+Jo copy peeche chal rahi ho, use leader nahi banate, warna aakhri khabar kho jaayegi. Poori taaza copy hi "pakki" maani
+jaati hai, pakki copies ki list = **ISR**. Agar sirf leader bacha ho aur koi pakki copy na ho, to likhna hi rok dete hain
+(**min.insync.replicas = 2**). Khabar khone se behtar thodi der rukna.
+
+Ek line me: disk pe likha (restart se bacha) + 3 copy (machine mari to bhi bacha) + acks=all (copy pe likhne ke baad hi
+"ho gaya").
