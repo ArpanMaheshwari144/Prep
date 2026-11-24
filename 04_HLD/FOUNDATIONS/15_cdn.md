@@ -116,73 +116,13 @@ Open Connect:
 
 ---
 
-## ★★ DEPTH-PASS (25-Sep) — CDN andar se + CDN KHUD kaise maarta hai
-
-> Upar = CDN KYA hai. Ye section = andar ki mashine (cache key, headers, signed URL) aur
-> wo 6 tarike jinse CDN khud system gira deta hai. Shakal wahi jo LB aur cache me thi.
-
-### A. Cache KEY + headers — edge kaise tay karta "kya rakhu, kitni der"
+## 4. Bas itna yaad (CDN gira / sab miss)
 
 ```
-CACHE KEY = edge kis cheez se pehchaanta "ye wahi file hai"
-            default: URL (+ jo headers / query param tu chune)
-
-Origin header se batata hai:
-   Cache-Control: public, max-age=86400   ->  CDN + browser 1 din rakho
-   Cache-Control: private                 ->  sirf browser, CDN NAHI (user ka apna data)
-   Cache-Control: no-store                ->  koi nahi rakhe
+CDN 95% bojh edge pe khatam karta hai. Sab ek saath miss hua (purge all, CDN hi gira) to origin pe achanak poora bojh.
+Bolna itna hi: origin ke aage ek shield parat, aur ek file ki kai miss pe origin pe ek hi request.
+Andar ki baarik baatein (cache key, error cache) design ka faisla nahi, CDN wale sambhalte hain.
 ```
-
-### E. ★★ CHHE TARIKE JINSE CDN KHUD SYSTEM KO MAARTA HAI
-
-```
-1. GALAT USER KO GALAT DATA  (sabse khatarnak)
-   personalized page pe Cache-Control bhoola -> CDN ne Arpan ka "My Account" rakh liya
-   -> Rahul ko Arpan ka page dikha
-   asli: Steam, Christmas 2015 — caching config change, logon ko doosron ke account page dikhe
-   ilaaj: user-specific pe private / no-store HAMESHA. Auth wale response cache nahi.
-
-2. PURGE / DEPLOY ke baad ORIGIN pe toofan
-   "purge all" kiya ya sabka TTL ek saath khatam -> har edge MISS -> sab ek saath origin pe
-   origin normal me ~5% dekhta tha (95% hit) -> achanak 100% -> gira
-   ilaaj: ORIGIN SHIELD   = edges aur origin ke beech ek aur cache layer
-                            (sau edge ki miss -> shield pe; origin ko sirf shield ki miss)
-          REQUEST COLLAPSING = ek hi file ki 1000 miss -> origin pe EK request
-          stale-while-revalidate = purana do, peeche se naya laao
-   (ye cache notes wala STAMPEDE hi hai, duniya bhar ke scale pe)
-
-3. GALAT CACHE KEY -> hit ratio gira
-   ?utm_source=fb, ?utm_source=insta -> same image, alag key -> har ek MISS
-   hit ratio 95% -> 40% = origin pe ~12 guna bojh, BINA traffic badhe
-   ilaaj: key me faltu query param ignore, sirf wo rakho jo content badalta hai
-
-4. ERROR CACHE ho gaya
-   origin ne 30 sec 500 / 404 diya -> CDN ne wahi rakh liya TTL tak
-   origin theek ho gaya, user ko 10 min tak error
-   ilaaj: error response pe TTL bahut chhota ya zero
-
-5. PURANA content, deploy ke baad page toota
-   naya HTML + CDN pe purana JS -> function mile hi nahi
-   ilaaj: upar wala versioned URL (B)
-
-6. CDN KHUD gira
-   provider down = poori site down (Fastly, June 2021 — bahut badi sites ek saath gayi)
-   ilaaj: multi-CDN + DNS failover
-   SACH: "CDN gira to origin sambhal lega" plan NAHI hai — origin 5% ke liye bana tha
-```
-
-### F. Ek shakal (wahi LB aur cache wali)
-
-```
-CDN origin ko BACHATA hai (95% traffic edge pe khatam)
-=> jis pal CDN miss karne lage (purge, galat key, CDN down), origin ~20 guna bojh ke saamne
-   jo usne kabhi dekha hi nahi. Bachane wali cheez hi girane wali.
-```
-
-> **BOLNE WALI LINE:** *"CDN origin ko bachata hai, isliye uski asli keemat tab dikhti hai jab wo
-> miss karne lage. Main teen cheez dekhta hoon: user-specific response kabhi cache na ho (private /
-> no-store), static files versioned naam + lambi TTL ke saath, aur origin ke aage shield + request
-> collapsing taaki purge ya expiry pe saari edges ek saath origin pe na toot padein."*
 
 ---
 
