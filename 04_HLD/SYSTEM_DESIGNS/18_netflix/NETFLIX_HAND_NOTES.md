@@ -133,7 +133,7 @@ Technical me: pehle cache me (copy ke saath), phir sync job batch me DB me (writ
 Arpan: Do log baat kar rahe, ek mujhse baat nahi karta. Maine dost ko bola, jo baat hui sankshep me mujhe bata diya kar. Jis din kuch nahi bataya, matlab aaj aage nahi badha.
 Technical me: "dost sankshep me bataye" = dabba / player playback ki report server ko bhejta.
 
-**Isi pe ek aur raasta (round me: game parlour ka maalik):**
+**Isi pe ek aur misaal (round me: game parlour ka maalik, saar wahi: dabba AWS ko bata de):**
 Pehle tasveer (round me Claude ne dikhayi):
 ```
                  Ravi ka TV

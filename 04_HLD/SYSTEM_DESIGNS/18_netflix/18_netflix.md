@@ -226,7 +226,7 @@ mujhse baat nahi karta. Maine dost ko bola, jo baat hui sankshep me mujhe bata d
 matlab aaj aage nahi badha.
 **Asli naam:** dost sankshep me bataye = dabba / player playback ki report (heartbeat) server ko bhejta.
 
-**Isi pe ek aur raasta (round me: game parlour ka maalik):**
+**Isi pe ek aur misaal (round me: game parlour ka maalik, saar wahi: dabba AWS ko bata de):**
 Pehle tasveer (round me Claude ne dikhayi):
 ```
                  Ravi ka TV
