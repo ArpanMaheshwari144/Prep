@@ -4,91 +4,26 @@
 
 ---
 
-## 1 Problem (1 line)
+## 1. CDN kya hai aur kaise kaam karta hai
 
+**Koi poochhe to aise bolo:**
 ```
-   USER (India)                    SERVER (USA)
-
-        │                                │
-        │   "netflix.com chahiye"        │
-        │ ─────────────────────────────►│
-        │   (12,000 km away)              │
-        │                                │
-        │  Response: 800ms latency        │
-        │ ◄─────────────────────────────│
-
-   Latency BAHUT zyada
-   Server overload (sab requests yahin)
-   Bandwidth costs zyada
-   Peak time crash (Netflix night)
+CDN = duniya bhar me faili cache machines (edge), user ke paas. File pehli baar maangi gayi to edge ke paas
+nahi hoti (miss): edge asli server (origin) se laata hai, rakh leta hai, aur user ko de deta hai. Us shehar ka
+agla user wahi file edge se paata hai (hit), tez, aur origin ko pata bhi nahi chalta.
+Isse teen fayde: user ke liye tez, origin pe bojh kam, aur door ka bandwidth bachta hai.
 ```
 
----
+**Scene (Netflix poster):** origin America me hai. Arpan Bangalore PG se app kholta hai, aur "Dark" ka poster 12,000 km se aata hai, ~800 ms me. CDN laga diya: pehli baar Bangalore edge ke paas poster nahi tha, to wo America se laaya, rakh liya, aur Arpan ko de diya. Pehli baar dheema hi raha. Agle 10 lakh log Bangalore edge se ~20 ms me poster paate hain, aur America ko ye request dikhti hi nahi.
 
-## 2 Pizza Analogy
-
+**Pull ya push:**
 ```
-WITHOUT CDN:
-   Pizza Hut headquarters (USA) — sirf 1 kitchen
-   India se order → 30 ghante delivery
-
-WITH CDN:
-   Pizza Hut har city mein BRANCH
-   Apne city ke branch se order → 30 min
-
-= Same content, closer to user
-= Faster delivery
-= Less load on HQ
+pull  edge tab laata hai jab koi maange. Pehla user der jhelta hai. Aam taur pe yahi (CloudFront default)
+push  hum pehle se saari edges pe daal dete hain. Bada din pata ho tab: naye season ki release raat,
+      sale ka din (Netflix notes ka "raat ko pehle se ISP ke dabbe me bhar do" yahi hai)
 ```
 
----
-
-## 3 Architecture
-
-```
-                    ORIGIN SERVER (USA)
-
-                          │
-              ┌───────────┼───────────┐
-              ▼           ▼           ▼
-       Edge Server   Edge Server  Edge Server
-       (Mumbai )  (London )  (Tokyo )
-            │             │             │
-            ▼             ▼             ▼
-        USER India     USER UK       USER Japan
-        (latency 50ms) (40ms)        (60ms)
-
-   = User → NEAREST edge server
-   = Origin sirf jab edge ke paas nahi ho
-```
-
----
-
-## 4 Cache Hit vs Cache Miss
-
-```
-SCENARIO A: CACHE HIT
-   User → Mumbai Edge: "Logo.png chahiye"
-   Mumbai Edge: "Mere paas hai!"
-   → 20ms response
-
-   = Origin ko bother nahi kiya
-   = FAST
-```
-
-```
-SCENARIO B: CACHE MISS
-   User → Mumbai Edge: "NewMovie.mp4 chahiye"
-   Mumbai Edge: "Mere paas nahi hai"
-   Mumbai Edge → Origin (USA): "Bhej do"
-   Origin → Mumbai Edge → User
-   → 800ms first time
-
-   BUT: Mumbai Edge ne YE FILE CACHE KAR LIYA
-   Agla user (Mumbai) request kare = 20ms hit
-
-   = First user slow, baaki sab fast
-```
+**Trap:** "origin gira to CDN sab sambhal lega". CDN sirf wahi de sakta hai jo uske paas pehle se rakha hai, aur utni der jitni TTL hai. Nayi cheez, login aur payment sab origin pe hi jaate hain. CDN backup server nahi hai, cache hai.
 
 ---
 
@@ -147,30 +82,6 @@ SOLUTION 3: ACTIVE PURGE
 
 ---
 
-## 7 Push vs Pull CDN
-
-```
-PULL CDN (most common):
-   User requests file from edge
-   Edge has it? Serve.
-   Edge doesn't? Fetch from origin + cache.
-
-   = Lazy loading
-   = First user pays cost
-   = AWS CloudFront default
-
-PUSH CDN:
-   YOU push content to all edges proactively
-   Pre-warm cache
-
-   = Eager loading
-   = High initial bandwidth cost
-   = Use for predictable high traffic
-     (movie release day, product launch)
-```
-
----
-
 ## 8 Real CDN Providers
 
 ```
@@ -203,47 +114,6 @@ Open Connect:
    = Netflix saves money
 
    Win-win architecture
-```
-
----
-
-## Request Flow Visual
-
-```
-   USER (Mumbai)
-      │
-      │ "video.mp4"
-      ▼
-   ┌────────────────┐
-   │  DNS resolve   │
-   │  → Mumbai Edge │
-   └────────┬───────┘
-            │
-            ▼
-   ┌────────────────────────┐
-   │  Mumbai Edge Server    │
-   │                          │
-   │  Check cache?            │
-   │  ┌──────────────────┐    │
-   │  │ HIT? → serve     │ │
-   │  │ MISS? → next     │    │
-   │  └──────────────────┘    │
-   └────────┬───────────────┘
-            │ cache miss
-            ▼
-   ┌────────────────────────┐
-   │  Origin Server (USA)   │
-   │  Returns file           │
-   └────────┬───────────────┘
-            │
-            ▼
-   ┌────────────────────────┐
-   │  Mumbai Edge CACHES it │
-   │  + forwards to user     │
-   └────────────────────────┘
-            │
-            ▼
-        USER (gets file)
 ```
 
 ---
