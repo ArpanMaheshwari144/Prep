@@ -363,7 +363,9 @@ vector<int> corpFlightBookings(vector<vector<int>> &bookings, int n) {
     }
     vector<int> ans;
     int cummSum = 0;                        // chalti-sum abhi khaali
-    for (int i = 1; i <= n; i++) {          // 1..n: flights 1-based, diff[0] / diff[n+1] answer me nahi
+    // ★ i = 1 se kyun: flight 1 se shuru, to start (diff[start]) bhi 1 se hi likha, diff[0] me kabhi kuch nahi jaata
+    //   i <= n kyun: n flights, flight n tak jawab chahiye; diff[n+1] me sirf aakhri "-" hai, wo jawab nahi
+    for (int i = 1; i <= n; i++) {
         cummSum += diff[i];
         ans.push_back(cummSum);
     }
