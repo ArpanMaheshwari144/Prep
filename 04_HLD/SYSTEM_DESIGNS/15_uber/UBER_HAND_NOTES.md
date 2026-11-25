@@ -92,6 +92,9 @@ Technical me: "jaldi ke liye parchi" = matching Redis se (abhi ki jagah, overwri
 Arpan: Connaught Place pe khade ko ISBT ka driver kyun? Sirf 8-9 km ke andar wale chahiye. Aur 5 lakh me se chhaanto mat: naksha pehle se dabbon me kata ho, server sirf usi dabbe me dekhe jahan Arpan khada. Usme 3 driver, unme jo khaali wo Arpan ko. Baaki 5 lakh kahin bhi ghoomein, lena-dena nahi.
 Technical me: "naksha dabbon me" = geohash (grid), "sirf apna dabba" = 5 lakh ki jagah gine-chune driver.
 
+**Jaankari (sirf jaankari hai, design wahi; reel se):** Uber ke khaane square nahi, chhatte jaise 6-kone wale (hexagon), naam H3, Uber ne khud banaya. Square kyun nahi: square me bagal wale padosi paas, kone wale ~40% zyada door; hexagon me 6 ke 6 padosi barabar door, to har disha me ek jaisa dhoondhna. Apna khaana + 6 padosi = 7, driver na mile to ek ring aur (19).
+Technical me: geohash = square khaane, H3 = hexagon khaane.
+
 **Maan lo gole ke teeno driver booked:**
 Arpan: Gole ke andar 3 driver hain, unme se jo bhi khaali ho wo Arpan ko mil jaayega; 5 lakh se lena-dena nahi. Teeno book hain to thodi der wait karna padega, jaise Uber karwata bhi hai, 15 minute wait.
 Technical me: gole me khaali nahi = intezaar / dobara dhoondo (koi gaadi zabardasti nahi).

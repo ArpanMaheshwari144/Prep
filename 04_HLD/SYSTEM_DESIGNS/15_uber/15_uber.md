@@ -153,6 +153,11 @@ khaali wo Arpan ko. Baaki 5 lakh kahin bhi ghoomein, lena-dena nahi.
 
 **Asli naam:** naksha dabbon me = geohash (grid), sirf apna dabba = 5 lakh ki jagah gine-chune driver.
 
+**Jaankari (sirf jaankari hai, design wahi; reel se):** Uber ke khaane square nahi, chhatte jaise 6-kone wale (hexagon),
+naam H3, Uber ne khud banaya. Square kyun nahi: square me bagal wale padosi paas, kone wale ~40% zyada door; hexagon me
+6 ke 6 padosi barabar door, to har disha me ek jaisa dhoondhna. Apna khaana + 6 padosi = 7, driver na mile to ek ring
+aur (19). **Asli naam:** geohash = square khaane, H3 = hexagon khaane.
+
 **21-Nov round (Whitefield):** Whitefield bada; ITPL, Agrahara, Nexus Forum mall alag-alag chhote hisse. Lakhon cab phone pe
 dikhana namumkin, sirf apna hissa. Bheed wali jagah dabba chhota-bada baad me (6c).
 **Asli naam:** geohash cell, adaptive cell size.
