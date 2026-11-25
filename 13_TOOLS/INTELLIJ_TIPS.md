@@ -29,5 +29,8 @@
   - sahi: `File -> Open -> 07_PROJECTS/todoapp` (seedha project-folder) -> pom detect -> deps download -> navigation chalti.
   - (ya current window me todoapp ka `pom.xml` right-click -> "Add as Maven Project".)
 
+- **Compile pe `ExceptionInInitializerError: com.sun.tools.javac.tree.EndPosTable` (25-Nov)** = laptop ka naya JDK (27) purane Lombok ke saath nahi chalta.
+  - FIX: project ka apna JDK chuno (usercrud = 17): IntelliJ me File -> Project Structure -> SDK = 17; terminal me `JAVA_HOME` = `C:\Program Files\Microsoft\jdk-17...` karke `mvnw test`.
+
 ## ★ READER MODE
 - Library source (decompiled/attached) READ-ONLY "Reader Mode" me khulta -- javadoc formatted dikhta (jaise `AuthenticationManager` ka contract, `DaoAuthenticationProvider` ka SEC-2056 note). editing nahi, sirf padhna.
