@@ -8,17 +8,19 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 > HLD = ek kahani: "main us situation me hota to kya karta", wahi jawab, naam baad me. FR = jo app aur user milke karte; NFR = peeche ka kaam; scope = pehle sawaal; bheed FR / NFR me nahi (HLD ka matlab hi bheed).
 
 ```
-SAFAR (March: khaali folder)  ->  aaj (22-Nov)
+SAFAR (March: khaali folder)  ->  aaj (25-Nov)
   Java + Spring poora · LLD 11 · 6 project
   HLD: 24 design (kahani -> asli naam -> tasveer) + scene-mock + hand notes 24 + 19 foundation
         24 / 24 design: upar Ek nazar (dhaancha + dikkat chain), FR / NFR har line kadam se judi (18-Nov), alag aankh se audit
         hand notes: har "Technical me" line shuru me batati is jawab me kahani ka shabd kya hai (parchi = Redis / outbox / hold ...)
         main file: har kadam ke neeche diagram, kahani ka shabd + bracket me asli naam (chhotu (relay), parchi (Redis)), neeche poora dhaancha
         outbox = hamare DB ki table; DB ki andar ki working (WAL / LSN) design me nahi
-        round ho gaye: 01 URL (15-Nov) · 02 rate limiter (16-Nov) · 09 BMS (17-Nov) · naye 18-Nov: 23 Yelp, file upload dedup (kadam 9) · 19-Nov: 24 Zomato · 15 Uber (21-Nov) · 16 leaderboard (22-Nov, FR / NFR + dhaancha + API)
-        API ab tak: BMS, Uber, leaderboard (baaki design me us din ke round ke ant me)
+        round ho gaye: 01 URL (15-Nov) · 02 rate limiter (16-Nov) · 09 BMS (17-Nov) · naye 18-Nov: 23 Yelp, file upload dedup (kadam 9) · 19-Nov: 24 Zomato · 15 Uber (21-Nov) · 16 leaderboard (22-Nov, FR / NFR + dhaancha + API) · 17 e-com (23-Nov) · 18 Netflix (24-Nov) · 19 YouTube (25-Nov)
+        API ab tak: BMS, Uber, leaderboard, e-com, Netflix, YouTube (baaki design me us din ke round ke ant me)
         Kafka = stadium + tube: producer daale -> Kafka / queue line -> worker / consumer nikaale
-  DSA: 18 pattern · 183 problem + 163 REDO = 346 .cpp · pattern sheet folder (19 file, 179 sawaal + MATHS KA KHEL)
+        kafka_concepts 25-Nov nayi: hissa 1-7 stadium ki kahani me, har hisse ka diagram; Kafka ki andar ki working (high watermark, batch) nahi
+        foundations 03 LB, 15 CDN, 16 DNS 24-Nov naye saanche me (kya + kyun + jo hum tay karte + ek trap; andar ki depth nahi)
+  DSA: 18 pattern · 183 problem + 166 REDO = 349 .cpp · pattern sheet folder (19 file, 179 sawaal + MATHS KA KHEL)
   STAR 12 kahani · PR review framework · DB internals
 ```
 
@@ -35,7 +37,7 @@ SAFAR (March: khaali folder)  ->  aaj (22-Nov)
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
-| 08 | [**08_DSA**](08_DSA) | 18 pattern · 183 problem + 163 REDO + sheet (179 sawaal) | **Gate** — pass karna hai (ab revise-only) |
+| 08 | [**08_DSA**](08_DSA) | 18 pattern · 183 problem + 166 REDO + sheet (179 sawaal) | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | 12 STAR kahani + JP company + why JP | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase · index.lock | PR-review + daily workflow Qs |
@@ -135,9 +137,9 @@ SAFAR (March: khaali folder)  ->  aaj (22-Nov)
   - [★14 chat/messaging (khud chala ke banaya)](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md)
   - [15 uber (Connaught Place se ghar)](04_HLD/SYSTEM_DESIGNS/15_uber/15_uber.md) (kadam 15 = batch matching, aging · kadam 16 = map pe live gaadi, Zomato reel · 21-Nov round: FR / NFR + API, 2c Redis matching + sawari ka raasta, 12b traffic kiraya, 13b der se kata)
   - [16 leaderboard (1 crore khiladi)](04_HLD/SYSTEM_DESIGNS/16_leaderboard/16_leaderboard.md) (22-Nov round: world contest UTC, weekly / biweekly / mahina board, API)
-  - [17 e-commerce (mausi ka mart, Diwali sale)](04_HLD/SYSTEM_DESIGNS/17_ecommerce/17_ecommerce.md) (kadam 9 = reel se: cart ki do almari giri -> sloppy quorum, wapas aayi -> hinted handoff)
-  - [18 Netflix (Money Heist ka naya season)](04_HLD/SYSTEM_DESIGNS/18_netflix/18_netflix.md) (kadam 1-7 = scene, neeche padhai wala hissa P1-P4)
-  - [19 YouTube (reel wala scene)](04_HLD/SYSTEM_DESIGNS/19_youtube/19_youtube.md)
+  - [17 e-commerce (mausi ka mart, Diwali sale)](04_HLD/SYSTEM_DESIGNS/17_ecommerce/17_ecommerce.md) (kadam 9 = reel se: cart ki do almari giri -> sloppy quorum, wapas aayi -> hinted handoff · 23-Nov round + API)
+  - [18 Netflix (Money Heist ka naya season)](04_HLD/SYSTEM_DESIGNS/18_netflix/18_netflix.md) (kadam 1-7 = scene, neeche padhai wala hissa P1-P4 · 24-Nov round + API)
+  - [19 YouTube (reel wala scene)](04_HLD/SYSTEM_DESIGNS/19_youtube/19_youtube.md) (25-Nov round + API: storage box Google ka, push = FCM / APNs)
   - [20 PUBG (Arpan + Claude ka squad, Pochinki)](04_HLD/SYSTEM_DESIGNS/20_pubg/20_pubg.md) (Uber se aaya: aas-paas ka gola, gudda, namumkin chaal · reel se 2b apni chaal turant, 3b server ki maano + rewind · Ek nazar + FR / NFR)
   - [21 Inventory (Arpan ki online dukaan, teen godown)](04_HLD/SYSTEM_DESIGNS/21_inventory_system/21_inventory_system.md) (E-com se aaya: ginti pay pe, dabbe, register, hub and spoke)
   - [22 Where Is My Train (bina net / GPS ke train kahan)](04_HLD/SYSTEM_DESIGNS/22_where_is_my_train/22_where_is_my_train.md) (cell tower, crowdsourcing, tower ki list)
@@ -171,7 +173,7 @@ SAFAR (March: khaali folder)  ->  aaj (22-Nov)
   - [24 Zomato (Whitefield ke PG se Burger Singh)](04_HLD/SYSTEM_DESIGNS/24_zomato/ZOMATO_HAND_NOTES.md)
 
 
-- **[FOUNDATIONS](04_HLD/FOUNDATIONS)** — building-blocks (har design inhi se bante) — [01 hld-kya-hai](04_HLD/FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity-estimation](04_HLD/FOUNDATIONS/02_capacity_estimation.md) · [03 load-balancing](04_HLD/FOUNDATIONS/03_load_balancing.md) · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) · [05 replication](04_HLD/FOUNDATIONS/05_database_replication.md) · [06 sharding](04_HLD/FOUNDATIONS/06_database_sharding.md) · [07 message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) (16-Nov stadium + tube me: teen kaam, keemat, kram sirf partition me (2011 paper + docs se), delivery ke teen vaade, Kafka ya RabbitMQ, DLQ, backpressure, queue ne ulta gira diya ke 5 kisse) · [08 CAP](04_HLD/FOUNDATIONS/08_cap_theorem.md) · [09 db-what-when](04_HLD/FOUNDATIONS/09_databases_what_when.md) (+ interview me kaunsa DB: 4 sawaal) · [10 ms-communication](04_HLD/FOUNDATIONS/10_ms_communication.md) (+ 3 service se maal jodna: timeout · breaker · PARTIAL) · [11 reliability/SPOF](04_HLD/FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch](04_HLD/FOUNDATIONS/12_elasticsearch_search.md) · [13 snowflake-id](04_HLD/FOUNDATIONS/13_distributed_id_snowflake.md) · [14 jab-ilaaj-hi-bimari-bane](04_HLD/FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md) (HUB: LB, cache, limiter, queue, CAP, SPOF, CDN ki ek hi shakal) · [15 CDN](04_HLD/FOUNDATIONS/15_cdn.md) · [16 DNS](04_HLD/FOUNDATIONS/16_dns.md) · [17 WAF](04_HLD/FOUNDATIONS/17_waf.md) · [18 monitoring](04_HLD/FOUNDATIONS/18_monitoring.md) · [19 url-browser-journey](04_HLD/FOUNDATIONS/19_url_browser_journey.md)
+- **[FOUNDATIONS](04_HLD/FOUNDATIONS)** — building-blocks (har design inhi se bante) — [01 hld-kya-hai](04_HLD/FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity-estimation](04_HLD/FOUNDATIONS/02_capacity_estimation.md) · [03 load-balancing](04_HLD/FOUNDATIONS/03_load_balancing.md) (24-Nov naya saancha: L4 / L7, algorithm, health check, Nginx hands-on) · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) · [05 replication](04_HLD/FOUNDATIONS/05_database_replication.md) · [06 sharding](04_HLD/FOUNDATIONS/06_database_sharding.md) · [07 message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) (16-Nov stadium + tube me: teen kaam, keemat, kram sirf partition me (2011 paper + docs se), delivery ke teen vaade, Kafka ya RabbitMQ, DLQ, backpressure, queue ne ulta gira diya ke 5 kisse) · [08 CAP](04_HLD/FOUNDATIONS/08_cap_theorem.md) · [09 db-what-when](04_HLD/FOUNDATIONS/09_databases_what_when.md) (+ interview me kaunsa DB: 4 sawaal) · [10 ms-communication](04_HLD/FOUNDATIONS/10_ms_communication.md) (+ 3 service se maal jodna: timeout · breaker · PARTIAL) · [11 reliability/SPOF](04_HLD/FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch](04_HLD/FOUNDATIONS/12_elasticsearch_search.md) · [13 snowflake-id](04_HLD/FOUNDATIONS/13_distributed_id_snowflake.md) · [14 jab-ilaaj-hi-bimari-bane](04_HLD/FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md) (HUB: LB, cache, limiter, queue, CAP, SPOF, CDN ki ek hi shakal) · [15 CDN](04_HLD/FOUNDATIONS/15_cdn.md) · [16 DNS](04_HLD/FOUNDATIONS/16_dns.md) · [17 WAF](04_HLD/FOUNDATIONS/17_waf.md) · [18 monitoring](04_HLD/FOUNDATIONS/18_monitoring.md) · [19 url-browser-journey](04_HLD/FOUNDATIONS/19_url_browser_journey.md)
 
 - **[KAHANIYAN](04_HLD/KAHANIYAN)** — tool kaise bana, sirf jaankari ke liye (interview ka sawaal nahi): [Redis](04_HLD/KAHANIYAN/redis.md) · [Kafka](04_HLD/KAHANIYAN/kafka.md) · [RabbitMQ](04_HLD/KAHANIYAN/rabbitmq.md) (2007, JP Morgan ka AMQP; 2021 me Streams)
 
@@ -240,7 +242,7 @@ SAFAR (March: khaali folder)  ->  aaj (22-Nov)
 
 ---
 
-## [08_DSA](08_DSA) — 18 pattern · 183 problem + 163 REDO = 346 .cpp
+## [08_DSA](08_DSA) — 18 pattern · 183 problem + 166 REDO = 349 .cpp
 **Kya:** pattern-wise solved problems (sirf C++) + pattern sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + redo.
 
 - ★ **[PATTERN_SHEET](08_DSA/00_PATTERN_SHEET)** — "gate ki chaabi", 19 chhoti file (ek badi file pe GitHub atakta tha). 179 sawaal. Har sawaal pe moti line, phir SAWAAL (poore vakya + e.g. + kyun) · SAAR (dry-run / tasveer) · CHAABI (baingani dabba) · WARNING (peela dabba, aaj ke code ka trap) · CODE (tera code, ★ sirf kick line pe). Teri purani galti wali line kabhi nahi kati. CHAABI = sawaal ki khaasiyat (jiske bina jawab galat); teri apni purani galti = WARNING (16-Nov).
@@ -257,9 +259,9 @@ ROZ: us pattern ka sheet block padho → khaali page pe 1 REDO → grill 5 (disg
 | # | Pattern | Problems | REDO | | # | Pattern | Problems | REDO |
 |---|---------|----------|------|---|---|---------|----------|------|
 | 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 11 | | 10 | [KADANE](08_DSA/10_KADANE) | 9 | 12 |
-| 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 12 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 2 |
-| 03 | [HASHING](08_DSA/03_HASHING) | 16 | 17 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 6 |
-| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 10 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 12 | 11 |
+| 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 13 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 2 |
+| 03 | [HASHING](08_DSA/03_HASHING) | 16 | 18 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 6 |
+| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 11 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 12 | 11 |
 | 05 | [MATRIX](08_DSA/05_MATRIX) | 4 | 6 | | 14 | [HEAP](08_DSA/14_HEAP) | 9 | 7 |
 | 06 | [STACK](08_DSA/06_STACK) | 13 | 7 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 5 |
 | 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 10 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 7 | 9 |
