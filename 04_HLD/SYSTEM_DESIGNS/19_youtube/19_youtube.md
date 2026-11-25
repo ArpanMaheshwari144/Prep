@@ -14,13 +14,13 @@ wahi yahan bhi. Upload ke tukde aur resume = [File upload](../07_file_upload_val
 
 **Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
 ```
-creator  --presigned URL-->  S3 (file seedha locker me, server se nahi)  -->  20-25 worker tukde baant ke har quality
+creator  --presigned URL-->  storage box (S3 / Google Cloud Storage jaisa; file seedha locker me, server se nahi)  -->  20-25 worker tukde baant ke har quality
                                                                               (chhoti quality pehle = jaldi live)
 dekhne wala  -->  manifest + CDN (Netflix jaisa) · garam video garam jagah, purani sasti jagah, trend pe wapas CDN
 view +1  -->  Kafka parchi, chhotu batch me jode · bot ke view gate pe hi rok
 nayi video  -->  Twitter wala fan-out, subscribers ko khabar · reels: agle kuch shuru ke tukde pehle se
 
- 1   10 hazaar creator, video server me phansi   ->  seedha locker (S3, presigned URL)
+ 1   10 hazaar creator, video server me phansi   ->  seedha locker (storage box, presigned URL)
  2   ek machine har quality, 3 ghante            ->  tukde baanto, chhoti quality pehle (parallel encoding)
  3   1 lakh view, ek row ke lock pe line         ->  +1 parchi pe, batch me jodo (Kafka, batch count)
  4   bot / phone se 10 lakh "view"               ->  gate pe rok, baar-baar to ban (rate limit, WAF)
@@ -68,6 +68,22 @@ Numbers lakhon video roz, ek video 2-40 GB -> app server se nahi guzar sakti
 Trade-off jo bolne hain: view count thodi der se badhta (DB bachane ke liye) · thandi jagah sasti par laane me der
 (isliye trend pe wapas garam) · pehle chhoti quality (4K wale ko thoda intezaar) · reels pehle se zyada laaye to data / battery, kam laaye to spinner.
 
+**Isi pe ek aur raasta (round me: FR / NFR, numbers, dhaancha):** YouTube Google ka hai, AWS ka S3 nahi chalata; apna
+storage box (S3 / Google Cloud Storage jaisa). Zyada hissa Netflix jaisa, bas video upload ka system alag. FR: dekhna,
+post karna, chalana, rokna, wahi se dobara (TV se laptop, account pe sync, Netflix jaisa); download scope se bahar.
+NFR: upload net ke hisaab se jaldi, upload hote hi subscribers ko khabar, bot se apne hi view na badhein, purani videos
+kahan, shorts bhi. Numbers: global (Russia, China chhod ke), 1-10 crore user, roz ~5 crore. Dhaancha: do tarah ke user
+(upload + dekhne wale, sirf dekhne wale); 24 ghante ki video tod ke bahut saare chhotu, pehle 144 / 240 / 360p, phir
+1080p, 4K; likhai bahut (view, like) to Cassandra jaisa, user aur video ki jaankari Postgres jaisa, video storage box me;
+net ke hisaab se quality ("kabhi na ruke" vaada nahi); Google ke apne CDN (Mumbai, Dubai, Europe), poori video nahi,
+chhote tukde (YouTube ki safed patti = itna aa chuka).
+
+**API (round me):** POST upload · GET saari video (home page) · GET ek video · POST view · GET recommendation · POST
+subscribe · nayi video ki khabar YouTube khud push karta (fan-out).
+**Asli naam:** POST /videos (upload ki parchi = presigned URL), GET /feed, GET /videos/{id}, POST /videos/{id}/view,
+GET /recommendations, POST /subscriptions; notification API nahi, server ka push: Android pe Firebase (FCM), iPhone pe
+Apple (APNs).
+
 ---
 
 ## 1. Video app server se hokar ja rahi, sabka app atka (seedha storage me)
@@ -82,6 +98,10 @@ bhijwa do.
 **Asli naam:** file seedha bade storage me = pre-signed URL (server sirf ek parchi deta hai, phone seedha object
 storage, S3 / GCS, me tukdon me upload karta hai; net toota to wahi se resume), chhota hissa apne paas = DB me sirf
 video ki parchi (metadata: title, owner, status), app server pe video kabhi nahi.
+
+**Isi pe ek aur misaal (round me: chhote bank ki parchi):** mere chhote bank ka locker sab ke saaman se ek din me bhar
+jaayega; file main nahi leta, parchi deta hoon, parchi le ke bade bank jao, wo apne bade locker me rakh lenge. 100-200 GB
+ki video aur lakhon creator, app server baith jaayega; seedha bade godown me.
 
 ```mermaid
 flowchart TB
@@ -167,6 +187,10 @@ thodi der se badhta hai.
 Isi pe ek aur raasta (Kafka ya Redis, pehle ek dabbe me jama): koi har ghante ek rupaya de jaaye to har rupaye ke liye bank nahi bhaagte; apne paas jama karo, gaddi
 bani to ek saath jama. **Asli naam:** Redis counter (INCR) / Kafka, phir batch me DB.
 
+**Isi pe ek aur misaal (round me: 10-10 rupaye):** screen pe +1 turant dikha do, DB me har baar nahi. Roz 10 rupaye leke
+aane wale ke liye har baar bank nahi jaata, 500-700 jama hone pe ek saath; waise hi 1000-2000 view pe batch. Beech me
+Kafka ki line, disk pe hai to kuch nahi khota.
+
 ```mermaid
 flowchart TB
     subgraph V["VIRAL: 1 minute me 1,00,000 view"]
@@ -206,6 +230,9 @@ dikha to daal do.
 **Asli naam:** gateway pe rok do = rate limit per user / IP / video ([Rate limiter](../02_rate_limiter/02_rate_limiter.md)),
 WAF me daal do = WAF ban, worker / consumer pattern dekhe = fraud detection worker / consumer (bot / repeat view ginti se pehle filter, kadam
 3 wali stream padh ke).
+
+**Isi pe ek aur misaal (round me: gate pe bouncer):** API gateway = gate pe bouncer: ek view / like wala andar, 10,000
+ya script wala gate pe hi bahar, line me ghuse hi nahi. YouTube ke paas lakhon pattern pehle se.
 
 ```mermaid
 flowchart TB
@@ -340,6 +367,10 @@ intezaar nahi karta, mere paas pehle se saamaan hai.
 **Asli naam:** agle page pehle se = pre-fetching (aage ki reels ki list ek saath, unke tukde pehle se phone pe, agli
 reel ka player bhi taiyaar).
 
+**Isi pe ek aur misaal (round me: roz ki kitaab):** reel chhoti (30 second se 1 minute); Delhi wale ko har reel US se
+nahi, Mumbai ke CDN se; ek dekhi to agli 3-4 saath mangwa ke rakh lo. Roz wahi kitaab padhne wale ki kitaab thodi der
+counter pe rakh do.
+
 **Maan lo Ravi mobile data pe, zyadatar reels 1 second me skip, app 5 reels poori achhi quality me utaar raha, pack
 shaam tak khatam:** Net dekho: kamzor hai to kam quality laao (240p bahut, pehle blur phir saaf). Battery pe Instagram
 kya karta, public nahi. Aur jis reel pe engagement 1 second, wo aage dikhane ka nahi; jisme 30 second guzaare, wahi
@@ -351,6 +382,10 @@ reel laana bewakoofi; shuru ke kuch chunks lo, achha laga to baaki. Chhotu ko si
 baaki chupchaap aa jaayenge. Par 1-2 page dekh ke kitaab mat hatao; 1-2 din pattern dekh ke laana kam karo.
 **Asli naam:** pre-fetch me sirf pehle kuch second, kitna laana = user ke pattern se. Trade-off: zyada laaye to data aur
 battery, kam laaye to spinner. Data saver on ho to pehle se laana band.
+
+**Isi pe ek aur misaal (round me: 8 page ka chhota version):** roz 4 page padhne wale ke liye 100 page ki nahi, 8-10
+page ka chhota version counter pe. Har reel 2 second dekh ke swipe, to pehle 2 second hi; aage dekhe to 4, phir 8 second
+CDN se turant. Skip kiya to bas 6 second aaya, poori reel nahi.
 
 **Maan lo pattern kaise:** pehle region (India, phir north / south) ka, phir roz ke dekhne se apna. **Maan lo 1-2 reel
 achhi nahi lagi:** 1-2 page pe kitaab nahi phaadte, 7 din koi na padhe to hatao. **Asli naam:** region trending, engagement signal.
@@ -390,7 +425,7 @@ pattern se).
 
 ```mermaid
 flowchart TB
-    CR(["Creator"]):::pill -- "presigned URL" --> S3[("S3")]:::card
+    CR(["Creator"]):::pill -- "presigned URL" --> S3[("Storage box<br/>(S3 / GCS jaisa)")]:::card
     S3 --> W["20-25 worker: tukde,<br/>har quality (chhoti pehle)"]:::card
     W --> CDN[("CDN · garam / thanda storage")]:::pill
     V(["Dekhne wala"]):::pill -- "manifest" --> CDN
