@@ -248,6 +248,7 @@ public class AccountService {
         // step 1 — fail toh exception, yahin ruk jaata (paisa kata hi nahi, wapas kuch nahi dena)
         // ★ (25-Nov) pehle withdraw bhi try ke andar tha: paisa kam -> catch -> from.deposit = bina kaate 1 crore jud gaya
         //   (5000 wala account 1.0005E7). Rollback SIRF tab jab step 1 ho chuka ho.
+        //   Misaal: cashier paisa nikaal hi nahi paaya (kam tha), phir bhi "galti pe wapas do" chala diya = hawa se 1 crore.
         from.withdraw(amount);
         try {
             to.deposit(amount);       // step 2
