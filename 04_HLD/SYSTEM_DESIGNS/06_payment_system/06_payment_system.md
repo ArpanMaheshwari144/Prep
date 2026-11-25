@@ -148,6 +148,14 @@ karta rahe, PSP se bhi aur hamari parchi se bhi: haan bhai hua, nahi hua.
 INITIATED / PENDING uthata, PSP se status poochhta), dono se baat = PSP aur hamare DB ka milaan (raat ko poora
 reconciliation, cron job).
 
+**Jaankari (reel se, design ka kadam nahi):** UPI me QR pe sirf UPI ID, PIN phone pe hi taale me band (Google Pay bhi
+nahi padh sakta, sirf tera bank). Request partner bank se NPCI tak, NPCI ek bank se kaatne aur doosre me jodne ko kehta,
+dono ki haan pe green tick. Par green tick = sirf dono bank ke register badle; asli paisa din me kuch baar, sab ka
+jod-ghata karke sirf bacha hua ek saath jaata (YouTube ke 10-10 rupaye jama karke ek saath jaisa). Isiliye PSP ki
+settlement file baad me aati aur raat ka milaan zaroori.
+**Asli naam:** NPCI (UPI ka beech wala, saare bank usi se jude), bacha hua ek saath = deferred net settlement (RBI ke
+bank khaaton me).
+
 **Maan lo PSP ka message raste me kho gaya (BookMyShow 6c wala hi jawab):** PSP ko onboard karte hi bol do "jaise hi
 paisa kaato, mujhe ek chhota sa event bhej do", jaise S3 file aane pe event bhejta. Event aaya = paisa kata, hum
 "mil gaya" bol dete. Event raste me kho gaya to wo PSP ka HLD hai, wo dobara bhejega; tab tak beech wala banda poochhe.
