@@ -66,8 +66,8 @@ import com.arpan.bank.repository.AccountRepository;
 //       = DATA INCONSISTENT
 //
 //    With manual rollback:
+//       from.withdraw(amount);    // step 1 (fail = kuch kata hi nahi)
 //       try {
-//           from.withdraw(amount);    // step 1
 //           to.deposit(amount);       // step 2
 //       } catch (RuntimeException e) {
 //           from.deposit(amount);     // UNDO step 1
@@ -245,11 +245,14 @@ public class AccountService {
         Account from = getAccount(fromId);
         Account to = getAccount(toId);
 
+        // step 1 — fail toh exception, yahin ruk jaata (paisa kata hi nahi, wapas kuch nahi dena)
+        // ★ (25-Nov) pehle withdraw bhi try ke andar tha: paisa kam -> catch -> from.deposit = bina kaate 1 crore jud gaya
+        //   (5000 wala account 1.0005E7). Rollback SIRF tab jab step 1 ho chuka ho.
+        from.withdraw(amount);
         try {
-            from.withdraw(amount);    // step 1 — fail toh exception
             to.deposit(amount);       // step 2
         } catch (RuntimeException e) {
-            // step 1 succeed, step 2 fail = manual rollback
+            // step 1 ho gaya, step 2 fail = manual rollback
             from.deposit(amount);
             throw e;
         }
