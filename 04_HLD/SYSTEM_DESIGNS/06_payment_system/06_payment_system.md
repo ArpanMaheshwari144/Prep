@@ -148,7 +148,7 @@ karta rahe, PSP se bhi aur hamari parchi se bhi: haan bhai hua, nahi hua.
 INITIATED / PENDING uthata, PSP se status poochhta), dono se baat = PSP aur hamare DB ka milaan (raat ko poora
 reconciliation, cron job).
 
-**Jaankari (reel se, design ka kadam nahi):** UPI me QR pe sirf UPI ID, PIN phone pe hi taale me band (Google Pay bhi
+**Jaankari (sirf jaankari hai, hamare design me ye asal me nahi; reel se):** UPI me QR pe sirf UPI ID, PIN phone pe hi taale me band (Google Pay bhi
 nahi padh sakta, sirf tera bank). Request partner bank se NPCI tak, NPCI ek bank se kaatne aur doosre me jodne ko kehta,
 dono ki haan pe green tick. Par green tick = sirf dono bank ke register badle; asli paisa din me kuch baar, sab ka
 jod-ghata karke sirf bacha hua ek saath jaata (YouTube ke 10-10 rupaye jama karke ek saath jaisa). Isiliye PSP ki
