@@ -25,7 +25,7 @@
 //
 // Balance dekhne ka tareeka (getBalance nahi hai): deposit(t, id, 0) -> naya balance hi lautata hai.
 //
-// compile+run:  javac Autodesk_Banking.java && java Autodesk_Banking
+// compile+run:  javac Autodesk_Banking.java && java 'Autodesk_Banking$BankingSystemImpl'   (main andar wali class me hai)
 
 import java.util.*;
 
