@@ -28,7 +28,7 @@ jama ho gaya, wapas aaya to kya karoge.
 cache   garam kitaab ki parchi expire hui, 1000 log ek saath godown bhaage, DB gira (stampede)
           hal: ek hi aadmi godown jaaye, baaki ruke                              -> 04 caching hissa 10
 retry   server dheema hua, sabne dobara bheja, load 3 guna, theek us waqt jab doob raha tha
-          hal: backoff + jitter (thoda ruk ke, sab alag-alag waqt pe)           -> cache 7d / URL 11c
+          hal: backoff + jitter (thoda ruk ke, sab alag-alag waqt pe)           -> notification kadam 5c
 queue   worker 10 min band, wapas aaya to jama dher poori raftaar se DB pe de maara
           hal: wapas aane pe raftaar dheere-dheere badhao                       -> 07 MQ "backlog ka ulta spike"
 limiter guard ka Redis gira, khula chhoda to rokne wala hi gayab
