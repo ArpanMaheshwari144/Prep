@@ -49,107 +49,166 @@ mile = 2, 7b · tick + unread = 8, 9 · photo / video = 10 · online / last seen
 
 &nbsp;
 
+---
+
 **1. Arpan ne Ravi ko "kahan hai?" bheja. Ravi ka phone har second server se poochta "mere liye kuch aaya?". 10 crore log aise poochh rahe, 99% baar jawab "kuch nahi". Server poochne walon se hi dab gaya.**
-Arpan: Server ko poochne ka mauka hi na do. Ravi ne kuch bheja to seedha bhej do, bas kaam khatam. Naam kya hai, technology kya hai, wo hogi koi. Bas beech me aisa dabba rakh do jo jaise hi kuch aaya, turant doosre bande ko bhej de. Kuch scene honge jahan pench phans sakta, jaise phone band hai, net nahi hai, wo aage dekhte.
-Technical me: "poochne ka mauka hi na do" = polling band, "beech ka dabba jo aate hi turant bhej de" = WebSocket (khula taar, server khud push kare).
+
+**Arpan:** Server ko poochne ka mauka hi na do. Ravi ne kuch bheja to seedha bhej do, bas kaam khatam. Naam kya hai, technology kya hai, wo hogi koi. Bas beech me aisa dabba rakh do jo jaise hi kuch aaya, turant doosre bande ko bhej de. Kuch scene honge jahan pench phans sakta, jaise phone band hai, net nahi hai, wo aage dekhte.
+
+*Technical me:* "poochne ka mauka hi na do" = polling band, "beech ka dabba jo aate hi turant bhej de" = WebSocket (khula taar, server khud push kare).
+
+---
 
 **2. Arpan ne "kahan hai?" bheja, par Ravi ka phone band, 2 ghante baad on hoga. Taar toota pada hai. Server ke haath me message hai, bhejne ki jagah nahi.**
-Arpan: Server se bol do, ise thodi der apne paas rakh le, aisi jagah jahan baad me dekh paaye. Ek dabba bana le, usme rakh lo: "Arpan ne Ravi ko ye bheja hai." Ravi online hoga to use bhej denge, sanjo lo. Jaise papa ne mujhe paise de ke kahin bheja, aur uncle ji mile nahi, to main paise apne paas hi rakhunga, kharch ya phenk thodi dunga.
-Technical me: "ek dabbe me rakh lo" = message store (pehle DB me save), "online hoga to bhej denge" = offline delivery.
+
+**Arpan:** Server se bol do, ise thodi der apne paas rakh le, aisi jagah jahan baad me dekh paaye. Ek dabba bana le, usme rakh lo: "Arpan ne Ravi ko ye bheja hai." Ravi online hoga to use bhej denge, sanjo lo. Jaise papa ne mujhe paise de ke kahin bheja, aur uncle ji mile nahi, to main paise apne paas hi rakhunga, kharch ya phenk thodi dunga.
+
+*Technical me:* "ek dabbe me rakh lo" = message store (pehle DB me save), "online hoga to bhej denge" = offline delivery.
 
 **Maan lo pooche message baantoge kis cheez se, chat id ya user id?** Arpan: Main cheez ye ki partition kis cheez pe ho raha. Chat id ke saath partition karenge, user id ke saath nahi.
 
 **Aur neeche (DB kaunsa, Cassandra kyun):**
-Arpan: Chat me likhai bahut hai, roz TB ke hisaab se, to data todna padega. Isliye Cassandra: wo disk pe bas neeche likhta jaata, likhai me bahut tez, aur khud hi machine pe baant deta. Chat id se baantunga, to ek chat ke saare message ek machine pe saath rahenge, aur har cheez ki 3 copy.
-Technical me: Cassandra = likhai bhaari (append-only commit log), partition key chat_id, 3 copy (RF 3).
+
+**Arpan:** Chat me likhai bahut hai, roz TB ke hisaab se, to data todna padega. Isliye Cassandra: wo disk pe bas neeche likhta jaata, likhai me bahut tez, aur khud hi machine pe baant deta. Chat id se baantunga, to ek chat ke saare message ek machine pe saath rahenge, aur har cheez ki 3 copy.
+
+*Technical me:* Cassandra = likhai bhaari (append-only commit log), partition key chat_id, 3 copy (RF 3).
 
 **Maan lo "college-gang" group 3 saal purana, 50 lakh message aur hazaron photo; roz log aaj-kal ke message padhte, par kabhi-kabhi Ravi upar scroll karke 2 saal purani trip ki photo dhoondhta (Claude ka scene; scene hi galat tha, aisa hota nahi):**
-Arpan: 50 lakh message bahut ho sakte, theek. Par 2 saal purana upar scroll karke dhoondhna sense nahi banata, aisa hota bhi nahi; ye scene galat likha hua hai. WhatsApp pe photo kholte hi gallery me download ho jaati hai, purani photo phone me hi hai.
-Technical me: DB = Cassandra, chat_id se baanta (ek chat ek machine pe, kram me); purani photo / video phone ki gallery me (client pe), server pe sirf link.
+
+**Arpan:** 50 lakh message bahut ho sakte, theek. Par 2 saal purana upar scroll karke dhoondhna sense nahi banata, aisa hota bhi nahi; ye scene galat likha hua hai. WhatsApp pe photo kholte hi gallery me download ho jaati hai, purani photo phone me hi hai.
+
+*Technical me:* DB = Cassandra, chat_id se baanta (ek chat ek machine pe, kram me); purani photo / video phone ki gallery me (client pe), server pe sirf link.
+
+---
 
 **3. 10 crore log, ek server sabke taar nahi pakad sakta, 100 server lage. Arpan ka taar server 3 pe, Ravi ka server 71 pe. Server 3 ko pata hi nahi Ravi kis server pe.**
-Arpan: Ek map rakh le apne paas, DSA wala map: ye is server pe hai, ye us server pe. Dhoondhne ki zaroorat nahi, O(1) time me mil gaya. Key-value pe rakh lo.
-Technical me: "DSA wala map, key-value" = session map in Redis (userId -> server), "O(1) me mil gaya" = seedha lookup.
+
+**Arpan:** Ek map rakh le apne paas, DSA wala map: ye is server pe hai, ye us server pe. Dhoondhne ki zaroorat nahi, O(1) time me mil gaya. Key-value pe rakh lo.
+
+*Technical me:* "DSA wala map, key-value" = session map in Redis (userId -> server), "O(1) me mil gaya" = seedha lookup.
 
 **Aur neeche (karodon taar, ek server ki memory):**
-Arpan: Subah sabne ek saath app khol li, karodon taar khule hain, ek server ki memory jawab de degi. To bahut saare chat server laga do aur aage LB khada kar do. Har server pe bhi har taar ke liye alag aadmi nahi bithana: event loop jaisa, kuch hi thread hain aur jis taar pe message aaya bas usi ko sambhalte.
-Technical me: event loop (Netty: kam thread, bahut connection) + LB ke peeche kai WebSocket server.
+
+**Arpan:** Subah sabne ek saath app khol li, karodon taar khule hain, ek server ki memory jawab de degi. To bahut saare chat server laga do aur aage LB khada kar do. Har server pe bhi har taar ke liye alag aadmi nahi bithana: event loop jaisa, kuch hi thread hain aur jis taar pe message aaya bas usi ko sambhalte.
+
+*Technical me:* event loop (Netty: kam thread, bahut connection) + LB ke peeche kai WebSocket server.
 
 **Maan lo ek server gira, uske 1 lakh log ek second me dobara judne aaye:**
-Arpan: Sab users ek saath server pe hit karenge to dikkat, server dobara gir jaayega, use garam hone ka time chahiye. To backoff plus jitter: thodi-thodi request ek saath jaayengi, aisa nahi ki das crore sidha chale jaayein.
-Technical me: reconnect storm -> exponential backoff + jitter (har phone alag waqt pe dobara jude).
+
+**Arpan:** Sab users ek saath server pe hit karenge to dikkat, server dobara gir jaayega, use garam hone ka time chahiye. To backoff plus jitter: thodi-thodi request ek saath jaayengi, aisa nahi ki das crore sidha chale jaayein.
+
+*Technical me:* reconnect storm -> exponential backoff + jitter (har phone alag waqt pe dobara jude).
+
+---
 
 **4. Server 3 ko pata chal gaya Ravi server 71 pe. Message 71 tak kaise pahunche? Har server baaki 99 se seedha taar jode? 100 x 99 taar, kal 500 server to aur zyada.**
-Arpan: Ravi online hai, hume pata hai wo kis server pe. Maan le saamne 10 ladke khade, maine ek chhote ladke ko kaha: "jo address tere paas hai, use le ke chala ja, wahan koi aadmi hoga, use ye pakda de." Wo dekhega "haan bhai, ye wo ladka hai", aur message pakda dega.
-Technical me: 10 ladke = 10 chat server · "chhota ladka address le ke jaaye" = Redis pub/sub (har server apne channel ko sunta), "wahan wale ko pakda de" = server 71 apne channel se le ke Ravi ke taar pe bheje.
+
+**Arpan:** Ravi online hai, hume pata hai wo kis server pe. Maan le saamne 10 ladke khade, maine ek chhote ladke ko kaha: "jo address tere paas hai, use le ke chala ja, wahan koi aadmi hoga, use ye pakda de." Wo dekhega "haan bhai, ye wo ladka hai", aur message pakda dega.
+
+*Technical me:* 10 ladke = 10 chat server · "chhota ladka address le ke jaaye" = Redis pub/sub (har server apne channel ko sunta), "wahan wale ko pakda de" = server 71 apne channel se le ke Ravi ke taar pe bheje.
+
+---
 
 **5. Arpan ne 500 logon ke group me "kal party hai" bheja. 500 log 60 server pe bikhre. Har member ke liye alag message, to ek message ke peeche 500 kaam, aur aise messages har second.**
-Arpan: Use ek dabbe me rakh lo, 500 log khud aayenge sunne. Kahin rakh do, 500 log jab chahe apna aake sunte rahenge.
-Technical me: "ek dabbe me rakh lo" = group message DB me ek baar (chat_id = college-gang), "500 log khud aayenge sunne" = members wahi ek message padhein, 500 copy nahi.
+
+**Arpan:** Use ek dabbe me rakh lo, 500 log khud aayenge sunne. Kahin rakh do, 500 log jab chahe apna aake sunte rahenge.
+
+*Technical me:* "ek dabbe me rakh lo" = group message DB me ek baar (chat_id = college-gang), "500 log khud aayenge sunne" = members wahi ek message padhein, 500 copy nahi.
+
+---
 
 **5b. Group "college-gang" me Arpan ka message #980 "kal party hai" DB me save ho gaya (har message pe ek number, kaun lagata ye kadam 7 me), par pub/sub tak pahunchne se pehle chat server gir gaya. Message DB me pada hai, 500 tak gaya hi nahi.**
-Arpan: Ek server thodi hai, hamara backup server hoga. Maan le mujhe ek message kai logon ko pahunchana hai.
+
+**Arpan:** Ek server thodi hai, hamara backup server hoga. Maan le mujhe ek message kai logon ko pahunchana hai.
 
 Papa ne bola "jaake ye 3-4 ghar hain, inko message pahuncha de", main jaane wala tha par achanak kuch ho gaya, nahi ja paaya. To kya message ruk jaayega? Matlab maan le ek chhotu hai jo maine message ke liye rakha.
 
 Ek din chhotu bimar pad gaya, kaam pe nahi aaya, to kya message ruk jaayenge? Nahi, doosra chhotu aayega.
 
 Main sochunga ye chhotu kabhi bimar pad gaya to dikkat ho jaayegi, isliye 1-2 chhotu extra rakh lo: wo kal kaam pe nahi aaya to ye kar dega, ye nahi aaya to wo.
-Technical me: "1-2 chhotu extra" = relay ki 1-2 copy (backup), ek gira to doosra kaam uthaye.
+
+*Technical me:* "1-2 chhotu extra" = relay ki 1-2 copy (backup), ek gira to doosra kaam uthaye.
 
 **Maan lo backup chhotu aa gaya, par #980 bhejna baaki hai ye baat to gire hue server ke dimaag me thi. Backup ko pata kaise chale?**
-Arpan: Ek aur scene soch: main hoon aur chhotu hai, chhotu se roz message bhijwata hoon. Maan le ek message chhotu ko bhijwana hai, par mujhe kuch kaam aa gaya, mujhe abhi nikalna padega, aur chhotu thodi der baad aayega.
+
+**Arpan:** Ek aur scene soch: main hoon aur chhotu hai, chhotu se roz message bhijwata hoon. Maan le ek message chhotu ko bhijwana hai, par mujhe kuch kaam aa gaya, mujhe abhi nikalna padega, aur chhotu thodi der baad aayega.
 
 To main ek parchi pe likh dunga: "chhotu bhai tere liye ye message hai, ye yahan jaana chahiye", aur us parchi ko deewar pe chipka jaunga.
 
 Chhotu andar aayega, dekhega "achha, Arpan bhai ko kuch kaam hoga, chale gaye", parchi padhega aur message dene nikal jaayega.
-Technical me: deewar ki parchi = outbox (hamare DB ki table, message ke saath ek saath, dono ya koi nahi (batch), DB me "ye bhejna hai" wali row), chhotu = relay (outbox ki row padh ke pub/sub pe daale). Server gire to bhi parchi DB me hai, jo chhotu aaye wahi padh le.
+
+*Technical me:* deewar ki parchi = outbox (hamare DB ki table, message ke saath ek saath, dono ya koi nahi (batch), DB me "ye bhejna hai" wali row), chhotu = relay (outbox ki row padh ke pub/sub pe daale). Server gire to bhi parchi DB me hai, jo chhotu aaye wahi padh le.
+
+---
 
 **5c. Pehla chhotu gira nahi tha, bas der se tha. Wo bhi wapas aa gaya aur backup chhotu bhi; dono ne deewar ki parchi padhi aur #980 bhej diya. 500 logon ko "kal party hai" do baar.**
-Arpan: Status rakh lo apne paas. Chhotu parchi padh ke message bhej de to parchi pe DONE likh de, aur mote register me bhi DONE. Dono jagah, kyunki hisaab mote register me bhi rakhna aur parchi pe bhi.
+
+**Arpan:** Status rakh lo apne paas. Chhotu parchi padh ke message bhej de to parchi pe DONE likh de, aur mote register me bhi DONE. Dono jagah, kyunki hisaab mote register me bhi rakhna aur parchi pe bhi.
 
 Ab koi aaya, dekha parchi pe neeche DONE likha hai, to kaam ho gaya, koi dikkat nahi. Kaam hua to parchi pe DONE aur register pe DONE; nahi hua to na parchi pe DONE na register pe.
 
 Aur ye ek hi transaction me, ek saath honge, taaki beech me gire to rollback ho jaaye, baad me phir kar sakte. Chhotu apne paas bhi parchi rakhe: "mere paas ye parchi hai, mujhe ye message bhejna hai".
 
 Message bheja to apni parchi pe tick laga diya, kaam khatam. Chhotu gir bhi jaaye, kuch bhi ho jaaye, uske paas parchi hai.
-Technical me: parchi pe DONE = outbox (hamare DB ki table) ki row ka status (bhejna baaki -> DONE), mota register = messages table, dono ek saath (dono ya koi nahi, batch). Par "bhejna" DB ke bahar hota hai (pub/sub), isliye bhejna aur DONE likhna ek transaction nahi ban sakte: bhej diya aur DONE likhne se pehle gira to agla chhotu phir bhejega. Isliye agla kadam (5d).
+
+*Technical me:* parchi pe DONE = outbox (hamare DB ki table) ki row ka status (bhejna baaki -> DONE), mota register = messages table, dono ek saath (dono ya koi nahi, batch). Par "bhejna" DB ke bahar hota hai (pub/sub), isliye bhejna aur DONE likhna ek transaction nahi ban sakte: bhej diya aur DONE likhne se pehle gira to agla chhotu phir bhejega. Isliye agla kadam (5d).
+
+---
 
 **5d. Dono chhotu ne ek hi pal me parchi padhi. Dono ko DONE nahi dikha, kyunki abhi kisi ne likha hi nahi tha. Dono 500 logon ko bhejne nikal pade.**
-Arpan: Do chhotu ko thode time antar pe bhejo, aisa nahi ki dono ek hi time pe pahunchein. Aur 500 logon tak ek chhotu message nahi pahuncha sakta, to bahar ek aadmi khada kar do jo un 500 logon ko dekh raha.
+
+**Arpan:** Do chhotu ko thode time antar pe bhejo, aisa nahi ki dono ek hi time pe pahunchein. Aur 500 logon tak ek chhotu message nahi pahuncha sakta, to bahar ek aadmi khada kar do jo un 500 logon ko dekh raha.
 
 (WhatsApp ke andar 500 ko ek saath bhej deta hai, uske paas kuch hoga, wo hamein nahi pata.) Chhotu parchi dekh ke us aadmi ke paas jaata: "hello bhai, ye message hai, ye tumhe 500 logon ko bhejna hai".
 
 Usne parchi dekhi, "achha ye message hai", aur 500 ko bhej diya. Ab same time pe doosra chhotu bhi wahan se chal pada tha, wo bhi wahi message le ke aaya.
 
 Aadmi bolega: "ye message to abhi chala gaya yaar, ise dobara kyun bhejna, discard karo." 2, 3, 5 chhotu bhi ek saath aayein to aadmi sambhal lega, kyunki use pata hai ye message 500 logon ke paas chala gaya; dobara wali parchi phaad ke wahin phenk dega.
-Technical me: parchi = outbox ki row · bahar wala aadmi = fan-out service (group ke 500 ko bhejne wala), message ka number #980 = idempotency key, wahi number dobara aaye to discard (dedup fan-out pe). Kadam 6 wali key ki hi doosri kahani: wahan phone pe key, yahan bhejne wale aadmi pe. "Time antar" = chhotu alag-alag waqt pe utheinge, par asli bachav aadmi ka "ye chala gaya" wala check hai.
+
+*Technical me:* parchi = outbox ki row · bahar wala aadmi = fan-out service (group ke 500 ko bhejne wala), message ka number #980 = idempotency key, wahi number dobara aaye to discard (dedup fan-out pe). Kadam 6 wali key ki hi doosri kahani: wahan phone pe key, yahan bhejne wale aadmi pe. "Time antar" = chhotu alag-alag waqt pe utheinge, par asli bachav aadmi ka "ye chala gaya" wala check hai.
+
+---
 
 **5e. Maan lo aage: do message hain, #982 "kal Goa chalte hain" aur #983 "shaam 5 baje taiyaar rehna". Bahar wale aadmi ko #982 ki parchi mili, wo "thodi der me bhej dunga" bol ke chai peene chala gaya. Uski jagah doosra aadmi aaya, use #983 mila aur usne turant bhej diya. Logon ko pehle "shaam 5 baje" dikha, "kal Goa" baad me.**
-Arpan: Do parchi ek saath daal li, 980 aur 981, kyunki do message hain. Ho sakta hai kuch dheema ho, wo message ja hi nahi paaye aur uske peeche wala aage chala jaaye. To hum dekh lenge kaunsa message pehle aaya tha, wahi pehle jaayega, uske baad doosra. Ek time specific hota hai: is samay pe ye pehle aaya tha, to wahi pehle jaayega, uske baad doosra message.
-Technical me: parchi = message (number ke saath) · "kaunsa pehle aaya" = server ka sequence number (#982, #983, kadam 7 / 12), phone usi kram me lagaye; #981 pehle aa gaya to bhi #980 ke baad hi dikhe.
+
+**Arpan:** Do parchi ek saath daal li, 980 aur 981, kyunki do message hain. Ho sakta hai kuch dheema ho, wo message ja hi nahi paaye aur uske peeche wala aage chala jaaye. To hum dekh lenge kaunsa message pehle aaya tha, wahi pehle jaayega, uske baad doosra. Ek time specific hota hai: is samay pe ye pehle aaya tha, to wahi pehle jaayega, uske baad doosra message.
+
+*Technical me:* parchi = message (number ke saath) · "kaunsa pehle aaya" = server ka sequence number (#982, #983, kadam 7 / 12), phone usi kram me lagaye; #981 pehle aa gaya to bhi #980 ke baad hi dikhe.
+
+---
 
 **6. Arpan lift me, Ravi ko "hi" bheja. Message server pe save ho gaya, par "pahuncha" wala jawab lift me kho gaya. Phone ko laga gaya hi nahi, "hi" dobara bheja. Ravi ko "hi hi".**
-Arpan: Message Ravi ke paas chala gaya, par hum lift me the to jawab hamare paas nahi aaya, humein laga nahi gaya. To jab network aaye tab bol do "haan bhai, chala gaya", double tick dikha do.
+
+**Arpan:** Message Ravi ke paas chala gaya, par hum lift me the to jawab hamare paas nahi aaya, humein laga nahi gaya. To jab network aaye tab bol do "haan bhai, chala gaya", double tick dikha do.
 
 Network nahi aaya to wo dobara bhej deta, do "hi" pahunch gaye. To message ek baar issue karwao, doosri baar discard kar do. Ek key rakh lo: "hi" aaya, iske paas ek key hai.
 
 Doosra aaya, same person ko ja raha aur key same hai, to mana kar do: "ye message chahiye nahi, tera pehla ho gaya."
-Technical me: "ek key rakh lo, key same to mana" = clientMsgId (idempotency key), "doosri baar discard" = dupe copy chhodo, "network aaye to double tick" = "pahuncha" ka jawab dobara bhejo.
+
+*Technical me:* "ek key rakh lo, key same to mana" = clientMsgId (idempotency key), "doosri baar discard" = dupe copy chhodo, "network aaye to double tick" = "pahuncha" ka jawab dobara bhejo.
 
 **Maan lo ulta: Ravi ke phone ka "mil gaya" kho gaya, server ne message dobara bheja.**
-Arpan: (Arpan, 8-Nov: "ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Wahi key, lene wale ke phone pe: Ravi ka phone message ka number (seq / clientMsgId) dekhe, pehle aa chuka to dobara mat dikhao.
-Technical me: idempotency key (wahi ID dobara aaye to chhodo).
-Arpan (key ka pench): Client message id idempotency key use karenge, to do message ek saath nahi jaayenge. Par ek pench hai: ye key server / app ke retry pe lagti hai; agar hum khud do baar bhejein to WhatsApp pe dono chale jaate, aur koi dikkat nahi.
-Technical me: clientMsgId = retry ka dohra rokta; user ne khud do baar bheja = do alag message (do alag id), theek.
+
+**Arpan:** (Arpan, 8-Nov: "ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Wahi key, lene wale ke phone pe: Ravi ka phone message ka number (seq / clientMsgId) dekhe, pehle aa chuka to dobara mat dikhao.
+
+*Technical me:* idempotency key (wahi ID dobara aaye to chhodo).
+
+**Arpan (key ka pench):** Client message id idempotency key use karenge, to do message ek saath nahi jaayenge. Par ek pench hai: ye key server / app ke retry pe lagti hai; agar hum khud do baar bhejein to WhatsApp pe dono chale jaate, aur koi dikkat nahi.
+
+*Technical me:* clientMsgId = retry ka dohra rokta; user ne khud do baar bheja = do alag message (do alag id), theek.
 Isi key ki doosri kahani = 5d: bahar wala aadmi jo 500 ko jaanta, wahi #980 dobara aaye to "ye to chala gaya" bol ke parchi phaad de.
 
+---
+
 **7. Group me Arpan ne "kal party" bheja, usi second Ravi ne "kahan?". Kuch members ko "kahan?" pehle dikha. Dono phone ki ghadiyan bhi 2 second aage-peeche. (Claude ne poochha: number lagayega kaun?)**
-Arpan: Numbering kar do: jisne pehle bheja uska pehla aayega, saaf seedhi baat. Phone nahi lagayega number, phone lagayega to clash ho jaayega. Phone ko thodi pata kaunsa message pehle aaya, phone to bas message bhejne wala banda hai. Server ko pata hai kaunsa pehle aaya, kis time aaya. Server lagayega number.
-Technical me: "numbering kar do" = sequence number, "server lagayega number" = server ka sequence, har chat ka apna (#980, #981), "phone ko thodi pata" = phone ki ghadi pe bharosa nahi.
+
+**Arpan:** Numbering kar do: jisne pehle bheja uska pehla aayega, saaf seedhi baat. Phone nahi lagayega number, phone lagayega to clash ho jaayega. Phone ko thodi pata kaunsa message pehle aaya, phone to bas message bhejne wala banda hai. Server ko pata hai kaunsa pehle aaya, kis time aaya. Server lagayega number.
+
+*Technical me:* "numbering kar do" = sequence number, "server lagayega number" = server ka sequence, har chat ka apna (#980, #981), "phone ko thodi pata" = phone ki ghadi pe bharosa nahi.
 
 **Maan lo "kal party" ko #980 mila par DB me save hone me atka, Ravi ka "kahan?" #981 pehle pahunch gaya. Ravi ka phone yaad rakhe "aakhri #981", net gaya, wapas aaya, "#981 ke baad do" bola. #980 chhoot gaya?**
-Arpan: Server chootiya thodi hai. Server har cheez bhej raha to record bhi rakh raha: ye bhej diya, ye bhej diya, teesra nahi gaya, chautha gaya, phir teesra bhi gaya.
+
+**Arpan:** Server chootiya thodi hai. Server har cheez bhej raha to record bhi rakh raha: ye bhej diya, ye bhej diya, teesra nahi gaya, chautha gaya, phir teesra bhi gaya.
 
 To Ravi ko message milega hi milega, kabhi nahi jaayega aisa nahi. Haan, group me kram thoda aage-peeche ho sakta hai. Server ko pata hai kaunsa pehle aaya, to sort karke daal do: thodi der ulta dikha, phir sahi.
 
@@ -162,67 +221,104 @@ Arpan (isi Maan lo me aur neeche: Priya metro me, #981 aaya #980 atka): Chat ser
 Server dekhega 2 aa gaya par 1 aaya hi nahi, to poochhega "1 kahan rah gaya". Atka hai to kuch second ke liye, 10 ghante nahi (WhatsApp ka server hi down ho wo alag baat, us din 2 bhejne ka bhi fayda nahi).
 
 To 2 bhej do, 1 aate hi turant 1 bhej do. Chat me thodi der pehla message baad me dikhe to bhi phone number se sort karke sahi jagah laga dega.
-Technical me: register = delivery record · "server ka record, ye gaya ye nahi" = har user ka delivery record (store-and-forward; group me har member ka bas ek number "yahan tak pahuncha", kadam 9), reconnect pe "jo nahi gaya wo sab do", phone ke aakhri number se nahi; "sort karke daal do" = sequence number se phone pe ordering; "FR me tay" = ordering kitni strict, requirement ka faisla.
+
+*Technical me:* register = delivery record · "server ka record, ye gaya ye nahi" = har user ka delivery record (store-and-forward; group me har member ka bas ek number "yahan tak pahuncha", kadam 9), reconnect pe "jo nahi gaya wo sab do", phone ke aakhri number se nahi; "sort karke daal do" = sequence number se phone pe ordering; "FR me tay" = ordering kitni strict, requirement ka faisla.
+
+---
 
 **8. Ravi ko unread ginti dikhani hai: "12 naye message". Group me 980 message, 500 member.**
-Arpan: Ek ginti rakh lo, Redis me ya map me ya DB me: Ravi ne itne message padh liye. 50 padh liye, ab neeche 12 aur hain, to 12 ke 12 turant uske phone me daal do.
-Technical me: "ek ginti rakh lo, Ravi ne itne padh liye" = read count (har member ka har chat me ek ginti), "12 aur hain" = unread = chat ke kul message - Ravi ke padhe (980 - 968 = 12). Ginti hai, message ka ID nahi ghatate.
+
+**Arpan:** Ek ginti rakh lo, Redis me ya map me ya DB me: Ravi ne itne message padh liye. 50 padh liye, ab neeche 12 aur hain, to 12 ke 12 turant uske phone me daal do.
+
+*Technical me:* "ek ginti rakh lo, Ravi ne itne padh liye" = read count (har member ka har chat me ek ginti), "12 aur hain" = unread = chat ke kul message - Ravi ke padhe (980 - 968 = 12). Ginti hai, message ka ID nahi ghatate.
+
+---
 
 **9. Arpan ne #980 "kal party" bheja, Info me dekhna kis-kis ne padha. Har message x har member ki line = 980 x 500 = 4.9 lakh entry. Ravi ka number 968, Sita ka 978. Kisne padha?**
-Arpan: Group me double tick aata hai, Info me jaake dekhte hain kisne padha. Ravi ne nahi padha, Sita ne padh liya. Maine 975 bheja, Sita ka 978, iska matlab Sita ne 975 padha, tabhi uski ginti 978 hui. Ravi ne 968 padha, matlab wo bahut der se offline hai, ya pahuncha to usne ye message read nahi kiya. Number ghata lo, isse pata pad jaayega kisne padha, kisne nahi.
-Technical me: "ginti 978, matlab 975 padha" = read watermark (number >= 975 to padha), "number ghata lo" = har member ka bas ek number, 4.9 lakh ki jagah 500.
+
+**Arpan:** Group me double tick aata hai, Info me jaake dekhte hain kisne padha. Ravi ne nahi padha, Sita ne padh liya. Maine 975 bheja, Sita ka 978, iska matlab Sita ne 975 padha, tabhi uski ginti 978 hui. Ravi ne 968 padha, matlab wo bahut der se offline hai, ya pahuncha to usne ye message read nahi kiya. Number ghata lo, isse pata pad jaayega kisne padha, kisne nahi.
+
+*Technical me:* "ginti 978, matlab 975 padha" = read watermark (number >= 975 to padha), "number ghata lo" = har member ka bas ek number, 4.9 lakh ki jagah 500.
+
+---
 
 **10. Arpan ne group me party ka 200 MB ka video bheja. Chat server ke raaste DB me save hoga aur 500 ko isi raaste. Taar chhote text ke liye bane the, video ne sab jam kar diya.**
-Arpan: Video ke liye alag taar jod do. Aaj 200 MB, kal koi 500 MB ya 1 GB bhi bhej sakta. Ise yahan se hatao, alag raaste pe bhej do. Ek alag machine rakh lo: "tu video hai, tu idhar ja", hamari chat block na kare. Video ko wahin pada rehne do, uska ek chhota URL bana do aur sabme bhej do, wo wahin se dekh lenge. Ek insaan bitha do: "video aayi, mere paas aa ja, main chhota URL bana ke bhej deta hoon", chat server pe koi dikkat nahi.
-Technical me: "alag machine, alag raasta" = S3 (chat server ke bahar), "chhota URL sabme bhejo" = message me sirf link, "wahin se dekh lenge" = video S3 / CDN se.
-Arpan: Video seedha S3 me, DB me uska presigned URL; jisko chahiye use URL bhejo, thumbnail bhi store kar sakte. Saath me server ki apni secret key, jisse video ka link thode time baad expire bhi ho jaaye.
-Technical me: presigned URL (server ki key se sign, chhoti umar), thumbnail alag.
+
+**Arpan:** Video ke liye alag taar jod do. Aaj 200 MB, kal koi 500 MB ya 1 GB bhi bhej sakta. Ise yahan se hatao, alag raaste pe bhej do. Ek alag machine rakh lo: "tu video hai, tu idhar ja", hamari chat block na kare. Video ko wahin pada rehne do, uska ek chhota URL bana do aur sabme bhej do, wo wahin se dekh lenge. Ek insaan bitha do: "video aayi, mere paas aa ja, main chhota URL bana ke bhej deta hoon", chat server pe koi dikkat nahi.
+
+*Technical me:* "alag machine, alag raasta" = S3 (chat server ke bahar), "chhota URL sabme bhejo" = message me sirf link, "wahin se dekh lenge" = video S3 / CDN se.
+
+**Arpan:** Video seedha S3 me, DB me uska presigned URL; jisko chahiye use URL bhejo, thumbnail bhi store kar sakte. Saath me server ki apni secret key, jisse video ka link thode time baad expire bhi ho jaaye.
+
+*Technical me:* presigned URL (server ki key se sign, chhoti umar), thumbnail alag.
+
+---
 
 **11. Ravi ke naam ke neeche "online". Ravi ka phone lift me band, taar tootne ka signal server tak pahuncha hi nahi. 2 ghante se Ravi "online" dikh raha, phone band pada.**
-Arpan: Ek register me likh liya "Ravi online hai". Ab har 3-5 second baad Ravi ko hilaunga, haath maarunga: "Ravi, tu online hai?" "Haan bhai, online hoon, pareshaan mat kar." Phir haath maara, jawab nahi diya. Phir maara, phir jawab nahi. 2-3 baar hilaya aur jawab nahi diya, to register se Ravi ka naam kaat diya, ab wo offline.
-Technical me: "register me Ravi online" = presence entry (Redis), "har 3-5 second hilaunga" = heartbeat, "2-3 baar jawab nahi to naam kaat diya" = heartbeat chhoote to entry mite (TTL), "last seen" dikhe.
+
+**Arpan:** Ek register me likh liya "Ravi online hai". Ab har 3-5 second baad Ravi ko hilaunga, haath maarunga: "Ravi, tu online hai?" "Haan bhai, online hoon, pareshaan mat kar." Phir haath maara, jawab nahi diya. Phir maara, phir jawab nahi. 2-3 baar hilaya aur jawab nahi diya, to register se Ravi ka naam kaat diya, ab wo offline.
+
+*Technical me:* "register me Ravi online" = presence entry (Redis), "har 3-5 second hilaunga" = heartbeat, "2-3 baar jawab nahi to naam kaat diya" = heartbeat chhoote to entry mite (TTL), "last seen" dikhe.
 
 **Maan lo Ravi chahta hi nahi ki sabko dikhe:**
-Arpan: Aajkal WhatsApp pe privacy hai, sabko na dikhe; app me setting se band kar lein. Ye ek feature hai, itna bada feature bhi nahi.
-Technical me: last seen privacy setting (server bhejne se pehle setting dekhe).
+
+**Arpan:** Aajkal WhatsApp pe privacy hai, sabko na dikhe; app me setting se band kar lein. Ye ek feature hai, itna bada feature bhi nahi.
+
+*Technical me:* last seen privacy setting (server bhejne se pehle setting dekhe).
+
+---
 
 **11b. Ravi online aaya. Uske phone me 500 contacts. Server "Ravi online hai" ki khabar 500 ko bheje? Lakhon log har minute online / offline, har baar 500-500 khabar ka toofan, aur 500 me se zyada tar ne Ravi ka naam us waqt screen pe dekha hi nahi.**
-Arpan: WhatsApp mujhe notification bhej ke thodi batayega ki dost online hai. Jisne Ravi ki chat khol rakhi hai, bas use dikhao. Maan lo 500 me se 10 ne chat khol rakhi, to 500 ko kyun, 10 ko dikhao.
+
+**Arpan:** WhatsApp mujhe notification bhej ke thodi batayega ki dost online hai. Jisne Ravi ki chat khol rakhi hai, bas use dikhao. Maan lo 500 me se 10 ne chat khol rakhi, to 500 ko kyun, 10 ko dikhao.
 
 Jaise gaon me 500 log aur ek dukaan. Electronics ki dukaan pe nayi LED aayi, to dukaan wala 500 logon ke ghar thodi jaayega, ya bahar board laga ke raah chalte ko thodi dikhayega.
 
 Jo dukaan ke andar aaya, "aaiye sir, ye nayi LED aayi hai", usi ko dikhayega. Aur main server se baar-baar poochta nahi ki Ravi online hai. Taar to pehle se khula hai (1).
 
 Maine chat kholi to bas server ko pata lag gaya, ab wo usi khule taar pe mujhe khud bata dega. Dono taraf se taar khula hai.
-Technical me: "dukaan ke andar aaya" = chat kholi to phone server ko bolta "Ravi ka status mujhe batate rehna" (subscribe), chat band = unsubscribe. Ravi online hua to server sirf subscribers ko bataye (presence pub/sub). Online dekhna ho to chat kholni padti, isiliye.
+
+*Technical me:* "dukaan ke andar aaya" = chat kholi to phone server ko bolta "Ravi ka status mujhe batate rehna" (subscribe), chat band = unsubscribe. Ravi online hua to server sirf subscribers ko bataye (presence pub/sub). Online dekhna ho to chat kholni padti, isiliye.
+
+---
 
 **12. Ravi ne Arpan ko "kal milte hain" phir "nahi, parso" bheja. Pehla server S1 se gaya, doosra S2 se, S1 dheema tha. Arpan ke phone pe pehle "nahi, parso" aaya, phir "kal milte hain". Arpan galat samjha.**
-Arpan: Pehle to koshish karo ki ek chat ke dono message ek hi server se jaayein. Phir bhi alag server se gaye, to bhi hume pata hai server pe pehle kaun aaya tha: "kal milte hain" pehla, "nahi, parso" doosra.
+
+**Arpan:** Pehle to koshish karo ki ek chat ke dono message ek hi server se jaayein. Phir bhi alag server se gaye, to bhi hume pata hai server pe pehle kaun aaya tha: "kal milte hain" pehla, "nahi, parso" doosra.
 
 Aisa nahi ki jo phone pe pehle pahuncha wo pehle dikhe (pehle aaya pehle paaya), aisa mat rakho. Jab dono phone pe pahunch jaayein, phone unhe sahi kram me laga ke dikhaye.
 
 Aur S1 bahut dheema ho to S2 wale ko rok ke nahi rakhenge, message to jaana hi hai. Thodi der ulta dikh sakta hai, phir apne aap theek ho jaata, WhatsApp me bhi aisa dekha hai. Perfect jawab nahi hai.
-Technical me: "server pe pata kaun pehle aaya" = har chat ka sequence number (block 7), "phone sahi kram me lagaye" = client number se sort kare, aane ke kram se nahi, "dheeme ke liye doosra mat roko" = deliver turant, baad me reorder.
+
+*Technical me:* "server pe pata kaun pehle aaya" = har chat ka sequence number (block 7), "phone sahi kram me lagaye" = client number se sort kare, aane ke kram se nahi, "dheeme ke liye doosra mat roko" = deliver turant, baad me reorder.
 
 **Aur neeche (ek server ya alag-alag, trade-off):**
-Arpan: Isme trade-off hai. Ek chat ke saare message ek hi server se bhejo to kram pakka, par wo server dheema hua to saare message ruk jaayenge. Alag-alag server se bhejo to koi nahi rukta, par kuch message pehle pahunch sakte, unhe phone pe sort kar do. Jaise 3 ladke 3 message le ke aaye, main har ek se poochhunga "tere paas kab aaya", jo pehle aaya wo pehle.
-Technical me: ek chat ek server = kram aasaan par ek dheema to sab ruke (head-of-line blocking); kai server = koi nahi rukta, phone number se sort kare.
+
+**Arpan:** Isme trade-off hai. Ek chat ke saare message ek hi server se bhejo to kram pakka, par wo server dheema hua to saare message ruk jaayenge. Alag-alag server se bhejo to koi nahi rukta, par kuch message pehle pahunch sakte, unhe phone pe sort kar do. Jaise 3 ladke 3 message le ke aaye, main har ek se poochhunga "tere paas kab aaya", jo pehle aaya wo pehle.
+
+*Technical me:* ek chat ek server = kram aasaan par ek dheema to sab ruke (head-of-line blocking); kai server = koi nahi rukta, phone number se sort kare.
 
 **Maan lo interviewer kheeche: number kaun lagayega, aur ye number kabhi khatam to nahi hoga?**
-Arpan: Har ladke se poochho "tu kab aaya", aur us time ko hi number bana do. Time hamesha badhta hai, to number bhi badhta jaata hai, aur phone usi number se kram laga ke dikhata hai.
+
+**Arpan:** Har ladke se poochho "tu kab aaya", aur us time ko hi number bana do. Time hamesha badhta hai, to number bhi badhta jaata hai, aur phone usi number se kram laga ke dikhata hai.
 
 Aur time kaunsi ghadi ka? Har group ka apna ek server hota hai: mera 500 logon ka group hai to wo hamesha server 7 pe jaayega, to number server 7 ki ghadi se lagega. Aisa nahi ki ek group ke do message alag-alag server pe chale jaayein, wo to badi dikkat ho jaayegi. Maan lo 10 din baad us group ke message server 20 pe chale gaye, to ab server 20 ki ghadi lagegi.
 
 Zyada gehra pooche to ek ID rakh lo. Par "ye number kabhi khatam nahi hoga" jaisa daava nahi karunga. Daava kiya to interviewer kahega "maan lo crore log dhadadhad message kar rahe, 50 saal me bhar gaya to?", aur mujhe apna point wapas lena padega. Interviewer bhi insaan hai, wahi poochega jo use pata hai; main bahas nahi karunga. Isliye seedha dhaancha bolunga: har message ko ek kram number, phone usi se lagata hai.
-Technical me: "time ko hi number" = Snowflake ID (time + machine + chhota counter, FOUNDATIONS 13), "har group ka apna server, ghadi usi ki" = ek chat hamesha ek hi server pe (chat id se server tay), isliye usi server ki ghadi aur counter se kram theek; server 20 pe gaya to wahan number pichhle aakhri number ke aage se shuru. "ek ID" = har chat ka sequence number. Kamzor jawab = number / had ka daava ("long ki had itni, kabhi nahi bharega"), kyunki interviewer use kheench sakta. Mazboot jawab = sirf dhaancha. Had yaad aa gayi to bonus line: long (64-bit) me lagbhag 9.2 x 10^18 (9 ke baad 18 zero), aur counter har chat ka alag. Range jaisa kuch aur pooche to: "padhte waqt dekha tha isliye yaad hai, baaki net se dekh lete".
+
+*Technical me:* "time ko hi number" = Snowflake ID (time + machine + chhota counter, FOUNDATIONS 13), "har group ka apna server, ghadi usi ki" = ek chat hamesha ek hi server pe (chat id se server tay), isliye usi server ki ghadi aur counter se kram theek; server 20 pe gaya to wahan number pichhle aakhri number ke aage se shuru. "ek ID" = har chat ka sequence number. Kamzor jawab = number / had ka daava ("long ki had itni, kabhi nahi bharega"), kyunki interviewer use kheench sakta. Mazboot jawab = sirf dhaancha. Had yaad aa gayi to bonus line: long (64-bit) me lagbhag 9.2 x 10^18 (9 ke baad 18 zero), aur counter har chat ka alag. Range jaisa kuch aur pooche to: "padhte waqt dekha tha isliye yaad hai, baaki net se dekh lete".
 
 **Isi pe ek aur raasta (number Redis se):**
-Arpan: Number Redis se le lo, har chat ka ek counter, 44 ke baad 45. Redis ek baar me ek hi number deta, to do message ko same number kabhi nahi milega. Message pe jo time dikhta hai wo server ki ghadi ka, par kram usi number se lagega.
-Technical me: har chat ka seq = Redis INCR; dikhne wala time = server ki ghadi (NTP), kram = seq.
+
+**Arpan:** Number Redis se le lo, har chat ka ek counter, 44 ke baad 45. Redis ek baar me ek hi number deta, to do message ko same number kabhi nahi milega. Message pe jo time dikhta hai wo server ki ghadi ka, par kram usi number se lagega.
+
+*Technical me:* har chat ka seq = Redis INCR; dikhne wala time = server ki ghadi (NTP), kram = seq.
 
 **Maan lo group me 500 log hain. Har message pe 500 logon ka server dhoondhna padega?**
-Arpan: 500 baar kyun bhejunga. Mere saamne 10 log baithe hain jo ek hi server se jude hain, maan lo server 4. Message aaya to bas "server 4 pe bhej do". Server 4 pe ek baitha ho ya 500, mujhe lena-dena nahi, mera kaam message dena hai. Aage server 4 apne logon ko dega.
-Technical me: "taar wala server" = WebSocket gateway, jahan phone juda hai. "group wala server" = chat server, jo number lagata hai. Dono alag hain. "server pe ek baar bhejo, aage wo apne logon ko de" = per-server fan-out (Redis pub/sub: har gateway group ka channel sunta hai, chat server us channel pe ek baar daalta hai).
+
+**Arpan:** 500 baar kyun bhejunga. Mere saamne 10 log baithe hain jo ek hi server se jude hain, maan lo server 4. Message aaya to bas "server 4 pe bhej do". Server 4 pe ek baitha ho ya 500, mujhe lena-dena nahi, mera kaam message dena hai. Aage server 4 apne logon ko dega.
+
+*Technical me:* "taar wala server" = WebSocket gateway, jahan phone juda hai. "group wala server" = chat server, jo number lagata hai. Dono alag hain. "server pe ek baar bhejo, aage wo apne logon ko de" = per-server fan-out (Redis pub/sub: har gateway group ka channel sunta hai, chat server us channel pe ek baar daalta hai).
 
 &nbsp;
 

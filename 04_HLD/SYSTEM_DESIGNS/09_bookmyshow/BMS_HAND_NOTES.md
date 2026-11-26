@@ -31,19 +31,24 @@ User --> line (virtual queue, token: capacity jitne andar) --> LB --> kai counte
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
-Arpan: Log aa rahe hain, paise dekar ja rahe hain, matlab seat book honi chahiye. Ek seat do aadmi ko nahi milni chahiye. Payment consistent hona chahiye. Logon ko zyada intezaar na karna pade.
+
+**Arpan:** Log aa rahe hain, paise dekar ja rahe hain, matlab seat book honi chahiye. Ek seat do aadmi ko nahi milni chahiye. Payment consistent hona chahiye. Logon ko zyada intezaar na karna pade.
 
 FR me wo jo BookMyShow karta hai: seat book karna, pay karna, ek seat do ko nahi.
 
 NFR wo jo hum engineer ki tarah dekhte: Redis, replica, kai server, load balancer, kuch atke nahi; koi line me aaya aur bahut der khada raha, uski parchi khatam ho gayi aur bina pay kiye chala gaya, 8 minute khade rehne ka fayda hi nahi hua, aisa na ho.
 
 Refund me BookMyShow ka seedha lena-dena nahi, wo PSP ka kaam hai. API abhi nahi, kuch din baad.
-Arpan (shard pe): BookMyShow me shard nahi, partition kar do. Shard ki ek keemat hai, shard karna matlab apni aisi-taisi karwana. AWS jaise bahut bade platform, ya bank jo Europe, America, Canada, Australia, India sab jagah faila hai, wahan shard keh sakte. BookMyShow India me bahut bada bhi ho to partition kar lo, thoda indexing laga do. Shard bahut alag duniya hai; hum aise hi bol dete "shard kar do", par companiyan 10 baar sochti hain.
-Technical me: parchi = seat ka hold · "pehle partition" = ek hi DB ke andar table partitioning (jaise show date se), "indexing" = sahi index, "shard ki keemat" = cross-shard transaction, rebalancing, ops ka bojh; shard aakhri raasta.
-Arpan (FR dobara, chain dekh ke): FR wo jo BookMyShow asal me karta hai. Chain me har baar seat dekhna, rokna, pay karna, book karna hi ho raha. To FR ke liye dikkat dekhne ki zaroorat nahi: seat dekho, seat hai to book karo, book kiya to paise kaato, paise kate to seat do, bas. Baaki NFR: do log ek saath book na karein, zyada bheed na ho, zyada line me intezaar na karna pade, refund turant mile, seat turant dikhe.
 
-Arpan (API): API me kya hai bhai: seat book karenge, payment karenge, get karenge. Ek POST seat ki, ki haan bhai kaunsi seat book kari. GET poori seat mapping lene ke liye. Aur payment ka ek POST. Teen API bahut hai isme, aur kuch to hai nahi.
-Technical me: GET seat map = read (padhne wali copy se), POST seat book = hold (dekhna + rokna ek query), POST payment = PSP ko bhejo, PAYMENT_PENDING.
+**Arpan (shard pe):** BookMyShow me shard nahi, partition kar do. Shard ki ek keemat hai, shard karna matlab apni aisi-taisi karwana. AWS jaise bahut bade platform, ya bank jo Europe, America, Canada, Australia, India sab jagah faila hai, wahan shard keh sakte. BookMyShow India me bahut bada bhi ho to partition kar lo, thoda indexing laga do. Shard bahut alag duniya hai; hum aise hi bol dete "shard kar do", par companiyan 10 baar sochti hain.
+
+*Technical me:* parchi = seat ka hold · "pehle partition" = ek hi DB ke andar table partitioning (jaise show date se), "indexing" = sahi index, "shard ki keemat" = cross-shard transaction, rebalancing, ops ka bojh; shard aakhri raasta.
+
+**Arpan (FR dobara, chain dekh ke):** FR wo jo BookMyShow asal me karta hai. Chain me har baar seat dekhna, rokna, pay karna, book karna hi ho raha. To FR ke liye dikkat dekhne ki zaroorat nahi: seat dekho, seat hai to book karo, book kiya to paise kaato, paise kate to seat do, bas. Baaki NFR: do log ek saath book na karein, zyada bheed na ho, zyada line me intezaar na karna pade, refund turant mile, seat turant dikhe.
+
+**Arpan (API):** API me kya hai bhai: seat book karenge, payment karenge, get karenge. Ek POST seat ki, ki haan bhai kaunsi seat book kari. GET poori seat mapping lene ke liye. Aur payment ka ek POST. Teen API bahut hai isme, aur kuch to hai nahi.
+
+*Technical me:* GET seat map = read (padhne wali copy se), POST seat book = hold (dekhna + rokna ek query), POST payment = PSP ko bhejo, PAYMENT_PENDING.
 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
@@ -77,97 +82,142 @@ API     (Arpan: "teen API bahut hai, aur kuch to hai nahi")
 
 &nbsp;
 
+---
+
 **1. Arpan ne D5 chuni aur "book" dabaya. Usi second ek aur ladke ne bhi D5 pe book dabaya. Dono ke app ne seat khaali dekhi, aur dono ko "seat mil gayi" aa gaya.**
-Arpan: Seat dekhna aur seat book karna, ise ek saath rakh, alag-alag mat rakh. Maan le do counter hain, main is counter pe, doosra us counter pe, aur andar ek hi seat bachi.
+
+**Arpan:** Seat dekhna aur seat book karna, ise ek saath rakh, alag-alag mat rakh. Maan le do counter hain, main is counter pe, doosra us counter pe, aur andar ek hi seat bachi.
 
 Dono counter ko nahi pata ki doosra bhi wahi seat bech raha. Maine kaha "ek seat chahiye, lo mere paise".
 
 Mere counter wale ne jaake seat pe ek parchi rakh di: "ye Arpan ki seat hai, Arpan iska payment karega, ye Arpan ko milegi, kisi aur ko nahi." Doosra counter wala dekhega: "achha, yahan Arpan ki parchi lagi hai, ise main bech nahi sakta. Tu ja bhai, seat book ho gayi."
-Technical me: counter = hamara server · "ek saath rakh, alag mat" = dekhna aur rokna ek hi query (UPDATE ... WHERE seat FREE), "seat pe parchi" = hold, "doosra parchi dekh ke mana" = doosre ko 0 row, "seat chali gayi".
+
+*Technical me:* counter = hamara server · "ek saath rakh, alag mat" = dekhna aur rokna ek hi query (UPDATE ... WHERE seat FREE), "seat pe parchi" = hold, "doosra parchi dekh ke mana" = doosre ko 0 row, "seat chali gayi".
 **DB kaunsa:**
-Arpan: Atomic update: check plus book ek hi update me, WHERE me "seat available hai" to hi book. MySQL do query ek saath nahi chalata, ek baar me ek, to atomic apne aap. Isse baat uthi ki SQL database lenge, NoSQL nahi: yahan consistency chahiye over availability, consistency bahut zyada chahiye, kyunki ek seat do logon ko nahi ja sakti.
-Technical me: atomic conditional UPDATE, consistency > availability = SQL (Postgres / MySQL).
+
+**Arpan:** Atomic update: check plus book ek hi update me, WHERE me "seat available hai" to hi book. MySQL do query ek saath nahi chalata, ek baar me ek, to atomic apne aap. Isse baat uthi ki SQL database lenge, NoSQL nahi: yahan consistency chahiye over availability, consistency bahut zyada chahiye, kyunki ek seat do logon ko nahi ja sakti.
+
+*Technical me:* atomic conditional UPDATE, consistency > availability = SQL (Postgres / MySQL).
 
 **Maan lo Arpan ko family ke saath D5, D6, D7 teeno chahiye; counter wale ne D5, D6 pe parchi lagayi, D7 tak pahuncha to usi second doosre counter wale ne D7 pe Priya ki parchi laga di.**
-Arpan: Ye almost same hai. D5 D6 D7 ka kaam ek saath hi hoga, alag-alag nahi: dekhna aur rokna teeno ka ek hi baar, beech me koi nahi aa sakta. Agar teeno available hain tabhi book karo.
+
+**Arpan:** Ye almost same hai. D5 D6 D7 ka kaam ek saath hi hoga, alag-alag nahi: dekhna aur rokna teeno ka ek hi baar, beech me koi nahi aa sakta. Agar teeno available hain tabhi book karo.
 
 Maan lo mujhe D1 se D10 poora block chahiye, to main beech me khada hoke bolunga "sab sun lo, D1 se D10 meri", ek parchi pe likh dunga aur sab counter wale usi parchi se padhenge.
 
 Jaise ek chhotu board leke khada ho gaya: "D1 se D10 book hai, ise koi book nahi karega".
-Technical me: chhotu ka board = ek booking id saari seat pe, counter = server · "teeno ek saath, beech me koi nahi" = ek transaction (all-or-nothing, UPDATE ... WHERE seat IN (...) AND FREE; ek bhi na mili to rollback, kisi pe parchi nahi), "ek parchi poore block ki" = ek booking id ke neeche saari seat.
+
+*Technical me:* chhotu ka board = ek booking id saari seat pe, counter = server · "teeno ek saath, beech me koi nahi" = ek transaction (all-or-nothing, UPDATE ... WHERE seat IN (...) AND FREE; ek bhi na mili to rollback, kisi pe parchi nahi), "ek parchi poore block ki" = ek booking id ke neeche saari seat.
 
 **Maan lo Arpan seat map khol ke 1 ghanta baitha raha, aate waqt poora hall khaali tha, is beech peeche se koi aaya aur D5 book karke le gaya:**
-Arpan: Isme koi design nahi toot raha: na LB ka dabba, na Redis, kuch nahi. Ye sabko Redis me daal ke live dikhana, iska koi matlab nahi. Seat tab tak hold, jab tak pay nahi hua; pay karte jao, seat lete jao.
+
+**Arpan:** Isme koi design nahi toot raha: na LB ka dabba, na Redis, kuch nahi. Ye sabko Redis me daal ke live dikhana, iska koi matlab nahi. Seat tab tak hold, jab tak pay nahi hua; pay karte jao, seat lete jao.
 
 Main 1 ghante khol ke baitha to kya poora hall waisa hi rahega? Seat book hoti rahengi. App back karke dobara aaunga to pata lagega 10 seat book ho gayi.
 
 Ya to "ye seat book ho chuki" dikha do, ya front end pe "seat map badal gaya, refresh karo" ka button. Ye user ki baat hai, hamari dikkat nahi; hamari dikkat tab jab pay na ho, ya 10 seat thi aur 5 hi dikh rahi.
-Technical me: purana seat map = sirf UI ("already booked" / refresh), design nahi badalta; asli roka = kadam 1 ka "dekhna + rokna ek query".
+
+*Technical me:* purana seat map = sirf UI ("already booked" / refresh), design nahi badalta; asli roka = kadam 1 ka "dekhna + rokna ek query".
+
+---
 
 **2. Arpan ne D5 pe parchi laga di, phir pay kiye bina phone rakh ke chai peene chala gaya, kabhi wapas nahi aaya. D5 pe hamesha ke liye Arpan ki parchi, koi aur le hi nahi sakta.**
-Arpan: Parchi ko thodi der ke liye wahin rehne de. Counter wala dekh raha: "ye payment kar raha, chal main 5 minute tak dekhta hoon. Aa gaya to theek, nahi to hata dunga yahan se." Usne 5 minute intezaar kiya, Arpan nahi aaya, to parchi phaad ke phenk di. Seat agle ke liye.
-Technical me: counter wala = hamara server · "5 minute tak dekhta hoon" = hold expiry (hold_until), "parchi phaad ke phenk di, seat agle ke liye" = hold hata ke seat wapas FREE.
+
+**Arpan:** Parchi ko thodi der ke liye wahin rehne de. Counter wala dekh raha: "ye payment kar raha, chal main 5 minute tak dekhta hoon. Aa gaya to theek, nahi to hata dunga yahan se." Usne 5 minute intezaar kiya, Arpan nahi aaya, to parchi phaad ke phenk di. Seat agle ke liye.
+
+*Technical me:* counter wala = hamara server · "5 minute tak dekhta hoon" = hold expiry (hold_until), "parchi phaad ke phenk di, seat agle ke liye" = hold hata ke seat wapas FREE.
 
 **Aur neeche (5 minute hi kyun):**
-Arpan: 5 minute isliye kyunki GPay se pay karne me itna waqt lagta; aur BMS sach me aisa karta, ek baar maine timer me pay nahi kiya to seat chali gayi.
-Technical me: hold ki umar = aam pay ka waqt; BMS countdown = hold_until.
+
+**Arpan:** 5 minute isliye kyunki GPay se pay karne me itna waqt lagta; aur BMS sach me aisa karta, ek baar maine timer me pay nahi kiya to seat chali gayi.
+
+*Technical me:* hold ki umar = aam pay ka waqt; BMS countdown = hold_until.
 
 **Maan lo pooche parchi ki umar Redis TTL me kyun nahi:**
-Arpan: Main yahan DB column zyada prefer karta hoon. Redis abhi is waqt system me lagana thoda early stage hai, kyunki ye DB column se bhi manage ho sakta. Redis lagaya to ek aur system maintain karna padega; kisi din Redis gira to un keys ka kya hoga, stampede / avalanche wali dikkat, replica bhi chahiye. DB column se abhi itni dikkat nahi.
-Technical me: hold_until DB column (ek hi sach, ek system), Redis = aur ek cheez sambhalni (failover, replica); zaroorat pe baad me.
+
+**Arpan:** Main yahan DB column zyada prefer karta hoon. Redis abhi is waqt system me lagana thoda early stage hai, kyunki ye DB column se bhi manage ho sakta. Redis lagaya to ek aur system maintain karna padega; kisi din Redis gira to un keys ka kya hoga, stampede / avalanche wali dikkat, replica bhi chahiye. DB column se abhi itni dikkat nahi.
+
+*Technical me:* hold_until DB column (ek hi sach, ek system), Redis = aur ek cheez sambhalni (failover, replica); zaroorat pe baad me.
+
+---
 
 **3. Parchi phaadne wala counter wala har minute ghoom ke purani parchiyan dekhta hai. Aaj wo chhutti pe. Arpan ki parchi ko 20 minute ho gaye, abhi bhi D5 pe lagi, aur naya aadmi D5 lena chahta hai.**
-Arpan: Sabse pehli baat, parchi uthane wala chhutti pe hai to uska ek chhota bhai rakh lo, wo kaam kar lega. Ya us din ke liye uska replacement laana padega. Ya phir hum us parchi pe hi umar laga dein ki wo apne aap wahan se gayab ho jaaye: parchi 5 minute tak yahan padi hai, 5 minute ke baad tu hat ja, parchi khatam.
-Technical me: "chhota bhai / replacement" = backup safai job, "parchi pe hi umar" = shart query me hi (seat FREE ho YA hold_until nikal chuka), phaadne wale ka intezaar nahi.
+
+**Arpan:** Sabse pehli baat, parchi uthane wala chhutti pe hai to uska ek chhota bhai rakh lo, wo kaam kar lega. Ya us din ke liye uska replacement laana padega. Ya phir hum us parchi pe hi umar laga dein ki wo apne aap wahan se gayab ho jaaye: parchi 5 minute tak yahan padi hai, 5 minute ke baad tu hat ja, parchi khatam.
+
+*Technical me:* "chhota bhai / replacement" = backup safai job, "parchi pe hi umar" = shart query me hi (seat FREE ho YA hold_until nikal chuka), phaadne wale ka intezaar nahi.
+
+---
 
 **4. Avengers ki advance booking subah 10 baje khuli. 10 lakh log ek saath app pe toot pade, seat sirf 50 hazaar. Servers dub gaye, jo asli me pay kar rahe the unke page bhi atke.**
-Arpan: Counter badha de, server badha de. Jo sirf dekhne aa raha uske liye ek alag diary, aur jo kuch hilane aa raha uske liye alag diary, primary-replica wali cheez. Aur thode-thode log andar jaao, zyada nahi.
+
+**Arpan:** Counter badha de, server badha de. Jo sirf dekhne aa raha uske liye ek alag diary, aur jo kuch hilane aa raha uske liye alag diary, primary-replica wali cheez. Aur thode-thode log andar jaao, zyada nahi.
 
 Sabse pehli baat, cinema ki capacity kitni hai, utne log andar. Maan lo mere hall me 1000 ki jagah aur saamne 5000 khade, to 1000 andar jaao, baaki 4000 ghar jaao.
 
 Aur wo line me lago: "le bhai, ye teri parchi, tu jaayega, phir agla number tera."
-Technical me: "counter / server badha de" = machine badhana, "dekhne wale ki alag diary" = read replica, "capacity jitne andar, baaki line me" = virtual queue (waiting room), "ye teri parchi, agla number tera" = token.
 
-Isi pe ek aur raasta (ek saath aane hi mat do, booking pehle se khol do) (Arpan): Hum bolte hain ek saath traffic aayega, par aajkal log smart ho gaye, ek saath traffic aane hi nahi dete.
+*Technical me:* "counter / server badha de" = machine badhana, "dekhne wale ki alag diary" = read replica, "capacity jitne andar, baaki line me" = virtual queue (waiting room), "ye teri parchi, agla number tera" = token.
+
+**Isi pe ek aur raasta (ek saath aane hi mat do, booking pehle se khol do) (Arpan):** Hum bolte hain ek saath traffic aayega, par aajkal log smart ho gaye, ek saath traffic aane hi nahi dete.
 
 Avengers Doomsday 17 December ko aa rahi hai, mahina bhar baaki hai, par uske ticket kal raat (17 November) hi khul gaye, taaki saare user ek saath na aayein, dheere-dheere apni-apni seat book kar lein.
 
 Rockstar ne GTA 6 me bhi yahi kiya: release (19 November) se 9 din pehle pre-download khol diya, taaki release ke din server download na jhel paaye aisa na ho.
 
 Interview me bol sakte: "Sir, aap ek saath bheed bol rahe ho, par hum mahina bhar pehle booking khol dete hain, to itna shor aata hi nahi."
-Technical me: "pehle se khol do, dheere-dheere aayein" = load ko waqt pe phailana (advance booking / pre-load), peak ko chapta karna; "ek saath bheed" ka ilaaj sirf jhelna nahi, bheed ko aane se pehle baant dena.
+
+*Technical me:* "pehle se khol do, dheere-dheere aayein" = load ko waqt pe phailana (advance booking / pre-load), peak ko chapta karna; "ek saath bheed" ka ilaaj sirf jhelna nahi, bheed ko aane se pehle baant dena.
 
 **Aur neeche (seat sirf dekhne wale bahut):**
-Arpan: Bahut log sirf seat dekhte hain, book nahi karte; unke liye DB pe jaane ka matlab nahi, seat Redis se dikhao. Seat book hui to Redis se hata do, peeche job map saaf karti rahe. Job band ho to bhi dikkat nahi, shart query me hai (hold_until <= now), job bas map saaf karti. Redis sirf dekhne ke liye, faisla hamesha SQL ka: Ravi ko Redis me seat khaali dikh gayi tab bhi kadam 3 wali query chalegi aur SQL bolega seat book ho chuki.
-Technical me: seat map Redis cache (book pe hatao + sync job), sach = SQL, faisla conditional UPDATE.
+
+**Arpan:** Bahut log sirf seat dekhte hain, book nahi karte; unke liye DB pe jaane ka matlab nahi, seat Redis se dikhao. Seat book hui to Redis se hata do, peeche job map saaf karti rahe. Job band ho to bhi dikkat nahi, shart query me hai (hold_until <= now), job bas map saaf karti. Redis sirf dekhne ke liye, faisla hamesha SQL ka: Ravi ko Redis me seat khaali dikh gayi tab bhi kadam 3 wali query chalegi aur SQL bolega seat book ho chuki.
+
+*Technical me:* seat map Redis cache (book pe hatao + sync job), sach = SQL, faisla conditional UPDATE.
+
+---
 
 **5. Line me Arpan ka number aaya, andar jaane ka token mila jo 10 minute chalega. Usne 8ve minute pe D5 chuni, to D5 pe 5 minute ki parchi lagi. 10ve minute pe token khatam, par parchi ke 3 minute baaki. Pay kar paayega? Kaunsi ghadi chalegi?**
-Arpan: Humne use token diya, wo andar aa gaya. Iska matlab wo authenticate ho chuka, ab koi dikkat nahi. Andar aa gaya, to haan bhai, seat ruk gayi iske liye. Payment nahi karega to use hata do. Use utne time me payment karna hai jo uske liye allot hua. Kar diya to theek, nahi to agla.
-Technical me: "token diya, andar aa gaya, authenticate ho chuka" = token sirf gate ka pass, "seat ruk gayi, allot hue time me payment" = pay ka faisla hold ki ghadi (hold_until) karti. Do alag ghadiyan: token = gate, hold = seat.
 
-Isi pe ek aur raasta (der se seat chuni to 4-5 min ka grace): Isme Arpan ki galti nahi. Koi har baar 9:59 pe seat chune to use 1 minute hi milega, ye galat baat. To andar aake seat chuni to thoda grace period de do, 4-5 minute, taaki pay kar le. 9ve minute pe chuni to 9 + 5 = 14 minute tak; usme pay ho gaya to theek, nahi to bahar.
-Technical me: "seat chuni to grace" = hold ki apni umar (hold_until), token khatam hone se nahi kat-ti.
+**Arpan:** Humne use token diya, wo andar aa gaya. Iska matlab wo authenticate ho chuka, ab koi dikkat nahi. Andar aa gaya, to haan bhai, seat ruk gayi iske liye. Payment nahi karega to use hata do. Use utne time me payment karna hai jo uske liye allot hua. Kar diya to theek, nahi to agla.
+
+*Technical me:* "token diya, andar aa gaya, authenticate ho chuka" = token sirf gate ka pass, "seat ruk gayi, allot hue time me payment" = pay ka faisla hold ki ghadi (hold_until) karti. Do alag ghadiyan: token = gate, hold = seat.
+
+**Isi pe ek aur raasta (der se seat chuni to 4-5 min ka grace):** Isme Arpan ki galti nahi. Koi har baar 9:59 pe seat chune to use 1 minute hi milega, ye galat baat. To andar aake seat chuni to thoda grace period de do, 4-5 minute, taaki pay kar le. 9ve minute pe chuni to 9 + 5 = 14 minute tak; usme pay ho gaya to theek, nahi to bahar.
+
+*Technical me:* "seat chuni to grace" = hold ki apni umar (hold_until), token khatam hone se nahi kat-ti.
+
+---
 
 **6. Arpan ne 4:30 pe Pay dabaya, PSP dheema. 5:00 pe parchi ki umar khatam, 5:10 pe Priya D5 maang rahi, PSP ka jawab 5:20 pe (Pay ke 50 second baad, 6b ki 30-55 sec ghadi ke andar) "paisa kat gaya".**
 
 **6a. Seat kiski?**
-Arpan: Time ke andar Pay dabaya to seat Arpan ki, Priya ko nahi; humne vaada kar diya, warna consumer court ka case. PSP dheema hai to galti Arpan ki nahi, hamari taraf ki hai. To parchi pe status likh lo: pay chal raha hai, PSP ka jawab baaki. Jab tak ye likha hai, umar badha do, seat kisi aur ko dikhe hi nahi. Ya query me hi daal do.
-Technical me: parchi = seat ka hold, ghadi = client timeout · "status likh lo" = HELD -> PAYMENT_PENDING (Pay dabate hi), "umar badha do" = is status pe hold expire nahi hota (query aur safai job isko nahi chhoote).
+
+**Arpan:** Time ke andar Pay dabaya to seat Arpan ki, Priya ko nahi; humne vaada kar diya, warna consumer court ka case. PSP dheema hai to galti Arpan ki nahi, hamari taraf ki hai. To parchi pe status likh lo: pay chal raha hai, PSP ka jawab baaki. Jab tak ye likha hai, umar badha do, seat kisi aur ko dikhe hi nahi. Ya query me hi daal do.
+
+*Technical me:* parchi = seat ka hold, ghadi = client timeout · "status likh lo" = HELD -> PAYMENT_PENDING (Pay dabate hi), "umar badha do" = is status pe hold expire nahi hota (query aur safai job isko nahi chhoote).
 
 **Maan lo network glitch, Pay do baar daba:**
-Arpan: Key client hi banayega, server nahi, kyunki request client ki taraf se aa rahi; jaise GPay ke server key banake saath bhejte, hum us key ke hisaab se aage process karte. Wahi key dobara aaye to "process ho rahi" ya "ho chuki" lauta do.
-Technical me: client idempotency key (app banaye), server pe key dekh ke purana jawab.
+
+**Arpan:** Key client hi banayega, server nahi, kyunki request client ki taraf se aa rahi; jaise GPay ke server key banake saath bhejte, hum us key ke hisaab se aage process karte. Wahi key dobara aaye to "process ho rahi" ya "ho chuki" lauta do.
+
+*Technical me:* client idempotency key (app banaye), server pe key dekh ke purana jawab.
+
+---
 
 **6b. Maan lo chhotu (PSP) jawab hi nahi de raha, 1-2 baar jagaya phir bhi chup. User ko kab tak rokun?**
-Arpan: PSP do hi haal me hota: haan bol diya to BOOKED, theek. Dheema hai to 1-2 baar ping karo "bhai kya chal raha". Phir bhi chup to booking FAILED dikha do, kyunki peeche line lagi hai, aur bhi log pay kar rahe. Jaise mere paas do ladke: ek ko baar-baar bol raha "ja pay kar", wo mana kar raha, to "chhod, doosra ladka tu ja". Ab jo bhi naya pay karne aaye, wo doosre PSP pe jaayega, ye wala dheema hai.
-Arpan: Seat mat chhodo. User to pay kar raha, dikkat Razorpay / bank ki taraf se, seat chhodi to galti hamari.
+
+**Arpan:** PSP do hi haal me hota: haan bol diya to BOOKED, theek. Dheema hai to 1-2 baar ping karo "bhai kya chal raha". Phir bhi chup to booking FAILED dikha do, kyunki peeche line lagi hai, aur bhi log pay kar rahe. Jaise mere paas do ladke: ek ko baar-baar bol raha "ja pay kar", wo mana kar raha, to "chhod, doosra ladka tu ja". Ab jo bhi naya pay karne aaye, wo doosre PSP pe jaayega, ye wala dheema hai.
+
+**Arpan:** Seat mat chhodo. User to pay kar raha, dikkat Razorpay / bank ki taraf se, seat chhodi to galti hamari.
 
 Gola sirf 30-55 second (peeche picture ki line lagi, log 1 minute bhi nahi rukte, back daba dete), phir payment FAILED dikhao: "paisa kata hoga to wapas aa jaayega, dobara pay karo".
 
 Seat parchi ki bachi umar tak Arpan ki HELD; dobara pay doosre PSP pe (Razorpay jaisi doosri service). Dobara pay karna hai ya nahi, wo popup se poochho, neeche "ghadi pakki".
 
 Aur agar dheeme wale ne peeche se paisa kaat liya tha? User seedha PSP se baat nahi karta, beech me hum baithe hain, jaise bank me seedha manager ke paas nahi ja sakte. Har payment ki id hamare paas hai. User ko bol do "paisa kata ho to wapas aa jaayega, dobara pay kar le", aur baad me kata nikla to rollback, paisa wapas. IRCTC, GPay, Paytm sab roz yahi karte; isiliye wo likhte hain "agar paise kate to", kyunki unhe bhi pakka nahi pata.
-Arpan (ghadi pakki): Ghadi lagbhag 1 minute: 30-55 second + 5 second ka buffer, kyunki Razorpay ki taraf hum baithe nahi reh sakte, peeche aur log hain, aur user khud pareshan hota "seat hui ya nahi, paisa kata ya nahi".
+
+**Arpan (ghadi pakki):** Ghadi lagbhag 1 minute: 30-55 second + 5 second ka buffer, kyunki Razorpay ki taraf hum baithe nahi reh sakte, peeche aur log hain, aur user khud pareshan hota "seat hui ya nahi, paisa kata ya nahi".
 
 Gole ke beech UI pe likho "tumhara payment process ho raha hai, bank se jawab aate hi batayenge"; peeche chhotu Razorpay se poochhta rahe. 1 minute ke andar paisa kat gaya to seat BOOKED, khatam kahani, refund nahi.
 
@@ -182,17 +232,24 @@ Seat ki umar (TTL) ab nahi badhate, badhane ka matlab nahi; seedha user se pooch
 (Bank ka server hi down ho to wo hamare HLD ke bahar.) DB me likho: is payment ki booking fail, paisa kata ho to refund.
 
 Razorpay ko bhej do "iska paisa kata ho to lautao, nahi to kuch nahi"; Razorpay bank se poochh ke lautata aur hume bata deta "process kar diya". 1 minute ke baad aaya "paisa kat gaya" = refund.
-Technical me: parchi = seat ka hold, chhotu = status poll job · ghadi = client timeout ~60 sec (30-55 + buffer), "process ho raha" = PAYMENT_PENDING UI message + status poll, 1 minute ke andar SUCCESS = BOOKED (refund nahi), 1 minute ke baad = payment attempt FAILED + booking HELD + UI popup "dobara pay?" (Haan = PSP-2 ka QR, Naa = turant EXPIRED, hold_until nahi badhaya), der se aaya SUCCESS = REFUND_PENDING + refund API (Razorpay bank se poochh ke lautaye), dobara pay = PSP-2.
+
+*Technical me:* parchi = seat ka hold, chhotu = status poll job · ghadi = client timeout ~60 sec (30-55 + buffer), "process ho raha" = PAYMENT_PENDING UI message + status poll, 1 minute ke andar SUCCESS = BOOKED (refund nahi), 1 minute ke baad = payment attempt FAILED + booking HELD + UI popup "dobara pay?" (Haan = PSP-2 ka QR, Naa = turant EXPIRED, hold_until nahi badhaya), der se aaya SUCCESS = REFUND_PENDING + refund API (Razorpay bank se poochh ke lautaye), dobara pay = PSP-2.
 
 Hum perfect system ke peeche nahi bhaag rahe. PSP hamare bas me nahi, wo dheema hai to na uski galti na hamari. Perfect consistency maango to ticket bechoge kaise; dikkat aayegi, bas user se saaf baat karo aur paisa wapas karo.
-Technical me: "1-2 baar ping" = status check retry (timeout), "payment FAILED dikha do, seat mat chhodo" = payment attempt FAILED, booking wapas HELD (hold_until tak, dobara pay), umar khatam to EXPIRED (paisa kata nikla to refund), "doosra ladka / naye log doosre PSP pe" = circuit breaker -> PSP-2, "id hamare paas" = payment id (idempotency key), "baad me kata nikla to wapas" = reconciliation job + refund.
+
+*Technical me:* "1-2 baar ping" = status check retry (timeout), "payment FAILED dikha do, seat mat chhodo" = payment attempt FAILED, booking wapas HELD (hold_until tak, dobara pay), umar khatam to EXPIRED (paisa kata nikla to refund), "doosra ladka / naye log doosre PSP pe" = circuit breaker -> PSP-2, "id hamare paas" = payment id (idempotency key), "baad me kata nikla to wapas" = reconciliation job + refund.
 
 **Aur neeche (doosre PSP pe seedha kyun nahi):**
-Arpan: Doosre PSP pe bhejne me paisa do baar kat sakta, use pata nahi pehla pending hai; isliye pehla FAILED likho, baad me kata to refund.
-Technical me: failover me double charge ka khatra -> FAILED + der se kata to refund.
+
+**Arpan:** Doosre PSP pe bhejne me paisa do baar kat sakta, use pata nahi pehla pending hai; isliye pehla FAILED likho, baad me kata to refund.
+
+*Technical me:* failover me double charge ka khatra -> FAILED + der se kata to refund.
+
+---
 
 **6c. 6b wala gola ghoom hi raha tha, popup aane se pehle hi Arpan ne thak ke back daba diya, app band. Thodi der baad Razorpay ne paisa kaat liya. Arpan ko lag raha: paisa gaya, seat bhi gayi. Ab?** (Myntra wala hi jawab; BookMyShow ka bhi apna PSP nahi, Razorpay hi hai)
-Arpan: Razorpay kitni der lega, wo hamare haath me nahi, uska design hai. User ko zyada der nahi rok sakte, itne me to Doomsday ka poora hall book ho jaayega.
+
+**Arpan:** Razorpay kitni der lega, wo hamare haath me nahi, uska design hai. User ko zyada der nahi rok sakte, itne me to Doomsday ka poora hall book ho jaayega.
 
 To 30 se 55 second gola ghumao, uske baad saaf bol do: "payment abhi ho nahi pa raha, paisa kata hoga to apne aap wapas aa jaayega, doosre tareeke se pay kar lo".
 
@@ -209,18 +266,22 @@ Baad me pata chala paisa kata tha, to Razorpay ko bolo "is user ka paisa lautao"
 Bank se poochhne ka haq Razorpay ka hai, BookMyShow ka nahi; bank hamare server ko jawab hi nahi dega. Paisa Razorpay ne kaata, to lautayega bhi wahi; hum apni taraf DB me likh ke rakhte hain.
 
 Badi film pe 3-4 company (Razorpay jaisi doosri service) line me rakho.
-Technical me: "30-55 sec gola" = hamara client timeout, "pehla DB me FAILED" = payment attempt FAILED, booking HELD rehti (payment ka sach event / poll se, BMS 6f), "onboard pe SLA" = PSP ka uptime SLA + incident response (latency ka nahi), "doosra pay doosre PSP pe" = PSP failover (backup PSP), "hum khud poochte" = status poll (fetch payment API), "chhota event" = webhook, "mil gaya" = ack (2xx), "baad me kata nikla to lautao" = REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe.
-Arpan: 30-55 sec hamare liye hai: itni der peeche chhotu Razorpay se poochhta rahe, phir bhi jawab nahi to payment FAILED maano.
+
+*Technical me:* "30-55 sec gola" = hamara client timeout, "pehla DB me FAILED" = payment attempt FAILED, booking HELD rehti (payment ka sach event / poll se, BMS 6f), "onboard pe SLA" = PSP ka uptime SLA + incident response (latency ka nahi), "doosra pay doosre PSP pe" = PSP failover (backup PSP), "hum khud poochte" = status poll (fetch payment API), "chhota event" = webhook, "mil gaya" = ack (2xx), "baad me kata nikla to lautao" = REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe.
+
+**Arpan:** 30-55 sec hamare liye hai: itni der peeche chhotu Razorpay se poochhta rahe, phir bhi jawab nahi to payment FAILED maano.
 
 User ko zyada nahi latka sakte; Razorpay ne 5 minute baad event bheja to 5 minute khade thodi rahenge. Aise der se katna bahut kam hota hai, aam taur pe 1 minute ke andar jawab aa jaata hai.
 
 Baad me paisa kata to Razorpay event bhejega; table me alag column "kitni der baad kata" (jaise Uber me).
 
 Isse saboot bhi: roz ka pattern dikhega (10 me se 5 user ke har baar 2 minute baad kate), Razorpay ko dikha sakte "aise kaise chalega, theek kar aur inka paisa wapas de".
-Technical me: "chhotu poochhe" = status polling, "Razorpay khud bataye" = webhook (late ho to payment.authorized + late_authorized: true); Razorpay bank se 3 din tak poochhta rehta, capture na karo to khud auto-refund (Razorpay docs); "kitni der baad kata" = late debit column (reconciliation + PSP latency ka saboot).
 
-Aur neeche (UPI app ka apna gola, user back daba de to) (Arpan): Maan lo main GPay se pay kar raha, server dheema chal raha. GPay apna gola ghumata rahega; wo hamare server pe nahi hai, to 1 minute ho ya 10 minute, ye sawaal hi paida nahi hota. User ne beech me back daba diya aur thodi der baad paise kate hi nahi, to koi dikkat nahi, user khush.
-Arpan (do haal): Yahan do cheezein hain. Pehla: user app me ruka raha.
+*Technical me:* "chhotu poochhe" = status polling, "Razorpay khud bataye" = webhook (late ho to payment.authorized + late_authorized: true); Razorpay bank se 3 din tak poochhta rehta, capture na karo to khud auto-refund (Razorpay docs); "kitni der baad kata" = late debit column (reconciliation + PSP latency ka saboot).
+
+**Aur neeche (UPI app ka apna gola, user back daba de to) (Arpan):** Maan lo main GPay se pay kar raha, server dheema chal raha. GPay apna gola ghumata rahega; wo hamare server pe nahi hai, to 1 minute ho ya 10 minute, ye sawaal hi paida nahi hota. User ne beech me back daba diya aur thodi der baad paise kate hi nahi, to koi dikkat nahi, user khush.
+
+**Arpan (do haal):** Yahan do cheezein hain. Pehla: user app me ruka raha.
 
 Maan lo maine subah seat book ki aur 10 second me jawab aa gaya ki booking fail ho gayi, to wahin popup dikha do: "tumhari seat hai, booking fail hui, paise kate to wapas aa jaayenge, dobara pay kar lo".
 
@@ -229,33 +290,44 @@ Dobara pay hoga to doosre PSP pe jaayega, ye PSP dheema hai. Doosra: user paresh
 Hum 1.5 minute tak rokenge, peeche chhotu dekhta rahega; kata to seat book. 1.5 minute ke baad khatam, kyunki peeche bheed lag rahi hai, ek user ke peeche pareshan nahi ho sakte, aur chhotu ka bhi time waste nahi kar sakte, chhotu 10 minute busy thodi rahega.
 
 Bank ki dikkat hai, wo hamare haath me nahi. DB me booking INITIATED thi, FAILED likh do.
-Arpan (popup ki umar): Popup to hum dikhayenge hi, kyunki backend ko pata hi nahi ki user ne app band kiya ya nahi. 1.5-2 minute baad popup: "tumhari booking fail ho gayi, paise kate to wapas aa jaayenge, koi dikkat nahi; tumhari seat abhi bhi hamare paas hai, dobara pay kar lo".
+
+**Arpan (popup ki umar):** Popup to hum dikhayenge hi, kyunki backend ko pata hi nahi ki user ne app band kiya ya nahi. 1.5-2 minute baad popup: "tumhari booking fail ho gayi, paise kate to wapas aa jaayenge, koi dikkat nahi; tumhari seat abhi bhi hamare paas hai, dobara pay kar lo".
 
 Par us popup ki bhi ek umar hogi, aisa nahi ki wo hamesha screen pe rahe. Aajkal popup me upar chhota sa timer chalta hai, train booking me dekha hoga, 1, 2 ya 5 minute ka. Utni der seat uski (TTL tak).
 
 Us beech pay kar diya to wahi normal booking chalegi: Razorpay se jawab aaya ki paise kat gaye to seat book, nahi to nahi. Timer khatam aur pay nahi kiya (ya app band tha) to seat chhodo, doosre log le lenge.
-Arpan (der se kata): Maan lo paise 2 minute pe kate, ya 5-10 minute baad, ya 1 ghante baad. Tab tak user app me hai hi nahi. DB me likh lo ki iske paise kate, Razorpay ko bolo "kata ho to refund kar dena, nahi kata to koi baat nahi". Aur jab user agli baar app khole, tab use dikha do: "booking fail ho gayi, tumhare koi paise kate to wapas aa jaayenge; nahi kate to badhiya".
-Technical me: "GPay ka gola hamare server pe nahi" = UPI app (GPay) ka apna screen, hamara client timeout wahan nahi chalta; "app me ruka to wahin popup, dobara pay doosre PSP pe" = 6b wala popup + PSP failover; "1.5 minute rokenge, chhotu dekhta" = status poll / webhook ka time; "popup to dikhayenge hi, backend ko pata nahi app band hai" = server user ki screen nahi jaanta, isliye hamesha popup bhejo; "popup ka timer, utni der seat uski" = popup / hold ki umar (TTL, train booking jaisa countdown), timer khatam = hold release; "booking fail" = INITIATED -> FAILED; "der se kata" = late debit -> REFUND_PENDING + refund API (Razorpay lautaye); "agli baar app khole tab batao" = booking status jab user wapas aaye.
+
+**Arpan (der se kata):** Maan lo paise 2 minute pe kate, ya 5-10 minute baad, ya 1 ghante baad. Tab tak user app me hai hi nahi. DB me likh lo ki iske paise kate, Razorpay ko bolo "kata ho to refund kar dena, nahi kata to koi baat nahi". Aur jab user agli baar app khole, tab use dikha do: "booking fail ho gayi, tumhare koi paise kate to wapas aa jaayenge; nahi kate to badhiya".
+
+*Technical me:* "GPay ka gola hamare server pe nahi" = UPI app (GPay) ka apna screen, hamara client timeout wahan nahi chalta; "app me ruka to wahin popup, dobara pay doosre PSP pe" = 6b wala popup + PSP failover; "1.5 minute rokenge, chhotu dekhta" = status poll / webhook ka time; "popup to dikhayenge hi, backend ko pata nahi app band hai" = server user ki screen nahi jaanta, isliye hamesha popup bhejo; "popup ka timer, utni der seat uski" = popup / hold ki umar (TTL, train booking jaisa countdown), timer khatam = hold release; "booking fail" = INITIATED -> FAILED; "der se kata" = late debit -> REFUND_PENDING + refund API (Razorpay lautaye); "agli baar app khole tab batao" = booking status jab user wapas aaye.
+
+---
 
 **6d. Razorpay ka event aaya "paisa kat gaya", parchi pe SUCCESS likh diya. Ticket banane wale ko bolne hi wale the ki server gir gaya. Restart ke baad parchi SUCCESS hai, to koi chhotu use nahi uthata (wo sirf PENDING dekhta). Paisa kata, ticket kabhi nahi bana.**
-Arpan: SUCCESS likhna aur ticket book karna, ye do kaam alag-alag nahi, ek hi jagah hon.
+
+**Arpan:** SUCCESS likhna aur ticket book karna, ye do kaam alag-alag nahi, ek hi jagah hon.
 
 Ya to dono ek saath karo, ya SUCCESS ke saath hi ek parchi pe likh do "Arpan ne paisa de diya, D5 book karna hai", kyunki SUCCESS likhne ke baad bhi server gir sakta hai.
 
 Jaise mujhe D5 book karna tha aur beech me koi kaam yaad aa gaya, main bhool gaya; doosre ko D5 ka kuch pata hi nahi, wo apna agla kaam dekh lega.
 
 Isliye parchi pe likh do: koi bhi aaye, kahin se bhi aaye, parchi dekh le aur D5 book kar de.
-Technical me: "SUCCESS aur parchi ek saath" = transactional outbox (hamare DB ki table; payment SUCCESS + "ticket banao" ek hi DB transaction me), "koi bhi aaye parchi dekh ke book kare" = relay (wo chhotu jo outbox ki row padh ke ticket service ko bheje); server gire to restart pe parchi wahin padi.
 
-Isi pe ek aur raasta (do service, beech ka dabba, ticket PENDING): Payment aur ticket do alag service hain, to dono pe ek transaction nahi lag sakta. Beech me ek dabba (DB) rakh lo jo ek service likhe, doosri padhe.
+*Technical me:* "SUCCESS aur parchi ek saath" = transactional outbox (hamare DB ki table; payment SUCCESS + "ticket banao" ek hi DB transaction me), "koi bhi aaye parchi dekh ke book kare" = relay (wo chhotu jo outbox ki row padh ke ticket service ko bheje); server gire to restart pe parchi wahin padi.
+
+**Isi pe ek aur raasta (do service, beech ka dabba, ticket PENDING):** Payment aur ticket do alag service hain, to dono pe ek transaction nahi lag sakta. Beech me ek dabba (DB) rakh lo jo ek service likhe, doosri padhe.
 
 DB me likh do "Arpan ka payment poora, ticket abhi PENDING, bani nahi". Server gira to koi baat nahi, jaankari kahin store hai. Ticket service aayi, dekha "Arpan ka ticket pending hai", bana diya, phir dabbe se nikaal ke phenk do.
 
 Ticket service khud bhi beech me giri to dobara aake wahi dabba padhegi: "jiske pending hain sab aa jaao". Gire usse pehle store kar lo, kahin bhi.
-Technical me: "do service, ek transaction nahi" = distributed, "beech ka dabba" = DB, "ticket PENDING wali entry" = outbox / pending table ki row, "ticket service pending padh ke banaye" = consumer poll + retry, "kaam ke baad dabbe se hatao" = outbox row processed.
+
+*Technical me:* "do service, ek transaction nahi" = distributed, "beech ka dabba" = DB, "ticket PENDING wali entry" = outbox / pending table ki row, "ticket service pending padh ke banaye" = consumer poll + retry, "kaam ke baad dabbe se hatao" = outbox row processed.
+
+---
 
 **6e. Arpan ne parchi ki umar ke andar Pay dabaya, bank ne paisa kaatne me 12 minute lagaye. 6a se Pay dabate hi parchi ki umar ruk gayi thi, par 6c wali 30-55 second ki ghadi nikal gayi, payment FAILED dikha, seat bachi umar tak Arpan ki HELD rahi; Arpan ne popup pe Naa dabaya, seat turant khuli, D5 Priya ko mili. 12ve minute pe event: "Arpan ka paisa kat gaya". Arpan ki booking kya dikhegi, paise ka kya?**
-Arpan: Razorpay kya karta, kitni der leta, wo hamara design nahi.
+
+**Arpan:** Razorpay kya karta, kitni der leta, wo hamara design nahi.
 
 Hamare haath me itna: Pay dabate hi ek chhotu rakh lo jo Razorpay se har kuch second poochta rahe (3, 5, 10 second, ek-dum nahi), jawab aaye to bata de; main apne aur kaam me lag jaata hoon.
 
@@ -264,11 +336,14 @@ Window khatam to seat khul gayi, Priya ne doosre PSP se book kar li, ye theek ha
 Arpan ko UI pe dikha do "booking fail hui, paisa 2-3 din me wapas aa jaayega". Raat ko sync job chalegi, jiska refund baaki hai sabka karegi: hamare haath me ho to hum, warna Razorpay ko bolo "iska lautao".
 
 Razorpay bank se poochega, wo uska design hai; bank BookMyShow ke server se baat nahi karta, Razorpay se karta hai. Yahi jawab har jagah jahan PSP beech me hai.
-Technical me: "window khatam" = 30-55 sec client timeout pe payment FAILED, phir popup pe Naa to seat turant khuli (EXPIRED), "chhotu poochta rahe" = status poll job, "paisa kata, seat nahi" = payment SUCCESS + booking FAILED (do alag haalat), "refund dena hai" = REFUND_PENDING, "raat ki sync job" = refund / reconciliation job, "Razorpay ko bolo lautao" = refund API.
 
+*Technical me:* "window khatam" = 30-55 sec client timeout pe payment FAILED, phir popup pe Naa to seat turant khuli (EXPIRED), "chhotu poochta rahe" = status poll job, "paisa kata, seat nahi" = payment SUCCESS + booking FAILED (do alag haalat), "refund dena hai" = REFUND_PENDING, "raat ki sync job" = refund / reconciliation job, "Razorpay ko bolo lautao" = refund API.
+
+---
 
 **6f. Razorpay ka event aaya SUCCESS, parchi pe SUCCESS likha. 2 second baad chhotu ka purana jawab (usne SUCCESS se pehle poocha tha, jawab "PENDING" raste me atka tha) pahuncha, aur chhotu ne parchi pe wapas PENDING likh diya. Ticket atak gaya.**
-Arpan: Sach ek hi jagah ho, ek mote register me, DB me, jahan koi jawab badal na de. Razorpay ka event aaya to wo sach hai, DB me likh do "Arpan ka paisa kat gaya".
+
+**Arpan:** Sach ek hi jagah ho, ek mote register me, DB me, jahan koi jawab badal na de. Razorpay ka event aaya to wo sach hai, DB me likh do "Arpan ka paisa kat gaya".
 
 Chhotu kuch bhi likhne se pehle DB me dekhe: wahan SUCCESS hai to apna purana PENDING phenk de.
 
@@ -276,7 +351,7 @@ Aur agar parchi pe galat reh gaya, to har 5-10 minute ek sync job chale: DB me k
 
 API dheemi ho sakti hai, purana jawab der se aa sakta hai, isliye hamesha DB dekh ke likho.
 
-Isi pe ek aur raasta (PENDING aur SUCCESS kram se, line by line): PENDING aur SUCCESS kram se, line by line jaane chahiye, warna dikkat.
+**Isi pe ek aur raasta (PENDING aur SUCCESS kram se, line by line):** PENDING aur SUCCESS kram se, line by line jaane chahiye, warna dikkat.
 
 Maan le kisi ne 4 seat book ki, aur jo main banda hai jiske paas ticket hai wo aaya nahi, kya main baaki 3 ko jaane dunga? Nahi. Waise hi pehle PENDING rakhunga, phir SUCCESS.
 
@@ -286,19 +361,26 @@ PENDING pehle pahunch gaya to badiya; SUCCESS pehle aa gaya to server dekhega "y
 
 Saare anklon (server) ko bol do: sab number se aayega, 2 pehle aaya to 1 ka intezaar. Chat me hum phone pe sort kar dete, par yahan seat aur paisa hai, grahak ko dikkat ho jaayegi.
 Maan lo PENDING (1) raste me kho gaya, kabhi aaya hi nahi: ankal ji bolenge "SUCCESS ki parchi aa gayi, PENDING ki nahi". 1-2 second dekhenge, nahi aayi to ek chhotu ko Razorpay ke paas bhejo: "paisa kata ya nahi?" Kata hai to ankal ji iska sab kar do, raaste me koi server dheema hoga isliye wo aaya nahi. Ya PENDING aur SUCCESS ko ek hi operation me rakh do: ya dono hon ya koi nahi. Dono jawab valid.
-Technical me: parchi = DB me status, mota register = DB (sach) · "khabar pe number, 2 ruke jab tak 1" = sequence number + ordering (out-of-order hold), "1 kho gaya to chhotu Razorpay se pooche" = timeout ke baad status poll (fetch payment API), "ek operation" = dono status ek saath (atomic).
-Technical me: "ek mote register me sach" = source of truth (DB), "likhne se pehle DB dekho, SUCCESS ke upar PENDING nahi" = conditional update (sirf tab likho jab abhi PENDING ho) = state machine, haalat sirf aage jaati, "DB se parchi theek, ulta nahi" = reconciliation / sync job.
+
+*Technical me:* parchi = DB me status, mota register = DB (sach) · "khabar pe number, 2 ruke jab tak 1" = sequence number + ordering (out-of-order hold), "1 kho gaya to chhotu Razorpay se pooche" = timeout ke baad status poll (fetch payment API), "ek operation" = dono status ek saath (atomic).
+
+*Technical me:* "ek mote register me sach" = source of truth (DB), "likhne se pehle DB dekho, SUCCESS ke upar PENDING nahi" = conditional update (sirf tab likho jab abhi PENDING ho) = state machine, haalat sirf aage jaati, "DB se parchi theek, ulta nahi" = reconciliation / sync job.
+
+---
 
 **6g. Raat ki job ne Razorpay ko bola "Arpan ka 500 lautao", Razorpay bola "refund shuru". Job ne DB me likh diya "refund ho gaya". 5 din baad Arpan: "paisa nahi aaya". Refund Razorpay ki taraf beech me fail ho gaya tha.**
-Arpan: "Refund shuru" ka matlab "ho gaya" nahi. Jab tak Razorpay se pakka jawab na aaye ki refund ho gaya, DB me REFUND_PENDING hi likho.
+
+**Arpan:** "Refund shuru" ka matlab "ho gaya" nahi. Jab tak Razorpay se pakka jawab na aaye ki refund ho gaya, DB me REFUND_PENDING hi likho.
 
 Galat jawab zindagi me kabhi mat likho, paise ke maamle me inconsistency nahi; kal Arpan consumer court gaya aur hamare DB me "refund ho gaya" likha hai jabki bank me paisa nahi, to ungli hum pe.
 
 Ek job lagao: 5 din se purane jinka refund abhi tak pending hai, unhe nikaalo aur Razorpay se poochho "inka kya hua", unke support se bhi. Dabaav nahi daal sakte, par poochhna hamara kaam hai. Pakka jawab aaye tabhi DB me REFUNDED.
-Technical me: "pakka jawab tak REFUND_PENDING" = refund state (REFUND_PENDING -> REFUNDED / REFUND_FAILED, sirf refund.processed / refund.failed event pe), "5 din se purane pending, Razorpay se poochho" = stuck refund job (reconciliation), "galat jawab mat likho" = source of truth.
 
-Aur neeche (refund ke do event: shuru, phir poora): Razorpay do (ya jitne uske niyam) event bhejega. Pehla "refund shuru" aaya to DB me REFUND INITIATED likho. Usi din ya 1-2 din baad "refund poora" aaye tabhi REFUNDED. Jaise main kisi ladke ko paise dekar bhejoon, wo aake bole "pahuncha diye", to kya main uske bolne se maan lunga? Saamne wale ko phone karke poochhunga "sach me mile?".
-Technical me: "shuru" = refund.created (REFUND_PENDING / INITIATED), "poora" = refund.processed (REFUNDED), "ladke ki baat nahi, saamne wale se poochho" = sirf pakke event pe final state.
+*Technical me:* "pakka jawab tak REFUND_PENDING" = refund state (REFUND_PENDING -> REFUNDED / REFUND_FAILED, sirf refund.processed / refund.failed event pe), "5 din se purane pending, Razorpay se poochho" = stuck refund job (reconciliation), "galat jawab mat likho" = source of truth.
+
+**Aur neeche (refund ke do event: shuru, phir poora):** Razorpay do (ya jitne uske niyam) event bhejega. Pehla "refund shuru" aaya to DB me REFUND INITIATED likho. Usi din ya 1-2 din baad "refund poora" aaye tabhi REFUNDED. Jaise main kisi ladke ko paise dekar bhejoon, wo aake bole "pahuncha diye", to kya main uske bolne se maan lunga? Saamne wale ko phone karke poochhunga "sach me mile?".
+
+*Technical me:* "shuru" = refund.created (REFUND_PENDING / INITIATED), "poora" = refund.processed (REFUNDED), "ladke ki baat nahi, saamne wale se poochho" = sirf pakke event pe final state.
 
 
 &nbsp;
