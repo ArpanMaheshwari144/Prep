@@ -66,7 +66,7 @@ line ke saath kadam number.
 FR      1  "Start" dabao to 100 logon ke match me jodo, 4-4 (ya 2-3) ke squad   -> kadam 1
         2  match me aas-paas ke log, goli, gaadi, awaaz dikhe / sunai de        -> kadam 2
         3  goli lagi ya nahi; sar pe lagi to headshot, kahin bhi lagi to dead   -> kadam 3
-        4  match khatam: kills, damage, rank points save                        -> kadam 5
+        4  match khatam: kills + aakhir tak bachi team (winner) save             -> kadam 5
 
 NFR     1  ping kam (India wala India ke server pe)                             -> kadam 1
         2  button dabate hi player chale, kichad jaisa na lage                  -> kadam 2b
@@ -80,7 +80,7 @@ Numbers raat 9 baje lakhon log · ek match 100 log, 8 km x 8 km
 ```
 
 Trade-off jo bolne hain: door ki khabar nahi aati (par door ka dikhna hi nahi chahiye) · server har goli check karta
-(server pe kaam zyada, par hacker ki nahi chalti) · rank points thodi der se dikhte (DB bachane ke liye).
+(server pe kaam zyada, par hacker ki nahi chalti) · match ka hisaab thodi der se dikhta (DB bachane ke liye).
 
 **Isi pe ek aur raasta (round me: FR / NFR, numbers, dhaancha):**
 ```
@@ -332,8 +332,8 @@ review + ban.
 
 ## 5. Chicken dinner ke baad DB ghut gaya (parchi, line, Cassandra)
 
-"Winner winner chicken dinner." Raat 10 baje hazaron match lagbhag ek saath khatam, lakhon players ke kills, damage,
-rank points ek pal me DB pe. DB ghut gaya, Arpan ki screen pe "Rank points updating..." 2 minute se. Har cheez turant
+"Winner winner chicken dinner." Raat 10 baje hazaron match lagbhag ek saath khatam, lakhon players ke kills aur
+winner ek pal me DB pe. DB ghut gaya, Arpan ki screen pe "Result updating..." 2 minute se. Har cheez turant
 DB pe kyun? Docs wala scene: har click pe DB pe mat jao. Match ke beech parchi pe likho "Arpan ne itna kiya, Claude ne
 itna" (Claude bechara mar gaya), match khatam ho to ek saath. Lakh match = lakh parchi, parchi kho jaaye to uski copy
 rakho; phir parchiyan le jao aur dheere-dheere DB me bharo, DB pe achanak bojh nahi. DB aisa jo likhai dhadadhad pel
@@ -352,6 +352,8 @@ likhai dhadadhad = write-heavy DB (Cassandra).
   Kafka me batch, line lagwa ke Cassandra.
 - Match khatam pe har kisi ke stats nahi chahiye, damage / rank points kuch nahi; sirf kills (Arpan ne 4, isne 8, usne
   9) aur aakhir tak kaunsi team bachi, wahi winner.
+- Damage ka matlab nahi, heal lagake aadmi theek ho jaata. Rank = world leaderboard wali, bahut saare match khel ke
+  bani; har match me hum kills hi dekhte, aur aakhir me jo team bachi wo jeeti.
 - Coordinate sirf pattern ke liye, taaki hacker dikhe aur game sudhaar sakein.
 **Asli naam:** "parchi -> line -> Cassandra" = Redis + Kafka batch writes, "kai din ka pattern dekh ke hacker" =
 offline cheat detection (poora raasta log, baad me analytics).

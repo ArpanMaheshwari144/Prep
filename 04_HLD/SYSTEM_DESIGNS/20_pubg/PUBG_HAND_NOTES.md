@@ -44,7 +44,7 @@ line ke saath kadam number.
 FR      1  "Start" dabao to 100 logon ke match me jodo, 4-4 (ya 2-3) ke squad   -> kadam 1
         2  match me aas-paas ke log, goli, gaadi, awaaz dikhe / sunai de        -> kadam 2
         3  goli lagi ya nahi; sar pe lagi to headshot, kahin bhi lagi to dead   -> kadam 3
-        4  match khatam: kills, damage, rank points save                        -> kadam 5
+        4  match khatam: kills + aakhir tak bachi team (winner) save             -> kadam 5
 
 NFR     1  ping kam (India wala India ke server pe)                             -> kadam 1
         2  button dabate hi player chale, kichad jaisa na lage                  -> kadam 2b
@@ -58,7 +58,7 @@ Numbers raat 9 baje lakhon log · ek match 100 log, 8 km x 8 km
 ```
 
 Trade-off jo bolne hain: door ki khabar nahi aati (par door ka dikhna hi nahi chahiye) · server har goli check karta
-(server pe kaam zyada, par hacker ki nahi chalti) · rank points thodi der se dikhte (DB bachane ke liye).
+(server pe kaam zyada, par hacker ki nahi chalti) · match ka hisaab thodi der se dikhta (DB bachane ke liye).
 
 **Isi pe ek aur raasta (round me: FR / NFR, numbers, dhaancha):**
 ```
@@ -220,7 +220,7 @@ Is baar ghus gaya to ghus gaya, uski koi baat mat maano, aur agli baar match me 
 
 ---
 
-**5. "Winner winner chicken dinner." Raat 10 baje 5,000 match lagbhag ek saath khatam, 5 lakh players ke kills, damage, rank points ek pal me DB pe. DB ghut gaya, Arpan ki screen pe "Rank points updating..." 2 minute se.**
+**5. "Winner winner chicken dinner." Raat 10 baje 5,000 match lagbhag ek saath khatam, 5 lakh players ke kills aur winner ek pal me DB pe. DB ghut gaya, Arpan ki screen pe "Result updating..." 2 minute se.**
 
 **Arpan:** Har cheez turant DB pe? Arpan ne itne kill kiye, Shubham ne itne, Claude ne itne (Claude bechara mar gaya).
 
@@ -238,6 +238,7 @@ Phir sab parchiyan le jao aur DB me bharo, DB pe achanak itna bojh nahi.
 - Sirf aakhri coordinate likha to ye pata hi nahi chalega.
 - Har user ko seedha DB pe nahi likhwaana: pehle parchi (Redis) me "iska aakhri coordinate ye", jaldi milta; phir Kafka me batch, line lagwa ke Cassandra.
 - Match khatam pe har kisi ke stats nahi chahiye, damage / rank points kuch nahi; sirf kills (Arpan ne 4, isne 8, usne 9) aur aakhir tak kaunsi team bachi, wahi winner.
+- Damage ka matlab nahi, heal lagake aadmi theek ho jaata. Rank = world leaderboard wali, bahut saare match khel ke bani; har match me hum kills hi dekhte, aur aakhir me jo team bachi wo jeeti.
 - Coordinate sirf pattern ke liye, taaki hacker dikhe aur game sudhaar sakein.
 
 *Technical me:* "parchi -> line -> Cassandra" = Redis + Kafka batch writes, "kai din ka pattern dekh ke hacker" = offline cheat detection (poora raasta log, baad me analytics).
