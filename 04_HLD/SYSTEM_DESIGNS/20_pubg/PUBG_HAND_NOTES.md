@@ -86,8 +86,6 @@ DB       likhai bahut (har goli, har kadam ke coordinate, America, India, China,
          Cassandra pehli pasand.
          User ki profile ke liye seedha SQL, Postgres jaisa.
          Kuch rakhna pada to Redis cache.
-         Technical me: "dono taraf khula taar" = WebSocket, "likhai bahut" = write-heavy DB (Cassandra),
-         "profile" = relational DB (Postgres), "kuch rakhna pade" = cache (Redis).
 ```
 
 *Technical me:* "dono taraf khula taar" = WebSocket, "likhai bahut" = write-heavy DB (Cassandra), "profile" = relational DB (Postgres), "kuch rakhna pade" = cache (Redis).
