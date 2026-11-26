@@ -144,7 +144,7 @@ SAFAR (March: khaali folder)  ->  aaj (25-Nov)
   - [21 Inventory (Arpan ki online dukaan, teen godown)](04_HLD/SYSTEM_DESIGNS/21_inventory_system/21_inventory_system.md) (E-com se aaya: ginti pay pe, dabbe, register, hub and spoke)
   - [22 Where Is My Train (bina net / GPS ke train kahan)](04_HLD/SYSTEM_DESIGNS/22_where_is_my_train/22_where_is_my_train.md) (cell tower, crowdsourcing, tower ki list)
   - [23 Yelp search (5 km ke andar burger)](04_HLD/SYSTEM_DESIGNS/23_yelp_search/23_yelp_search.md) (reel se: geo filter + Elasticsearch fuzzy, Postgres -> ES change event, Closed dikhao, server-side sort)
-  - [24 Zomato (Whitefield ke PG se Burger Singh)](04_HLD/SYSTEM_DESIGNS/24_zomato/24_zomato.md) (area list cache + grid cell, order status flow, prep-time dispatch, accept timeout, Diwali capacity gate + Kafka line, atomic decrement, reel se DLQ)
+  - [24 Zomato (Whitefield ke PG se Burger Singh)](04_HLD/SYSTEM_DESIGNS/24_zomato/24_zomato.md) (area list cache + grid cell, order status flow, prep-time dispatch, accept timeout, Diwali capacity gate + auto-accept (Kafka nahi), atomic decrement)
 
 - ★★ **HAND NOTES** — scene-mock ke baad, Arpan ke shabd. Har block = scene -> Arpan ka jawab -> Technical me (asli naam). "Technical me" ki shuruaat me hi likha ki is jawab me kahani ka shabd kya hai (chhotu = fetcher / relay / status poll job, design ke hisaab se). Kadam ke andar seedhi: Aur neeche · Isi pe ek aur raasta · Isi pe ek aur misaal · Maan lo. Revision yahin se.
   - [01 URL (token counter)](04_HLD/SYSTEM_DESIGNS/01_url_shortener/URL_HAND_NOTES.md)
