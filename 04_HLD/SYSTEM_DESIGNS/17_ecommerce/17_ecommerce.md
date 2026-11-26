@@ -45,23 +45,21 @@ Technical me: FR = browse / stock -> cart -> checkout -> order; NFR = consistenc
 
 **Isi pe ek aur raasta (round me FR / NFR):**
 ```
-FR       1  stock dekho: DB me stock hai to app pe dikhao, warna mat dikhao (kahan se doge)
-         2  cart me daalo (add karo)
-         3  pay karo
-         4  kabhi sale aaye to sale ki bheed sambhaalo
-         main kaam do-teen: cart me kaise daalenge, aur order kaise hoga
+E-com me sabse badiya kaam: stock dekho, cart me daalo (add karo), pay karo; aur kabhi sale aaye to sale
+  ki bheed sambhaalni padegi.
+Main kaam do-teen: cart me kaise daalenge aur order kaise hoga.
+DB me stock hai to app pe dikhao, warna mat dikhao, kahan se doge.
 
-NFR      1  do log ek hi cart na dekhein: Arpan aur Ravi ka cart alag-alag, har user ka apna
-         2  ek hi stock bacha ho to do log use na le paayein
-         asli dhyaan: inventory aur shelf
+NFR      do log ek hi cart na dekhein, Arpan aur Ravi ka cart alag-alag ho, har user ka apna; aur ek hi stock
+         bacha ho to do log use na le paayein.
+         Asli dhyaan inventory aur shelf pe.
+         Har shehar ka alag system: Lucknow, Bangalore, Mumbai, Pune, Goa, Delhi; Lucknow wale Lucknow se lenge,
+         Delhi wale Delhi se.
+         Ye Amazon nahi, Blinkit wala dark store jaisa, usi din delivery; bas Blinkit sab bechta (iPhone bhi),
+         hamara area usse kaafi chhota, aur hamara apna physical store bhi hai.
 
-Scope    har shehar ka alag system (Lucknow, Bangalore, Mumbai, Pune, Goa, Delhi): Lucknow wale Lucknow se lenge,
-         Delhi wale Delhi se
-         Amazon nahi, Blinkit wala dark store jaisa, usi din delivery
-         farak: Blinkit sab bechta (iPhone bhi), hamara area usse kaafi chhota, aur hamara apna physical store bhi
-
-Dhaancha user -> CDN -> LB -> kai server (ek nahi) -> DB me stock dekha -> cart me add
-              -> alag pay service -> PSP (Razorpay) ya COD
+Dhaancha user aaya -> CDN -> LB -> kai server (ek nahi) -> DB me stock dekha -> cart me add -> alag pay service
+         -> PSP (Razorpay) ya COD.
 ```
 **Asli naam:** cart user id pe (har user ka alag), dark store = paas ka store, pay = alag service + PSP, COD = payment method.
 

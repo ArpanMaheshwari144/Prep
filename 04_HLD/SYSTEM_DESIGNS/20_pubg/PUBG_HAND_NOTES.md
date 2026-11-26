@@ -62,32 +62,38 @@ Trade-off jo bolne hain: door ki khabar nahi aati (par door ka dikhna hi nahi ch
 
 **Isi pe ek aur raasta (round me: FR / NFR, numbers, dhaancha):**
 ```
-FR       1  4-4 ka squad bane, log pelam pel khelein (2-3 ka squad, ya random squad me bhi)   -> kadam 1
-         2  India ke log India ke server pe, China ke China pe, Australia ke Australia pe     -> kadam 1
-         3  "Start" dabate hi match chale                                                     -> kadam 1
-         4  gaadi me baithe to gaadi ki awaaz, goli chali to goli ki, par sirf aas-paas ki    -> kadam 2
-         5  goli maari to wo mare; headshot maara to dikhe "you killed this enemy by headshot" -> kadam 3
+FR       sabse pehle 4-4 ka squad bane aur log pelam pel khelein; India ke log India ke server pe, China ke China
+         pe, Australia ke Australia pe.
+         "Start" dabate hi match chale.
+         Gaadi me baithe to gaadi ki awaaz, goli chali to goli ki, par aas-paas ki.
+         Maine opponent ko goli maari to wo mare; headshot maara to dikhe "you killed this enemy by headshot".
 
-NFR      1  ping kam                                                                          -> kadam 1
-         2  guddi chalao to guddi chalta dikhe, gaadi chalao to gaadi; lag kam                -> kadam 2b
-         NFR nahi:  "server ye kare, wo kare"     (peeche ka scene hai)
-                    "phone kam MB / GB me chale"  (phone ki jitni memory, utni lega hi)
+NFR      ping kam; guddi chala rahe to guddi chalta dikhe, gaadi chala rahe to gaadi; lag kam.
+         "Server ye kare, wo kare" NFR me nahi bol sakte, wo peeche ka scene hai.
+         "Phone kam MB / GB me chale" bhi nahi, phone ki jitni memory utni wo lega hi.
 
-Numbers  kul 1 crore user, roz ~5 million khelte (5 million sweet spot; roz 1 crore bahut zyada)
+Numbers  kul 1 crore user, roz ~5 million khelte (5 million sweet spot; roz 1 crore bahut zyada).
 
-Dhaancha phone --khula taar (WebSocket)--> LB --> kaafi saare game server
-         client main hai: guddi chalaya, gaadi chalayi, goli maari; server decide kare kisne kya kiya
-         Cassandra  = likhai bahut (har goli, har kadam ke coordinate, duniya bhar se)      -> kadam 5
-         Postgres   = user ki profile (seedha SQL)
-         Redis      = kuch rakhna pade to (match ke coordinate ki parchi)                  -> kadam 5
-         CDN nahi   = design me koi aapatti nahi kar raha
+Dhaancha client ka phone PUBG ke server pe jaata hai.
+         Yahan main cheez client hai: client ne guddi chalaya to guddi aage, gaadi chalayi, goli maari; aur
+         server decide kare kisne kya kiya.
+         Kaafi saare server, aage LB.
+         Dono taraf taar khula chahiye, isliye WebSocket.
+         CDN ka socha, par design me koi aapatti nahi kar raha, isliye nahi liya.
+
+DB       likhai bahut (har goli, har kadam ke coordinate, America, India, China, Australia sab jagah), isliye
+         Cassandra pehli pasand.
+         User ki profile ke liye seedha SQL, Postgres jaisa.
+         Kuch rakhna pada to Redis cache.
+         Technical me: "dono taraf khula taar" = WebSocket, "likhai bahut" = write-heavy DB (Cassandra),
+         "profile" = relational DB (Postgres), "kuch rakhna pade" = cache (Redis).
 ```
 
 *Technical me:* "dono taraf khula taar" = WebSocket, "likhai bahut" = write-heavy DB (Cassandra), "profile" = relational DB (Postgres), "kuch rakhna pade" = cache (Redis).
 
 **API (round me):**
 
-**Arpan (API):** Zyadatar POST hongi, kyunki client se server ko jaata hai: match shuru, guddi chala, goli chali, headshot laga, kaun mara, sab coordinate ke saath; server unse line banata. Server se jo aata (ping), wo server khud bhejta. Match khatam (winner winner chicken dinner): GET match ke result.
+**Arpan (API):** Zyadatar POST hongi, kyunki client se server ko jaata hai: POST match shuru, POST guddi chala, POST goli chali, POST headshot laga, POST kaun mara, sab coordinate ke saath; server unse line banata. Server se jo aata (ping), wo server khud bhejta. Match khatam (winner winner chicken dinner): GET match ke result.
 ```
 API     POST /matchmaking          -> "Start" dabaya, 100 ke match me jodo, squad bhar do       (FR 1, kadam 1)
         match ke andar REST nahi, khule taar (WebSocket / UDP) pe chhote message:
@@ -146,10 +152,12 @@ Exact nahi keh sakte, kabhi lag ho jaata, par server aaram se andaza laga leta. 
 *Technical me:* "player ko turant apni screen pe chala do, server ka intezaar nahi" = client-side prediction, "peeche chhoti line, server usse jagah pakde" = phone apni chaal (input) server ko bhejta rehta, server apna hisaab chalata (server authoritative).
 
 **Isi pe ek aur misaal (round me: server ko guddi nahi dikhta):**
-- Screen pe lagta guddi bhaag raha, par server ko guddi-puddi nahi dikhta. Wo lines aur ping dekhta: kahan se ping aaya, uske hisaab se react karta.
+- Screen pe lagta hai guddi bhaag raha, par server ko guddi-puddi nahi dikhta.
+- Wo lines dekh raha, ping dekh raha: kahan se ping aaya, uske hisaab se react karta.
 - Jaise Zomato me bike chalti dikhti hai, asal me bike thodi chal rahi, animation hai; server number se, ping se baat karta.
-- Client guddi chalata hai to peeche ek chhoti line chalti, jo na client ko dikhti na kisi aur ko, sirf server dekhta.
-- Ping me 150-200 ms lagte, to server ke hisaab se tu yahan khada, asal me thoda aage. Mudne pe Zomato ke driver jaisa: server andaza lagata, kabhi seedha nikal ke wapas aata.
+- Client guddi chalata hai to peeche ek chhoti line chalti jo na client ko dikhti na kisi aur ko, sirf server dekhta.
+- Ping me 150-200 ms lagte, to server ke hisaab se tu yahan khada, asal me thoda aage.
+- Mudne pe Zomato ke driver jaisa: server andaza lagata, kabhi seedha nikal ke wapas aata.
 
 ---
 
@@ -197,11 +205,13 @@ Is baar ghus gaya to ghus gaya, uski koi baat mat maano, aur agli baar match me 
 
 *Technical me:* "pichhli jagah se 1 second me itna hi" = server-side movement validation (speed ki had, namumkin chaal reject), "update phenk do" = discard / server ki jagah sach, "agli baar ghusne mat do" = anti-cheat ban.
 
-**Isi pe ek aur raasta (round me: ping chhoot gaya to):** Pochinki se School 5-6 minute ka raasta, ye 1 second me pahunch gaya.
+**Isi pe ek aur raasta (round me: ping chhoot gaya to):**
+- Pochinki se School 5-6 minute ka raasta, ye 1 second me pahunch gaya.
 - Iske liye pattern nahi chahiye, server khud pakad lega: pehla ping Pochinki se, doosra School se = namumkin, hacker.
-- Server ne poora raasta dekha: wo maanega hi nahi. Hum hote to Arpan ko marne nahi dete, kill nullify, count nahi hoga.
-- Beech me kuch millisecond server andha ho gaya, ping aaye hi nahi: chhalaang dikhi hi nahi. Hacker School me aaram se chal ke 10 meter andar khade Arpan ke peeche gaya aur maar diya, to server ko ye theek khela lagega.
-- Par sab logs me likha ja raha: baad me dekh ke uske kills radd, agle din phir aaya to phir radd, kuch din baad match me ghusne hi mat do.
+- Server ne poora raasta dekha to wo maanega hi nahi; hum hote to Arpan ko marne nahi dete, kill nullify, count nahi hoga.
+- Par maan lo beech me kuch millisecond ke liye server andha ho gaya, ping aaye hi nahi: use chhalaang dikhi hi nahi.
+- Hacker School me aaram se chal ke 10 meter andar khade Arpan ke peeche gaya aur maar diya, to server ko ye theek khela lagega.
+- Par sab logs me likha ja raha; baad me dekhenge: uske kills radd, agle din phir aaya to phir radd, kuch din baad match me ghusne hi mat do.
 - PUBG asal me kya karta (nullify ya ban), wo unke docs me hoga, mujhe nahi pata.
 
 *Technical me:* "server khud pakde, maane hi nahi" = server-side movement validation (server authoritative), "ping chhoota to chhalaang dikhi hi nahi" = packet loss se beech ka gap, "baad me logs dekh ke radd + ban" = offline cheat review + ban.
@@ -220,10 +230,12 @@ Phir sab parchiyan le jao aur DB me bharo, DB pe achanak itna bojh nahi.
 
 *Technical me:* "likhai dhadadhad" = write-heavy DB (Cassandra), "match ke beech parchi, end me ek saath" = game server memory me jama, match end pe batch, "parchi line me + copy, phir DB" = queue (Kafka) + async write, copy = durable queue (Arpan ko DB ka intezaar nahi, agla match turant).
 
-**Isi pe ek aur raasta (round me: coordinate kyun likhein):** Cassandra me aise hi kuch bhi nahi likh dete.
-- Likhai isliye bahut, kyunki hacker ek din me nahi pakda jaata, pattern chahiye: ek second me Koramangala, agle second Whitefield, namumkin. Sirf aakhri coordinate likha to ye pata hi nahi chalega.
-- Har user ko seedha DB pe nahi likhwaana: pehle parchi (Redis) me "iska aakhri coordinate ye" (jaldi milta), phir Kafka me batch, line lagwa ke Cassandra.
-- Match khatam pe har kisi ke stats nahi chahiye, damage / rank points kuch nahi: sirf kills (Arpan ne 4, isne 8, usne 9) aur aakhir tak kaunsi team bachi, wahi winner.
+**Isi pe ek aur raasta (round me: coordinate kyun likhein):**
+- Cassandra me aise hi kuch bhi nahi likh dete.
+- Likhai isliye bahut, kyunki hacker ek din me nahi pakda jaata, pattern chahiye: ek second me Koramangala, agle second Whitefield, namumkin.
+- Sirf aakhri coordinate likha to ye pata hi nahi chalega.
+- Har user ko seedha DB pe nahi likhwaana: pehle parchi (Redis) me "iska aakhri coordinate ye", jaldi milta; phir Kafka me batch, line lagwa ke Cassandra.
+- Match khatam pe har kisi ke stats nahi chahiye, damage / rank points kuch nahi; sirf kills (Arpan ne 4, isne 8, usne 9) aur aakhir tak kaunsi team bachi, wahi winner.
 - Coordinate sirf pattern ke liye, taaki hacker dikhe aur game sudhaar sakein.
 
 *Technical me:* "parchi -> line -> Cassandra" = Redis + Kafka batch writes, "kai din ka pattern dekh ke hacker" = offline cheat detection (poora raasta log, baad me analytics).

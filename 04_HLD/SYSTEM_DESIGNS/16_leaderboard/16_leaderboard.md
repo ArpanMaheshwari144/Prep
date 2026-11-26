@@ -38,23 +38,17 @@ Technical me: pehle sawaal = scope / requirement clarification, FR = score updat
 Arpan (FR pakka): Top 10 FR nahi ho sakta; LeetCode me top 10 / top 15 jaisa koi feature nahi, wo rank pe chalta, top 10 pe koi inaam nahi. Top 10 feature to top 11, top 100 bhi feature, iska matlab nahi. Feature = scoreboard: sab usi board pe dikhte, apni rank bhi usi me.
 Technical me: FR = score update + scoreboard (har user usi board me apni rank dekhe); "top kitne dikhane" sirf pehle sawaal (a), FR nahi.
 
-**FR / NFR ki doosri kahani + dhaancha (round me):**
+**FR / NFR ki doosri kahani + dhaancha (round me) (Arpan):**
 ```
-Pehla sawaal  world stage ya India? koi India nahi bolega, world hi hoga, to time zone UTC
-              "Arpan ke upar ke 5, neeche ke 5" sawaal nahi banta: board sabke score se banta, kisi ek ki nazar
-              se nahi (LeetCode bhi aise nahi dekhta); sab upar dekhte, apna bhi usi me aa jaata
+world hi hoga, time zone UTC; "upar ke 5, neeche ke 5" sawaal nahi banta (board sabka, kisi ek ki nazar
+  se nahi).
 
-FR       1  contest aaya, Arpan ne contest diya, uski rank dikhe
-         2  weekly, biweekly contest; mahine / hafte me top pe kaun
+FR       contest diya to rank dikhe; weekly, biweekly, mahine ka top.
 
-NFR      1  score barabar to time se
-         2  low latency
-         3  consistency (sabka score dikhe)
-         4  crash na ho
+NFR      barabar score pe time, low latency, consistency, crash na ho.
 
-Dhaancha user -> CDN (HTML / static file paas se, duniya bhar ka) -> LB -> bahut saare server
-              -> local cache -> Redis -> AWS RDS + uski replica
-         DB me user id, naam, score, kaunsa contest: consistent data, JSON jaisa kuch nahi = SQL / Postgres
+Dhaancha user -> CDN (static) -> LB -> kai server -> local cache -> Redis -> AWS RDS Postgres + replica.
+         DB me user id, naam, score, contest id: row wala consistent data, isliye SQL / Postgres.
 ```
 
 ## FR / NFR / Numbers (interview me pehle 2 minute)

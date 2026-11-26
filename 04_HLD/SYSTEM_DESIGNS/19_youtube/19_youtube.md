@@ -70,35 +70,22 @@ Trade-off jo bolne hain: view count thodi der se badhta (DB bachane ke liye) · 
 
 **Isi pe ek aur raasta (round me: FR / NFR, numbers, dhaancha):**
 ```
-Pehle    YouTube Google ka hai, AWS ka S3 nahi chalata: apna storage box (S3 / Google Cloud Storage jaisa)
-         zyada hissa Netflix jaisa, bas isme video upload ka system alag
+YouTube Google ka hai, AWS ka S3 nahi chalata; apna storage box (S3 / Google Cloud Storage jaisa).
+Zyada hissa Netflix jaisa, bas video upload ka system alag.
 
-FR       1  video dekhna, post karna, chalana, rokna
-         2  wahi se dobara laptop aur phone pe: TV pe dekh ke aaya to laptop pe wahi se
-            (account wahi hai, Netflix jaisa sync)
-         download scope se bahar
+FR       dekhna, post karna, chalana, rokna, wahi se dobara (TV se laptop, account pe sync, Netflix jaisa);
+         download scope se bahar.
 
-NFR      1  video upload net ke hisaab se jaldi
-         2  upload hote hi subscribers ko notification
-         3  koi apne hi bot se 10,000-20,000 view na badha le
-         4  purani videos kahan rakhein
-         5  shorts bhi
+NFR      upload net ke hisaab se jaldi, upload hote hi subscribers ko khabar, bot se apne hi view na badhein,
+         purani videos kahan, shorts bhi.
 
-Numbers  global (Russia, China chhod ke): 1 se 10 crore user, roz ~5 crore (50 million)
+Numbers  global (Russia, China chhod ke), 1-10 crore user, roz ~5 crore.
 
-Dhaancha do tarah ke user: upload bhi karta aur dekhta bhi, aur sirf dekhne wala (jaise main)
-         video upload hoke storage box me
-         24 ghante ki video ek saath nahi: tod do, bahut saare chhotu, har tukda jaldi
-            pehle 144 / 240 / 360p (sabse chhoti, kam samay), phir 480p, 1080p, phir 4K
-         DB: likhai bahut (view, like ek saath)     = Cassandra jaisa (ya Google ka apna)
-             user aur video ki jaankari (metadata)  = Postgres jaisa SQL
-             video                                  = storage box
-         net alag-alag (gaon me 5-10 MB, shahar me WiFi 1 GB/s): isliye 144p se 4K
-            kharab net pe thodi rukegi ya blur; "kabhi na ruke" vaada nahi, net dekh ke quality
-         garam cheez garam jagah, thandi thandi
-         Google ke apne CDN (Mumbai, Dubai, Europe ...): Delhi se dekh raha to har baar US nahi jaata
-         CDN pe poori 10 ghante ki video nahi, chhote tukde: pehle 4 minute, phir 5, phir aage
-            YouTube ki safed patti = itna aa chuka, net band karo tab bhi utna chalega
+Dhaancha do tarah ke user (upload + dekhne wale, sirf dekhne wale); 24 ghante ki video tod ke bahut saare chhotu,
+         pehle 144 / 240 / 360p, phir 1080p, 4K; likhai bahut (view, like) to Cassandra jaisa, user aur video ki
+         jaankari Postgres jaisa, video storage box me; net ke hisaab se quality ("kabhi na ruke" vaada nahi);
+         Google ke apne CDN (Mumbai, Dubai, Europe), poori video nahi, chhote tukde (YouTube ki safed patti =
+         itna aa chuka).
 ```
 
 **API (round me):** POST upload · GET saari video (home page) · GET ek video · POST view · GET recommendation · POST
