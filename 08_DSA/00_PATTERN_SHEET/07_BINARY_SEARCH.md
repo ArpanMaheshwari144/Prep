@@ -5,6 +5,8 @@
 > **BROAD IDEA:** sorted space -> mid -> aadha kaato -> O(log n). (space array ho ya ANSWER-range).
 >
 > BS ko poori sorted array nahi chahiye: bas ek comparison se "kaunsa half phenko" tay ho (find-peak bhi).
+>
+> ★ ARPAN KA NIYAM (26-Nov): sawaal me O(log n) likha ho -> sabse PEHLE binary search socho, sorted ho ya na ho.
 
 ### high=mid ya high=mid-1?
 
