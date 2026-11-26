@@ -44,7 +44,7 @@ Order Service  -->  DB me order + saath me vasiyat (outbox)  -->  Kafka
 ```
 
 **FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
-Arpan: FR wo jo app ka kaam hai. Notification ka kaam kya: order hua, SMS / email gaya, user ki pasand maano aur message bhej do, bas. OTP jaisa zaroori pehle jaaye, umar khatam ho to mat bhejo, crore logon ko ek saath offer, ye sab NFR hain: pehle FR bani, FR me dikkat aayi, aur wo cheez NFR me jodi. "OTP pehle jaaye" aur "OTP turant" ek hi baat, ek baar likho.
+Arpan: FR wo jo app ka kaam hai. Notification ka kaam kya: order hua, SMS / email gaya, user ki pasand maano aur message bhej do, bas. OTP jaisa zaroori pehle jaaye, umar khatam ho to mat bhejo, crore logon ko ek saath offer, ye sab NFR hain: pehle FR bani, FR me dikkat aayi, aur wo cheez NFR me jodi.
 Technical me: FR = kya karta (functional), NFR = kitna achha / kis shart pe karta (priority, TTL, scale, delivery tracking).
 
 ## FR / NFR / Numbers (interview me pehle 2 minute)
@@ -239,7 +239,7 @@ code. Sale ka message hai to thoda ruk jao, 15-30 second late se kiska kya chhoo
 Aur pakka ek hi OTP chahiye to company se terms me tay: "30 second me nahi bheja to apni taraf fail maan lo, mat bhejna,
 aur hume fail wapas bata do", phir hum turant doosri company pe.
 **Asli naam:** SLA + timeout threshold, failover, idempotent OTP (same code dono SMS me), priority ke hisaab se retry;
-ek hi OTP chahiye = message validity period (TTL, Twilio me `validity_period`, 1 se 36,000 sec) + failure callback. Par ye rok sirf
+ek hi OTP chahiye = message validity period (TTL) + failure callback. Par ye rok sirf
 company ki line tak: SMS Jio / Airtel tak chala gaya to wapas nahi, wo hamara area nahi; isliye "ek hi code" bhi saath.
 
 ```mermaid

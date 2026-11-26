@@ -39,7 +39,7 @@ Order Service  -->  DB me order + saath me vasiyat (outbox)  -->  Kafka
 
 **FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
 
-**Arpan:** FR wo jo app ka kaam hai. Notification ka kaam kya: order hua, SMS / email gaya, user ki pasand maano aur message bhej do, bas. OTP jaisa zaroori pehle jaaye, umar khatam ho to mat bhejo, crore logon ko ek saath offer, ye sab NFR hain: pehle FR bani, FR me dikkat aayi, aur wo cheez NFR me jodi. "OTP pehle jaaye" aur "OTP turant" ek hi baat, ek baar likho.
+**Arpan:** FR wo jo app ka kaam hai. Notification ka kaam kya: order hua, SMS / email gaya, user ki pasand maano aur message bhej do, bas. OTP jaisa zaroori pehle jaaye, umar khatam ho to mat bhejo, crore logon ko ek saath offer, ye sab NFR hain: pehle FR bani, FR me dikkat aayi, aur wo cheez NFR me jodi.
 
 *Technical me:* FR = kya karta (functional), NFR = kitna achha / kis shart pe karta (priority, TTL, scale, delivery tracking).
 
@@ -169,7 +169,7 @@ Onboarding pe SMS company se terms me hi tay kar lo, jaise AWS ka SLA hota (upti
 *Technical me:* "30 second me nahi bheja to mat bhejna" = message validity period (TTL / expiry), "terms me tay, paisa credit" = SLA, "fail wapas bata do" = failure callback.
 Par perfect system nahi banta. Company ki line me pada SMS khud fail ho jaayega, par agar wo aage Jio / Airtel tak chala gaya, to wahan hum kuch nahi kar sakte, wo hamara area nahi, out of scope. Ya to Google jaisa sab apne paas rakho, ya third party rakho to kahin na kahin kuch tootega, isliye "2 OTP chalega, ek hi code" bhi saath rakho.
 
-*Technical me:* Twilio me ye setting `validity_period` (1 se 36,000 sec): itni der line me pada raha to bhejta hi nahi; carrier tak gaya to wapas nahi.
+*Technical me:* message ki umar (TTL): itni der line me pada raha to bhejo hi mat; carrier tak chala gaya to wapas nahi aata.
 
 **Maan lo SMS company ka server jawab nahi de raha, aur hamare lakhon worker / consumer fail hote hi turant, har second, bina ruke dobara bhej rahe. Company aur dabti ja rahi, theek hone ka mauka hi nahi.**
 
