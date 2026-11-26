@@ -43,9 +43,10 @@ public class Autodesk_WorkingHours {
 
     HashMap<String, HashMap<String, Integer>> mp = new HashMap<>();
     HashMap<String, Integer> mp1 = new HashMap<>();
+    HashMap<String, Integer> mp2 = new HashMap<>();
 
     public boolean addWorker(String workerId, String position, int compensation) {
-      if(mp.containsKey(workerId) == true){
+      if(mp.containsKey(workerId)){
         return false;
       }
       HashMap<String, Integer> innerMap = new HashMap<>();
@@ -55,22 +56,29 @@ public class Autodesk_WorkingHours {
     }
 
     public String register(String workerId, int timestamp) {
-      if(mp.containsKey(workerId) == false){
+      if(!mp.containsKey(workerId)){
         return "invalid_request";
       }
 
       if(mp1.containsKey(workerId)){
-        mp1.put(workerId, timestamp - mp1.get(workerId));
+        int t = (timestamp - mp1.get(workerId)) + mp2.getOrDefault(workerId, 0);
+        mp2.put(workerId, t);
+        mp1.remove(workerId);
+      } else {
+        mp1.put(workerId, timestamp);
       }
-      mp1.put(workerId, timestamp);
       return "registered";
     }
 
     public Optional<Integer> get(String workerId) {
-      if(mp1.containsKey(workerId) == false){
-        return  Optional.empty();
+      if(mp.containsKey(workerId) == false){
+        return Optional.empty();
       }
-      return Optional.of(mp1.get(workerId));
+      else if(mp2.containsKey(workerId) == false){
+        return  Optional.of(0);
+      }
+
+      return Optional.of(mp2.get(workerId));
     }
   }
 
