@@ -34,8 +34,6 @@ Phone  -->  hamara server (JWT dekhe, token de)          DB: file ka status, fol
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
 
-**Arpan:** Ye sab sahi lag raha, koi dikkat nahi, yahi rehne do.
-
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
 FR      1  file upload, badi bhi                                  -> kadam 2, 3
@@ -112,7 +110,7 @@ Numbers 1000 log x 2 GB ek saath = 2 TB -> ye data hamare server se guzarna hi n
 
 **Arpan:** Do baar aa sakta hai, koi dikkat nahi. Parchi rakho: is file ka kaam ho gaya, likh liya; dobara aaya to dekha ho gaya, chhod do. Ulta aaya to dekho kaunsa naya hai, purana aaya to chhod do.
 Maan lo resume me v1 phir v2 aaye aur event ulte pahunche. Arpan: Apna thappa lagao, pehli = current, doosri = updated. V1 / V2 ke naam se nahi, apne thappe se faisla; purana thappa baad me aaya to phenk do.
-S3 khud likhta hai: "Amazon S3 event notifications are designed to be delivered at least once." (https://docs.aws.amazon.com/AmazonS3/latest/userguide/EventNotifications.html) aur "Event notifications aren't guaranteed to arrive in the same order that the events occurred." (https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html)
+S3 ka event kabhi do baar ya ulte kram me aa sakta (AWS docs).
 
 *Technical me:* "parchi" = idempotency (file id + version pe ek hi baar), "kaunsa naya" / "apna thappa" = S3 event ka `sequencer` ya hamara version number (bada = baad wala, usi file ke liye).
 

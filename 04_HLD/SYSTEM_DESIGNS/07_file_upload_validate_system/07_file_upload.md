@@ -56,7 +56,6 @@ Phone  -->  hamara server (JWT dekhe, token de)          DB: file ka status, fol
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
-Arpan: Ye sab sahi lag raha, koi dikkat nahi, yahi rehne do.
 
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
@@ -196,8 +195,8 @@ UPLOADED ke saath hi "iska scan karwana hai" likh do, baad me koi utha ke Kafka 
 **Asli naam:** outbox (hamare DB ki table; status + scan ka kaam ek DB transaction me, server gire to bhi row bachi) + relay.
 
 **Maan lo S3 ne "file aa gayi" do baar bataya, ya ulte kram me:** parchi rakho, is file ka kaam ho gaya to dobara aaya
-chhod do; ulta aaya to dekho kaunsa naya, purana chhod do. (Grill: resume v1 phir v2, event ulte: apna thappa lagao, pehli = current, doosri = updated; naam se nahi, thappe se; purana thappa baad me aaya to phenko.) S3 khud likhta hai: "Amazon S3 event notifications are designed to be delivered at least once."
-([AWS](https://docs.aws.amazon.com/AmazonS3/latest/userguide/EventNotifications.html)) aur "Event notifications aren't guaranteed to arrive in the same order that the events occurred." ([AWS](https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html))
+chhod do; ulta aaya to dekho kaunsa naya, purana chhod do. (Resume v1 phir v2, event ulte: apna thappa lagao, pehli = current, doosri = updated; naam se nahi, thappe se; purana thappa baad me aaya to phenko.) S3 ka event kabhi do baar ya ulte
+kram me aa sakta (AWS docs).
 **Asli naam:** idempotency (file id + version pe ek hi baar), S3 event ka `sequencer` ya hamara version number = thappa (usi file ke liye, bada = baad wala).
 
 **Maan lo user har 2-3 sec status poochhe:** status cache me, validate hote hi cache update (ya TTL). **Maan lo worker gira,
