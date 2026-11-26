@@ -32,11 +32,24 @@ Technical me: pehle sawaal = scope / requirement clarification, FR = score updat
 Arpan (FR pakka): Top 10 FR nahi ho sakta; LeetCode me top 10 / top 15 jaisa koi feature nahi, wo rank pe chalta, top 10 pe koi inaam nahi. Top 10 feature to top 11, top 100 bhi feature, iska matlab nahi. Feature = scoreboard: sab usi board pe dikhte, apni rank bhi usi me.
 Technical me: FR = score update + scoreboard (har user usi board me apni rank dekhe); "top kitne dikhane" sirf pehle sawaal (a), FR nahi.
 
-**FR / NFR ki doosri kahani:**
-Arpan: Pehla sawaal: world stage ya India? Koi India nahi bolega, world hi hoga, to time zone UTC. "Arpan ke upar ke 5, neeche ke 5" sawaal nahi banta; hum Arpan ya kisi ek ki nazar se nahi dekh rahe, LeetCode bhi aise nahi dekhta, board sabke score se banta, sab upar dekhte, apna bhi usi me aa jaata, design bhi us hisaab se nahi banta. FR: contest aaya, Arpan ne contest diya, uski rank dikhani; weekly, biweekly contest, aur mahine / hafte me top pe kaun. NFR: score barabar to time se, low latency, consistency (sabka score dikhe), crash na ho.
+**FR / NFR ki doosri kahani + dhaancha (round me):**
+```
+Pehla sawaal  world stage ya India? koi India nahi bolega, world hi hoga, to time zone UTC
+              "Arpan ke upar ke 5, neeche ke 5" sawaal nahi banta: board sabke score se banta, kisi ek ki nazar
+              se nahi (LeetCode bhi aise nahi dekhta); sab upar dekhte, apna bhi usi me aa jaata
 
-**Dhaancha:**
-Arpan: User app pe aaya, contest diya, LB, phir bahut saare server. Duniya bhar ka hai to paas me CDN (HTML / static file paas se). Local cache, phir Redis, phir DB AWS RDS, uski replica. DB me chahiye user id, naam, score, kaunsa contest: consistent data, JSON jaisa kuch nahi, isliye SQL / Postgres.
+FR       1  contest aaya, Arpan ne contest diya, uski rank dikhe
+         2  weekly, biweekly contest; mahine / hafte me top pe kaun
+
+NFR      1  score barabar to time se
+         2  low latency
+         3  consistency (sabka score dikhe)
+         4  crash na ho
+
+Dhaancha user -> CDN (HTML / static file paas se, duniya bhar ka) -> LB -> bahut saare server
+              -> local cache -> Redis -> AWS RDS + uski replica
+         DB me user id, naam, score, kaunsa contest: consistent data, JSON jaisa kuch nahi = SQL / Postgres
+```
 Technical me: dhaancha = CDN + LB + kai app server + local cache + Redis + RDS Postgres (primary + replica); "consistent, JSON nahi" = row wala data, SQL.
 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**

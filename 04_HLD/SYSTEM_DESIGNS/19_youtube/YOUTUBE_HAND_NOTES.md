@@ -59,7 +59,38 @@ Numbers lakhon video roz, ek video 2-40 GB -> app server se nahi guzar sakti
 Trade-off jo bolne hain: view count thodi der se badhta (DB bachane ke liye) · thandi jagah sasti par laane me der
 (isliye trend pe wapas garam) · pehle chhoti quality (4K wale ko thoda intezaar) · reels pehle se zyada laaye to data / battery, kam laaye to spinner.
 
-**Isi pe ek aur raasta (round me: FR / NFR, numbers, dhaancha):** YouTube Google ka hai, wo AWS ka S3 nahi chalata; apna storage box (S3 / Google Cloud Storage jaisa). YouTube ka zyada hissa Netflix jaisa, bas isme video upload ka system alag. FR: user video dekhta, post karta, chalata, rokta, aur wahi se dobara chalata laptop aur phone pe; TV pe kuch dekh ke aaya to laptop pe wahi se, kyunki account wahi hai (Netflix jaisa sync). Download scope se bahar. NFR: video upload net ke hisaab se jaldi; upload hote hi subscribers ko notification; koi apne hi bot se 10,000-20,000 view na badha le; purani videos kahan rakhein; shorts bhi. Numbers: YouTube global hai (Russia, China chhod ke), maan lo 1 se 10 crore user, roz ~5 crore (50 million). Dhaancha: do tarah ke user, ek jo upload bhi karta aur dekhta bhi, ek jo sirf dekhta (jaise main). Video upload hoke storage box me. 24 ghante ki video ek saath nahi: tod do, bahut saare chhotu, har tukda jaldi; pehle 144, 240, 360p (sabse chhoti, kam samay), phir 480p, 1080p, phir 4K. DB: likhai bahut (view, like ek saath) to Cassandra jaisa (ya Google ka apna); user aur video ki jaankari (metadata) Postgres jaisa SQL; aur storage box. Net alag-alag (gaon me 5-10 MB, shahar me WiFi 1 GB/s), isliye 144p se 4K; kharab net pe thodi rukegi ya blur, "kabhi na ruke" vaada nahi kar sakte, net dekh ke quality. Garam cheez garam jagah, thandi thandi; Google ke apne CDN (Mumbai, Dubai, Europe ...), Delhi se dekh raha to har baar US nahi jaata. CDN pe poori 10 ghante ki video nahi, chhote tukde: pehle 4 minute, phir 5, phir aage; YouTube ki safed patti = itna aa chuka, net band karo tab bhi utna chalega.
+**Isi pe ek aur raasta (round me: FR / NFR, numbers, dhaancha):**
+```
+Pehle    YouTube Google ka hai, AWS ka S3 nahi chalata: apna storage box (S3 / Google Cloud Storage jaisa)
+         zyada hissa Netflix jaisa, bas isme video upload ka system alag
+
+FR       1  video dekhna, post karna, chalana, rokna
+         2  wahi se dobara laptop aur phone pe: TV pe dekh ke aaya to laptop pe wahi se
+            (account wahi hai, Netflix jaisa sync)
+         download scope se bahar
+
+NFR      1  video upload net ke hisaab se jaldi
+         2  upload hote hi subscribers ko notification
+         3  koi apne hi bot se 10,000-20,000 view na badha le
+         4  purani videos kahan rakhein
+         5  shorts bhi
+
+Numbers  global (Russia, China chhod ke): 1 se 10 crore user, roz ~5 crore (50 million)
+
+Dhaancha do tarah ke user: upload bhi karta aur dekhta bhi, aur sirf dekhne wala (jaise main)
+         video upload hoke storage box me
+         24 ghante ki video ek saath nahi: tod do, bahut saare chhotu, har tukda jaldi
+            pehle 144 / 240 / 360p (sabse chhoti, kam samay), phir 480p, 1080p, phir 4K
+         DB: likhai bahut (view, like ek saath)     = Cassandra jaisa (ya Google ka apna)
+             user aur video ki jaankari (metadata)  = Postgres jaisa SQL
+             video                                  = storage box
+         net alag-alag (gaon me 5-10 MB, shahar me WiFi 1 GB/s): isliye 144p se 4K
+            kharab net pe thodi rukegi ya blur; "kabhi na ruke" vaada nahi, net dekh ke quality
+         garam cheez garam jagah, thandi thandi
+         Google ke apne CDN (Mumbai, Dubai, Europe ...): Delhi se dekh raha to har baar US nahi jaata
+         CDN pe poori 10 ghante ki video nahi, chhote tukde: pehle 4 minute, phir 5, phir aage
+            YouTube ki safed patti = itna aa chuka, net band karo tab bhi utna chalega
+```
 
 **API (round me):** POST upload (main API). GET saari video (home page khola to sab ek saath). Video pe click: POST, phir GET wo ek video. POST view. GET recommendation (bahut video dekh li to suggestion). POST subscribe, phir GET se pata ki subscribe ho gaya. Nayi video aayi to notification: YouTube apni taraf se push karta (fan-out); push ko API me kya kehte, pata nahi tha.
 ```

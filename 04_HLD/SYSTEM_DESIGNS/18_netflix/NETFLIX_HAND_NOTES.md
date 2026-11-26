@@ -32,7 +32,28 @@ Arpan: "Buffering nahi" NFR galat hai. User ka net bahut mandda hai, 144p pe bhi
 Technical me: NFR = jaldi shuru (low start-up time) + adaptive bitrate (ABR), buffering zero ka vaada nahi.
 
 **Isi pe ek aur raasta (round me: FR / NFR, numbers, dhaancha):**
-Arpan: Pehle scope saaf karo: recommendation chahiye ya nahi, kitna chahiye. FR: user ko video dikhe, wo video khole, play / pause kare, search kare. NFR: video net ke hisaab se ho; net achha chal raha to badhiya quality, achha nahi to theek-thaak quality. "Video buffer na ho" koi requirement nahi: net band ya slow hua to buffer hoga hi, Netflix bhi buffer karta; quality 144p tak gir jaaye to dekhne ka fayda nahi. Numbers: poori duniya me 1 billion user, 10-20 million roz (DAU), matlab bahut scalable system chahiye. Dhaancha: user app pe aaya, bahut saare server, beech me LB; LB ke baad local cache, phir Redis, phir CDN, CDN ke peeche S3. Video kahan rakhta wo Netflix ka andar ka system hai, hamara lena-dena nahi. Video koi DB me nahi rakhta, wo S3 jaisi cheez me; CDN Netflix ne apne bana rakhe (Open Connect), paas ke server pe video taaki kam se kam time me dikhe. DB: Netflix andar bahut saare DB use kar sakta, Cassandra / NoSQL type shayad mushkil, par kisi use case ke liye wo bhi kar le; mere hisaab se mere hisaab se Postgres theek, kyunki writes bahut nahi: Netflix pe hum user video upload nahi karte, Netflix rights khareed ke khud daalta. Postgres me user ki jaankari, uski recommendations, wo roz kya dekhta. Ya recommendation ke liye Neo4j bhi le sakta hoon. Netflix ka design public nahi, andar kya use karta pata nahi.
+```
+Scope    pehle saaf karo: recommendation chahiye ya nahi, kitna chahiye
+
+FR       1  user ko video dikhe, wo video khole
+         2  play / pause kare
+         3  search kare
+
+NFR      1  video net ke hisaab se: net achha to badhiya quality, achha nahi to theek-thaak quality
+         NFR nahi: "video buffer na ho"  (net band / slow hua to buffer hoga hi, Netflix bhi karta;
+                                          quality 144p tak gir jaaye to dekhne ka fayda nahi)
+
+Numbers  poori duniya me 1 billion user, roz 10-20 million (DAU) = bahut scalable system chahiye
+
+Dhaancha user app -> LB -> bahut saare server -> local cache -> Redis -> CDN -> S3
+         video DB me nahi, S3 jaisi cheez me; kahan rakhta = Netflix ka andar ka system, hamara lena-dena nahi
+         CDN Netflix ke apne (Open Connect): paas ke server pe video, taaki kam se kam time me dikhe
+         Postgres  = user ki jaankari, uski recommendations, wo roz kya dekhta
+                     (writes bahut nahi: hum video upload nahi karte, Netflix rights khareed ke khud daalta)
+         Cassandra / NoSQL = shayad mushkil, par kisi use case ke liye wo bhi kar le
+         Neo4j     = recommendation ke liye bhi le sakte
+         Netflix ka design public nahi, andar kya use karta pata nahi
+```
 Technical me: FR = browse, play / pause, search · NFR = adaptive bitrate (ABR), buffering zero ka vaada nahi · dhaancha = LB -> app servers -> local cache -> Redis -> CDN (Open Connect) -> S3 · Postgres (RDS) = user, list, dekhne ka itihaas (dekhne ki likhai bahut ho to kadam 5c: pehle cache, DB me batch) · Neo4j = graph DB (kaun kis jaisa dekhta).
 
 **API (round me):**

@@ -39,7 +39,25 @@ Arpan: E-commerce ka matlab: stock dekho aur screen pe dikhao, phir cart me daal
 Technical me: FR = browse / stock -> cart -> checkout -> order; NFR = consistency (oversell nahi), alag sale service, payment latka na rahe.
 
 **Isi pe ek aur raasta (round me FR / NFR):**
-Arpan: E-com me sabse badiya kaam: stock dekho, cart me daalo (add karo), pay karo; aur kabhi sale aaye to sale ki bheed sambhaalni padegi. Main kaam do-teen: cart me kaise daalenge aur order kaise hoga. DB me stock hai to app pe dikhao, warna mat dikhao, kahan se doge. NFR: do log ek hi cart na dekhein, Arpan aur Ravi ka cart alag-alag ho, har user ka apna; aur ek hi stock bacha ho to do log use na le paayein. Asli dhyaan inventory aur shelf pe. Har shehar ka alag system: Lucknow, Bangalore, Mumbai, Pune, Goa, Delhi; Lucknow wale Lucknow se lenge, Delhi wale Delhi se. Ye Amazon nahi, Blinkit wala dark store jaisa, usi din delivery; bas Blinkit sab bechta (iPhone bhi), hamara area usse kaafi chhota, aur hamara apna physical store bhi hai. Dhaancha: user aaya -> CDN -> LB -> kai server (ek nahi) -> DB me stock dekha -> cart me add -> alag pay service -> PSP (Razorpay) ya COD.
+```
+FR       1  stock dekho: DB me stock hai to app pe dikhao, warna mat dikhao (kahan se doge)
+         2  cart me daalo (add karo)
+         3  pay karo
+         4  kabhi sale aaye to sale ki bheed sambhaalo
+         main kaam do-teen: cart me kaise daalenge, aur order kaise hoga
+
+NFR      1  do log ek hi cart na dekhein: Arpan aur Ravi ka cart alag-alag, har user ka apna
+         2  ek hi stock bacha ho to do log use na le paayein
+         asli dhyaan: inventory aur shelf
+
+Scope    har shehar ka alag system (Lucknow, Bangalore, Mumbai, Pune, Goa, Delhi): Lucknow wale Lucknow se lenge,
+         Delhi wale Delhi se
+         Amazon nahi, Blinkit wala dark store jaisa, usi din delivery
+         farak: Blinkit sab bechta (iPhone bhi), hamara area usse kaafi chhota, aur hamara apna physical store bhi
+
+Dhaancha user -> CDN -> LB -> kai server (ek nahi) -> DB me stock dekha -> cart me add
+              -> alag pay service -> PSP (Razorpay) ya COD
+```
 Technical me: cart user id pe (har user ka alag), dark store = paas ka store, pay = alag service + PSP, COD = payment method.
 
 Arpan (API): API app pe hi, shelf pe koi nahi. GET stocks: har cheez ka stock, app me sab dikhe. GET stock id se: ghee ki id do, uska stock aa jaaye (500). POST cart me +1 (cart me daalo). POST pay. Ye 4-5 main API, aage aur bhi hongi.
