@@ -285,12 +285,12 @@ na aaye. DB theek hote hi chhotu naya laaye, umar khatam, sab naya le jaayein.
 
 Main khud ko scene me rakh ke dekhta hoon. Mere paas 1 se 10 tak gintee hai. Ek ladka aaya: "11 hai?" Main andar jaake dekhta hoon, nahi hai. Phir aaya: "33 hai?" Phir andar gaya, nahi hai. 2-3 baar aisa hua, har baar andar jaana pada, main pareshaan ho gaya. Aise to wo number badhata jaayega aur main har baar andar bhaagta rahunga.
 
-To main parchi pe likh lunga "mere paas 1 se 10 tak hai", isse bada koi maange to wahin mana: "11 nahi hai, nikal", andar jaane ki zaroorat hi nahi. Fayda: sabka naam yaad rakhne ki zaroorat nahi, bas ek range. DB SQL hai, id 1, 2, 3 kram se banti, to DB me 1 se 10 crore user hain to beech wale milenge hi. 50 crore maanga to parchi dekh ke wahin mana, DB tak gaya hi nahi.
+To main parchi pe likh lunga "mere paas 1 se 10 tak hai", isse bada koi maange to wahin mana: "11 nahi hai, nikal", andar jaane ki zaroorat hi nahi. Fayda: sabka naam yaad rakhne ki zaroorat nahi, bas ek range. DB SQL hai, id 1, 2, 3 kram se banti, to DB me 1 se 10 crore user hain to beech wale zyadatar milenge; koi na mile (user ne account delete kiya, ya number chhoot gaya) to neeche wala null raasta. 50 crore maanga to parchi dekh ke wahin mana, DB tak gaya hi nahi.
 
 Range ke andar wala, jaise 500, nahi mila to null de do; null ka kya karna wo uska engineer if-else lagaye. Aur koi 500 baar-baar maange (range ke andar, par hai nahi), to main parchi pe likh lunga "500 = null"; ab koi bhi 500 maange, DB jaaunga hi nahi.
 **Asli naam:** "nakli id, har baar andar (DB) bhaagna" = cache penetration. "parchi pe range, bahar wala wahin wapas" = request aate hi id range check (input validation), cache aur DB se pehle; galat id na cache tak pahunchti na DB tak. (Yahan parchi = range ki parchi, cache wali key nahi.) Range ke andar par nahi mila = null ko bhi cache me rakho (negative caching, thodi der ki umar), taaki baar-baar wahi nakli id DB tak na pahunche.
 
-**Aur neeche (beech ki id delete ho gayi to):** Beech ki row delete ho gayi to wo design ki dikkat nahi, engineering ki galti, script chala ke theek kar denge; MySQL me id kram se banti.
+**Aur neeche (beech ki id delete ho gayi to):** Beech ki row delete ho gayi (user ne account hataya, ya save fail hua to number chhoot gaya) to ye normal hai, galti nahi; wahi null wala raasta, parchi pe "500 = null".
 **Asli naam:** auto-increment, isliye range check chalta; beech ka delete = data fix.
 
 ```mermaid
