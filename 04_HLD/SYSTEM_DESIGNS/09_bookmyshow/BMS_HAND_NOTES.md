@@ -287,11 +287,11 @@ Maan lo maine subah seat book ki aur 10 second me jawab aa gaya ki booking fail 
 
 Dobara pay hoga to doosre PSP pe jaayega, ye PSP dheema hai. Doosra: user pareshan ho gaya, "abhi nahi ho raha, 1 minute baad karta hoon", back daba ke poora app band kar diya, aur peeche se payment kat gaya.
 
-Hum 1.5 minute tak rokenge, peeche chhotu dekhta rahega; kata to seat book. 1.5 minute ke baad khatam, kyunki peeche bheed lag rahi hai, ek user ke peeche pareshan nahi ho sakte, aur chhotu ka bhi time waste nahi kar sakte, chhotu 10 minute busy thodi rahega.
+Hum 1 minute tak rokenge (6b wali ghadi), peeche chhotu dekhta rahega; kata to seat book. 1 minute ke baad khatam, kyunki peeche bheed lag rahi hai, ek user ke peeche pareshan nahi ho sakte, aur chhotu ka bhi time waste nahi kar sakte, chhotu 10 minute busy thodi rahega.
 
 Bank ki dikkat hai, wo hamare haath me nahi. DB me payment FAILED likh do (booking HELD rehti, seat abhi tumhari).
 
-**Arpan (popup ki umar):** Popup to hum dikhayenge hi, kyunki backend ko pata hi nahi ki user ne app band kiya ya nahi. 1.5-2 minute baad popup: "tumhari booking fail ho gayi, paise kate to wapas aa jaayenge, koi dikkat nahi; tumhari seat abhi bhi hamare paas hai, dobara pay kar lo".
+**Arpan (popup ki umar):** Popup to hum dikhayenge hi, kyunki backend ko pata hi nahi ki user ne app band kiya ya nahi. 1 minute baad popup: "tumhari booking fail ho gayi, paise kate to wapas aa jaayenge, koi dikkat nahi; tumhari seat abhi bhi hamare paas hai, dobara pay kar lo".
 
 Par us popup ki bhi ek umar hogi, aisa nahi ki wo hamesha screen pe rahe. Aajkal popup me upar chhota sa timer chalta hai, train booking me dekha hoga, 1, 2 ya 5 minute ka. Utni der seat uski (TTL tak).
 
@@ -299,7 +299,7 @@ Us beech pay kar diya to wahi normal booking chalegi: Razorpay se jawab aaya ki 
 
 **Arpan (der se kata):** Maan lo paise 2 minute pe kate, ya 5-10 minute baad, ya 1 ghante baad. Tab tak user app me hai hi nahi. DB me likh lo ki iske paise kate, Razorpay ko bolo "kata ho to refund kar dena, nahi kata to koi baat nahi". Aur jab user agli baar app khole, tab use dikha do: "booking fail ho gayi, tumhare koi paise kate to wapas aa jaayenge; nahi kate to badhiya".
 
-*Technical me:* "GPay ka gola hamare server pe nahi" = UPI app (GPay) ka apna screen, hamara client timeout wahan nahi chalta; "app me ruka to wahin popup, dobara pay doosre PSP pe" = 6b wala popup + PSP failover; "1.5 minute rokenge, chhotu dekhta" = status poll / webhook ka time; "popup to dikhayenge hi, backend ko pata nahi app band hai" = server user ki screen nahi jaanta, isliye hamesha popup bhejo; "popup ka timer, utni der seat uski" = popup / hold ki umar (TTL, train booking jaisa countdown), timer khatam = hold release; "booking fail" = INITIATED -> FAILED; "der se kata" = late debit -> REFUND_PENDING + refund API (Razorpay lautaye); "agli baar app khole tab batao" = booking status jab user wapas aaye.
+*Technical me:* "GPay ka gola hamare server pe nahi" = UPI app (GPay) ka apna screen, hamara client timeout wahan nahi chalta; "app me ruka to wahin popup, dobara pay doosre PSP pe" = 6b wala popup + PSP failover; "1 minute rokenge, chhotu dekhta" = status poll / webhook ka time; "popup to dikhayenge hi, backend ko pata nahi app band hai" = server user ki screen nahi jaanta, isliye hamesha popup bhejo; "popup ka timer, utni der seat uski" = popup / hold ki umar (TTL, train booking jaisa countdown), timer khatam = hold release; "booking fail" = payment FAILED, booking HELD (seat abhi uski); "der se kata" = late debit -> REFUND_PENDING + refund API (Razorpay lautaye); "agli baar app khole tab batao" = booking status jab user wapas aaye.
 
 ---
 
