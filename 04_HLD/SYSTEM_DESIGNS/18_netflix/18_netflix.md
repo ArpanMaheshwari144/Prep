@@ -61,7 +61,7 @@ DB       Netflix andar bahut saare DB use kar sakta, Cassandra / NoSQL type shay
          Ya recommendation ke liye Neo4j bhi le sakta hoon.
          Netflix ka design public nahi, andar kya use karta pata nahi.
 ```
-**Asli naam:** FR = browse, play / pause, search · NFR = adaptive bitrate (ABR), buffering zero ka vaada nahi · dhaancha = LB -> app servers -> local cache -> Redis -> CDN (Open Connect) -> S3 · Postgres (RDS) = user, list, dekhne ka itihaas (dekhne ki likhai bahut ho to kadam 5c: pehle cache, DB me batch) · Neo4j = graph DB (kaun kis jaisa dekhta).
+**Asli naam:** FR = browse, play / pause, search · NFR = adaptive bitrate (ABR), buffering zero ka vaada nahi · dhaancha = app ka raasta LB -> app servers -> local cache -> Redis; video ka raasta alag: TV seedha CDN (Open Connect dabba) se, uske peeche S3 · Postgres (RDS) = user, list, dekhne ka itihaas (dekhne ki likhai bahut ho to kadam 5c: pehle cache, DB me batch) · Neo4j = graph DB (kaun kis jaisa dekhta).
 
 **API (round me):** POST wala video upload nahi chahiye, kyunki video Netflix ke andar hi daali jaati, hum upload nahi karte. GET filmein / series: kitni filmein, kitni series, Netflix ke server se jo data aa raha. GET recommendation: poori pasand wali list. GET dekhi hui: 3 saal purane user ne jo dekh rakhi (Stranger Things, Money Heist). POST search. POST payment wali. Ye 4-5 main API, jin pe system tika hai.
 ```
@@ -86,7 +86,7 @@ NFR     1  play dabate hi video jaldi shuru ho; net ke hisaab se quality ghate-b
         2  kamzor net aur purane TV pe bhi chale                            -> kadam 7, P3
         3  pasand wali list jaldi khule (thodi purani chalegi)              -> kadam 6, 6b
         4  data pahunchane ka kharcha kam                                   -> kadam 1, 3
-Numbers India me 2 crore log ek saath, saath me baaki duniya -> ek jagah se sabko video nahi bhej sakte
+Numbers India me 20 lakh log ek saath, saath me baaki duniya -> ek jagah se sabko video nahi bhej sakte
         · har film kai size me -> poora maal kisi ek dabbe me nahi samaata
 ```
 
@@ -125,9 +125,9 @@ flowchart TB
     style AS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 2. 12:29 tak dabba khaali, 12:30 pe 2 crore (pehle se laa ke rakho)
+## 2. 12:29 tak dabba khaali, 12:30 pe 20 lakh (pehle se laa ke rakho)
 
-Dabba lag gaya, par season 12:30 pe aaya aur 12:29 tak dabba khaali tha. 12:30 pe 2 crore ek saath aaye, dabba sabko
+Dabba lag gaya, par season 12:30 pe aaya aur 12:29 tak dabba khaali tha. 12:30 pe 20 lakh ek saath aaye, dabba sabko
 "laata hoon" bolta hai aur saari request phir samundar paar. Jab pata hai log kis liye aa rahe, to wo cheez pehle se
 laa ke rakh lo. Pen drive me Money Heist rakh liya, ab sabko baant raha: le tu bhi le, tu bhi le, buffering hi nahi.
 Aur ye cheez ban gayi hai, ab badlegi nahi, isliye rakhne me koi dikkat nahi.
@@ -140,7 +140,7 @@ Badlegi nahi = video static hai, isliye CDN pe rakhna safe.
 
 ```mermaid
 flowchart TB
-    X["12:29 tak dabba khaali,<br/>12:30 pe 2 crore<br/>(CDN)"]:::bad
+    X["12:29 tak dabba khaali,<br/>12:30 pe 20 lakh<br/>(CDN)"]:::bad
     subgraph PD["PEN DRIVE ME PEHLE SE RAKH LO"]
         B(["Raat ko hi Money Heist bhar do<br/>(ban gayi, ab badlegi nahi)"]):::pill
     end

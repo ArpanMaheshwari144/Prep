@@ -2,7 +2,7 @@
 
 Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpan ke shabd ka naam).
 
-**Scene:** Maan lo Money Heist ka naya season Friday dopahar 12:30 baje poori duniya me ek saath. Arpan, Ravi aur India ke 2 crore log 12:30 pe ek saath play dabate hain, saath me US, Spain, Brazil bhi.
+**Scene:** Maan lo Money Heist ka naya season Friday dopahar 12:30 baje poori duniya me ek saath. Arpan, Ravi aur India ke 20 lakh log 12:30 pe ek saath play dabate hain, saath me US, Spain, Brazil bhi.
 
 **Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
 ```
@@ -59,7 +59,7 @@ DB       Netflix andar bahut saare DB use kar sakta, Cassandra / NoSQL type shay
          Netflix ka design public nahi, andar kya use karta pata nahi.
 ```
 
-*Technical me:* FR = browse, play / pause, search · NFR = adaptive bitrate (ABR), buffering zero ka vaada nahi · dhaancha = LB -> app servers -> local cache -> Redis -> CDN (Open Connect) -> S3 · Postgres (RDS) = user, list, dekhne ka itihaas (dekhne ki likhai bahut ho to kadam 5c: pehle cache, DB me batch) · Neo4j = graph DB (kaun kis jaisa dekhta).
+*Technical me:* FR = browse, play / pause, search · NFR = adaptive bitrate (ABR), buffering zero ka vaada nahi · dhaancha = app ka raasta LB -> app servers -> local cache -> Redis; video ka raasta alag: TV seedha CDN (Open Connect dabba) se, uske peeche S3 · Postgres (RDS) = user, list, dekhne ka itihaas (dekhne ki likhai bahut ho to kadam 5c: pehle cache, DB me batch) · Neo4j = graph DB (kaun kis jaisa dekhta).
 
 **API (round me):**
 
@@ -85,7 +85,7 @@ NFR     1  play dabate hi video jaldi shuru ho; net ke hisaab se quality ghate-b
         2  kamzor net aur purane TV pe bhi chale                            -> kadam 7, P3
         3  pasand wali list jaldi khule (thodi purani chalegi)              -> kadam 6, 6b
         4  data pahunchane ka kharcha kam                                   -> kadam 1, 3
-Numbers India me 2 crore log ek saath, saath me baaki duniya -> ek jagah se sabko video nahi bhej sakte
+Numbers India me 20 lakh log ek saath, saath me baaki duniya -> ek jagah se sabko video nahi bhej sakte
         · har film kai size me -> poora maal kisi ek dabbe me nahi samaata
 ```
 
@@ -107,7 +107,7 @@ Numbers India me 2 crore log ek saath, saath me baaki duniya -> ek jagah se sabk
 
 ---
 
-**2. Dabba lag gaya, par season 12:30 pe aaya, 12:29 tak dabba khaali. 12:30 pe 2 crore ek saath, dabba sabko "laata hoon" bolta, saari request phir samundar paar.**
+**2. Dabba lag gaya, par season 12:30 pe aaya, 12:29 tak dabba khaali. 12:30 pe 20 lakh ek saath, dabba sabko "laata hoon" bolta, saari request phir samundar paar.**
 
 **Arpan:** Jab pata hai log kis liye aa rahe, to wo cheez pehle se laa ke rakh lo. Pen drive me Money Heist rakh liya, ab sabko baant raha: le tu bhi le, tu bhi le, buffering hi nahi. Aur ye cheez ban gayi hai, ab badlegi nahi, isliye rakhne me koi dikkat nahi.
 
