@@ -139,7 +139,7 @@ Numbers nahi: yahan koi faisla nahi badalte.
 
 **Arpan:** Counter bina umar ke pada rahega, kabhi khatam nahi hoga, Ravi ka hisaab hamesha ke liye bigad gaya. To +1 aur umar do alag kaam nahi, ek hi kaam: ya dono likhe jaayein ya kuch nahi. Ladke ko bula ke bolo "+1 aur 60 dono ek saath likhna, beech me gira to kuch mat likhna, sab pehle jaisa". Kuch nahi hua to dobara try kar lo.
 
-*Technical me:* ladka = Redis (usse ek hi baar me dono kaam karwao) · "dono ek saath ya kuch nahi" = INCR + EXPIRE ek Lua script me (atomic, ya SET key 1 EX 60 NX + INCR); bina umar ka counter = key kabhi expire nahi, user hamesha block. (HANDS_ON 02 me chala ke dekha.)
+*Technical me:* ladka = Redis (usse ek hi baar me dono kaam karwao) · "dono ek saath ya kuch nahi" = INCR + EXPIRE ek Lua script me (atomic, ya SET key 1 EX 60 NX + INCR); bina umar ka counter = key kabhi expire nahi, user hamesha block.
 
 ---
 

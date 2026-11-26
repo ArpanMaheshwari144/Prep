@@ -178,7 +178,7 @@ baaki 19 ko 429.
 
 **Maan lo counter wala tareeka:** har request pe +1, pehli pe 60 sec ki umar. Ravi ki pehli request pe +1 ho gaya aur umar lagane se pehle server
 gira. Counter bina umar ke pada rahega, Ravi hamesha ke liye atka. Isliye +1 aur umar ek hi kaam: ya dono likhe jaayein ya kuch nahi, phir dobara try.
-**Asli naam:** INCR + EXPIRE ek Lua script me (atomic); bina umar ki key kabhi expire nahi hoti (HANDS_ON 02_incr_expire_crash).
+**Asli naam:** INCR + EXPIRE ek Lua script me (atomic); bina umar ki key kabhi expire nahi hoti.
 
 **Maan lo Lua hi atki:** Lua chalte waqt poora Redis atakta, isliye script chhoti, loop nahi; ek machine lakh command /
 sec, zyada to shard.
@@ -449,8 +449,7 @@ Redis tod do: product page ka alag, OTP ka alag.
 
 **Asli naam:** feed alag Redis, Ravi ka alag = sach (limiter ka dabba) aur cache alag Redis · LRU hatao = `maxmemory-policy
 noeviction` (Redis kuch nahi phenkta; bhar gaya to naya likhna error deta, isliye bharne hi mat do) · dekh liya to TTL kam
-= cache pe chhota TTL · DB se thodi loading = cache miss pe DB, thoda dheema (graceful degradation). Foundations 04 caching
-ka "Redis = ek cheez, teen kaam": limiter ka dabba SACH hai, cache nahi, isliye phenkna mana.
+= cache pe chhota TTL · DB se thodi loading = cache miss pe DB, thoda dheema (graceful degradation).
 
 ```mermaid
 flowchart TB
