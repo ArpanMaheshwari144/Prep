@@ -5,6 +5,8 @@
 // ★ OA ME KYA GADBAD HUI (26-Nov, score 200/600): COMPILE ERROR aa gaya aur pakad nahi paaya, isliye pata hi nahi chala kitne test
 //   pass hue, kitne nahi. Compile error me sabse PEHLI "error:" wali line padho: usme line number + kya galat, baaki
 //   neeche ki lines aksar usi ek galti ki wajah se aati hain. Ek theek karo, phir dobara compile.
+// ★ C++ se Java me aaye to: C++ me "map<...> mp;" = khaali map ban gaya. Java me "HashMap<...> mp;" = null.
+//   new HashMap<>() bhoole to pehli hi call pe NullPointerException (26-Nov practice me yahi hua).
 //
 // ================= SAWAAL (Level 1) =================
 // Office me contract workers aate-jaate hain, unka time register karna hai.
@@ -39,19 +41,36 @@ public class Autodesk_WorkingHours {
   // ================= TERA CODE =================
   static class WorkingHoursRegister {
 
+    HashMap<String, HashMap<String, Integer>> mp = new HashMap<>();
+    HashMap<String, Integer> mp1 = new HashMap<>();
+
     public boolean addWorker(String workerId, String position, int compensation) {
-      // TERA CODE
-      return false;
+      if(mp.containsKey(workerId) == true){
+        return false;
+      }
+      HashMap<String, Integer> innerMap = new HashMap<>();
+      innerMap.put(position, compensation);
+      mp.put(workerId, innerMap);
+      return true;
     }
 
     public String register(String workerId, int timestamp) {
-      // TERA CODE
-      return "";
+      if(mp.containsKey(workerId) == false){
+        return "invalid_request";
+      }
+
+      if(mp1.containsKey(workerId)){
+        mp1.put(workerId, timestamp - mp1.get(workerId));
+      }
+      mp1.put(workerId, timestamp);
+      return "registered";
     }
 
     public Optional<Integer> get(String workerId) {
-      // TERA CODE
-      return Optional.empty();
+      if(mp1.containsKey(workerId) == false){
+        return  Optional.empty();
+      }
+      return Optional.of(mp1.get(workerId));
     }
   }
 
