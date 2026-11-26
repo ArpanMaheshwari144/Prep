@@ -71,6 +71,7 @@ FR      1  "Start" dabao to 100 logon ke match me jodo, 4-4 (ya 2-3) ke squad   
 NFR     1  ping kam (India wala India ke server pe)                             -> kadam 1
         2  button dabate hi player chale, kichad jaisa na lage                  -> kadam 2b
         3  hacker na jeete: faisla server ka                                    -> kadam 3, 4
+           (pehle interviewer se poochho: hacker ka case chahiye? chahiye to beech match me kya karna)
         4  goli ka faisla insaaf se: goli ke pal jo saamne tha use lagi         -> kadam 3b
         5  match khatam hone pe DB na ghute, agla match turant                  -> kadam 5
 
