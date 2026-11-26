@@ -34,7 +34,7 @@ Order Service  -->  DB + vasiyat (outbox)  -->  Kafka (stadium: gate = partition
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
 FR      Order Service ki khabar SMS, Fraud, Analytics tak pahunche · Order Service kisi ka intezaar na kare
-        · ek user ki khabar kram me (order, pay, cancel)
+        · ek order ki khabar kram me (order, pay, cancel)
 NFR     khabar kabhi na khoye · do baar aaye to bhi kaam ek baar
         · ek service dheemi ho to baaki na rukein · ek kharab khabar line na roke
 Numbers roz 10 crore khabar = ~1,200 / sec, sale me ~5,000 / sec · ek checker ~500 / sec -> 10 checker, gate 30 (aage checker badhane ki jagah)
@@ -42,7 +42,7 @@ Numbers roz 10 crore khabar = ~1,200 / sec, sale me ~5,000 / sec · ek checker ~
 ```
 
 **FR / NFR -> kadam (Arpan: "sale ki bheed hatao, yahan matlab nahi; baaki sab theek"):** khabar SMS, Fraud, Analytics tak =
-1, 4, 4b · Order Service intezaar na kare = 1, 7 · ek user ki khabar kram me = 3b, 8b · NFR khabar kabhi na khoye = 5, 7 ·
+1, 4, 4b · Order Service intezaar na kare = 1, 7 · ek order ki khabar kram me = 3b, 8b · NFR khabar kabhi na khoye = 5, 7 ·
 do baar aaye to kaam ek baar = 6, 6b · ek service dheemi to baaki na rukein = 2, 4b, 4c, 9, 10 · ek kharab khabar line na roke = 8, 8b.
 
 &nbsp;
@@ -118,7 +118,7 @@ do baar aaye to kaam ek baar = 6, 6b · ek service dheemi to baaki na rukein = 2
 
 *Technical me:* partition badle to keys doosri jagah, isliye pehle se zyada partition.
 
-**Maan lo ek user ki khabar bahut garam:**
+**Maan lo ek key ki khabar bahut garam (jaise ek bada seller, uske dher order):**
 
 **Arpan:** Key me number jod deta hoon, jaise user 9 ya 4, to wo alag tukde pe chala jaata. Keemat ye ki us user ka poora kram nahi bachta, bas har tukde ke andar bachta.
 
@@ -233,9 +233,9 @@ Stadium me do saathi aaye, ek ki jeb me hathiyar nikla: dono bahar, ek nahi. Peh
 
 **10. Koi line me 7 din se zyada peeche reh gaya, aur gate ki 7 din purani list ka panna phaad diya jaata hai.**
 
-**Arpan:** Wahan bheed bahut zyada hai, aur admin daalo wahan. Use itna peeche rehne hi mat do na, wahan aisa karo taaki wo bheed 7 din tak peeche na rahe.
+**Arpan:** Wahan bheed bahut zyada hai, aur checker daalo wahan. Use itna peeche rehne hi mat do na, wahan aisa karo taaki wo bheed 7 din tak peeche na rahe.
 
-*Technical me:* "aur admin daalo" = pehle checker (consumer) badhao, gate (30) tak; gate bhar gaye tab gate (partition) bhi badhao, isliye shuru se zyada gate rakhe the, "itna peeche rehne hi mat do" = retention khatam hone se pehle lag pakadna.
+*Technical me:* "aur checker daalo" = pehle checker (consumer) badhao, gate (30) tak; gate bhar gaye tab gate (partition) bhi badhao, isliye shuru se zyada gate rakhe the, "itna peeche rehne hi mat do" = retention khatam hone se pehle lag pakadna.
 
 **Aur neeche (10 checker par gate ek):**
 
@@ -245,7 +245,7 @@ Stadium me do saathi aaye, ek ki jeb me hathiyar nikla: dono bahar, ek nahi. Peh
 
 **Maan lo wo dheere-dheere peeche ja raha: aaj 1 din, kal 2 din. 7 din hone se pehle kaise pata chalega?**
 
-**Arpan:** Alert laga do. Wo peeche ja raha, alert aa gaya. Wo aise bolta: "abe ye bahut peeche hai, admin jaldi-jaldi kaam karo, itna peeche kyun ja raha hai."
+**Arpan:** Alert laga do. Wo peeche ja raha, alert aa gaya. Wo aise bolta: "abe ye bahut peeche hai, checker jaldi-jaldi kaam karo, itna peeche kyun ja raha hai."
 
 *Technical me:* "alert laga do" = consumer lag alert.
 

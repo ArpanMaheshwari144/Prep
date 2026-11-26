@@ -40,7 +40,7 @@ Order Service  -->  DB + vasiyat (outbox)  -->  Kafka (stadium: gate = partition
 
 ```
 FR      Order Service ki khabar SMS, Fraud, Analytics tak pahunche · Order Service kisi ka intezaar na kare
-        · ek user ki khabar kram me (order, pay, cancel)
+        · ek order ki khabar kram me (order, pay, cancel)
 NFR     khabar kabhi na khoye · do baar aaye to bhi kaam ek baar
         · ek service dheemi ho to baaki na rukein · ek kharab khabar line na roke
 Numbers roz 10 crore khabar = ~1,200 / sec, sale me ~5,000 / sec · ek checker ~500 / sec -> 10 checker, gate 30 (aage checker badhane ki jagah)
@@ -48,7 +48,7 @@ Numbers roz 10 crore khabar = ~1,200 / sec, sale me ~5,000 / sec · ek checker ~
 ```
 
 **FR / NFR -> kadam (Arpan: "sale ki bheed hatao, yahan matlab nahi; baaki sab theek"):** khabar SMS, Fraud, Analytics tak =
-1, 4, 4b · Order Service intezaar na kare = 1, 7 · ek user ki khabar kram me = 3b, 8b · NFR khabar kabhi na khoye = 5, 7 ·
+1, 4, 4b · Order Service intezaar na kare = 1, 7 · ek order ki khabar kram me = 3b, 8b · NFR khabar kabhi na khoye = 5, 7 ·
 do baar aaye to kaam ek baar = 6, 6b · ek service dheemi to baaki na rukein = 2, 4b, 4c, 9, 10 · ek kharab khabar line na roke = 8, 8b.
 
 ---
@@ -146,7 +146,7 @@ mat bhejo, key se ek partition: A7 ki saari khabar ek line me, A8 ki ek me. Ek l
 shipped.
 **Asli naam:** partition key (message key = order id), kram sirf ek partition ke andar.
 
-**Isi pe ek aur misaal (exam hall):** bahar kaise bhi, andar roll number ki fix seat = partition ke andar kram. **Maan lo ek user
+**Isi pe ek aur misaal (exam hall):** bahar kaise bhi, andar roll number ki fix seat = partition ke andar kram. **Maan lo ek key
 garam:** key me number jodo, alag tukde; keemat: us user ka kram sirf tukde ke andar. **Asli naam:** per-partition order, key salting.
 
 **Maan lo baad me gate 10 se 20 karne pade:** Ginti badalte hi hash badalta, A7 ki khabar doosre gate pe, thodi der kram toot sakta; isliye shuru me hi zaroorat se zyada gate.
@@ -407,7 +407,7 @@ flowchart TB
 ## 10. Koi 7 din peeche reh gaya (aur admin + alert)
 
 Koi line me 7 din se zyada peeche reh gaya, aur gate ki 7 din purani list ka panna phaad diya jaata hai, to uski
-khabar hamesha ke liye gayi. Wahan bheed bahut zyada hai, aur admin daalo wahan. Use itna peeche rehne hi mat do na,
+khabar hamesha ke liye gayi. Wahan bheed bahut zyada hai, aur checker daalo wahan. Use itna peeche rehne hi mat do na,
 wahan aisa karo taaki wo bheed 7 din tak peeche na rahe.
 
 **Asli naam:** 7 din ka panna = retention, kitna peeche = consumer lag (gate ki aakhri khabar minus uska offset), aur
@@ -417,7 +417,7 @@ retention khatam hone se pehle lag pakadna. Gate badhao to hash badal ke kram bi
 kharidna hai.
 
 **Maan lo wo dheere-dheere peeche ja raha, aaj 1 din, kal 2 din, 7 din hone se pehle kaise pata chalega:** alert laga
-do. Wo peeche ja raha, alert aa gaya. Wo aise bolta: "abe ye bahut peeche hai, admin jaldi-jaldi kaam karo, itna
+do. Wo peeche ja raha, alert aa gaya. Wo aise bolta: "abe ye bahut peeche hai, checker jaldi-jaldi kaam karo, itna
 peeche kyun ja raha hai."
 **Asli naam:** consumer lag alert (lag 1 ghante se zyada to alert).
 
