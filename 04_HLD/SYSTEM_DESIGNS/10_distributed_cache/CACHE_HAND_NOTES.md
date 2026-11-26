@@ -16,7 +16,7 @@ Ravi  -->  server  -->  cache (Redis, RAM)  --miss-->  DB (asli sach)
  3   1 TB ek machine me nahi                    ->  tod do, hash se baanto (sharding)
  4   11vi machine judi, har key ki jagah badli  ->  paas ka petrol pump (consistent hashing)
  4b-d  ring ek disha, sab dabbe barabar bharte, aur dabbe jodo (scale out)
- 5   naam badla, cache me purana "Ravi"         ->  pehle DB, phir parchi kaato + retry; sync job (updated_at)
+ 5   naam badla, cache me purana "Ravi"         ->  pehle parchi kaato, phir DB + retry; sync job (updated_at)
  5b-c  kuch second purana chalega (eventual consistency), TTL
  6   Priya viral, 10,000 miss, sab DB pe        ->  ek chhotu bhejo, baaki ruko (single flight)
  6b  bot nakli id maange                        ->  "nahi hai" bhi parchi pe (negative cache)

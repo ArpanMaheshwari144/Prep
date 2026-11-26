@@ -21,7 +21,7 @@ Order Service  -->  DB me order + saath me vasiyat (outbox)  -->  Kafka
                     |  fail: ruk ke dobara (1, 2, 5 sec) · band to backup company (circuit breaker) · galat number = DLQ
                     |  pahuncha? company baad me bataye (webhook), na bataye to chhotu poochhe
                     |
-                 pasand + saancha apne paas (cache) · Diwali 1 crore = tukdon me, parchi pe "kahan tak"
+                 saancha apne paas (cache), pasand DB se · Diwali 1 crore = tukdon me, parchi pe "kahan tak"
 
  1   order khud SMS call kare, button 8 sec        ->  beech me dabba, aaram se bhejo (Kafka)
  1b  DB me order, Kafka se pehle gira              ->  order ke saath vasiyat (outbox = DB table, + relay)
@@ -150,9 +150,8 @@ pehle check, mila to skip. Ek chhoti khidki fir bhi bachti: SMS chala gaya aur "
 ek baar dobara ja sakta. Parchi is khidki ko bahut chhota kar deti, poora band nahi karti; ye kabhi-kabhar wala dohra
 maan ke chalte.
 
-**Parchi kahan:** Redis me map jaisa, chhota TTL; map me hai to skip. **Maan lo Redis gira:** DB me event id pe unique
-constraint, Redis sirf tez raasta, single point of failure nahi.
-**Asli naam:** Redis SET NX + TTL, unique constraint (asli pehra).
+**Parchi kahan:** Redis me map jaisa, chhota TTL; map me hai to skip. **Maan lo Redis gira:** DB me event id pe `IF NOT EXISTS`, Redis sirf tez raasta, single point of failure nahi.
+**Asli naam:** Redis SET NX + TTL, DB me IF NOT EXISTS (asli pehra).
 
 ```mermaid
 flowchart TB
@@ -177,7 +176,7 @@ flowchart TB
 
 Company ne OTP pe error lautaya: "abhi bheed hai, baad me try karo". Chhod do to OTP kabhi nahi milega, aur turant
 baar-baar bhejo to company pe bojh aur peeche ki saari SMS line ruki. To use alag rakh do, thodi der baad try karenge;
-zaroori kaam hai to rakh lunga, 3 ghante baad bhi.
+zaroori kaam hai to rakh lunga (OTP ho to uski umar ke andar hi, neeche).
 Jaise main papa se 100 rupaye maangne gaya aur papa busy hain, to thodi der ruk jaata hoon, baad me jaata hoon. Pattern
 yahi: koi bhi dikkat aayi to likh lo, kahin daal do, line mat roko. Par galat number pe 3 ghante baad bhi kuch nahi
 hoga, use dobara ghumaana bekaar. Wo kaise pehchanein, agle kadam me.

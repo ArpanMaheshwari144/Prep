@@ -147,7 +147,7 @@ Chhotu andar aayega, dekhega "achha, Arpan bhai ko kuch kaam hoga, chale gaye", 
 
 Ab koi aaya, dekha parchi pe neeche DONE likha hai, to kaam ho gaya, koi dikkat nahi. Kaam hua to parchi pe DONE aur register pe DONE; nahi hua to na parchi pe DONE na register pe.
 
-Aur ye ek hi transaction me, ek saath honge, taaki beech me gire to rollback ho jaaye, baad me phir kar sakte. Chhotu apne paas bhi parchi rakhe: "mere paas ye parchi hai, mujhe ye message bhejna hai".
+Aur ye ek saath honge (dono ya koi nahi), taaki beech me gire to aadha likha na rahe, baad me phir kar sakte. Chhotu apne paas bhi parchi rakhe: "mere paas ye parchi hai, mujhe ye message bhejna hai".
 
 Message bheja to apni parchi pe tick laga diya, kaam khatam. Chhotu gir bhi jaaye, kuch bhi ho jaaye, uske paas parchi hai.
 
@@ -171,9 +171,9 @@ Aadmi bolega: "ye message to abhi chala gaya yaar, ise dobara kyun bhejna, disca
 
 **5e. Maan lo aage: do message hain, #982 "kal Goa chalte hain" aur #983 "shaam 5 baje taiyaar rehna". Bahar wale aadmi ko #982 ki parchi mili, wo "thodi der me bhej dunga" bol ke chai peene chala gaya. Uski jagah doosra aadmi aaya, use #983 mila aur usne turant bhej diya. Logon ko pehle "shaam 5 baje" dikha, "kal Goa" baad me.**
 
-**Arpan:** Do parchi ek saath daal li, 980 aur 981, kyunki do message hain. Ho sakta hai kuch dheema ho, wo message ja hi nahi paaye aur uske peeche wala aage chala jaaye. To hum dekh lenge kaunsa message pehle aaya tha, wahi pehle jaayega, uske baad doosra. Ek time specific hota hai: is samay pe ye pehle aaya tha, to wahi pehle jaayega, uske baad doosra message.
+**Arpan:** Do parchi ek saath daal li, 982 aur 983, kyunki do message hain. Ho sakta hai kuch dheema ho, wo message ja hi nahi paaye aur uske peeche wala aage chala jaaye. To hum dekh lenge kaunsa message pehle aaya tha, wahi pehle jaayega, uske baad doosra. Ek time specific hota hai: is samay pe ye pehle aaya tha, to wahi pehle jaayega, uske baad doosra message.
 
-*Technical me:* parchi = message (number ke saath) · "kaunsa pehle aaya" = server ka sequence number (#982, #983, kadam 7 / 12), phone usi kram me lagaye; #981 pehle aa gaya to bhi #980 ke baad hi dikhe.
+*Technical me:* parchi = message (number ke saath) · "kaunsa pehle aaya" = server ka sequence number (#982, #983, kadam 7 / 12), phone usi kram me lagaye; #983 pehle aa gaya to bhi #982 ke baad hi dikhe.
 
 ---
 
@@ -234,7 +234,7 @@ To 2 bhej do, 1 aate hi turant 1 bhej do. Chat me thodi der pehla message baad m
 
 ---
 
-**9. Arpan ne #980 "kal party" bheja, Info me dekhna kis-kis ne padha. Har message x har member ki line = 980 x 500 = 4.9 lakh entry. Ravi ka number 968, Sita ka 978. Kisne padha?**
+**9. Arpan ne #975 "kal party" bheja, Info me dekhna kis-kis ne padha. Har message x har member ki line = 980 x 500 = 4.9 lakh entry. Ravi ka number 968, Sita ka 978. Kisne padha?**
 
 **Arpan:** Group me double tick aata hai, Info me jaake dekhte hain kisne padha. Ravi ne nahi padha, Sita ne padh liya. Maine 975 bheja, Sita ka 978, iska matlab Sita ne 975 padha, tabhi uski ginti 978 hui. Ravi ne 968 padha, matlab wo bahut der se offline hai, ya pahuncha to usne ye message read nahi kiya. Number ghata lo, isse pata pad jaayega kisne padha, kisne nahi.
 

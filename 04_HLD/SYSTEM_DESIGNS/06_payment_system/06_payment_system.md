@@ -409,7 +409,7 @@ bank se paisa kata ya nahi. Doosra PSP khada hai. Ye aisa hai: chhotu ko 500 de 
 sakta hai bhaag gaya, ho sakta hai line me khada ho aur dukaan pe paise de bhi diye hon. Agar pehle se pata hai ki
 PSP-1 down hai, to payment wahan jaane hi mat do, seedha PSP-2. Par agar pata nahi aur paise shayad kat chuke hain, to
 PSP-2 ko bheja to wo bhi kaat lega. Isliye Ravi ko bolo "tumhara payment process ho raha hai", aur PSP-1 ko saaf bol
-do: chhotu, tere paas itna waqt hai, ya haan bol ya naa. Haan aaya to kaam ho gaya, naa aaya to Ravi ke paise wapas.
+do: chhotu, tere paas itna waqt hai, ya haan bol ya naa. Haan aaya to kaam ho gaya; naa aaya to payment FAILED (paisa kata hi nahi); kata tha aur haan der se aaya to Ravi ke paise wapas.
 Koi perfect raasta nahi hai, par Ravi ko bekaar me ghanton atka ke nahi rakhna.
 
 **Asli naam:** pehle se pata down hai = circuit breaker OPEN, tab hi fallback PSP-2. Pata nahi kata ya nahi = unknown

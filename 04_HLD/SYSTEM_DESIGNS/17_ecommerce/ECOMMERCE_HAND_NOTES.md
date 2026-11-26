@@ -416,7 +416,7 @@ Ab line me aage khade ho jao, koi naya aayega to tumhe agla kaam milega. Jaise c
 
 *Technical me:* chhotu = wapas aaye machine ko pakadne wali job · purana 0 + kaam D, E pe = ownership D, E ko (purani copy hatao).
 
-**Padhai (reel se, R aur W ka dial):** N = 10 pe W1 R1 = bahut tez, par purana bhi mil sakta (1 + 1 < 10). W6 R5 = 11 > 10, pakka naya, par sirf 1 almari gir sakti, aur gire to likhna ruk jaata. Isliye balance tab jab R aur W dono N ke aadhe ke paas. Yahi dial consistency aur availability ke beech khud chunne deta (C side ya A side).
+**Padhai (reel se, R aur W ka dial):** N = 10 pe W1 R1 = bahut tez, par purana bhi mil sakta (1 + 1 < 10). W6 R5 = 11 > 10, pakka naya, par 5 almari giri to likhna ruk jaata (6 chahiye), 6 giri to padhna bhi. Isliye balance tab jab R aur W dono N ke aadhe ke paas. Yahi dial consistency aur availability ke beech khud chunne deta (C side ya A side).
 
 &nbsp;
 

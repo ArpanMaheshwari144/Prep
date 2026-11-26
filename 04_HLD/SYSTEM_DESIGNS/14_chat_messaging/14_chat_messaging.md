@@ -361,7 +361,7 @@ flowchart TB
 
 ## 9. #980 kisne padha? 4.9 lakh line (number ghata lo)
 
-Arpan ne #980 "kal party" bheja, Info me dekhna kis-kis ne padha. Har message x har member ki line = 980 x 500 = 4.9
+Arpan ne #975 "kal party" bheja, Info me dekhna kis-kis ne padha. Har message x har member ki line = 980 x 500 = 4.9
 lakh entry. Group me double tick aata hai, Info me jaake dekhte hain kisne padha. Sita ka number 978, iska matlab Sita
 ne 975 padha, tabhi uski ginti 978 hui. Ravi ka 968, matlab wo bahut der se offline hai, ya pahuncha to usne ye message
 read nahi kiya. Number ghata lo, isse pata pad jaayega kisne padha, kisne nahi.

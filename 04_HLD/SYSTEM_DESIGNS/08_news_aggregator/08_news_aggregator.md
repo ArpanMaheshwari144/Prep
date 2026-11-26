@@ -244,7 +244,7 @@ flowchart TB
 
 ## 6. Priya app kholti hai: site pe jaaye ya parchi se de? (pehli baar DB, phir parchi)
 
-Priya app kholti hai. Chhotu site pe jaata hai ya parchi se deta hai? Parchi bhi chhotu hi banata. Naya banda aaya,
+Priya app kholti hai. Chhotu site pe jaata hai ya parchi se deta hai? Parchi worker / consumer banata (chhotu sirf khabar Kafka me daalta, kadam 4). Naya banda aaya,
 pehle din pasand poochi: tech. To pehli baar DB se laao (thoda time chalega) aur parchi me rakh do. Roz tech hi dekh
 raha to wahi pehle se saamne rakho, pasand badle to DB se.
 

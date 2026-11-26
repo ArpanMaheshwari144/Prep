@@ -480,8 +480,8 @@ sab almari milaati rahe, taaki jo parchi kho jaaye wo bhi pakdi jaaye.
 
 **Asli naam:** hinted handoff (D ke paas maal + hint ki ye B, C ka), anti-entropy / read repair (peeche milaan).
 
-**Padhai (reel, R aur W ka dial):** N = 10 pe W1 R1 = tez par purana mil sakta; W6 R5 = 11 > 10 pakka, par 1 hi almari
-gir sakti. Balance = R aur W dono N ke aadhe ke paas. Yahi dial consistency aur availability ke beech chunne deta.
+**Padhai (reel, R aur W ka dial):** N = 10 pe W1 R1 = tez par purana mil sakta; W6 R5 = 11 > 10 pakka, par 5 almari giri to
+likhna ruk jaata (6 chahiye). Balance = R aur W dono N ke aadhe ke paas. Yahi dial consistency aur availability ke beech chunne deta.
 
 **Isi pe ek aur raasta (B, C ka purana saaf, kaam D, E ke paas):** Ek chhotu bitha do jo dekhe B aur C wapas aaye ya nahi, warna kal B, C khade ho jaayein aur bagawat pe utar aayein to dikkat. Aaye to chhotu halla macha de aur unhe batao: tum thodi der band the, tumhara kaam D aur E ko de diya, tum chup raho; tumhare paas Rahul ka jo purana tha (cart me 10 iPhone ho to bhi) use 0 kar do. Ab line me aage khade ho jao, koi naya aayega to tumhe agla kaam milega. Jaise company: ek employee chala gaya to company nahi rukti, doosre se kaam karwa lete.
 **Asli naam:** chhotu = wapas aaye machine ko pakadne wali job · purana 0 + kaam D, E pe = ownership D, E ko (purani copy hatao).

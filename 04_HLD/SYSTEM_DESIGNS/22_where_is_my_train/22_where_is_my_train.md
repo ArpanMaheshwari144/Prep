@@ -89,7 +89,7 @@ tower se juda), tower ki range jitna andaza = accuracy trade-off, pakki jagah na
 **Maan lo koi pooche GPS kyun nahi:** GPS on-off hota rehta, battery ke saath chalta, gaon me pahunch gaye to dikkat,
 kahin net nahi. Tower to bhar-bhar ke aa rahe. Mujhe bas range chahiye: ye is station se pehle hai, to log taiyaar
 rahein.
-**Asli naam:** GPS = battery zyada khaata, train ki metal body me signal kamzor (reel ki baat); tower = sasta, hamesha
+**Asli naam:** GPS = battery zyada khaata, train ki metal body me signal kamzor; tower = sasta, hamesha
 juda.
 
 ```mermaid

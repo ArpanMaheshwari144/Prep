@@ -140,7 +140,7 @@ do baar aaye to kaam ek baar = 6, 6b · ek service dheemi to baaki na rukein = 2
 
 **Maan lo checker ke room me scanner hang, 10 minute sab atke.**
 
-**Arpan:** Ticket check zaroori hai, bina ticket talaashi kyun lun, wahin se nikaal dunga. Order maintain karna hai, jaise pehle order phir pay. Scanner atka to ek mat rakho, copy bana ke rakho: 2-3 scanner, 2-3 room. Ek kharab to doosre se traffic chalta rahega.
+**Arpan:** Ticket check zaroori hai, bina ticket talaashi kyun lun, wahin se nikaal dunga. Order maintain karna hai, jaise pehle order phir pay. Scanner atka to ek mat rakho, copy bana ke rakho: 2-3 scanner ek hi room me. Ek kharab to doosre se traffic chalta rahega.
 
 *Technical me:* "2-3 scanner / room" = group me zyada consumer (ek gira to uske partition baaki me bat jaate, rebalance); "pehle ticket phir talaashi" = do topic ki chain (ticket_ok).
 

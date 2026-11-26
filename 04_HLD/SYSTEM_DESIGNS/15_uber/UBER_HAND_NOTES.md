@@ -165,7 +165,7 @@ Raju akela tha aur dabbe se nikal gaya to Arpan ko us waqt koi nahi dikhega, jai
 
 *Technical me:* "5 km gola" = aas-paas ke cell + asli fasla, "sirf khaali" = available drivers filter, "phone baja do" = broadcast dispatch, "30 second" = request TTL.
 
-(Yahan se kadam 6 ke India-Pakistan wale Maan lo tak saare scene Lucknow ke: Arpan Lucknow me hai, wahan Gomti nadi aur Ekana stadium. Shehar badla, Uber ki baat wahi.)
+(Yahan se kadam 6 ke India-Pakistan wale Maan lo tak ke pehle wale scene Lucknow ke (21-Nov round wale Bangalore ke): Arpan Lucknow me hai, wahan Gomti nadi aur Ekana stadium. Shehar badla, Uber ki baat wahi.)
 
 **Maan lo (Gomti nadi) seedhi lakeer pe sabse paas Raju 500 meter, par nadi ke us paar, pul 4 km door; isi kinare Shyam 1.5 km. System ne Raju diya, Arpan 18 minute khada.**
 
@@ -235,7 +235,7 @@ Aur sach: 50-60 hazaar ko turant cab namumkin, intezaar hoga hi, ek-do ghanta bh
 
 ---
 
-**7. Raju ne 14.9 sec pe accept dabaya, server pe 16 sec pe pahuncha, tab tak Priya ko de diya.**
+**7. Raju ne 14.9 sec pe accept dabaya, server pe 16 sec pe pahuncha, tab tak ride doosre driver ko de di.**
 
 **Arpan:** Ghadi server ki. 15 sec tak ruka, phir chala gaya; der se aaya to uski parchi phaad do, accept radd. Uber me bhi aise booking cancel hoti dikhti.
 

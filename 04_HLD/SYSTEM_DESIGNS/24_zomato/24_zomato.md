@@ -41,7 +41,7 @@ ka part nahi; door se aa raha to late aayega. Rating / doori se sort aur 15 km t
 FR      1  aas-paas (15 km) ke restaurant dikhao, rating ya doori se sort        -> kadam 1, 2
         2  menu dekho, order karo, khana pahunche                                -> kadam 0, 3
         3  driver ko map pe track kar sake (Uber wali tracking)                  -> kadam 3
-        4  restaurant kitni door hai (jaise 15 km), app pe pehle se dikhe        -> kadam 4
+        4  restaurant kitni door hai (jaise 15 km), app pe pehle se dikhe        -> kadam 1
         (pehle sawaal: order ka paisa PSP (Razorpay jaisa) se; uska andar ka kaam design ka hissa nahi.
          Interviewer se poochho: PSP ka timeout kitna, ya PSP scope se bahar? Wo bole "30-60 sec bahut" to wahi timeout,
          uske baad FAILED aur alag column "kitni der baad kata" (BMS 6c jaisa))

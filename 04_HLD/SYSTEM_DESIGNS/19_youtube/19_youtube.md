@@ -49,7 +49,7 @@ FR      1  video upload (badi file, 2-40 GB)                                  ->
         6  reels / shorts: swipe karte hi agli chale                            -> kadam 8
         7  roko, wahi se chalao                                                 -> Netflix kadam 5 (yaad account pe)
         8  search + recommendation (pasand ka music / video): recommendation ki algorithm / ML design ka
-           hissa nahi; pattern kaise banta = kadam 8b; search maange to Elasticsearch                 -> kadam 8b
+           hissa nahi; pattern kaise banta = kadam 8 Maan lo; search maange to Elasticsearch            -> kadam 8
 
 NFR     1  upload kabhi app ko na roke (badi file app server se na guzre)       -> kadam 1
         2  video jaldi live (pehle chhoti quality)                              -> kadam 2

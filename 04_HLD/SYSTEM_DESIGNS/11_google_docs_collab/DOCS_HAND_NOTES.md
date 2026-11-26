@@ -71,7 +71,7 @@ Main Ravi ka operation laaunga: isne ye likha to "Goa jaayenge" ke baad budget l
 
 **Arpan:** Hum HTTP use kar rahe the, HTTP ek tarafa hai, server Ravi ko khud nahi bhejega, har baar refresh karna padega. Peeche WebSocket laga dunga: change hua, turant push, two-way. WebSocket toota to jaise hi connection judega wo apne aap dekh lega aur turant push kar dega, same as WhatsApp: offline hue, online aaye to saare message ek saath.
 
-*Technical me:* version number = optimistic check (Jira / Confluence wala "kisi ne badla"), "HTTP ek tarafa" = request-response, "WebSocket two-way push", "judte hi chhoote ek saath" = reconnect pe missed ops replay (last version se aage).
+*Technical me:* version number = har op ke saath version (Jira / Confluence me purane version pe mana; Docs me mana nahi, server transform karta, kadam 3), "HTTP ek tarafa" = request-response, "WebSocket two-way push", "judte hi chhoote ek saath" = reconnect pe missed ops replay (last version se aage).
 
 ---
 

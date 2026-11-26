@@ -130,7 +130,7 @@ S3 khud likhta hai: "Amazon S3 event notifications are designed to be delivered 
 
 **Maan lo worker beech me gira, file VALIDATING pe atki:**
 
-**Arpan:** Sweeper job chala sakte: har minute dekhe, VALIDATING / UPLOADING agar 10 minute se nahi badla to us file ko hata do, wo bekaar hai. S3 me lifecycle rule bhi purani temporary aur adhoori multipart files apne aap clean kar deta.
+**Arpan:** Sweeper job chala sakte: har minute dekhe, UPLOADING agar bahut der se (upload jitne time se zyada) nahi badla to adhoori file hata do, wo bekaar hai; VALIDATING pe atki file hatani nahi, neeche wala retry. S3 me lifecycle rule bhi purani temporary aur adhoori multipart files apne aap clean kar deta.
 
 *Technical me:* sweeper / reaper job (status + updated_at dekh ke), S3 lifecycle rule (adhoora multipart abort).
 **Isi pe ek aur raasta (atki files dobara try):**

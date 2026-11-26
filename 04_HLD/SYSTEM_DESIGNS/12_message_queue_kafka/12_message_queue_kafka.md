@@ -193,7 +193,7 @@ ek dheema to doosra nahi rukta.
 
 **Maan lo checker ke room me scanner hang, 10 minute sab atke:** ticket check zaroori hai, bina ticket wale ki talaashi
 kyun, wahin se nikaal do; order maintain karna hai, jaise pehle order phir pay. Scanner atka to ek mat rakho, copy rakho:
-2-3 scanner, 2-3 room, ek kharab to doosre se traffic chalta rahe.
+2-3 scanner ek hi room me, ek kharab to doosre se traffic chalta rahe.
 **Asli naam:** 2-3 scanner / room = group me zyada consumer (ek gira to uske partition baaki me bat jaate, rebalance);
 pehle ticket phir talaashi = do topic ki chain (`ticket_ok`).
 

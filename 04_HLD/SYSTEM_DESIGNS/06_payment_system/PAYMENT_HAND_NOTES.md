@@ -208,7 +208,7 @@ Arpan (aur neeche: wallet se 2000 Ravi ke ICICI me, ICICI ne FAILED bola): Agar 
 
 Agar pehle se pata hai ki PSP-1 down hai, to payment wahan jaane hi mat do, seedha PSP-2. Par agar pata nahi aur paise shayad kat chuke hain, to PSP-2 ko bheja to wo bhi kaat lega.
 
-Isliye Ravi ko bolo "tumhara payment process ho raha hai", aur PSP-1 ko saaf bol do: chhotu, tere paas itna waqt hai, ya haan bol ya naa. Haan aaya to kaam ho gaya, naa aaya to Ravi ke paise wapas.
+Isliye Ravi ko bolo "tumhara payment process ho raha hai", aur PSP-1 ko saaf bol do: chhotu, tere paas itna waqt hai, ya haan bol ya naa. Haan aaya to kaam ho gaya; naa aaya to payment FAILED (paisa kata hi nahi); kata tha aur haan der se aaya to Ravi ke paise wapas.
 
 Koi perfect raasta nahi hai, par Ravi ko bekaar me ghanton atka ke nahi rakhna.
 

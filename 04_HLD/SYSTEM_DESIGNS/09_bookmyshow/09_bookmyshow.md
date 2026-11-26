@@ -366,7 +366,7 @@ Aur neeche (UPI app ka apna gola, user back daba de to): GPay se pay kar raha ho
 minute, wo sawaal hi nahi. Back dabaya aur paise kate hi nahi = user khush. Do haal: (1) user app me ruka, 10 second me
 "fail" aaya -> wahin popup "seat tumhari, dobara pay karo", dobara pay doosre PSP pe. (2) user ne back daba ke app band
 kar diya: 1.5 minute rokenge, chhotu peeche dekhta, kata to seat book; uske baad khatam (peeche bheed, chhotu 10 minute
-busy nahi reh sakta), booking INITIATED -> FAILED. Popup phir bhi bhejo, kyunki backend ko pata hi nahi app band hai:
+busy nahi reh sakta), payment FAILED (booking HELD rehti). Popup phir bhi bhejo, kyunki backend ko pata hi nahi app band hai:
 "booking fail, paise kate to wapas, seat abhi tumhari, dobara pay karo". Popup pe timer (1, 2 ya 5 minute, train booking
 jaisa), utni der seat uski; pay kiya to normal booking (Razorpay ne kaata to seat book), timer khatam to seat chhodo.
 Paise 2 minute, 10 minute ya 1 ghante baad kate: DB me likh lo, Razorpay ko bolo "kata ho to refund karo", aur user agli

@@ -302,17 +302,17 @@ Maan le wo ek tarah se kohinoor heera hai: na koi chhoo sakta, na chhed sakta, n
 
 *Technical me:* taala = koi badal na sake (lock) · "kai copy chhupa ke, milao" = copies (doosri jagah) se chhedchhaad pakadna, "version ka lock" = versioning, "kohinoor, koi badal na sake" = S3 Object Lock.
 
-&nbsp;
-
-## Mahine ki statement (billions of records)
-
-(Ye alag sawaal hai, bade bank ka: crore khaate, arbon transaction. Upar wala 50 lakh account ka design yahan bada ho jaata.)
-
 **Aur neeche (godown ka pehla taala):**
 
 **Arpan:** Pehla taala: godown me har koi nahi ghusega, sirf jiske paas ijazat hai. Par ijazat wala bhi badal sakta hai, isliye upar wala copies + version lock.
 
 *Technical me:* pehle access control (IAM), andar wale ko Object Lock / versioning rokta.
+
+&nbsp;
+
+## Mahine ki statement (billions of records)
+
+(Ye alag sawaal hai, bade bank ka: crore khaate, arbon transaction. Upar wala 50 lakh account ka design yahan bada ho jaata.)
 
 **Scene:** Bank ke crore khaate, arbon transaction. Har customer ki har mahine ki statement banni hai, aur 31 March ko sab ek saath maangte hain. Peeche kaam karne wale = chhotu.
 

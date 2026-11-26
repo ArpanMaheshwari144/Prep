@@ -162,7 +162,7 @@ Login hai to pasand ke hisaab se, category chunne ka option; login nahi to bas n
 
 **6. Priya app kholti hai. Chhotu site pe jaata hai ya parchi se deta hai?**
 
-**Arpan:** Parchi bhi chhotu hi banata. Naya banda aaya, pehle din pasand poochi: tech. To pehli baar DB se laao (thoda time chalega) aur parchi me rakh do. Roz tech hi dekh raha to wahi pehle se saamne rakho, pasand badle to DB se. Aur jis site se khabar la rahe wo band ho to 5 sec, 10 sec baad dobara try; na khule to chhodo, baaki site chalti rahengi.
+**Arpan:** Parchi worker / consumer banata (chhotu sirf khabar Kafka me daalta, kadam 4). Naya banda aaya, pehle din pasand poochi: tech. To pehli baar DB se laao (thoda time chalega) aur parchi me rakh do. Roz tech hi dekh raha to wahi pehle se saamne rakho, pasand badle to DB se. Aur jis site se khabar la rahe wo band ho to 5 sec, 10 sec baad dobara try; na khule to chhodo, baaki site chalti rahengi.
 
 *Technical me:* chhotu = fetcher, parchi = Redis feed · "pehli baar DB, phir parchi" = cache-aside, "5 sec, 10 sec baad dobara" = retry + backoff, ek site band = baaki pe asar nahi.
 

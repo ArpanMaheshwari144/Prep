@@ -201,7 +201,7 @@ chhod do; ulta aaya to dekho kaunsa naya, purana chhod do. (Grill: resume v1 phi
 **Asli naam:** idempotency (file id + version pe ek hi baar), S3 event ka `sequencer` ya hamara version number = thappa (usi file ke liye, bada = baad wala).
 
 **Maan lo user har 2-3 sec status poochhe:** status cache me, validate hote hi cache update (ya TTL). **Maan lo worker gira,
-file VALIDATING pe atki:** sweeper job har minute, 10 min se status nahi badla to hatao; S3 lifecycle rule adhoori files saaf.
+file VALIDATING pe atki:** sweeper job har minute, UPLOADING bahut der se nahi badla to adhoori hatao (VALIDATING atki = retry, neeche); S3 lifecycle rule adhoori files saaf.
 **Asli naam:** status cache (write-through), sweeper job, S3 lifecycle rule.
 
 **DB kaunsa:** file S3 me, DB me sirf metadata (naam, type, waqt, size, status); seedhi row, NoSQL ka point nahi -> SQL (RDS Postgres).

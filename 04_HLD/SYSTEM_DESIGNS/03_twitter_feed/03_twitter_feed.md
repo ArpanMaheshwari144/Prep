@@ -598,7 +598,7 @@ register = tweet store (Cassandra), like count saath me. Dabbe me sirf ID isliye
 **Maan lo Arpan ne tweet delete kar diya, par 8000 logon ke dabbe me uska number (ID) abhi bhi pada hai:** Tweet feed me push ho chuka tha to Ravi ko kuch second ke liye dikh sakta hai; Twitter ko baad me pata chala user ne delete kar diya, to wahan likh dega "the user has deleted this post". Ye aasaan cheez hai.
 **Isi pe ek aur misaal (Arpan):** Elon kabhi tweet karta hai, phir delete kar deta hai; thodi der ke liye dikh jaata hai, isi beech log screenshot le lete hain. Yahi hota hai: kuch der purana dikhna chalta hai.
 
-**Asli naam:** tweet store me deleted flag (soft delete), kuch second purana dikhna = eventual consistency, patti = tombstone, dikhate waqt deleted wala chhod do = hydration pe filter, 8000 dabbe saaf nahi karne padte.
+**Asli naam:** tweet store me deleted flag (soft delete), kuch second purana dikhna = eventual consistency, patti = tombstone, 8000 dabbe saaf nahi karne padte.
 
 ```mermaid
 flowchart TB
@@ -772,7 +772,7 @@ flowchart TB
     CL[("Kohli / SRK ki alag parchi<br/>padhte waqt milao")]:::card
     F --> FE(["Feed: dabba + celeb parchi,<br/>ranking"]):::good
     CL --> FE
-    T --> DB[("Cassandra: user id se baanto, 3 copy<br/>purane S3, follow Neo4j")]:::card
+    W --> DB[("Cassandra: user id se baanto, 3 copy<br/>purane S3, follow Neo4j")]:::card
     V["Video: presigned URL -> S3<br/>workers 4 size -> CDN"]:::card --> FE
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5

@@ -180,7 +180,7 @@ sabka phone bajao ("ITPL se airport"), request ki umar ~30 sec, jo accept kare u
 
 ![Dabbe ki seema pe mat chalo: Arpan se 8 km ka gola, chhoote dabbon ke driver bhi](../00_IMG/15_uber_map_kadam4.svg)
 
-(Yahan se kadam 6 ke Maan lo tak scene Lucknow ke: Gomti nadi, Ekana stadium. Shehar badla, Uber ki baat wahi.)
+(Yahan se kadam 6 ke Maan lo tak ke pehle wale scene Lucknow ke (21-Nov round wale Bangalore ke): Gomti nadi, Ekana stadium. Shehar badla, Uber ki baat wahi.)
 
 **Maan lo (reel se aaya) seedhi lakeer pe sabse paas Raju 500 meter, par Gomti nadi ke us paar, pul 4 km door; isi kinare Shyam 1.5 km:** Sirf map pe kaun paas
 dikh raha ye nahi dekhna. Gole ke driver ki asli doori nikaalo: sadak se kitni door, kitni der lagegi. Nadi wala sadak se 8 km,
@@ -275,7 +275,7 @@ Arpan ko. Har tukde ke liye yahi. Phir bhi bheed to gola bada.
 
 ## 7. Raju ne 14.9 sec pe accept dabaya, server pe 16 sec pe pahuncha (ghadi server ki)
 
-Wapas Delhi, Connaught Place, wahi shaam 7 baje wali booking. Raju ne 14.9 sec pe accept dabaya, par server pe 16 sec pe pahuncha, tab tak Priya ko de diya. Ghadi server ki hai. 15
+Wapas Delhi, Connaught Place, wahi shaam 7 baje wali booking. Raju ne 14.9 sec pe accept dabaya, par server pe 16 sec pe pahuncha, tab tak ride doosre driver ko de di. Ghadi server ki hai. 15
 sec tak ruka, phir chala gaya; der se aaya to uski parchi phaad do, accept radd. Uber me bhi aise booking cancel hoti
 dikhti hai.
 

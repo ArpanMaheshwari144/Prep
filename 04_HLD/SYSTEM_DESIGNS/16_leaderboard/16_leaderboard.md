@@ -34,7 +34,7 @@ match khatam (+50, match id)  -->  server  -->  Redis sorted set (apne aap sort)
 
 **FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
 Arpan: Score update FR hai. Top 10 FR nahi ho sakta, scoreboard aise kaam nahi karta: poochho top 10, 50 ya 100. "Mere aage-peeche ke 5" FR nahi, board sabke hisaab se banta, ye kisi ek user ka hai. Aaj / hafta / all-time, UTC, world ya India ka board: ye sab FR se pehle sawaal hain, pehle requirement clear kar lo, phir uske hisaab se FR me daalo. Score barabar to pehle wala upar = NFR. Rank milli second, score kuch second, Redis gira: inka yahan matlab nahi; asli rank to contest khatam hone ke baad hi pata chalti, beech me thodi purani chalegi.
-Technical me: pehle sawaal = scope / requirement clarification, FR = score update + top N, NFR = tie-break + eventual consistency (contest ke beech).
+Technical me: pehle sawaal = scope / requirement clarification, FR = score update + scoreboard, NFR = tie-break + eventual consistency (contest ke beech).
 Arpan (FR pakka): Top 10 FR nahi ho sakta; LeetCode me top 10 / top 15 jaisa koi feature nahi, wo rank pe chalta, top 10 pe koi inaam nahi. Top 10 feature to top 11, top 100 bhi feature, iska matlab nahi. Feature = scoreboard: sab usi board pe dikhte, apni rank bhi usi me.
 Technical me: FR = score update + scoreboard (har user usi board me apni rank dekhe); "top kitne dikhane" sirf pehle sawaal (a), FR nahi.
 

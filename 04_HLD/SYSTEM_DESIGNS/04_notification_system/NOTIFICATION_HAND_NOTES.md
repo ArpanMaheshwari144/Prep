@@ -15,7 +15,7 @@ Order Service  -->  DB me order + saath me vasiyat (outbox)  -->  Kafka
                     |  fail: ruk ke dobara (1, 2, 5 sec) · band to backup company (circuit breaker) · galat number = DLQ
                     |  pahuncha? company baad me bataye (webhook), na bataye to chhotu poochhe
                     |
-                 pasand + saancha apne paas (cache) · Diwali 1 crore = tukdon me, parchi pe "kahan tak"
+                 saancha apne paas (cache), pasand DB se · Diwali 1 crore = tukdon me, parchi pe "kahan tak"
 
  1   order khud SMS call kare, button 8 sec        ->  beech me dabba, aaram se bhejo (Kafka)
  1b  DB me order, Kafka se pehle gira              ->  order ke saath vasiyat (outbox = DB table, + relay)
@@ -104,7 +104,7 @@ Numbers 10 crore user x 5 khabar = 50 crore roz, ~5,800 / sec · sale pe 10 guna
 
 **4. Company ne OTP pe error lautaya: "abhi bheed hai, baad me try karo". Chhod de to OTP kabhi nahi milega, turant baar-baar bheje to company pe bojh aur peeche ki saari SMS line ruki. Kuch khabar kabhi ja hi nahi sakti, jaise galat number.**
 
-**Arpan:** Alag cheez me bhej de use, thodi der baad try kar lenge, kahin rakh de. Jaise main papa ke paas 100 rupaye maangne ja raha aur papa kisi kaam me busy hain, to thodi der ruk jaate hain, baad me chale jaayenge. Important kaam hai to rakh lunga, thodi der baad try karenge, 3 ghante baad. Pattern dikh raha hai: koi bhi dikkat aayi to likh lo, kuch bhi aaya to kahin daal do.
+**Arpan:** Alag cheez me bhej de use, thodi der baad try kar lenge, kahin rakh de. Jaise main papa ke paas 100 rupaye maangne ja raha aur papa kisi kaam me busy hain, to thodi der ruk jaate hain, baad me chale jaayenge. Important kaam hai to rakh lunga, thodi der baad try karenge (OTP ho to uski umar ke andar hi, neeche). Pattern dikh raha hai: koi bhi dikkat aayi to likh lo, kuch bhi aaya to kahin daal do.
 
 *Technical me:* "alag cheez me, thodi der baad try" = retry queue (ruk ke dobara), "dikkat aayi to likh lo, kahin daal do" = queue / parchi / retry ka ek hi pattern. Galat number ka hal block 5 me.
 

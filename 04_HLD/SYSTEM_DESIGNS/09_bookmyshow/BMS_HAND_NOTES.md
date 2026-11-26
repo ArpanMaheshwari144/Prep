@@ -95,7 +95,7 @@ Mere counter wale ne jaake seat pe ek parchi rakh di: "ye Arpan ki seat hai, Arp
 *Technical me:* counter = hamara server · "ek saath rakh, alag mat" = dekhna aur rokna ek hi query (UPDATE ... WHERE seat FREE), "seat pe parchi" = hold, "doosra parchi dekh ke mana" = doosre ko 0 row, "seat chali gayi".
 **DB kaunsa:**
 
-**Arpan:** Atomic update: check plus book ek hi update me, WHERE me "seat available hai" to hi book. MySQL do query ek saath nahi chalata, ek baar me ek, to atomic apne aap. Isse baat uthi ki SQL database lenge, NoSQL nahi: yahan consistency chahiye over availability, consistency bahut zyada chahiye, kyunki ek seat do logon ko nahi ja sakti.
+**Arpan:** Atomic update: check plus book ek hi update me, WHERE me "seat available hai" to hi book. Do log ek saath aaye to DB us row pe taala lagata, ek ki update hoti, doosre ko seat FREE milti hi nahi, to atomic apne aap. Isse baat uthi ki SQL database lenge, NoSQL nahi: yahan consistency chahiye over availability, consistency bahut zyada chahiye, kyunki ek seat do logon ko nahi ja sakti.
 
 *Technical me:* atomic conditional UPDATE, consistency > availability = SQL (Postgres / MySQL).
 
@@ -289,7 +289,7 @@ Dobara pay hoga to doosre PSP pe jaayega, ye PSP dheema hai. Doosra: user paresh
 
 Hum 1.5 minute tak rokenge, peeche chhotu dekhta rahega; kata to seat book. 1.5 minute ke baad khatam, kyunki peeche bheed lag rahi hai, ek user ke peeche pareshan nahi ho sakte, aur chhotu ka bhi time waste nahi kar sakte, chhotu 10 minute busy thodi rahega.
 
-Bank ki dikkat hai, wo hamare haath me nahi. DB me booking INITIATED thi, FAILED likh do.
+Bank ki dikkat hai, wo hamare haath me nahi. DB me payment FAILED likh do (booking HELD rehti, seat abhi tumhari).
 
 **Arpan (popup ki umar):** Popup to hum dikhayenge hi, kyunki backend ko pata hi nahi ki user ne app band kiya ya nahi. 1.5-2 minute baad popup: "tumhari booking fail ho gayi, paise kate to wapas aa jaayenge, koi dikkat nahi; tumhari seat abhi bhi hamare paas hai, dobara pay kar lo".
 
