@@ -34,7 +34,7 @@ Arpan  -->  app server  -->  parchi INITIATED (pehle apne register me)  -->  PSP
 
 **Arpan (do baar katna):** Do baar katta hai bhai, GPay, PhonePe, Paytm sab pe hota. PSP / Razorpay ke chakkar me: wahan se jawab na aaye, doosre PSP pe bhej diya, paise kat gaye; ye hum rok nahi sakte. Kabhi user ka net, kabhi Razorpay ka, kabhi bank ka. Isliye "do baar nahi katega" bolna zyada ho jaayega, interview me cross-Q ban jaayega; bolo hi mat.
 
-*Technical me:* ek jagah = ek DB transaction (ACID), alag jagah = saga (har kadam ka ulta kadam), 2PC nahi (kadam 8). Double debit = idempotency se kam, par zero ka vaada nahi; reconciliation + auto refund; RBI TAT circular (20-Sep-2019): UPI merchant T+5, P2P T+1, der pe Rs 100 / din.
+*Technical me:* ek jagah = ek DB transaction (ACID), alag jagah = saga (har kadam ka ulta kadam), 2PC nahi (kadam 8). Double debit = idempotency se kam, par zero ka vaada nahi; reconciliation + auto refund.
 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
@@ -75,9 +75,9 @@ Numbers ~10 crore user, aam din kuch sau payment / sec, Diwali pe ~3,000 / sec
 
 *Technical me:* "centralized authority jo ye kaam khud kare" = PSP (Razorpay, Juspay), "bas hum uski cheez use karein" = PSP ki API.
 
-Reel se (Stripe; Arpan: "scene-mock ka matlab nahi, tokenization credit card ka apna hota, Stripe ID rakhta"): card ka number apne DB me nahi, PSP card rakhe aur hume ek ID de, DB me sirf wo ID; UPI me sirf UPI ID, PIN user ke UPI app me.
+Reel se (Stripe; Arpan: "tokenization credit card ka apna hota, Stripe ID rakhta"): card ka number apne DB me nahi, PSP card rakhe aur hume ek ID de, DB me sirf wo ID; UPI me sirf UPI ID, PIN user ke UPI app me.
 
-*Technical me:* tokenization (payment method ID), card data PSP ke paas (PCI DSS), India me RBI ka niyam (1 Oct 2022): dukaan aur PSP dono card number nahi rakhte, sirf bank / card network; baaki ke paas token.
+*Technical me:* tokenization (payment method ID), card data PSP ke paas (PCI DSS), hamare DB me sirf token.
 **DB kaunsa: SQL ya NoSQL?** Arpan: Mera jhukaav consistency pe bahut zyada hai, system consistent hona chahiye. SQL DB ACID properties follow karta (atomicity, consistency); NoSQL (Cassandra jaisa) key-value hai, ACID follow nahi karta. Hum transaction, ACID, consistency wali cheezon pe zyada baat kar rahe, scale pe itni nahi. Scale pehle replicas aur index laga ke, sharding (partition) baad me, wo bahut badi baat hai. To MySQL ya Postgres.
 
 *Technical me:* paisa = ACID chahiye = SQL (Postgres / MySQL); scale ka kram: read replica + index pehle, shard aakhir me.
@@ -128,7 +128,7 @@ Isiliye hamare paas bhi PSP ka paisa aur settlement file baad me aati hai, aur r
 
 **Arpan:** PSP-1 band ho gaya to unka payment alag PSP-2 pe bhej do. Hamare paas fallback tareeka hoga na koi, unhe intezaar kyun karwana. Aur maan lo PSP-1 band hai lekin kuch log apna status jaanna chah rahe, to unhe thodi der rok do: "bhai abhi thoda down hai, aate-jaate hum tumhe bata denge."
 
-*Technical me:* "PSP-2 pe bhej do, fallback tareeka" = fallback PSP, "status wale ko thodi der rok do" = PSP-1 pe atke payment wahin PENDING, PSP-2 pe dobara nahi; "thodi der" = 30-55 sec, phir neeche wala "Maan lo PSP-1 chup" jawab (chain me 11b) (FAILED + PSP-2, kata nikla to REFUND_PENDING).
+*Technical me:* "PSP-2 pe bhej do, fallback tareeka" = fallback PSP, "status wale ko thodi der rok do" = PSP-1 pe atke payment wahin PENDING, PSP-2 pe dobara nahi; "thodi der" kitni = kadam 11b dekho.
 
 ---
 

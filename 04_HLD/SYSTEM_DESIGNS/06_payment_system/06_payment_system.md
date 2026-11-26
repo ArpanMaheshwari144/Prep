@@ -36,7 +36,7 @@ Arpan  -->  app server  -->  parchi INITIATED (pehle apne register me)  -->  PSP
 **FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
 Arpan: PSP ka FR / NFR se kuch lena-dena nahi, PSP alag cheez hai (HDFC hamara PSP nahi). FR me ek cheez poochh sakte: sab ek bank me rakhein ya do bank me. Ek hi bank me sab ho to wahan transaction, do bank me ho to saga. Hamara design do bank wala, isliye saga likha.
 Arpan (do baar katna): Do baar katta hai bhai, GPay, PhonePe, Paytm sab pe hota. PSP / Razorpay ke chakkar me: wahan se jawab na aaye, doosre PSP pe bhej diya, paise kat gaye; ye hum rok nahi sakte. Kabhi user ka net, kabhi Razorpay ka, kabhi bank ka. Isliye "do baar nahi katega" bolna zyada ho jaayega, interview me cross-Q ban jaayega; bolo hi mat.
-Technical me: ek jagah = ek DB transaction (ACID), alag jagah = saga (har kadam ka ulta kadam), 2PC nahi (kadam 8). Double debit = idempotency se kam, par zero ka vaada nahi; reconciliation + auto refund; RBI TAT circular (20-Sep-2019): UPI merchant T+5, P2P T+1, der pe Rs 100 / din.
+Technical me: ek jagah = ek DB transaction (ACID), alag jagah = saga (har kadam ka ulta kadam), 2PC nahi (kadam 8). Double debit = idempotency se kam, par zero ka vaada nahi; reconciliation + auto refund.
 
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
@@ -82,9 +82,8 @@ sambhalta, hum thodi fees dete). Hamara paise ka hisaab = SQL DB (Postgres; dono
 
 **Card ka number kahan rakhein (reel se, Stripe; scene-mock nahi):** card ka number hum apne DB me rakhte hi nahi. PSP
 (Stripe / Razorpay) card leke apne paas rakhta aur hume ek ID deta; DB me sirf wo ID, agli baar usi ID se charge.
-Card sambhalne ka jhanjhat aur jokhim hamara nahi, hum fees dete. India me RBI ka niyam isse bhi kada (1 Oct 2022 se):
-dukaan hi nahi, PSP bhi card number nahi rakh sakta; card sirf bank / card network (Visa, RuPay) ke paas, baaki sabko
-token milta. UPI me ye sawaal hi nahi: hamare paas sirf UPI ID aati, PIN user apne UPI app me daalta.
+Card sambhalne ka jhanjhat aur jokhim hamara nahi, hum fees dete. Hamare DB me sirf
+token. UPI me ye sawaal hi nahi: hamare paas sirf UPI ID aati, PIN user apne UPI app me daalta.
 **Asli naam:** tokenization (payment method ID / card token), card data PSP ke paas (PCI DSS ka bojh PSP pe).
 
 **DB kaunsa:** jhukaav consistency pe; SQL ACID deta, NoSQL key-value ACID nahi -> MySQL / Postgres. Scale pehle replica
@@ -187,8 +186,7 @@ band hai lekin kuch log apna status jaanna chah rahe, to unhe thodi der rok do: 
 hum tumhe bata denge.
 
 **Asli naam:** PSP-2 = fallback PSP (naye payment), status wale ko thodi der rokna = PSP-1 pe atke payment wahin
-PENDING, PSP-2 pe dobara nahi (warna do baar kata); thodi der = 30-55 sec, phir neeche wala "Maan lo PSP-1 chup" jawab (chain me 11b) (FAILED + PSP-2,
-kata nikla to REFUND_PENDING).
+PENDING, PSP-2 pe dobara nahi (warna do baar kata); thodi der kitni = kadam 11b dekho.
 
 ```mermaid
 flowchart TB
