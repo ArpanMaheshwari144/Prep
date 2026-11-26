@@ -50,7 +50,7 @@ Numbers 50 lakh order roz, market ~6 ghante -> ~250 / sec aam · 9:15 pe jhatka 
         live bhaav: ~10 lakh app khule, har second naya bhaav -> poochhne ki jagah push
 ```
 
-**FR / NFR -> kadam (Arpan: "achha baith ke banaya, sab badhiya, aise hi rehne do"):** order dalo + bhaav mile to sauda = 1 ·
+**FR / NFR -> kadam:** order dalo + bhaav mile to sauda = 1 ·
 paisa aur share badlo = 3, 6, 7 · live bhaav = 8 · cancel = 3c · bhaav badle (wahi order) = 3d · paise nikaalna = 3e ·
 3:30 raasta 2 = 3c · jitna mila utna = 3b · NFR paisa / share sahi = 2, 3, 5b, 7 · pehle aaya pehle = 4 ·
 har cheez ka record = 5, 6.
