@@ -250,9 +250,9 @@ flowchart TB
 
 ## 6. Salary ka din, line sadak tak (10 cashier, 10 counter)
 
-Mahine ki 1 tareekh, sabki salary, poora mohalla branch me. Roz ki bheed ke liye kadam 3 wale do counter
-kaafi the, aaj unhi do pe line sadak tak. To cashier badha do: ek
-tha, 10 kar do, 10 counter kar do. Bheed badh gayi, kaam khatam. Aam taur pe bhi yahi hota hai, bank me ek counter
+Mahine ki 1 tareekh, sabki salary, poora mohalla branch me. Roz ki bheed ke liye jitne counter the (kadam
+3c) wo kaafi the, aaj unpe line sadak tak. To cashier badha do: aur
+counter kar do. Bheed badh gayi, kaam khatam. Aam taur pe bhi yahi hota hai, bank me ek counter
 pe bheed ho to hum doosre counter pe jaate hain, movies me bhi same.
 
 **Asli naam:** 10 cashier = kai Banking Service machine (stateless, sach DB me), doosre counter pe bhejna = load

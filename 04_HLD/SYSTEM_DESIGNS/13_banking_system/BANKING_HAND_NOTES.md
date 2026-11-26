@@ -187,7 +187,7 @@ Online me bank andar ye kaise karta, wo system hamein pata nahi, wahan nahi jaan
 
 ---
 
-**6. Mahine ki 1 tareekh, sabki salary, poora mohalla branch me. Roz ki bheed ke liye kadam 3 wale do counter kaafi the, aaj unhi do pe line sadak tak.**
+**6. Mahine ki 1 tareekh, sabki salary, poora mohalla branch me. Roz ki bheed ke liye jitne counter the (kadam 3c) wo kaafi the, aaj unpe line sadak tak.**
 
 **Arpan:** Cashier badha do. Ek cashier tha, 10 cashier kar do, 10 counter kar do. Bheed badh gayi, kaam khatam, paisa hazam. Aam taur pe bhi yahi hota hai: bank me ek counter pe bheed hai to hum doosre counter pe jaate hain, movies me bhi same, har jagah same.
 
