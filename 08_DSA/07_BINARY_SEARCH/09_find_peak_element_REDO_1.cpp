@@ -26,6 +26,21 @@ using namespace std;
 
 int findPeakElement(vector<int> &nums)
 {
+    int n = nums.size();
+    int low = 0, high = n - 1;
+    while (low < high)
+    {
+        int mid = low + (high - low) / 2;
+        if (nums[mid] < nums[mid + 1])
+        {
+            low = mid + 1;
+        }
+        else if (nums[mid] > nums[mid + 1])
+        {
+            high = mid;
+        }
+    }
+    return low;
 }
 
 // ---------- checker (ise mat chhed) ----------
@@ -59,6 +74,7 @@ int main()
     check({1, 3, 2, 4, 6, 5});
     check({3, 1, 2});
     check({1, 3, 2, 1});
-    cout << "\n" << passed << "/" << total << " passed\n";
+    cout << "\n"
+         << passed << "/" << total << " passed\n";
     return 0;
 }
