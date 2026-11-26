@@ -80,6 +80,7 @@ Dhaancha client ka phone PUBG ke server pe jaata hai.
          Kaafi saare server, aage LB.
          Dono taraf taar khula chahiye, isliye WebSocket.
          CDN ka socha, par design me koi aapatti nahi kar raha, isliye nahi liya.
+         AWS ka CDN to har jagah chalta hi hoga.
 
 DB       likhai bahut (har goli, har kadam ke coordinate, America, India, China, Australia sab jagah), isliye
          Cassandra pehli pasand.
@@ -208,6 +209,7 @@ Is baar ghus gaya to ghus gaya, uski koi baat mat maano, aur agli baar match me 
 **Isi pe ek aur raasta (round me: ping chhoot gaya to):**
 - Pochinki se School 5-6 minute ka raasta, ye 1 second me pahunch gaya.
 - Iske liye pattern nahi chahiye, server khud pakad lega: pehla ping Pochinki se, doosra School se = namumkin, hacker.
+- Pehli soch: server ko pata lagne tak ho sakta hai hacker Arpan ko maar bhi de aur Arpan mar bhi jaaye. Par isse hamare paas pattern aa gaya (logs, Cassandra me); wo save kar lenge, aur agli baar us hacker ko match se disqualify.
 - Server ne poora raasta dekha to wo maanega hi nahi; hum hote to Arpan ko marne nahi dete, kill nullify, count nahi hoga.
 - Par maan lo beech me kuch millisecond ke liye server andha ho gaya, ping aaye hi nahi: use chhalaang dikhi hi nahi.
 - Hacker School me aaram se chal ke 10 meter andar khade Arpan ke peeche gaya aur maar diya, to server ko ye theek khela lagega.
