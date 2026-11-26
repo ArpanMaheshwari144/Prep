@@ -109,9 +109,9 @@ flowchart TB
 ## 2. 1.25 lakh likhai / sec, DB ghut gaya (bada bhai)
 
 Har 4 sec, 5 lakh driver = 1.25 lakh update / sec. Normal DB ghut gaya, aur jagah 30 sec peeche chal rahi. Do raaste
-the: ya to chhoti parchi, kaat ke nayi jagah likho; ya bada dabba jo likhne me tez ho. Crore-crore likhai pe parchi
-dheemi ho sakti, gir sakti, aur kab tak replica lagaunga, kal driver aur badhenge. To bada bhai bulao, jo isi kaam ke
-liye bana hai, apni copies khud rakhta.
+the: ya to chhoti parchi, kaat ke nayi jagah likho; ya bada dabba jo likhne me tez ho. Abhi ki aakhri jagah chhoti parchi
+(Redis) pe, kaat ke nayi: guddi chalta dikhe, driver neeche pahuncha ye wahi se. Poora raasta bada bhai me, jo isi
+kaam ke liye bana hai, apni copies khud rakhta; mahine bhar ka raasta = pattern (achhe raaste, kahan ride zyada, concert).
 
 **Asli naam:** bada bhai = Cassandra (likhai tez, apni copies, machine jodo to badhta; andar ring = consistent hashing, nayi machine jude to sirf paas ka hissa hile). Driver ki row driver_id pe,
 nayi jagah aate hi upar likh do (sirf taaza chahiye).
@@ -130,11 +130,11 @@ khaali ka padhai ke liye alag. Aage purane raaston se "airport ka sabse achha 9v
 ```mermaid
 flowchart TB
     X["Har 4 sec, 5 lakh driver:<br/>1.25 lakh / sec, normal DB ghut gaya"]:::bad
-    P["Chhoti parchi: dheemi ho sakti,<br/>gir sakti, kab tak replica<br/>(Redis)"]:::card
+    P["Abhi ki aakhri jagah: chhoti parchi,<br/>kaat ke nayi (Redis)"]:::pill
     subgraph BB["BADA BHAI (isi kaam ke liye bana)"]
-        C[("Likhai tez, copies khud<br/>(Cassandra)")]:::pill
+        C[("Poora raasta, likhai tez, copies khud,<br/>mahine ka pattern (Cassandra)")]:::pill
     end
-    X -.-> P
+    X --> P
     X --> C
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5

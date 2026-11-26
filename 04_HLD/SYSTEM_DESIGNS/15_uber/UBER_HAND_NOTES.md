@@ -85,7 +85,7 @@ ek driver do jagah nahi = 5, 7 · ride ke beech driver gaya = 14, 16d.
 
 **2. Har 4 sec, 5 lakh driver = 1.25 lakh update / sec. Normal DB ghut gaya, jagah 30 sec peeche.**
 
-**Arpan:** Ya to chhoti parchi, kaat ke nayi jagah likho; ya bada dabba jo likhne me tez ho. Crore-crore likhai pe parchi dheemi ho sakti, gir sakti, aur kab tak replica lagaunga, kal driver aur badhenge. To bada bhai bulao, jo isi kaam ke liye bana hai, apni copies khud rakhta: Cassandra.
+**Arpan:** Ya to chhoti parchi, kaat ke nayi jagah likho; ya bada dabba jo likhne me tez ho. Abhi ki aakhri jagah chhoti parchi (Redis) pe, kaat ke nayi; guddi chalta dikhana ho ya driver building ke neeche pahuncha, ye wahi se pata. Poora raasta bada bhai me, jo likhne ke liye hi bana hai, apni copies khud rakhta: Cassandra. Uber naya chala to pattern nahi; mahine bhar ka raasta Cassandra me hua to pata chalega kahan achhe raaste, Whitefield me ride zyada, kahan concert hote, driver wahan rakho.
 
 *Technical me:* chhoti parchi = Redis (kaat ke nayi likho = overwrite) · "bada dabba" = Cassandra (likhai tez, apni copies, machine jodo to badhta; andar ring = consistent hashing).
 
@@ -99,7 +99,7 @@ Ab maan le company ko ye sab chahiye, to wo kahin aur lagega, apne alag storage 
 
 Jitne bhi driver ki saari location har 4 second, Kafka me daal do, aur batch me alag storage box me daalte jao: 4 second baad driver yahan pahuncha, 4 second baad yahan, 10 minute se yahan khada tha, 20 minute yahan cigarette phooki, matlab jo bhi kiya (cigarette to map nahi dikhayega), cheezein alag-alag.
 
-DB me location daali to DB pata nahi kitne guna bada karna padega, Cassandra jaisa koi bhi DB nahi jhel paayega, aur fayda bhi nahi.
+Har 4 second ki location seedhi main DB (order wale) me daali to DB pata nahi kitne guna bada karna padega, aur fayda bhi nahi; isliye Kafka se batch me alag dabbe (Cassandra) me.
 
 *Technical me:* kadam 2 ke do raaste: pehli kahani me Cassandra me overwrite, is kahani me Redis me overwrite + raasta Kafka se alag storage. "parchi pe kaat ke nayi" = Redis me sirf aakhri jagah (overwrite), delivery ke baad hata do; "Kafka me daal, batch me alag storage box" = poore raaste ki history alag jagah (Kafka -> batch write); DB me sirf order ka status.
 
