@@ -100,10 +100,6 @@ message ek machine pe, kram me.
 
 **Maan lo pooche baantoge kis cheez se:** chat id se, user id se nahi.
 
-**Maan lo group 3 saal purana, 50 lakh message, Ravi upar scroll karke 2 saal purani trip ki photo dhoondhta (scene hi
-galat tha, aisa hota nahi):** 2 saal purana upar scroll karke koi nahi dhoondhta. Photo kholte hi phone ki gallery me
-download, purani photo phone me hi; server pe sirf link.
-
 **Aur neeche (DB kaunsa, Cassandra kyun):** Chat me likhai bahut hai, roz TB ke hisaab se, to data todna padega. Isliye Cassandra: wo disk pe bas neeche likhta jaata, likhai me bahut tez, aur khud hi machine pe baant deta. Chat id se baantunga, to ek chat ke saare message ek machine pe saath rahenge, aur har cheez ki 3 copy.
 **Asli naam:** Cassandra = likhai bhaari (append-only commit log), partition key chat_id, 3 copy (RF 3).
 

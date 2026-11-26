@@ -73,12 +73,6 @@ mile = 2, 7b · tick + unread = 8, 9 · photo / video = 10 · online / last seen
 
 *Technical me:* Cassandra = likhai bhaari (append-only commit log), partition key chat_id, 3 copy (RF 3).
 
-**Maan lo "college-gang" group 3 saal purana, 50 lakh message aur hazaron photo; roz log aaj-kal ke message padhte, par kabhi-kabhi Ravi upar scroll karke 2 saal purani trip ki photo dhoondhta (Claude ka scene; scene hi galat tha, aisa hota nahi):**
-
-**Arpan:** 50 lakh message bahut ho sakte, theek. Par 2 saal purana upar scroll karke dhoondhna sense nahi banata, aisa hota bhi nahi; ye scene galat likha hua hai. WhatsApp pe photo kholte hi gallery me download ho jaati hai, purani photo phone me hi hai.
-
-*Technical me:* DB = Cassandra, chat_id se baanta (ek chat ek machine pe, kram me); purani photo / video phone ki gallery me (client pe), server pe sirf link.
-
 ---
 
 **3. 10 crore log, ek server sabke taar nahi pakad sakta, 100 server lage. Arpan ka taar server 3 pe, Ravi ka server 71 pe. Server 3 ko pata hi nahi Ravi kis server pe.**
