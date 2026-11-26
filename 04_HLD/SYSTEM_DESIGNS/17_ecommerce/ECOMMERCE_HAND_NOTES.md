@@ -43,7 +43,12 @@ Arpan: E-com me sabse badiya kaam: stock dekho, cart me daalo (add karo), pay ka
 Technical me: cart user id pe (har user ka alag), dark store = paas ka store, pay = alag service + PSP, COD = payment method.
 
 Arpan (API): API app pe hi, shelf pe koi nahi. GET stocks: har cheez ka stock, app me sab dikhe. GET stock id se: ghee ki id do, uska stock aa jaaye (500). POST cart me +1 (cart me daalo). POST pay. Ye 4-5 main API, aage aur bhi hongi.
-Technical me: GET /stocks (saara stock, paas wale store ka), GET /stocks/{id} (ek cheez), POST /cart (item +1), POST /pay (PSP ko, -1 paisa katne pe).
+```
+API     GET  /stocks         -> saara stock, paas wale store ka (app me sab dikhe)
+        GET  /stocks/{id}    -> ek cheez ka stock (ghee ki id -> 500)
+        POST /cart           -> cart me +1
+        POST /pay            -> PSP ko; stock -1 tab jab paisa kate
+```
 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```

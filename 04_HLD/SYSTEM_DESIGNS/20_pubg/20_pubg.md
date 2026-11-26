@@ -96,11 +96,16 @@ rakhna pada to Redis cache.
 **Asli naam:** "dono taraf khula taar" = WebSocket, "likhai bahut" = write-heavy DB (Cassandra), "profile" =
 relational DB (Postgres), "kuch rakhna pade" = cache (Redis).
 
-**API (round me):** Zyadatar POST hongi, kyunki client se server ko jaata hai: POST match shuru, POST guddi chala,
-POST goli chali, POST headshot laga, POST kaun mara, sab coordinate ke saath; server unse line banata. Server se jo
-aata (ping), wo server khud bhejta. Match khatam (winner winner chicken dinner): GET match ke result.
-**Asli naam:** POST /matchmaking (Start dabaya); match ke andar ki POST (chaal, goli) asal me REST call nahi, usi
-khule taar (WebSocket / UDP) pe chhote message; GET /matches/{id}/result.
+**API (round me):**
+Arpan (API): Zyadatar POST hongi, kyunki client se server ko jaata hai: match shuru, guddi chala, goli chali, headshot laga, kaun mara, sab coordinate ke saath; server unse line banata. Server se jo aata (ping), wo server khud bhejta. Match khatam (winner winner chicken dinner): GET match ke result.
+```
+API     POST /matchmaking          -> "Start" dabaya, 100 ke match me jodo, squad bhar do       (FR 1, kadam 1)
+        match ke andar REST nahi, khule taar (WebSocket / UDP) pe chhote message:
+             phone -> server  chaal {kahan, kis disha}  -> server line banaye, jagah tay      (FR 2, kadam 2b, 4)
+             phone -> server  goli  {kahan se, disha}   -> server line kheench ke jaanche     (FR 3, kadam 3, 3b)
+             server -> phone  aas-paas ki khabar, kaun mara, headshot (server khud push)      (FR 2, 3, kadam 2)
+        GET  /matches/{id}/result  -> chicken dinner: kills + aakhri bachi team               (FR 4, kadam 5)
+```
 
 ---
 

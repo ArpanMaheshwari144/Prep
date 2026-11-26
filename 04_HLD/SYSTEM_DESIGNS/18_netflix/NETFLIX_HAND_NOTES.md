@@ -37,7 +37,15 @@ Technical me: FR = browse, play / pause, search · NFR = adaptive bitrate (ABR),
 
 **API (round me):**
 Arpan (API): POST wala video upload nahi chahiye, kyunki video Netflix ke andar hi daali jaati, hum upload nahi karte. GET filmein / series: kitni filmein, kitni series, Netflix ke server se jo data aa raha. GET recommendation: poori pasand wali list. GET dekhi hui: 3 saal purane user ne jo dekh rakhi (Stranger Things, Money Heist). POST search. POST payment wali. Ye 4-5 main API, jin pe system tika hai.
-Technical me: GET /titles (filmein + series), GET /recommendations (pehle se bani list, kadam 6), GET /continue-watching (dekhi hui + kahan tak, kadam 5), POST /search, POST /payment (subscription); video upload ki API nahi (Netflix khud daalta). Video ke tukde API server se nahi, paas ke dabbe (Open Connect) se.
+```
+API     GET  /titles             -> filmein + series ki list
+        GET  /recommendations    -> pasand wali list (pehle se bani, kadam 6)
+        GET  /continue-watching  -> dekhi hui + kahan tak (kadam 5)
+        POST /search             -> dhoondho
+        POST /payment            -> subscription
+        video upload ki API nahi (Netflix khud daalta)
+        video ke tukde API server se nahi, paas ke dabbe (Open Connect) se
+```
 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```

@@ -56,8 +56,16 @@ Trade-off jo bolne hain: door ki khabar nahi aati (par door ka dikhna hi nahi ch
 **Isi pe ek aur raasta (round me: FR / NFR, numbers, dhaancha):** FR: sabse pehle 4-4 ka squad bane aur log pelam pel khelein; India ke log India ke server pe, China ke China pe, Australia ke Australia pe. "Start" dabate hi match chale. Gaadi me baithe to gaadi ki awaaz, goli chali to goli ki, par aas-paas ki. Maine opponent ko goli maari to wo mare; headshot maara to dikhe "you killed this enemy by headshot". NFR: ping kam; guddi chala rahe to guddi chalta dikhe, gaadi chala rahe to gaadi; lag kam. "Server ye kare, wo kare" NFR me nahi bol sakte, wo peeche ka scene hai. "Phone kam MB / GB me chale" bhi nahi, phone ki jitni memory utni wo lega hi. Numbers: kul 1 crore user, roz ~5 million khelte (5 million sweet spot; roz 1 crore bahut zyada). Dhaancha: client ka phone PUBG ke server pe jaata hai. Yahan main cheez client hai: client ne guddi chalaya to guddi aage, gaadi chalayi, goli maari; aur server decide kare kisne kya kiya. Kaafi saare server, aage LB. Dono taraf taar khula chahiye, isliye WebSocket. CDN ka socha, par design me koi aapatti nahi kar raha, isliye nahi liya. DB: likhai bahut (har goli, har kadam ke coordinate, America, India, China, Australia sab jagah), isliye Cassandra pehli pasand. User ki profile ke liye seedha SQL, Postgres jaisa. Kuch rakhna pada to Redis cache.
 Technical me: "dono taraf khula taar" = WebSocket, "likhai bahut" = write-heavy DB (Cassandra), "profile" = relational DB (Postgres), "kuch rakhna pade" = cache (Redis).
 
-**API (round me):** Zyadatar POST hongi, kyunki client se server ko jaata hai: POST match shuru, POST guddi chala, POST goli chali, POST headshot laga, POST kaun mara, sab coordinate ke saath; server unse line banata. Server se jo aata (ping), wo server khud bhejta. Match khatam (winner winner chicken dinner): GET match ke result.
-Technical me: POST /matchmaking (Start dabaya); match ke andar ki POST (chaal, goli) asal me REST call nahi, usi khule taar (WebSocket / UDP) pe chhote message; GET /matches/{id}/result.
+**API (round me):**
+Arpan (API): Zyadatar POST hongi, kyunki client se server ko jaata hai: match shuru, guddi chala, goli chali, headshot laga, kaun mara, sab coordinate ke saath; server unse line banata. Server se jo aata (ping), wo server khud bhejta. Match khatam (winner winner chicken dinner): GET match ke result.
+```
+API     POST /matchmaking          -> "Start" dabaya, 100 ke match me jodo, squad bhar do       (FR 1, kadam 1)
+        match ke andar REST nahi, khule taar (WebSocket / UDP) pe chhote message:
+             phone -> server  chaal {kahan, kis disha}  -> server line banaye, jagah tay      (FR 2, kadam 2b, 4)
+             phone -> server  goli  {kahan se, disha}   -> server line kheench ke jaanche     (FR 3, kadam 3, 3b)
+             server -> phone  aas-paas ki khabar, kaun mara, headshot (server khud push)      (FR 2, 3, kadam 2)
+        GET  /matches/{id}/result  -> chicken dinner: kills + aakhri bachi team               (FR 4, kadam 5)
+```
 
 &nbsp;
 

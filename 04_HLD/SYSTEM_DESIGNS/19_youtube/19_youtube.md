@@ -80,9 +80,15 @@ chhote tukde (YouTube ki safed patti = itna aa chuka).
 
 **API (round me):** POST upload · GET saari video (home page) · GET ek video · POST view · GET recommendation · POST
 subscribe · nayi video ki khabar YouTube khud push karta (fan-out).
-**Asli naam:** POST /videos (upload ki parchi = presigned URL), GET /feed, GET /videos/{id}, POST /videos/{id}/view,
-GET /recommendations, POST /subscriptions; notification API nahi, server ka push: Android pe Firebase (FCM), iPhone pe
-Apple (APNs).
+```
+API     POST /videos              -> upload (upload ki parchi = presigned URL)
+        GET  /feed                -> home page, saari video ek saath
+        GET  /videos/{id}         -> ek video
+        POST /videos/{id}/view    -> view gino
+        GET  /recommendations     -> suggestion
+        POST /subscriptions       -> subscribe
+        nayi video ki khabar = API nahi, server ka push (Android: Firebase FCM, iPhone: Apple APNs)
+```
 
 ---
 
