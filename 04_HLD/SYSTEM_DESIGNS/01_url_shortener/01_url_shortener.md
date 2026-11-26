@@ -72,7 +72,7 @@ apne aap atomic hai.
 **Asli naam:** unique index / constraint on code.
 
 **Maan lo do log same lamba link chhota karein (Delhi, Mumbai):** dono ko alag code, ek ke do link chalte, dikkat nahi;
-counter aage hi chalega. bit.ly pe jaancha (21-Nov): ek hi YouTube link do baar, dono baar alag link.
+counter aage hi chalega.
 **Asli naam:** same long URL = naya code, lambe link pe dedup nahi.
 
 ```mermaid
@@ -292,8 +292,6 @@ machine tay.
 **Maan lo almari phir kam padi, 10vi lagani hai:** ye Cassandra khud sambhalta hai. Token ke hash se tukda wahi tay
 karta, nayi machine lagao to apne aap thoda data baant deta, baaki apni jagah. Ye uska andar ka kaam hai, hamara
 faisla nahi; interview me "Cassandra, partition key = token, machine jodte jao" kaafi.
-**Asli naam:** Cassandra andar token ring pe data baantta hai (official doc: "Dataset Partitioning: Consistent
-Hashing", https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html).
 
 **Maan lo 10vi almari:** mod se sab token idhar-udhar ho jaate, isliye almariyan gol chakkar me; hash jahan gire, uske
 sabse paas wali almari.
@@ -326,7 +324,7 @@ flowchart TB
 
 **Isi pe ek aur raasta (hash ki jagah state ke hisaab se):** mote register ko state ke hisaab se kaato (Delhi, Punjab, UP), har register pe
 thappa. Token me state ka chhupa code (01 = Delhi); beech ka bada bhai shuru ke 2 digit list se mila ke sahi register
-pe bheje. DB = Cassandra: key-value, likhai bahut, data me bank jaisi consistency (paisa, transaction) chahiye hi nahi, apne aap scale + replica.
+pe bheje.
 **Asli naam:** geo-partition, shard id ID ke andar, router / shard map.
 
 ## 9. Almari number 3 me aag (copy + acknowledge)
@@ -473,7 +471,7 @@ dekhte; gandi nikle to mat do.
 unke phone ka cache radd kar do, to agli request seedha hamare paas aayegi. Par phone uske haath me hai, main use mita
 nahi sakta. To phone pe likhne hi mat do. Likhega nahi to wo har baar hamare counter pe aayega, aur hum use theek
 token de denge. Agar phone wali dikkat hai to uske phone me likhna hi mat do, saaf baat hai. Aam taur pe phone ke
-cache ko TTL laga ke invalidate kar sakte, lekin hum technical nahi, aam dikkat ka solution bol rahe the.
+cache ko TTL laga ke invalidate kar sakte.
 **Asli naam:** phone me likh le = 301 (browser cache, hamesha ke liye), phone me likhna hi mat do, har baar counter pe aaye = 302 + `Cache-Control: no-store` (save hi mat karna; 301
 nahi; har click hamare paas, control hamare paas), phone cache pe TTL = browser cache ki umar.
 

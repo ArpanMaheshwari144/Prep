@@ -70,7 +70,7 @@ Numbers sirf jahan faisla badle: saalon me itna data (~90 TB) ki ek almari me na
 
 **Maan lo Arpan ne Delhi me YouTube ka ek gaana chhota kiya, Mumbai me kisi aur ne wahi link chhota kiya:**
 
-**Arpan:** URL shortener banane dega, uska link alag hoga. Duplicate link nahi banenge, par ek ke do link ho sakte hain, dikkat nahi, ye to design ka hissa hai; counter aage chalega hi chalega. (21-Nov Arpan ne bit.ly pe khud jaancha: ek hi YouTube link do baar chhota kiya, dono baar alag link mila, bit.ly/4AGUMOh aur bit.ly/4AKx7N1.)
+**Arpan:** URL shortener banane dega, uska link alag hoga. Duplicate link nahi banenge, par ek ke do link ho sakte hain, dikkat nahi, ye to design ka hissa hai; counter aage chalega hi chalega.
 
 *Technical me:* same lamba link = har baar naya code (lambe link pe "pehle se hai?" ki jaanch nahi), ek lambe ke kai chhote chalte hain.
 
@@ -173,8 +173,6 @@ Numbers sirf jahan faisla badle: saalon me itna data (~90 TB) ki ek almari me na
 *Technical me:* key-value + bahut likhai + saalon ka data = Cassandra (wide-column, apne aap replica + scale). Cassandra kyun: data key-value, likhai bahut, aur data me bank jaisi consistency (paisa nikaalna, transaction) chahiye hi nahi.
 
 **Maan lo almari phir kam padi, 10vi lagani hai:** Cassandra khud sambhalta: token ke hash se tukda wahi tay karta, nayi machine lagao to apne aap thoda data baant deta. Uska andar ka kaam, hamara faisla nahi.
-
-*Technical me:* Cassandra andar token ring (consistent hashing) se baantta, official doc: https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html
 
 **Arpan (jab 9 almari bhar gayi, 10vi aayi):** Hum mod karte the na, to mod se ab har cheez badal jaayegi. To aisa karo ki in sabko gol chakkar me bitha do. Token ka hash aaya, maan lo 5vi aur 6vi ke beech gira, to jo sabse paas wali almari hai wahan chala jaayega.
 
@@ -346,7 +344,7 @@ Main bas Redis ki copiyan ek ring me rakhta hoon: ek copy yahan, ek yahan, ek ya
 **Maan lo token radd kiya, par log counter pe aa hi nahi rahe. Unhe kaise pata chale? Shuru me phone me likhne dena tha ya nahi?**
 
 **Arpan:** Unke phone me wo cheez update kar do na. Wo cookies aur cache se aa rahe honge, to unka cache radd kar do, hata do, to agli request seedha yahan aayegi. Phir (jab poocha ki phone uske haath me hai, tu kaise mitayega): To phir phone pe likho mat na bhai. Phone pe likhega nahi to wo hamare counter pe dobara aayega, dobara hum use theek token de denge. Agar aisi phone wali dikkat hai to uske phone me likhna hi mat do, saaf baat hai.
-Baad me Arpan: aam taur pe phone ke cache ko TTL laga ke invalidate kar sakte hain, lekin hum technical nahi, aam dikkat ka solution bol rahe the, isliye thodi der me samjha.
+Baad me Arpan: aam taur pe phone ke cache ko TTL laga ke invalidate kar sakte hain.
 
 *Technical me:* "phone me likhna hi mat do, har baar counter pe aaye" = 302 + `Cache-Control: no-store` (save hi mat karna; 301 nahi), "phone me likh le" = 301 (browser cache), "phone cache pe TTL" = browser cache ki umar.
 **302 ka doosra fayda:**
