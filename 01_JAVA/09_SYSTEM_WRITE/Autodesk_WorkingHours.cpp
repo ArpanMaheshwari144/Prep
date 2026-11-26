@@ -2,7 +2,9 @@
 // Class ke method likho, neeche ke tests pass karo. Sirf Level 1 ka poora sawaal hai (OA me yahi khula tha).
 // Atke aur galti na dikhe to har return se pehle cout me RAASTE ka naam daal ("INVALID nahi mila", "ENTER", "LEAVE").
 //
-// ★ OA ME KYA GADBAD HUI (26-Nov): abhi khaali. Arpan bataye to yahan likhna, Banking wali file jaisa.
+// ★ OA ME KYA GADBAD HUI (26-Nov): COMPILE ERROR aa gaya aur pakad nahi paaya, isliye pata hi nahi chala kitne test
+//   pass hue, kitne nahi. Compile error me sabse PEHLI "error:" wali line padho: usme line number + kya galat, baaki
+//   neeche ki lines aksar usi ek galti ki wajah se aati hain. Ek theek karo, phir dobara compile.
 //
 // ================= SAWAAL (Level 1) =================
 // Office me contract workers aate-jaate hain, unka time register karna hai.
