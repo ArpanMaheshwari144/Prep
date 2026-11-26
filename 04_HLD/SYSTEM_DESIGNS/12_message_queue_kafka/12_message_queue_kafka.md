@@ -47,7 +47,7 @@ Numbers roz 10 crore khabar = ~1,200 / sec, sale me ~5,000 / sec · ek checker ~
         ek khabar ~1 KB -> roz ~100 GB, 7 din x 3 copy = ~2 TB disk
 ```
 
-**FR / NFR -> kadam (Arpan: "sale ki bheed hatao, yahan matlab nahi; baaki sab theek"):** khabar SMS, Fraud, Analytics tak =
+**FR / NFR -> kadam (Arpan: "sale ki bheed hatao, yahan matlab nahi"):** khabar SMS, Fraud, Analytics tak =
 1, 4, 4b · Order Service intezaar na kare = 1, 7 · ek order ki khabar kram me = 3b, 8b · NFR khabar kabhi na khoye = 5, 7 ·
 do baar aaye to kaam ek baar = 6, 6b · ek service dheemi to baaki na rukein = 2, 4b, 4c, 9, 10 · ek kharab khabar line na roke = 8, 8b.
 

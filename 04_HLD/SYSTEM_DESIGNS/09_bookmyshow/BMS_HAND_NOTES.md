@@ -38,7 +38,7 @@ FR me wo jo BookMyShow karta hai: seat book karna, pay karna, ek seat do ko nahi
 
 NFR wo jo hum engineer ki tarah dekhte: Redis, replica, kai server, load balancer, kuch atke nahi; koi line me aaya aur bahut der khada raha, uski parchi khatam ho gayi aur bina pay kiye chala gaya, 8 minute khade rehne ka fayda hi nahi hua, aisa na ho.
 
-Refund me BookMyShow ka seedha lena-dena nahi, wo PSP ka kaam hai. API abhi nahi, kuch din baad.
+Refund me BookMyShow ka seedha lena-dena nahi, wo PSP ka kaam hai.
 
 **Arpan (shard pe):** BookMyShow me shard nahi, partition kar do. Shard ki ek keemat hai, shard karna matlab apni aisi-taisi karwana. AWS jaise bahut bade platform, ya bank jo Europe, America, Canada, Australia, India sab jagah faila hai, wahan shard keh sakte. BookMyShow India me bahut bada bhi ho to partition kar lo, thoda indexing laga do. Shard bahut alag duniya hai; hum aise hi bol dete "shard kar do", par companiyan 10 baar sochti hain.
 

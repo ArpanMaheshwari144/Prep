@@ -49,7 +49,7 @@ Numbers 50 crore user, ek waqt ~10 crore online = 10 crore khule taar -> ~100 ch
         roz ~400 crore message = ~46,000 likhai / sec, ek message ~300 byte -> roz ~1.2 TB
 ```
 
-**FR / NFR -> kadam (Arpan: "badhiya likha hai, aise hi rehne do"):** 1-to-1 + group = 1, 3, 4, 5, 12c · offline ho to baad me
+**FR / NFR -> kadam:** 1-to-1 + group = 1, 3, 4, 5, 12c · offline ho to baad me
 mile = 2, 7b · tick + unread = 8, 9 · photo / video = 10 · online / last seen = 11, 11b · NFR turant = 1, 3, 4 · kabhi na khoye =
 2, 5b · kram na bigde = 5e, 7, 7b, 12, 12b · do baar na dikhe = 5c, 5d, 6, 6b.
 

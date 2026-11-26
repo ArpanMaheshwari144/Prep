@@ -274,7 +274,7 @@ UI pe kya dikhana aur PSP andar kaise chalta, ye HLD ka hissa nahi.
 
 **Maan lo Ravi ne 4 tab khole, Buy now 4 baar.**
 
-**Arpan:** (Arpan, 8-Nov: "ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Gate pe user id hi key: ek user ka ek hi ghee rukega, Ravi ka pehle se ruka hai to wahi lauta do, naya mat roko.
+**Arpan:** ("ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Gate pe user id hi key: ek user ka ek hi ghee rukega, Ravi ka pehle se ruka hai to wahi lauta do, naya mat roko.
 
 User id ek hai, to 4 tab ho, 5 ya 10, ek hi katega, 4 nahi. Ek tab se Buy now karke pay kar diya to baaki saare tab me cart 0: "order successful", khatam. Cart ko hamesha sync rakho; ye login, sign up aur user id ka khel hai.
 
@@ -352,7 +352,7 @@ PSP 2 minute baad bole paisa kat gaya, to ek alag column me likho kitni der me k
 
 **Maan lo PSP ka "success" do baar aaya (ek retry se, ek status job se).**
 
-**Arpan:** (Arpan, 8-Nov: "ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Payment id hi key: pehli baar aaya to order pakka, doosri baar wahi id dekh ke chhod do. Do order nahi, ginti do baar nahi kategi.
+**Arpan:** ("ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Payment id hi key: pehli baar aaya to order pakka, doosri baar wahi id dekh ke chhod do. Do order nahi, ginti do baar nahi kategi.
 
 *Technical me:* idempotency key (wahi ID dobara aaye to chhodo).
 

@@ -134,7 +134,7 @@ Priya  9800, 10:05 pe  ->  9800.90      line: Ravi -> Priya
 **Asli naam:** composite score (score + earlier-time fraction). Score pehle tolta, fraction sirf barabari pe.
 Time na jodo to barabar score pe Redis khud member naam ke alphabet (lexicographic) se kram lagata, pehle pahuncha wala nahi; isliye time jodte hain.
 
-**Maan lo (Claude ka nitpick) pooche:** time ka number jodo to baad wale ka bada: Ravi 10:00 = 9805, Priya 10:05 = 9805.15,
+**Maan lo pooche:** time ka number jodo to baad wale ka bada: Ravi 10:00 = 9805, Priya 10:05 = 9805.15,
 board pe sabse zyada score upar chahiye to Priya upar? Arpan: Ravi upar hi aayega; number sirf misaal tha. Redis 1, 2, 3 (chhota upar)
 rakhta, jo upar chahiye us hisaab se reverse karke padho; jodo, ghatao ya reverse, andar ki baat. **Asli naam:** pehle aaye ka hissa bada (ya time ulta karke jodo) = composite score; misaal ka number sirf misaal.
 
@@ -379,8 +379,7 @@ coordinator; ek dabbe pe kai thappe ho sakte. Query 1 crore nahi dekhti. Asli ra
 
 **Aur neeche (range se baantne ka matlab saaf):** India se 10 lakh log, meri rank 5,000 dekhni hai to 10 lakh me kahan dhoondhoge.
 Dabbe score ki range se, naam bas shehar ke gole jaise (Delhi, Mumbai, Bangalore, Chennai, Gujarat). Har dabbe pe range ka
-thappa: Delhi pe 4,000 se 5,000, to seedha Delhi ke dabbe pe; Bangalore, Mumbai se lena-dena nahi. (Pehle "IP" shabd bola
-tha, matlab tha jagah ke hisaab se gola.)
+thappa: Delhi pe 4,000 se 5,000, to seedha Delhi ke dabbe pe; Bangalore, Mumbai se lena-dena nahi.
 **Asli naam:** range partitioning (score range pe shard, naam sirf pehchaan), shard map (kis shard me kaunsi range), query sirf us ek shard pe.
 Bolne ki line: "FR ke hisaab se poora world board. Ek time zone (UTC). Pehle sawaal gino, paanchon wale pehle; ek jitne sawaal me jo pehle
 khatam kare wo upar, phir milli second, phir naam. Result aate jaayein, board banta jaaye, rank thodi der me theek."

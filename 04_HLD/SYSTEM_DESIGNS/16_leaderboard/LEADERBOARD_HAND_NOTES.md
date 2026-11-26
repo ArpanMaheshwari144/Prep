@@ -125,7 +125,7 @@ Isliye Redis sorted set: andar hi andar sort karta rehta, top 500 aur rank dono 
 *Technical me:* dabba har khiladi ke saath ek hi number leta, to "score phir time" ek number me pack: aage score, point ke baad time (jo pehle aaya uska hissa bada). Ravi 9800.95, Priya 9800.90.
 Jaankari (reel se): time na jodo to score barabar hone pe Redis khud naam ke alphabet se kram lagata (Aditi pehle, Zoya baad me), pehle pahunchne wala nahi; isliye time jodte hain.
 
-**Maan lo (Claude ka nitpick) pooche: time ko number bana ke score me jodo, to baad wale ka number bada; Ravi 10:00 = 9800 + 5 = 9805, Priya 10:05 = 9800 + 5.15 = 9805.15. Board pe sabse zyada score upar dikhana hai, to upar Priya aa jaayegi?**
+**Maan lo pooche: time ko number bana ke score me jodo, to baad wale ka number bada; Ravi 10:00 = 9800 + 5 = 9805, Priya 10:05 = 9800 + 5.15 = 9805.15. Board pe sabse zyada score upar dikhana hai, to upar Priya aa jaayegi?**
 
 **Arpan:** Ravi upar hi aayega, Priya kaise aa jaayegi. Wo number sirf misaal tha. Redis sorted rakhta hai 1, 2, 3, matlab sabse chhota upar. Hume jo upar chahiye us hisaab se ulta (reverse) kar do: sabse zyada score upar chahiye to reverse karke padho. Number jodo, ghatao ya reverse karo, dikkat kya hai; LeetCode andar kaunsa hisaab lagata wo public nahi. Baat itni: pehle score, barabar to time, pehle khatam wala upar.
 
@@ -329,7 +329,7 @@ Har dabbe pe range ka thappa: Delhi me is range se is range tak.
 
 Mujhe Arpan ki 5,000 wali rank chahiye, upar se dekha kis dabbe me hai: Delhi pe likha 4,000 se 5,000, to seedha Delhi ke dabbe pe; Bangalore, Mumbai se lena-dena nahi. 10 lakh se kitna bach gaya.
 
-(Pehle "IP" shabd bola tha, matlab tha jagah ke hisaab se gola.)
+
 
 *Technical me:* "dabbe range se, naam shehar ke" = range partitioning (score range pe shard, naam sirf pehchaan), "dabbe pe range ka thappa" = shard map (kis shard me kaunsi range), "seedha Delhi ke dabbe pe" = query sirf us ek shard pe, poore 10 lakh pe nahi.
 Bolne ki line: "FR ke hisaab se poora world board. Contest ek time zone me (UTC). Pehle sawaal gino, paanchon wale pehle; ek jitne sawaal me jo pehle khatam kare wo upar, phir milli second, phir naam. Result aate jaayein, board banta jaaye, rank thodi der me theek."

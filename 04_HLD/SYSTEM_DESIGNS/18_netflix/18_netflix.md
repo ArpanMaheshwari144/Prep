@@ -259,7 +259,7 @@ matlab aaj aage nahi badha.
 **Asli naam:** dost sankshep me bataye = dabba / player playback ki report (heartbeat) server ko bhejta.
 
 **Isi pe ek aur misaal (round me: game parlour ka maalik, saar wahi: dabba AWS ko bata de):**
-Pehle tasveer (round me Claude ne dikhayi):
+Pehle tasveer:
 ```
                  Ravi ka TV
                 /          \

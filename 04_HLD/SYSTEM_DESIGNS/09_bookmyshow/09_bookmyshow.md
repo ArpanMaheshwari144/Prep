@@ -36,7 +36,7 @@ User --> line (virtual queue, token: capacity jitne andar) --> LB --> kai counte
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
-Arpan: Log aa rahe hain, paise dekar ja rahe hain, matlab seat book honi chahiye. Ek seat do aadmi ko nahi milni chahiye. Payment consistent hona chahiye. Logon ko zyada intezaar na karna pade. FR me wo jo BookMyShow karta hai: seat book karna, pay karna, ek seat do ko nahi. NFR wo jo hum engineer ki tarah dekhte: Redis, replica, kai server, load balancer, kuch atke nahi; koi line me aaya aur bahut der khada raha, uski parchi khatam ho gayi aur bina pay kiye chala gaya, 8 minute khade rehne ka fayda hi nahi hua, aisa na ho. Refund me BookMyShow ka seedha lena-dena nahi, wo PSP ka kaam hai. API abhi nahi, kuch din baad.
+Arpan: Log aa rahe hain, paise dekar ja rahe hain, matlab seat book honi chahiye. Ek seat do aadmi ko nahi milni chahiye. Payment consistent hona chahiye. Logon ko zyada intezaar na karna pade. FR me wo jo BookMyShow karta hai: seat book karna, pay karna, ek seat do ko nahi. NFR wo jo hum engineer ki tarah dekhte: Redis, replica, kai server, load balancer, kuch atke nahi; koi line me aaya aur bahut der khada raha, uski parchi khatam ho gayi aur bina pay kiye chala gaya, 8 minute khade rehne ka fayda hi nahi hua, aisa na ho. Refund me BookMyShow ka seedha lena-dena nahi, wo PSP ka kaam hai.
 
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
@@ -295,7 +295,7 @@ consistency maango to ticket bik hi nahi sakte; bas user se saaf baat aur paisa 
 naye log doosre PSP pe = circuit breaker -> PSP-2, hamari id = payment id (idempotency key), baad me kata nikla to wapas
 = reconciliation job + refund.
 
-**Ghadi pakki (12-Nov, Arpan):** ghadi lagbhag 1 minute, 30-55 second + 5 second ka buffer: Razorpay ki taraf hum baithe nahi
+**Ghadi pakki:** ghadi lagbhag 1 minute, 30-55 second + 5 second ka buffer: Razorpay ki taraf hum baithe nahi
 reh sakte, peeche aur log hain, aur user khud pareshan hota "seat hui ya nahi, paisa kata ya nahi". Gole ke beech UI pe likho
 "tumhara payment process ho raha hai, bank se jawab aate hi batayenge", peeche chhotu Razorpay se poochhta rahe. 1 minute ke
 andar paisa kata to seat BOOKED, refund nahi. 1 minute ho gaya aur jawab nahi, to "booking fail hui, paisa kata hoga to wapas

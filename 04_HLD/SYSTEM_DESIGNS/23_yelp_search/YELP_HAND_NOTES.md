@@ -58,7 +58,7 @@ NFR     1  band dukaan search me "Closed" dikhe (search thodi der peeche chalega
 
 **3. Sync job har raat 2 baje. Paas wale "Burger Point" ne dopahar 1 baje menu me "Paneer Burger" joda, Postgres me turant. Shaam 8 baje Ravi "paneer burger" search kare, nahi aata; ES ko raat 2 baje pata chalega. Restaurant wala shikayat kar raha.**
 
-**Arpan:** Koi badlaav hua to ek single job chala do. Raat ko jo job chalegi wo to chalegi, par badlaav ho rahe to jaise hi Postgres me aaye, ek event bhej do Elasticsearch ko: ye bhi aa gaya, ye bhi kar de. Jaise S3 me hota hai, same jawab. (Yahan queue / Kafka nahi, wo kisi ne bola hi nahi; Zomato itna bada nahi ki Kafka uthaye; bas change event.)
+**Arpan:** Koi badlaav hua to ek single job chala do. Raat ko jo job chalegi wo to chalegi, par badlaav ho rahe to jaise hi Postgres me aaye, ek event bhej do Elasticsearch ko: ye bhi aa gaya, ye bhi kar de. Jaise S3 me hota hai, same jawab.
 
 **Arpan (Kafka kab):** Kafka numbers dekh ke decide karunga. Zomato jaise food delivery me ek saath zyada se zyada 20 hazaar order maano, wo seedha sambhal leta, Kafka ka matlab nahi. Haan, ekdum peak pe 1 lakh log ek saath aa gaye to gola ghoomta dikhao, "order place ho gaya", Kafka peeche sambhal lega. Amazon jaise ke liye Kafka soch sakta; Yelp kahan chalta (US / Europe) pata nahi, to wo alag baat.
 

@@ -189,7 +189,7 @@ Ek aur scene: saamne se goliyan chal rahi, main bhaag ke ekdum deewar ke peeche 
 
 Goli seedhi line me chali; deewar pe lagti to server mana karta, wo deewar wala scene pata hai. Par server mujhe (delay jitna) peeche karke dekhega aur goli aayi; agar main wahan tha to goli seedhi mujhe lagi, khatam kahani.
 
-*Technical me:* "server ki maano, 3 kadam peeche" = server reconciliation, jhatke se peeche aana = rubber banding, "server scene recreate / replay kare, mujhe peeche karke dekhe" = lag compensation (server rewind: goli wale ke ping jitna duniya peeche, Valve ne apne games me likha), "deewar ke peeche phir bhi mara" = lag compensation ka asar, corner se nikal ke maarne wale ko isi se fayda = peeker's advantage (Riot ne kam karne ko Valorant me 128 tick server).
+*Technical me:* "server ki maano, 3 kadam peeche" = server reconciliation, jhatke se peeche aana = rubber banding, "server scene recreate / replay kare, mujhe peeche karke dekhe" = lag compensation (server rewind: goli wale ke ping jitna duniya peeche), "deewar ke peeche phir bhi mara" = lag compensation ka asar, corner se nikal ke maarne wale ko isi se fayda = peeker's advantage.
 
 **Isi pe ek aur misaal (round me: dost aage nikal gaya phir bhi mara):** Dost chal ke ja raha tha, saamne se goli aayi, wo 1-2 second aage nikal chuka tha phir bhi mar gaya. Kyunki goli chali to server ne scene dobara banaya aur dekha dost aakhri baar kahan khada tha; wahin goli lagi. Server dobara chala ke dekhta hai, isliye aage nikal ke bhi mar jaate.
 

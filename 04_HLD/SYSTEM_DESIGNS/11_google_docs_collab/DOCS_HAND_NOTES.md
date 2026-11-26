@@ -41,7 +41,7 @@ Numbers ~10 crore user, roz ~3-4 crore · har akshar ek badlaav
         -> likhna bahut zyada: har akshar pe DB nahi chal sakta
 ```
 
-**FR / NFR -> kadam (Arpan: "achha lag raha, aise hi rehne do"):** kai log ek saath edit = 1, 3, 3b, 4 · doosre ka likha
+**FR / NFR -> kadam:** kai log ek saath edit = 1, 3, 3b, 4 · doosre ka likha
 turant dikhe, kisi ka mite nahi = 1, 1b, 3, 3c · kaun edit kar sakta, hataya to turant band = 6, 6b, 7 · NFR typing turant =
 2 · aakhir me sabka doc SAME = 3, 3b, 4 · "Saved" dikha to ude nahi = 5, 5b, 5c.
 
@@ -75,7 +75,7 @@ Main Ravi ka operation laaunga: isne ye likha to "Goa jaayenge" ke baad budget l
 
 ---
 
-**2. (Ye dikkat Arpan ne khud uthayi) Hazaron-laakhon log dhadadhad save kar rahe, har chhota badlaav DB pe jaaye to?**
+**2. Hazaron-laakhon log dhadadhad save kar rahe, har chhota badlaav DB pe jaaye to?**
 
 **Arpan:** Sab save DB pe jaayenge kya, kitna DB write karega, Cassandra ki bhi haalat ho jaayegi. Main hi Google Docs hoon: wo baar-baar hata rahe, badal rahe, check kar rahe. To main apna ek chhota register bana lunga, unki saari baatein likhta rahunga, phir kuch der baad DB me save kar dunga. Har write pe DB query nahi maarunga, warna DB baith jaayega.
 

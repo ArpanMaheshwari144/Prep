@@ -43,7 +43,7 @@ Numbers 50 crore user, ek waqt ~10 crore online = 10 crore khule taar -> ~100 ch
         roz ~400 crore message = ~46,000 likhai / sec, ek message ~300 byte -> roz ~1.2 TB
 ```
 
-**FR / NFR -> kadam (Arpan: "badhiya likha hai, aise hi rehne do"):** 1-to-1 + group = 1, 3, 4, 5, 12c · offline ho to baad me
+**FR / NFR -> kadam:** 1-to-1 + group = 1, 3, 4, 5, 12c · offline ho to baad me
 mile = 2, 7b · tick + unread = 8, 9 · photo / video = 10 · online / last seen = 11, 11b · NFR turant = 1, 3, 4 · kabhi na khoye =
 2, 5b · kram na bigde = 5e, 7, 7b, 12, 12b · do baar na dikhe = 5c, 5d, 6, 6b.
 
@@ -189,7 +189,7 @@ Doosra aaya, same person ko ja raha aur key same hai, to mana kar do: "ye messag
 
 **Maan lo ulta: Ravi ke phone ka "mil gaya" kho gaya, server ne message dobara bheja.**
 
-**Arpan:** (Arpan, 8-Nov: "ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Wahi key, lene wale ke phone pe: Ravi ka phone message ka number (seq / clientMsgId) dekhe, pehle aa chuka to dobara mat dikhao.
+**Arpan:** ("ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Wahi key, lene wale ke phone pe: Ravi ka phone message ka number (seq / clientMsgId) dekhe, pehle aa chuka to dobara mat dikhao.
 
 *Technical me:* idempotency key (wahi ID dobara aaye to chhodo).
 
@@ -200,7 +200,7 @@ Isi key ki doosri kahani = 5d: bahar wala aadmi jo 500 ko jaanta, wahi #980 doba
 
 ---
 
-**7. Group me Arpan ne "kal party" bheja, usi second Ravi ne "kahan?". Kuch members ko "kahan?" pehle dikha. Dono phone ki ghadiyan bhi 2 second aage-peeche. (Claude ne poochha: number lagayega kaun?)**
+**7. Group me Arpan ne "kal party" bheja, usi second Ravi ne "kahan?". Kuch members ko "kahan?" pehle dikha. Dono phone ki ghadiyan bhi 2 second aage-peeche.**
 
 **Arpan:** Numbering kar do: jisne pehle bheja uska pehla aayega, saaf seedhi baat. Phone nahi lagayega number, phone lagayega to clash ho jaayega. Phone ko thodi pata kaunsa message pehle aaya, phone to bas message bhejne wala banda hai. Server ko pata hai kaunsa pehle aaya, kis time aaya. Server lagayega number.
 

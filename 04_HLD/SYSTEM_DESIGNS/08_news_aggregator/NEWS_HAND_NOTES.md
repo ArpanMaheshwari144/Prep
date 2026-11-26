@@ -31,8 +31,6 @@ User  -->  LB  -->  server  -->  parchi se feed (pehli baar DB se)  <+
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
 
-**Arpan:** Theek hai, badhiya hai, yahi rehne do.
-
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
 FR      1  5000 site se khabar laao                                   -> kadam 1, 2, 2b

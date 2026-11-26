@@ -25,7 +25,7 @@ Arpan (Whitefield) --> Zomato app --> server --> Redis (menu + area ki restauran
 
 **Arpan ka nichod:** "Yahan do system design hain: ek user ke order ka (Arpan wala), ek restaurant aur driver ka (Zomato andar wala). User ko driver kaun hai ye sab nahi dikhta, restaurant ko dekhna padta. Zomato andar kya karta mujhe nahi pata, docs padh ke jawab nahi dunga; main hota to ye karta."
 
-**FR / NFR kahan se (Arpan):** Food delivery ka main kaam hi requirement hai. Koi bhi aadmi food order kar raha, uske aas-paas ke restaurant dikhenge. "Driver tez aaye" FR / NFR me nahi daal sakte, wo design ka part hi nahi; 40 km door se aa raha to late aayega, jaldi ka scope nahi. Rating / doori se sort aur 15 km tak = interviewer se poocha (Claude: haan, rating aur doori dono se; 15 km tak).
+**FR / NFR kahan se (Arpan):** Food delivery ka main kaam hi requirement hai. Koi bhi aadmi food order kar raha, uske aas-paas ke restaurant dikhenge. "Driver tez aaye" FR / NFR me nahi daal sakte, wo design ka part hi nahi; 40 km door se aa raha to late aayega, jaldi ka scope nahi. Rating / doori se sort aur 15 km tak = interviewer se poocha (rating aur doori dono se; 15 km tak).
 
 **FR / NFR (interview me pehle 2 minute):**
 ```
@@ -161,7 +161,7 @@ Order placed tabhi dikhao jab stock ho: stock tha to order placed, khatam. Burge
 
 ---
 
-**7. Burger Singh ki ginti 300, abhi 299 ho chuke. Arpan aur Rahul ek hi pal me order dabate, dono ko "1 bacha" dikhta, dono andar, 301. Kaise rokega? (Claude ne dikhaya: Diwali pe kai server, dono server ne ginti ek hi pal me 299 padhi, likhne se pehle.)**
+**7. Burger Singh ki ginti 300, abhi 299 ho chuke. Arpan aur Rahul ek hi pal me order dabate, dono ko "1 bacha" dikhta, dono andar, 301. Kaise rokega? (Diwali pe kai server, dono server ne ginti ek hi pal me 299 padhi, likhne se pehle.)**
 
 **Arpan:** Ginti ka counter ek hi hai, chahe Redis me chahe kisi me; dono server usi se baat kar rahe. Redis ek baar me ek hi command chalata, do ko ek saath nahi le sakta.
 

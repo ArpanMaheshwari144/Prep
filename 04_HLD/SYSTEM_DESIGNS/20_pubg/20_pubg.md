@@ -271,9 +271,8 @@ goli lagi, bhale wo aage chala gaya. Isi se kabhi bhaag ke deewar ke peeche pahu
 bahut game me). Server ki aankhen nahi, wo ping se baat karta. Goli deewar pe lagti to server mana karta (kadam 3).
 
 **Asli naam:** server ki maano, 3 kadam peeche = server reconciliation, jhatke se peeche = rubber banding, server
-scene peeche ghuma ke dekhe = lag compensation (server rewind, goli wale ke ping jitna; Valve ne apne games me likha),
-deewar ke peeche marna iska asar, corner se nikal ke maarne wale ko fayda = peeker's advantage (Riot ne kam karne ko
-Valorant me 128 tick server, second me 128 baar duniya update).
+scene peeche ghuma ke dekhe = lag compensation (server rewind, goli wale ke ping jitna),
+deewar ke peeche marna iska asar, corner se nikal ke maarne wale ko fayda = peeker's advantage.
 
 **Isi pe ek aur misaal (round me: dost aage nikal gaya phir bhi mara):** Dost chal ke ja raha tha, saamne se goli
 aayi, wo 1-2 second aage nikal chuka tha phir bhi mar gaya. Kyunki goli chali to server ne scene dobara banaya aur

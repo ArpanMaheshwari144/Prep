@@ -247,7 +247,7 @@ Peeche DB ki replica hai to wo bhi theek. Chhotu gira to doosra chhotu. DB ki sa
 *Technical me:* "dost sankshep me bataye" = dabba / player playback ki report server ko bhejta.
 
 **Isi pe ek aur misaal (round me: game parlour ka maalik, saar wahi: dabba AWS ko bata de):**
-Pehle tasveer (round me Claude ne dikhayi):
+Pehle tasveer:
 ```
                  Ravi ka TV
                 /          \

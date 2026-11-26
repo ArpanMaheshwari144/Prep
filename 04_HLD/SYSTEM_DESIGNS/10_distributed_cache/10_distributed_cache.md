@@ -182,9 +182,7 @@ ek saath bharte = hash se barabar baant.
 kamra nahi, ek niyam hai; dabbe 10 ho ya lakh, key dhoondhna ek hi hisaab, ring pe ghoomna nahi padta. Har naya dabba
 bas paas wale ka thoda hissa leta hai. Consistent hashing ye khud sambhal leta hai, interview me naam kaafi. Cassandra
 bhi andar yahi karta hai.
-**Asli naam:** dabbe jodte jao = scale out (nayi node ring me), ek hi hisaab = ring pe lookup. Official doc
-(Cassandra, "Dataset Partitioning: Consistent Hashing"):
-https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html
+**Asli naam:** dabbe jodte jao = scale out (nayi node ring me), ek hi hisaab = ring pe lookup.
 
 ![Gol ring: key jahan giri, ghadi ki disha me aage ka sabse paas wala dabba](../00_IMG/10_cache_ring_kadam4.svg)
 

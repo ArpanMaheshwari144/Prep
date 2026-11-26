@@ -113,7 +113,7 @@ Koi dabba "khatam" nahi hota, nayi key purane me bhi aati rehti hai, aur dhoondh
 
 **Arpan:** Ring me aur dabbe jodte jao. Ring bada hona dikkat nahi, ring koi kamra nahi, niyam hai; dabbe 10 ho ya lakh, dhoondhna ek hi hisaab. Consistent hashing apna kaam khud karta, interview me naam kaafi.
 
-*Technical me:* "dabbe jodte jao" = scale out (nayi node ring me), "ek hi hisaab" = ring pe lookup. Cassandra bhi andar yahi (official doc: https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html).
+*Technical me:* "dabbe jodte jao" = scale out (nayi node ring me), "ek hi hisaab" = ring pe lookup.
 
 ---
 

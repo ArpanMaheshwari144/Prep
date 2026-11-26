@@ -47,7 +47,7 @@ Numbers ~10 crore user, roz ~3-4 crore · har akshar ek badlaav
         -> likhna bahut zyada: har akshar pe DB nahi chal sakta
 ```
 
-**FR / NFR -> kadam (Arpan: "achha lag raha, aise hi rehne do"):** kai log ek saath edit = 1, 3, 3b, 4 · doosre ka likha
+**FR / NFR -> kadam:** kai log ek saath edit = 1, 3, 3b, 4 · doosre ka likha
 turant dikhe, kisi ka mite nahi = 1, 1b, 3, 3c · kaun edit kar sakta, hataya to turant band = 6, 6b, 7 · NFR typing turant =
 2 · aakhir me sabka doc SAME = 3, 3b, 4 · "Saved" dikha to ude nahi = 5, 5b, 5c.
 
