@@ -792,3 +792,46 @@ public:
 // broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
 ```
 
+
+---
+
+### ▸ EVALUATE REVERSE POLISH NOTATION (LC 150)
+
+**SAWAAL**
+```
+String ka array tokens: har token ek number (minus wala bhi, "-11") ya operator (+ - * /). Operator apne dono number ke BAAD aata hai. Poore hisaab ka jawab lautao; "/" zero ki taraf kaato.
+  e.g. ["2","1","+","3","*"] -> 9 · ["4","13","5","/","+"] -> 6
+  kyun: (2 + 1) * 3 = 9 · 4 + (13 / 5) = 4 + 2 = 6
+```
+
+**CODE**
+```cpp
+int solve(int a, int b, string token) {
+    if (token == "+")
+        return a + b;
+    else if (token == "-")
+        return a - b;
+    else if (token == "/")
+        return a / b;
+    else if (token == "*")
+        return (long)a * (long)b;
+    return -1;
+}
+
+int evalRPN(vector<string> &tokens) {
+    stack<int> st;
+    for (auto &token : tokens) {
+        if (token == "+" || token == "-" || token == "/" || token == "*") {
+            int b = st.top();               // pehle nikla = doosra number
+            st.pop();
+            int a = st.top();
+            st.pop();
+            int ans = solve(a, b, token);
+            st.push(ans);
+        }
+        else
+            st.push(stoi(token));
+    }
+    return st.top();
+}
+```
