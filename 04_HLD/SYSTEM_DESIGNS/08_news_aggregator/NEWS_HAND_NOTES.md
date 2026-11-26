@@ -146,11 +146,11 @@ Khabar aayi, maine apna algorithm chala ke chhaant liya: ye tech ki, ye cricket 
 
 Khabar to sabki ek hi hai: AI launch hua to poori duniya ke liye, Rahul aur Priya ko alag khabar thodi.
 
-Pasand dekh ke us category ki khabar unki feed me push, Twitter jaisa, taaki app kholte hi turant dikhe; neeche scroll karo to apne aap load.
+Pasand dekh ke us category ki parchi se khabar (har user ki alag feed nahi, sabki ek category parchi, kadam 8), taaki app kholte hi turant dikhe; neeche scroll karo to apne aap load.
 
 Login hai to pasand ke hisaab se, category chunne ka option; login nahi to bas normal khabar. Ye FR me likh sakte.
 
-*Technical me:* "pasand ki ek parchi" = user preference store, "shabdon ki list se chhaanto" = keyword-based classification (category tag), "feed me push" = fan-out on write, "neeche scroll pe load" = pagination / infinite scroll, "login nahi to normal khabar" = logged-out default / trending feed.
+*Technical me:* "pasand ki ek parchi" = user preference store, "shabdon ki list se chhaanto" = keyword-based classification (category tag), "category ki parchi" = category feed (ek key, kadam 8; har user me push nahi), "neeche scroll pe load" = pagination / infinite scroll, "login nahi to normal khabar" = logged-out default / trending feed.
 
 **Aur neeche (chhotu kya laaye):**
 

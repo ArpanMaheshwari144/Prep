@@ -210,9 +210,9 @@ bhi kaam kar de).
 
 **Maan lo Priya ne teen category chuni (tech, cricket, business), use EK feed chahiye:** teen alag parchi bekaar. Ek
 parchi pe sabki pasand. Khabar aate hi shabdon ki list se thappa (tech / cricket / business; kabhi galat bhi lagega).
-Khabar sabke liye ek hi, pasand dekh ke us category walon ki feed me push (Twitter jaisa), app kholte hi turant; neeche
+Khabar sabke liye ek hi, pasand dekh ke us category ki ek parchi se (har user ki alag feed nahi, kadam 8), app kholte hi turant; neeche
 scroll pe aur load. Login hai to pasand ki, login nahi to aam khabar.
-**Asli naam:** user preference store, keyword-based classification, fan-out on write, pagination / infinite scroll,
+**Asli naam:** user preference store, keyword-based classification, category feed (kadam 8), pagination / infinite scroll,
 logged-out default / trending feed.
 
 **Aur neeche (chunav ke din sab ek hi khabar padh rahe):** Server badhao, aage LB. Yahan likhna kuch nahi, sab wahi result padh rahe, to primary pe hit bekaar, replica se padhwao.
