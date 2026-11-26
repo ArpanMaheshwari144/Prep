@@ -208,12 +208,9 @@ Is baar ghus gaya to ghus gaya, uski koi baat mat maano, aur agli baar match me 
 
 **Isi pe ek aur raasta (round me: ping chhoot gaya to):**
 - Pochinki se School 5-6 minute ka raasta, ye 1 second me pahunch gaya.
-- Iske liye pattern nahi chahiye, server khud pakad lega: pehla ping Pochinki se, doosra School se = namumkin, hacker.
-- Pehli soch: server ko pata lagne tak ho sakta hai hacker Arpan ko maar bhi de aur Arpan mar bhi jaaye. Par isse hamare paas pattern aa gaya (logs, Cassandra me); wo save kar lenge, aur agli baar us hacker ko match se disqualify.
-- Server ne poora raasta dekha to wo maanega hi nahi; hum hote to Arpan ko marne nahi dete, kill nullify, count nahi hoga.
-- Par maan lo beech me kuch millisecond ke liye server andha ho gaya, ping aaye hi nahi: use chhalaang dikhi hi nahi.
-- Hacker School me aaram se chal ke 10 meter andar khade Arpan ke peeche gaya aur maar diya, to server ko ye theek khela lagega.
-- Par sab logs me likha ja raha; baad me dekhenge: uske kills radd, agle din phir aaya to phir radd, kuch din baad match me ghusne hi mat do.
+- Case 1, server ne dekh liya: iske liye pattern nahi chahiye, server khud pakad lega: pehla ping Pochinki se, doosra School se = namumkin, hacker. Server ne poora raasta dekha to wo maanega hi nahi; hum hote to Arpan ko marne nahi dete, kill nullify, count nahi hoga.
+- Case 2, server andha: maan lo beech me kuch millisecond ke liye server andha ho gaya (busy tha, ping late aaya ya aaya hi nahi): use chhalaang dikhi hi nahi. Hacker School me aaram se chal ke 10 meter andar khade Arpan ke peeche gaya aur maar diya, to server ko ye theek khela lagega.
+- Pehli soch: server ko pata lagne tak ho sakta hai hacker Arpan ko maar bhi de aur Arpan mar bhi jaaye. Par sab logs me likha ja raha; isse hamare paas pattern aa gaya (logs, Cassandra me); wo save kar lenge, aur agli baar us hacker ko match se disqualify. Baad me dekhenge: uske kills radd, agle din phir aaya to phir radd, kuch din baad match me ghusne hi mat do.
 - PUBG asal me kya karta (nullify ya ban), wo unke docs me hoga, mujhe nahi pata.
 
 *Technical me:* "server khud pakde, maane hi nahi" = server-side movement validation (server authoritative), "ping chhoota to chhalaang dikhi hi nahi" = packet loss se beech ka gap, "baad me logs dekh ke radd + ban" = offline cheat review + ban.
