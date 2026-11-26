@@ -109,7 +109,11 @@ API     POST /videos              -> upload (upload ki parchi = presigned URL)
 Arpan: Badi file apne paas mat rakho, seedha storage me bhejo. Jaise bank me koi bahut moti file le aaya ki locker me rakh lo. Hum badi file locker me kyun rakhenge? Watchman ko bulao: iska bas ek chhota sa hissa (parchi) apne paas rakho, aur file seedha bade storage me bhijwa do. Khatam kahani.
 Technical me: "file seedha bade storage me" = pre-signed URL, phone seedha object storage (S3 / GCS) me upload karta, "chhota hissa apne paas" = DB me sirf video ki parchi (metadata), app server pe video nahi.
 
-**Isi pe ek aur misaal (round me: chhote bank ki parchi):** Mere bank ka chhota locker hai, doosre shehar me mera hi bada bank, bada locker. Sab apna saaman mere chhote locker me rakhne lagein to ek din me bhar jaayega. To file main nahi leta, use parchi deta hoon jisme sab likha hai: parchi le ke bade bank jao, wo tera saaman apne locker me rakh lenge. Chhote locker me badi file kyun rakhun, uske chakkar me kyun girun. 40 GB kya, 100-200 GB ki video bhi, aur lakhon creator; app server baith jaayega. Seedha bade godown me.
+**Isi pe ek aur misaal (round me: chhote bank ki parchi):** Mere bank ka chhota locker hai, doosre shehar me mera hi bada bank, bada locker. Sab apna saaman mere chhote locker me rakhne lagein to ek din me bhar jaayega.
+
+To file main nahi leta, use parchi deta hoon jisme sab likha hai: parchi le ke bade bank jao, wo tera saaman apne locker me rakh lenge. Chhote locker me badi file kyun rakhun, uske chakkar me kyun girun.
+
+40 GB kya, 100-200 GB ki video bhi, aur lakhon creator; app server baith jaayega. Seedha bade godown me.
 
 **2. Video storage me aa gayi. Ab 360p, 720p, 1080p, 4K banana hai. Ek machine poori video ek-ek quality me bana rahi, 3 ghante lag rahe, subscribers pooch rahe "video kab?".**
 Arpan: Badi file hai to 20-25 log lagao. File tod do, chhote-chhote hisse, sab apna hissa fatafat banao, jab sab ho jaaye to poori file ek jagah jod do. Upload ho jaaye to storage mujhe ek khabar bhej de ki ho gaya. Phir pehle sabse chhoti, theek-thaak quality bana do. Jaise dulha-dulhan ko apni shaadi ki video jaldi dekhni hai: pehle chhoti quality de do, ek baar dekh ke santusht ho jaayenge, aur peeche hamare log 720p, 4K banate rahenge.
@@ -132,11 +136,21 @@ Technical me: "gateway pe rok do" = rate limit per user / IP / video, "WAF me da
 **Isi pe ek aur misaal (round me: gate pe bouncer):** YouTube ke paas lakhon pattern pehle se hain. API gateway = gate pe bouncer: Arpan ek like / view leke aaya, andar jao; Ravi 10,000 leke aaya, ya koi 1000 / 1 lakh ki script leke aaya, gate pe hi rok do, line me ghuse hi nahi.
 
 **5. Roz lakhon video, har ek ki 40 GB original + 5 quality ki copies. 10 saal purani videos jo mahine me ek baar koi dekhta, wo bhi mehenge tez storage me. Bill har mahine badh raha.**
-Arpan: Storage baant do: garam cheez garam jagah, thandi cheez thandi jagah. Arijit Singh ka naya gaana aaya, YouTube ke paas saalon ka pattern hai, pata hai ye chalega. Uske fan India me hain, to India ke CDN pe rakh do, aur garam storage me. 10-20 saal purana gaana jo koi nahi sunta, thande storage me. Jo ladka roz file lene aata hai, uski file main apne paas rakhta hoon; jo mahine me ek baar aata hai, uski file locker me, wo aaye tab jaake le aaunga.
+Arpan: Storage baant do: garam cheez garam jagah, thandi cheez thandi jagah. Arijit Singh ka naya gaana aaya, YouTube ke paas saalon ka pattern hai, pata hai ye chalega.
+
+Uske fan India me hain, to India ke CDN pe rakh do, aur garam storage me. 10-20 saal purana gaana jo koi nahi sunta, thande storage me.
+
+Jo ladka roz file lene aata hai, uski file main apne paas rakhta hoon; jo mahine me ek baar aata hai, uski file locker me, wo aaye tab jaake le aaunga.
 Technical me: "garam / thanda storage" = hot / cold storage tiering (lifecycle policy: itne din koi nahi dekha to sasti jagah), "pehle se India ke CDN pe" = popular video ko pehle se regional CDN pe.
 
 **6. 2010 ka gaana thandi jagah pada tha. Aaj reels pe trend ho gaya, 1 ghante me 50 lakh log. Thandi jagah se laane me har baar time, video ghoom rahi, log likh rahe "YouTube down hai?".**
-Arpan: Aaj wo phat gaya to thodi der ke liye garam storage aur CDN pe rakh lo. Pattern pata hai: ek-do din phatega, roz koi nahi sunega. Jaise Saiyaara ka gaana: India ka hai, Europe wale nahi sunenge, to India ke CDN pe. Kishore Kumar ka gaana 4 log sun rahe, achanak reel se phat gaya, to use bhi 1-2 din CDN pe. Fati jeans jaisa: kabhi nahi pehenta tha, trend aaya to 4-5 din pehni, trend thanda hua to wapas almaari me. Roz ginti dekho: 50 lakh, 16 lakh, 10 lakh, 5 lakh... trend khatam, wapas thande storage me. Purana gaana US ke server pe pada tha, India ka traffic roz US tak ja raha aur badhta hi ja raha: ek copy Mumbai ke server pe rakh do. 10 din peak, phir 11, 12, 15, 18 din ginti girti dikhe to wapas thandi jagah.
+Arpan: Aaj wo phat gaya to thodi der ke liye garam storage aur CDN pe rakh lo. Pattern pata hai: ek-do din phatega, roz koi nahi sunega. Jaise Saiyaara ka gaana: India ka hai, Europe wale nahi sunenge, to India ke CDN pe.
+
+Kishore Kumar ka gaana 4 log sun rahe, achanak reel se phat gaya, to use bhi 1-2 din CDN pe. Fati jeans jaisa: kabhi nahi pehenta tha, trend aaya to 4-5 din pehni, trend thanda hua to wapas almaari me.
+
+Roz ginti dekho: 50 lakh, 16 lakh, 10 lakh, 5 lakh... trend khatam, wapas thande storage me. Purana gaana US ke server pe pada tha, India ka traffic roz US tak ja raha aur badhta hi ja raha: ek copy Mumbai ke server pe rakh do.
+
+10 din peak, phir 11, 12, 15, 18 din ginti girti dikhe to wapas thandi jagah.
 Technical me: "phat gaya, garam me lao" = trend detect (view spike, view count wala stream), promote to hot storage + CDN, "ginti giri, wapas almaari" = demote (CDN se hatao, phir cold storage, TTL / lifecycle).
 
 **7. Arpan ka vlog chal gaya, uske subscriber nayi video ka intezaar karte. Par asli bojh tab, jab MrBeast jaisa bada YouTuber nayi video daale. MrBeast ne nayi video daali. Uske crore subscribers ko turant pata chalna chahiye.**
@@ -144,20 +158,48 @@ Arpan: Ye wahi subscriber wala fan-out hai jo Twitter me kiya: jisne subscribe k
 Technical me: "sab subscribers ko push" = fan-out (Twitter design) + notification system. Ghanti ke liye pull nahi chalta (user ko pata hi nahi kuch aaya), isliye bade creator pe bhi push; crore subscribers ko queue me daal ke workers / consumers thoda-thoda bhejte (Notification design). Home feed me video dikhana alag baat: wahan Twitter wala hybrid (bade creator ka pull) chalta.
 
 **8. Arpan ne Goa vlog se 30 second ke shorts bhi kaat ke daale. Chhoti video ka swipe (YouTube Shorts ho ya Instagram Reels, ek hi baat). Arpan ka dost Ravi Instagram pe reels dekh raha. Har swipe pe app server se agli reel maangta: phone se server, server se CDN, phir chale. Beech me 1-2 second ka spinner, aur reels me 1 second bhi bahut; spinner dikha aur Ravi aage swipe kar gaya.**
-Arpan: Instagram ke servers yahan hain nahi, to har reel pe bahar tak nahi jaayega; reel ke saare tukde CDN me laake rakh leta hai. Reel upload hui to 720p, 480p, jitne bhi p hote honge utne me todta hoga, transcoding yahan bhi lagti hogi: reel chhoti hoti hai to pehle chhoti quality bani, phir usse badi, phir usse badi, aur sab CDN ke server pe store. Ravi ki Instagram ki algorithm set hogi ki wo kis-kis ki reel dekhta hai, wahi reels aayengi. Ab koi dekh raha to 5 reel apne paas rakh lo. Ek scene lete hain: ek banda mere paas aaya, use page padhne hain, mere paas 20 page hain. Wo dhadadhad padhta raha. To kya main 20ve page ke khatam hone ka intezaar karunga? Nahi, chhotu ko bolunga "turant agle 20 page utha la". Wo 20 page padh le to agle 20 de diye, phir agle 20. Wo intezaar nahi kar raha, mere paas pehle se saamaan hai use dene ke liye. Bas yahi Instagram karta hai.
+Arpan: Instagram ke servers yahan hain nahi, to har reel pe bahar tak nahi jaayega; reel ke saare tukde CDN me laake rakh leta hai.
+
+Reel upload hui to 720p, 480p, jitne bhi p hote honge utne me todta hoga, transcoding yahan bhi lagti hogi: reel chhoti hoti hai to pehle chhoti quality bani, phir usse badi, phir usse badi, aur sab CDN ke server pe store.
+
+Ravi ki Instagram ki algorithm set hogi ki wo kis-kis ki reel dekhta hai, wahi reels aayengi. Ab koi dekh raha to 5 reel apne paas rakh lo. Ek scene lete hain: ek banda mere paas aaya, use page padhne hain, mere paas 20 page hain.
+
+Wo dhadadhad padhta raha. To kya main 20ve page ke khatam hone ka intezaar karunga? Nahi, chhotu ko bolunga "turant agle 20 page utha la". Wo 20 page padh le to agle 20 de diye, phir agle 20.
+
+Wo intezaar nahi kar raha, mere paas pehle se saamaan hai use dene ke liye. Bas yahi Instagram karta hai.
 Technical me: chhotu = phone ka background pre-fetch · "agle 20 page pehle se" = pre-fetching (aage ki reels ki list ek saath aati, aur unke tukde pehle se phone pe, agli reel ka player bhi taiyaar, swipe kiya aur chali), "tukde paas me" = CDN, "kai quality" = transcoding.
 
-**Isi pe ek aur misaal (round me: roz ki kitaab):** YouTube ke paas har jagah CDN (India, Europe, Dubai). Reel chhoti hai, 30 second se 1 minute, 1 GB bhi nahi. Delhi wala dekh raha to har reel US se kyun, Mumbai ke CDN se. Arpan ne ek reel dekhi to agli 3-4 saath mangwa ke rakh lo. Net kharab to kam quality me de do; net achha to buffering nahi, kharab to thodi hogi hi. Ek aadmi roz wahi kitaab padhne aata, main har baar andar se laane jaata; to thodi der ke liye wo kitaab counter pe rakh do.
+**Isi pe ek aur misaal (round me: roz ki kitaab):** YouTube ke paas har jagah CDN (India, Europe, Dubai). Reel chhoti hai, 30 second se 1 minute, 1 GB bhi nahi. Delhi wala dekh raha to har reel US se kyun, Mumbai ke CDN se.
+
+Arpan ne ek reel dekhi to agli 3-4 saath mangwa ke rakh lo. Net kharab to kam quality me de do; net achha to buffering nahi, kharab to thodi hogi hi.
+
+Ek aadmi roz wahi kitaab padhne aata, main har baar andar se laane jaata; to thodi der ke liye wo kitaab counter pe rakh do.
 
 **Maan lo Ravi metro me mobile data pe hai, 1.5 GB ka pack. Zyadatar reels 1 second me skip karta, par app har baar aage ki 5 reels poori, achhi quality me utaar raha. Shaam 4 baje pack khatam.**
-Arpan: Dekho uska net kaisa hai. Net itna badiya nahi chal raha to reels kam quality ki laao, faltu me zyada quality kyun; 240p bahut hai (Instagram me 480p bhi phone pe bahut HD lagti). Net slow to pehle thodi blur dikhegi; net theek chala to saaf. Net ke hisaab se 240p, 480p ya 1080p. Battery ke hisaab se Instagram kya karta hai, wo unki policy hai, hamein nahi pata, us pe faltu tippani nahi kar sakte. Aur Instagram ka main funda engagement hai: kisi reel pe meri engagement 1 second hai to wo reel ab dikhane ka nahi; kisi me 30 second gujaar diye to samajh jaayega ye dekhna chah raha. Library jaisa: 10 log roz aa rahe, unka pattern samajh gaya ki ye log ye padhne aate hain, to wahi kitaabein zyada aur alag-alag variety rakh di.
+Arpan: Dekho uska net kaisa hai. Net itna badiya nahi chal raha to reels kam quality ki laao, faltu me zyada quality kyun; 240p bahut hai (Instagram me 480p bhi phone pe bahut HD lagti).
+
+Net slow to pehle thodi blur dikhegi; net theek chala to saaf. Net ke hisaab se 240p, 480p ya 1080p. Battery ke hisaab se Instagram kya karta hai, wo unki policy hai, hamein nahi pata, us pe faltu tippani nahi kar sakte.
+
+Aur Instagram ka main funda engagement hai: kisi reel pe meri engagement 1 second hai to wo reel ab dikhane ka nahi; kisi me 30 second gujaar diye to samajh jaayega ye dekhna chah raha.
+
+Library jaisa: 10 log roz aa rahe, unka pattern samajh gaya ki ye log ye padhne aate hain, to wahi kitaabein zyada aur alag-alag variety rakh di.
 Technical me: "net ke hisaab se quality" = ABR (adaptive bitrate, pehle blur phir saaf), "1 second wali reel ab nahi" = recommendation ka engagement signal (kitni der dekhi), battery wala hissa public nahi.
 
 **Maan lo Ravi ka net achha, reels 1080p me aa rahi, par 5 me se 4 reels 1 second me skip. App ne har reel poori 30 second ki pehle hi utaar li thi, skip hui reel ke 29 second ka data bekaar.**
-Arpan: 10 reel poori laana thoda bewakoofi hai: 10 ki 10 skip kar di to aage 10 reel ke liye phir mehnat. To shuru ke kuch chunks le lo; use achha laga to theek, hamari mehnat bhi bekaar nahi gayi. Copy wala scene: chhotu ko 20 page laane bheja, dekha banda 1-2 page padh ke chala gaya; kal phir aaya, phir 1-2 page. Agle din kaha "chhotu, sirf 3-4 page la, bahut hai". Usne poora padh liya to chhotu ko chupchaap bhej dunga, wo poore le aayega. Par 1-2 page dekh ke kitaab nahi hataunga, kya pata use teesra-chautha page achha lage. Shuru me Instagram ke paas hamara kuch nahi hota, kuch bhi dikhata; 1-2 din pattern dekhega ki kya padhta, kitna padhta, phir laana kam karega. Pre-fetch bina soche nahi, dekh ke laaya hua.
+Arpan: 10 reel poori laana thoda bewakoofi hai: 10 ki 10 skip kar di to aage 10 reel ke liye phir mehnat. To shuru ke kuch chunks le lo; use achha laga to theek, hamari mehnat bhi bekaar nahi gayi.
+
+Copy wala scene: chhotu ko 20 page laane bheja, dekha banda 1-2 page padh ke chala gaya; kal phir aaya, phir 1-2 page. Agle din kaha "chhotu, sirf 3-4 page la, bahut hai".
+
+Usne poora padh liya to chhotu ko chupchaap bhej dunga, wo poore le aayega. Par 1-2 page dekh ke kitaab nahi hataunga, kya pata use teesra-chautha page achha lage.
+
+Shuru me Instagram ke paas hamara kuch nahi hota, kuch bhi dikhata; 1-2 din pattern dekhega ki kya padhta, kitna padhta, phir laana kam karega. Pre-fetch bina soche nahi, dekh ke laaya hua.
 Technical me: chhotu = phone ka background pre-fetch · "shuru ke kuch chunks" = pre-fetch me sirf pehle kuch second, baaki tab jab reel sach me chale; "kitna laana" = user ke pattern se (kitna skip karta). Trade-off: zyada laaye to data aur battery, kam laaye to spinner. Data saver on ho to pehle se laana band.
 
-**Isi pe ek aur misaal (round me: 8 page ka chhota version):** Wo roz kitaab ke 4 page padh ke chala jaata, main poori 100 page ki laata, counter bekaar bhar raha. 4-5 din pattern dikha to kitaab ka chhota version, 8-10 page wala, counter pe rakho, kam jagah. Waise hi Arpan har reel 2 second dekh ke swipe karta, to pehle 2 second hi mangwao; aage dekhe to 4, phir 8 second CDN se turant. 2 second pe skip kiya to bas 6 second aaya, poori reel nahi; hamara bhi bacha, uska net bhi.
+**Isi pe ek aur misaal (round me: 8 page ka chhota version):** Wo roz kitaab ke 4 page padh ke chala jaata, main poori 100 page ki laata, counter bekaar bhar raha.
+
+4-5 din pattern dikha to kitaab ka chhota version, 8-10 page wala, counter pe rakho, kam jagah. Waise hi Arpan har reel 2 second dekh ke swipe karta, to pehle 2 second hi mangwao; aage dekhe to 4, phir 8 second CDN se turant.
+
+2 second pe skip kiya to bas 6 second aaya, poori reel nahi; hamara bhi bacha, uska net bhi.
 
 **Maan lo pattern kaise banta:**
 Arpan: Shuru me Instagram ke paas hamara kuch nahi hota, kuch bhi reel dikhata. Roz jaate hain to use pata lag jaata ye Arpan ye zyada dekhta, to feed me wahi. Algorithm set hota: is region (India) ke log ye zyada dekhte, phir India me north ke log ye, south ke ye. Main bhi library me aisa karunga: is region ke log comic zyada padhte, is region ke horror fantasy.

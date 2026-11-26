@@ -27,7 +27,11 @@ match khatam (+50, match id)  -->  server  -->  Redis sorted set (apne aap sort)
 ```
 
 **FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
-Arpan: Score update FR hai. Top 10 FR nahi ho sakta, scoreboard aise kaam nahi karta: poochho top 10, 50 ya 100. "Mere aage-peeche ke 5" FR nahi, board sabke hisaab se banta, ye kisi ek user ka hai. Aaj / hafta / all-time, UTC, world ya India ka board: ye sab FR se pehle sawaal hain, pehle requirement clear kar lo, phir uske hisaab se FR me daalo. Score barabar to pehle wala upar = NFR. Rank milli second, score kuch second, Redis gira: inka yahan matlab nahi; asli rank to contest khatam hone ke baad hi pata chalti, beech me thodi purani chalegi.
+Arpan: Score update FR hai. Top 10 FR nahi ho sakta, scoreboard aise kaam nahi karta: poochho top 10, 50 ya 100. "Mere aage-peeche ke 5" FR nahi, board sabke hisaab se banta, ye kisi ek user ka hai.
+
+Aaj / hafta / all-time, UTC, world ya India ka board: ye sab FR se pehle sawaal hain, pehle requirement clear kar lo, phir uske hisaab se FR me daalo. Score barabar to pehle wala upar = NFR.
+
+Rank milli second, score kuch second, Redis gira: inka yahan matlab nahi; asli rank to contest khatam hone ke baad hi pata chalti, beech me thodi purani chalegi.
 Technical me: pehle sawaal = scope / requirement clarification, FR = score update + scoreboard (har user usi board me apni rank), NFR = tie-break + eventual consistency (contest ke beech).
 Arpan (FR pakka): Top 10 FR nahi ho sakta; LeetCode me top 10 / top 15 jaisa koi feature nahi, wo rank pe chalta, top 10 pe koi inaam nahi. Top 10 feature to top 11, top 100 bhi feature, iska matlab nahi. Feature = scoreboard: sab usi board pe dikhte, apni rank bhi usi me.
 Technical me: FR = score update + scoreboard (har user usi board me apni rank dekhe); "top kitne dikhane" sirf pehle sawaal (a), FR nahi.
@@ -83,7 +87,15 @@ Technical me: "apne aap sort wala dabba" = Redis sorted set (har khiladi + score
 Jaankari (reel se): sorted set andar se skip list hai, highway jaisi (neeche sadak har gaon rukti, upar express lane sirf bade shehron pe), isliye 1 crore me bhi ~24 kadam.
 
 **Maan lo (reel se) kisi ne kaha Redis kyun, SQL me score pe index laga do. Index laga diya, top 10 ab turant, par Arpan ka rank (45,23,118) abhi bhi 3 second leta hai.**
-Arpan: 1 crore khiladi pe index kaise lagega: maan lo 5 lakh ka ek block, phir 5 lakh ka, phir 5 lakh ka. Mujhe 1 crore me se 45 lakh wala rank dhoondhna hai; 5-5 lakh alag bhi kar diye to bhi har block me jaake dekhna hi padega, dhoondhne ka time badhega. Asli dikkat ye hai ki score badalta jaata hai, har second update ho raha. Index lagaya to har likhai pe index bhi badlega, likhne aur update ka time har waqt badhta jaayega. Index ka fayda ye ki query jaldi chalti, par jahan likhai zyada hai wahan index ka utna fayda nahi; log bahut hain aur real time me score dhadadhad update ho raha. Isliye Redis sorted set: andar hi andar sort karta rehta, top 500 aur rank dono turant.
+Arpan: 1 crore khiladi pe index kaise lagega: maan lo 5 lakh ka ek block, phir 5 lakh ka, phir 5 lakh ka.
+
+Mujhe 1 crore me se 45 lakh wala rank dhoondhna hai; 5-5 lakh alag bhi kar diye to bhi har block me jaake dekhna hi padega, dhoondhne ka time badhega. Asli dikkat ye hai ki score badalta jaata hai, har second update ho raha.
+
+Index lagaya to har likhai pe index bhi badlega, likhne aur update ka time har waqt badhta jaayega.
+
+Index ka fayda ye ki query jaldi chalti, par jahan likhai zyada hai wahan index ka utna fayda nahi; log bahut hain aur real time me score dhadadhad update ho raha.
+
+Isliye Redis sorted set: andar hi andar sort karta rehta, top 500 aur rank dono turant.
 Technical me: "har block me jaake dekhna" = rank ke liye "mere upar kitne" gin-na (index se bhi count scan), "har likhai pe index badle" = write-heavy pe index ka bojh (har update pe index update), isliye sorted set (daalna, rank, top sab log N).
 
 **Isi Maan lo ka doosra jawab:**
@@ -126,7 +138,11 @@ Technical me: score + outbox (hamare DB ki table) ki line ek hi DB transaction m
 **4. Main India wali line me 3,000 pe hoon. Screen pe poori duniya ka rank dikhana hai, aur lines 10 hain.**
 Arpan: Do nazar hain. Race me bhaagne wala sirf apne aage wale dekhta, peeche wale nahi: mera rank = mere upar kitne log. Referee sabko dekhta, ek ko nahi: scoreboard sabka dikhana hai to wo kaam chhotu ka, sab mila ke.
 Technical me: chhotu = background job (aggregator) · "mere upar kitne" = har shard se count (mere score se upar), sab jodo, +1. "Referee wala poora board" = background job jo har kuch minute me snapshot banata (thoda purana chalega).
-Arpan: FR pe depend karta hai. Hum Arpan ke point of view se soch rahe the; Arpan ko shuru ke 5 aur neeche ke 5 nahi dikhane, hum leaderboard ki tarah soch rahe. Leaderboard me world rank banana, to sabka dekhna, sirf Arpan ka nahi: US me Pablo ka bhi, yahan iska, wahan uska. Sabka kaise dikhega? Time se. Upar se ranking dheere-dheere tay hoti aayegi; ho sakta Arpan ki rank thodi der galat lage, farak nahi padta. Leaderboard ka matlab yahi: thodi der galat, time poora hote-hote sab rank theek.
+Arpan: FR pe depend karta hai. Hum Arpan ke point of view se soch rahe the; Arpan ko shuru ke 5 aur neeche ke 5 nahi dikhane, hum leaderboard ki tarah soch rahe.
+
+Leaderboard me world rank banana, to sabka dekhna, sirf Arpan ka nahi: US me Pablo ka bhi, yahan iska, wahan uska. Sabka kaise dikhega? Time se.
+
+Upar se ranking dheere-dheere tay hoti aayegi; ho sakta Arpan ki rank thodi der galat lage, farak nahi padta. Leaderboard ka matlab yahi: thodi der galat, time poora hote-hote sab rank theek.
 
 **Aur neeche (world rank turant kyun nahi niklegi):**
 Arpan: World rank ekdum nahi niklegi, LeetCode bhi khatam hone ke baad thoda time leta. Pehle Arpan ko koi andaze wali rank dikhegi (maan lo 5000); jaise-jaise US, EU wale khatam karte, board pe judte, rank upar-neeche hoti, sab khatam hone ke 5-10 minute baad theek. Mujhe Arpan se lena-dena nahi, board sabka banta. LeetCode andar wo number kaise nikalta, mujhe nahi pata, aur galat nahi bolunga.
@@ -153,7 +169,13 @@ Arpan: Contest ka naam 437, sabke score DB me. Agla Sunday 438; 437 phenkna nahi
 Technical me: contest id se alag board (key me contest id), purana = DB me history, mahine wala = sab contest ka jod (aggregate).
 
 **Maan lo Ravi ka match 11:59:58 pe khatam, score 12:00:02 pe pahuncha, server ne 9 Nov ke register me daal diya.**
-Arpan: LeetCode jaisa: Arpan ne contest diya, main parchi pe sab likh deta hoon: contest 137, Arpan ki rank, aur kis waqt khatam hua. Request server tak late aayi to koi baat nahi, parchi me sab likha hai: ye is din ka contest tha, itne baje khatam hua, to usi din ke register me daalo. Jo register kar ke aaye nahi, unka 0. Beech me LeetCode crash bhi ho jaaye to parchi hamare paas hai, wapas aate hi mote register me daal do. Purana register phekna nahi, side me rakh do; Ravi ko 7 Nov ka dekhna hai to wahi register khol ke dikha do. Agar Ravi aaj ka (10 tarikh ka) board khol ke baitha hai, to UI pe saaf likh do "ye 10 tarikh ka contest hai, kal wale ka result is link pe".
+Arpan: LeetCode jaisa: Arpan ne contest diya, main parchi pe sab likh deta hoon: contest 137, Arpan ki rank, aur kis waqt khatam hua.
+
+Request server tak late aayi to koi baat nahi, parchi me sab likha hai: ye is din ka contest tha, itne baje khatam hua, to usi din ke register me daalo. Jo register kar ke aaye nahi, unka 0.
+
+Beech me LeetCode crash bhi ho jaaye to parchi hamare paas hai, wapas aate hi mote register me daal do. Purana register phekna nahi, side me rakh do; Ravi ko 7 Nov ka dekhna hai to wahi register khol ke dikha do.
+
+Agar Ravi aaj ka (10 tarikh ka) board khol ke baitha hai, to UI pe saaf likh do "ye 10 tarikh ka contest hai, kal wale ka result is link pe".
 Technical me: "parchi pe contest id + khatam hone ka waqt" = event time, "usi din ke register me" = event time se bucket (pahunchne ke waqt se nahi), "purana register side me" = har din ka board history me rakho (discard nahi). "register kar ke aaye nahi" = contest ka sign-up; "mota register" = DB (kadam 7, score pehle DB me).
 
 **Isi Maan lo me aur neeche (contest ka aakhri sawaal 12:59:59 pe, server tak 1:00:03, server gira to):**
@@ -174,12 +196,48 @@ Technical me: shard map / router, score range sirf milte shard pe.
 
 **Maan lo dabbe region ke hisaab se: India, US, Europe. Is Sunday ke world contest me Arpan ki rank 50,000 (game wali 4,52,318 alag hai). World me uske upar ke 5 aur neeche ke 5 kaise?**
 Arpan: Ye ek sawaal nahi, pehle tod ke dekho kya maanga. Jaisa FR me tay kiya, kaam POORA world leaderboard banana hai; Arpan ke aas-paas wale to isi board ka ek hissa, Arpan jo dekhega wahi.
-Arpan: Contest duniya bhar me online hota (India, US, Europe se log), to sabka waqt ek time zone me, UTC. Bada bhai India, US, Europe sabke paas gaya, sabka result likh liya. Pehle gino kisne kitne sawaal kiye: contest me 5 sawaal the, 50,000 me se 20,000 ne paanchon kiye, to pehle sirf unse khelo, unki rank pehle; baaki 30,000 (4, 3, 2 wale) ko baad me alag dekh lo, unki rank waise bhi neeche. Ek jitne sawaal walon me jisne UTC me pehle khatam kiya wo upar; waqt bhi barabar to milli second (LeetCode bhi karta); wo bhi barabar to naam se. Result aate jaayein, line me judte jaayein. Rank dheere-dheere theek hoti, Arpan ko thodi der 5,000 dikhe phir 50,000. Har baar region se "aas-paas" maangna bhaari, isliye ek board banao.
-Arpan: Arpan ke upar ke 5 aur neeche ke 5 seedha tay nahi ho sakte, time se tay hote. Ranking upar se dheere-dheere tay hoti aati; thodi der Arpan ki rank galat dikh sakti, farak nahi padta, LeetCode bhi time poora hone pe sab rank theek kar deta. Happy New Year film ka board: jab tak time poora nahi, Team India neeche, jaise-jaise result aate Team India upar. Jisne pehle poora kiya use upar lao, jo baad me khatam kare use neeche; board thodi der hilta, phir sab aa gaye to ek saath jud ke theek. Rassi jaisa: chhoti rassi baandhi, phir badi, phir aur, dheere-dheere apne aap lambi.
-Arpan: Contest me "aage ke 5, peeche ke 5" ka alag feature ka matlab nahi. Arpan ne khatam kiya to thodi der rank upar dikhegi, abhi baaki khatam kar rahe; US wala aaya to uska waqt Arpan se milao, pehle khatam kiya to upar, nahi to neeche. Rank hilti rahegi, ye sabko pata. Contest poora hua to board bana, usme upar ke 5 aur neeche ke 5 apne aap dikh jaate, alag dikhane ki zaroorat nahi. Cheating pakadna FR ki baat, is design ka hissa nahi. (Farak: kadam 6 game hai, chalta rehta hai aur har match pe score badalta, wahan aage-peeche 5 har waqt dikhana alag cheez hai.)
-Arpan (contest chalte waqt aage-peeche 10): Dabbe score ki range se baanto, naam chahe shehar ke ho: Bangalore wala dabba = 10,000 wali range, Mumbai = 50,000, Delhi = 5,000. Har desh ka ek coordinator har dabbe pe thappa lagata hai ki isme yahan se yahan tak ki range hai; US aur Europe ke liye bhi same. Arpan ki range 5200 ke aas-paas, to coordinator se poocha, seedha Delhi (India), New York (US), Stockholm (Europe) wale dabbe mile; Bangalore, Mumbai ko poochha bhi nahi. Unhi dabbon se upar ke 10 aur neeche ke 10 nikaal ke Arpan ko beech me rakh do. Contest chal raha hai to ye andaze wali rank hai, galat hogi, sabko pata; rank sirf time se nahi, galat jawab / retry bhi ginte (Arpan ne pehle khatam kiya par 3 galat, doosre ne 1 minute baad bina galti, to wo upar). Jaise-jaise sabka khatam hota, rank theek hoti rehti; asli rank contest poora hone pe.
+Arpan: Contest duniya bhar me online hota (India, US, Europe se log), to sabka waqt ek time zone me, UTC. Bada bhai India, US, Europe sabke paas gaya, sabka result likh liya.
+
+Pehle gino kisne kitne sawaal kiye: contest me 5 sawaal the, 50,000 me se 20,000 ne paanchon kiye, to pehle sirf unse khelo, unki rank pehle; baaki 30,000 (4, 3, 2 wale) ko baad me alag dekh lo, unki rank waise bhi neeche.
+
+Ek jitne sawaal walon me jisne UTC me pehle khatam kiya wo upar; waqt bhi barabar to milli second (LeetCode bhi karta); wo bhi barabar to naam se. Result aate jaayein, line me judte jaayein.
+
+Rank dheere-dheere theek hoti, Arpan ko thodi der 5,000 dikhe phir 50,000. Har baar region se "aas-paas" maangna bhaari, isliye ek board banao.
+Arpan: Arpan ke upar ke 5 aur neeche ke 5 seedha tay nahi ho sakte, time se tay hote.
+
+Ranking upar se dheere-dheere tay hoti aati; thodi der Arpan ki rank galat dikh sakti, farak nahi padta, LeetCode bhi time poora hone pe sab rank theek kar deta.
+
+Happy New Year film ka board: jab tak time poora nahi, Team India neeche, jaise-jaise result aate Team India upar.
+
+Jisne pehle poora kiya use upar lao, jo baad me khatam kare use neeche; board thodi der hilta, phir sab aa gaye to ek saath jud ke theek. Rassi jaisa: chhoti rassi baandhi, phir badi, phir aur, dheere-dheere apne aap lambi.
+Arpan: Contest me "aage ke 5, peeche ke 5" ka alag feature ka matlab nahi.
+
+Arpan ne khatam kiya to thodi der rank upar dikhegi, abhi baaki khatam kar rahe; US wala aaya to uska waqt Arpan se milao, pehle khatam kiya to upar, nahi to neeche. Rank hilti rahegi, ye sabko pata.
+
+Contest poora hua to board bana, usme upar ke 5 aur neeche ke 5 apne aap dikh jaate, alag dikhane ki zaroorat nahi. Cheating pakadna FR ki baat, is design ka hissa nahi.
+
+(Farak: kadam 6 game hai, chalta rehta hai aur har match pe score badalta, wahan aage-peeche 5 har waqt dikhana alag cheez hai.)
+Arpan (contest chalte waqt aage-peeche 10): Dabbe score ki range se baanto, naam chahe shehar ke ho: Bangalore wala dabba = 10,000 wali range, Mumbai = 50,000, Delhi = 5,000.
+
+Har desh ka ek coordinator har dabbe pe thappa lagata hai ki isme yahan se yahan tak ki range hai; US aur Europe ke liye bhi same.
+
+Arpan ki range 5200 ke aas-paas, to coordinator se poocha, seedha Delhi (India), New York (US), Stockholm (Europe) wale dabbe mile; Bangalore, Mumbai ko poochha bhi nahi.
+
+Unhi dabbon se upar ke 10 aur neeche ke 10 nikaal ke Arpan ko beech me rakh do.
+
+Contest chal raha hai to ye andaze wali rank hai, galat hogi, sabko pata; rank sirf time se nahi, galat jawab / retry bhi ginte (Arpan ne pehle khatam kiya par 3 galat, doosre ne 1 minute baad bina galti, to wo upar).
+
+Jaise-jaise sabka khatam hota, rank theek hoti rehti; asli rank contest poora hone pe.
 Technical me: "dabbe score ki range se" = range partitioning (score range pe shard), "coordinator ka thappa" = shard map / router jo batata kaunsi range kis shard me, "seedha Delhi wale dabbe pe" = sirf matching shard pe range query (baaki shard skip), "andaze wali rank" = estimated rank, "galat jawab bhi ginte" = penalty (LeetCode: har galat submission pe 5 minute).
-Arpan (aur tez kaise): Real time me consistency itni matter nahi, availability matter karti; sahi rank contest khatam hone se pehle ban hi nahi sakti, ye sabko pata. Contest me pehle sign-up hota (interest dikhao, sign in, tab ghuso), to LeetCode ko pehle se pata: India se 50,000, US se 30,000, Europe se 20,000. Usi hisaab se jagah baant do: India 1 se 50,000, US 1 se 30,000, Europe 1 se 20,000. Ye rank NAHI, bas bachche baantne ke liye, jaise URL me har server ko counter ki range. Desh bada hai, sab ek jagah bharoge to dikkat, isliye desh ke andar IP se Bangalore, Delhi, New York me baanto, har desh ka coordinator. Ek dabbe pe kai thappe ho sakte (Bangalore me 500 se 1,000, 10,000 se 20,000, 50,000 ke paas). Query ko 1 crore nahi chahiye, range se apne dabbe. Asli rank upar wala world board banata.
+Arpan (aur tez kaise): Real time me consistency itni matter nahi, availability matter karti; sahi rank contest khatam hone se pehle ban hi nahi sakti, ye sabko pata.
+
+Contest me pehle sign-up hota (interest dikhao, sign in, tab ghuso), to LeetCode ko pehle se pata: India se 50,000, US se 30,000, Europe se 20,000.
+
+Usi hisaab se jagah baant do: India 1 se 50,000, US 1 se 30,000, Europe 1 se 20,000. Ye rank NAHI, bas bachche baantne ke liye, jaise URL me har server ko counter ki range.
+
+Desh bada hai, sab ek jagah bharoge to dikkat, isliye desh ke andar IP se Bangalore, Delhi, New York me baanto, har desh ka coordinator.
+
+Ek dabbe pe kai thappe ho sakte (Bangalore me 500 se 1,000, 10,000 se 20,000, 50,000 ke paas). Query ko 1 crore nahi chahiye, range se apne dabbe. Asli rank upar wala world board banata.
 Technical me: "availability zyada, rank baad me theek" = AP + eventual consistency, "sign-up se pehle pata kitne aayenge" = capacity planning / pre-partition, "IP se desh, shehar" = jagah ke hisaab se baantna (geo partitioning; shehar IP / profile se), "ek dabbe pe kai thappe" = shard map me har shard ki kai score range, "ye rank nahi, bas baantna" = partition key, rank global board pe.
 
 **Isi pe ek aur raasta (har region se range maango):**
@@ -187,7 +245,15 @@ Arpan: Ek raasta: bada bhai har region (India, US, Europe) se poochhe, "Arpan 50
 Technical me: har shard pe range query + merge (scatter-gather); har request pe sab shard = bhaari, isliye global aggregator behtar.
 
 **Aur neeche (range se baantne ka matlab saaf: 10 lakh me meri 5,000 kaise mile):**
-Arpan: Maan le India se 10 lakh log. Meri rank 5,000 dekhni hai to 10 lakh me kahan dhoondhega. Isliye data aisa baanto ki dhoondhna aasaan ho: map pe gole, Delhi ka gola (aas-paas ke Haryana, UP wale bhi Delhi ke dabbe me), Mumbai ka (Pune bhi), Bangalore, Chennai, Darjeeling, Gujarat ke gole. Desh kai tukdon me bat gaya. Har dabbe pe range ka thappa: Delhi me is range se is range tak. Mujhe Arpan ki 5,000 wali rank chahiye, upar se dekha kis dabbe me hai: Delhi pe likha 4,000 se 5,000, to seedha Delhi ke dabbe pe; Bangalore, Mumbai se lena-dena nahi. 10 lakh se kitna bach gaya. (Pehle "IP" shabd bola tha, matlab tha jagah ke hisaab se gola.)
+Arpan: Maan le India se 10 lakh log. Meri rank 5,000 dekhni hai to 10 lakh me kahan dhoondhega.
+
+Isliye data aisa baanto ki dhoondhna aasaan ho: map pe gole, Delhi ka gola (aas-paas ke Haryana, UP wale bhi Delhi ke dabbe me), Mumbai ka (Pune bhi), Bangalore, Chennai, Darjeeling, Gujarat ke gole. Desh kai tukdon me bat gaya.
+
+Har dabbe pe range ka thappa: Delhi me is range se is range tak.
+
+Mujhe Arpan ki 5,000 wali rank chahiye, upar se dekha kis dabbe me hai: Delhi pe likha 4,000 se 5,000, to seedha Delhi ke dabbe pe; Bangalore, Mumbai se lena-dena nahi. 10 lakh se kitna bach gaya.
+
+(Pehle "IP" shabd bola tha, matlab tha jagah ke hisaab se gola.)
 Technical me: "shehar ke gole" = geo partitioning (location se shard), "dabbe pe range ka thappa" = shard map (kis shard me kaunsi range), "seedha Delhi ke dabbe pe" = query sirf us ek shard pe, poore 10 lakh pe nahi.
 Bolne ki line: "FR ke hisaab se poora world board. Contest ek time zone me (UTC). Pehle sawaal gino, paanchon wale pehle; ek jitne sawaal me jo pehle khatam kare wo upar, phir milli second, phir naam. Result aate jaayein, board banta jaaye, rank thodi der me theek."
 Technical me: poora world board = global leaderboard (aggregator sab region ke result mila ke ek sorted board), "pehle sawaal gino, phir waqt, ms, naam" = sort key (solved desc, finish time asc, ms, naam) = composite score (kadam 2), "paanchon wale pehle, baaki baad me" = solved count ke hisaab se bucket, "rank dheere theek" = eventual consistency.

@@ -106,7 +106,11 @@ Technical me: sweeper / reaper job (status + updated_at dekh ke), S3 lifecycle r
 Arpan: Status DB me hai, yahi uska fayda. Ek worker VALIDATING pe atki files nikaale, dekhe kaunsi fail hui, aur unhe dobara try kare, file hamesha atki na rahe.
 Technical me: atke VALIDATING (purana updated_at) pe retry job.
 
-**DB kaunsa:** Arpan (21-Nov): File upload me main kaam to S3 karta hai, file wahin jaati hai. DB me hamein metadata chahiye: file ka naam, type (PDF, EXE, document), kab aur kitne baje upload hui, kitne GB ki, status. Iske liye NoSQL ka koi point nahi banta: JSON me kya store karna, MongoDB, DynamoDB, Cassandra ki zaroorat nahi, Cassandra to bahut badi baat. Requirement me bhi kya badlega. Isliye lean aaj bhi ACID / SQL wala: AWS RDS (Postgres / MySQL), jo chahiye wo SQL me mil jaata. (4-Oct bhi yahi: tracking aur status consistent chahiye.)
+**DB kaunsa:** Arpan (21-Nov): File upload me main kaam to S3 karta hai, file wahin jaati hai. DB me hamein metadata chahiye: file ka naam, type (PDF, EXE, document), kab aur kitne baje upload hui, kitne GB ki, status.
+
+Iske liye NoSQL ka koi point nahi banta: JSON me kya store karna, MongoDB, DynamoDB, Cassandra ki zaroorat nahi, Cassandra to bahut badi baat. Requirement me bhi kya badlega.
+
+Isliye lean aaj bhi ACID / SQL wala: AWS RDS (Postgres / MySQL), jo chahiye wo SQL me mil jaata. (4-Oct bhi yahi: tracking aur status consistent chahiye.)
 Technical me: file = S3, metadata + status = SQL (RDS Postgres), seedhi row + consistency, NoSQL ki zaroorat nahi.
 
 **5. "Goa trip" folder (Day1, Day2, 500 photo). S3 me folder hote hi nahi; naam path me likha to rename = 500 copy + 500 delete.**
@@ -114,7 +118,11 @@ Arpan: Folder ka hisaab alag, apne server me. Ek parent, baaki uske child, tree 
 Technical me: "tree" = DB me folders table (id, parent_id), file ki row me folder_id; S3 key file ki id se, naam se nahi.
 
 **Maan lo Arpan ne "Goa trip" folder delete kiya. DB me folder aur 500 file ki rows "deleted", app me folder gayab. Par S3 me 500 photo abhi bhi padi, jagah aur paisa.**
-Arpan: S3 se kaam hatana user ka nahi. Hum apna DB theek kar denge, S3 se hum hata denge. File mere mote store (kamre) me padi, uska saaraansh mere DB me. User bola file delete karni, maine uske saamne faad ke phenk di. Bahut log nahi jaante peeche S3 hai, wo sochte file bas hamare paas hai. To S3 pe abhi request nahi bhejenge. Do raaste: ya delete pe ek event jaaye jo S3 ko bole in files ko delete kar do, ya baad me ek sync job chale: DB me nahi hai to S3 se hata do.
+Arpan: S3 se kaam hatana user ka nahi. Hum apna DB theek kar denge, S3 se hum hata denge. File mere mote store (kamre) me padi, uska saaraansh mere DB me. User bola file delete karni, maine uske saamne faad ke phenk di.
+
+Bahut log nahi jaante peeche S3 hai, wo sochte file bas hamare paas hai. To S3 pe abhi request nahi bhejenge.
+
+Do raaste: ya delete pe ek event jaaye jo S3 ko bole in files ko delete kar do, ya baad me ek sync job chale: DB me nahi hai to S3 se hata do.
 Technical me: "saamne faad di, S3 baad me" = soft delete (DB me turant), "event jaaye, S3 se hatao" = async delete (queue + worker), "sync job" = orphan cleanup / reconciliation job.
 
 **Maan lo folder ki jaanch, ek file fail:**
@@ -145,7 +153,13 @@ Arpan: Private file ho to app bol de "ye private hai, link share mat karna"; phi
 Technical me: share warning (UI) + expiry backup.
 
 **8. Scan me 10 minute baaki, Ravi ko download chahiye. Scan me virus nikla to?**
-Arpan: Scan ki alag tez line, jaise SMS me OTP ki (doctor line me nahi lagta = scan ka alag Kafka topic, baaki kaam ke peeche nahi rukta). Scan poora hone tak link hi nahi; ho gaya to user ko bata do. Paise ginne jaisa: kisi ne kaha "gin do", maine andaza bola 10,000, wo sabko bata aaya, par asal me 20-25 hazaar nikle; pehle poora gino, phir batao. Upload hote hi Priya ne manager ko link bheja to bhi manager ko "file jaanch me hai, thoda ruko" dikhe, file nahi. Virus nikla to file lo hi mat. Hum antivirus nahi, file system hain; mall vs airport ki security, hum utna jaanchte jitna system ko chahiye (magic bytes + virus scan, poora antivirus nahi). Zaroori ho to bahar wala (third party) pehle jaanche, phir hamare paas.
+Arpan: Scan ki alag tez line, jaise SMS me OTP ki (doctor line me nahi lagta = scan ka alag Kafka topic, baaki kaam ke peeche nahi rukta). Scan poora hone tak link hi nahi; ho gaya to user ko bata do.
+
+Paise ginne jaisa: kisi ne kaha "gin do", maine andaza bola 10,000, wo sabko bata aaya, par asal me 20-25 hazaar nikle; pehle poora gino, phir batao.
+
+Upload hote hi Priya ne manager ko link bheja to bhi manager ko "file jaanch me hai, thoda ruko" dikhe, file nahi. Virus nikla to file lo hi mat.
+
+Hum antivirus nahi, file system hain; mall vs airport ki security, hum utna jaanchte jitna system ko chahiye (magic bytes + virus scan, poora antivirus nahi). Zaroori ho to bahar wala (third party) pehle jaanche, phir hamare paas.
 Technical me: "alag line" = scan ka alag Kafka topic (Kafka me priority nahi hoti, isliye zaroori kaam ki alag line), "link nahi" = status CLEAN tak download band, "lo hi mat" = INFECTED -> file hatao (quarantine / delete) + user ko batao.
 
 **Maan lo bahar wala scanner 1 ghante se jawab hi nahi de raha, Ravi ki file "scan baaki" pe atki.**
@@ -161,7 +175,15 @@ Arpan: Pehli baat, file ko temporary jagah rakho; jaanch pass ho tab asli jagah,
 Technical me: quarantine / temp prefix pe upload, pass hone pe asli bucket / prefix me copy.
 
 **9. App ko 6 mahine ho gaye. S3 ka bill pichhle mahine se double. S3 me ek hi meme lakhon baar padi, Ravi ne apni shaadi ki 2 GB video teen baar daali (bhool gaya tha ki pehle daal chuka).**
-Arpan: Pehli baat, S3 duplicate file handle nahi karta, to hamein apne server se kehna padega duplicate handle karo. Main server pe baitha hoon, ek aadmi moti file le ke aaya, maine bhej di. Kuch din baad wahi file dobara le aaya, phir bhej di; 3-4 baar aa raha. To uski file pe ek number chipka do, maan lo ABC123, aur DB (mote register) me rakh do. Number hash hoga: file ka content dekh ke koi bhi algorithm chalao, number nikla ABC123. Wahi file dobara aayi to dobara number nikala, wahi ABC123 nikla kyunki same file hai; to wo file upload nahi hone denge. Number phone nikaale ya server, wo design ka hissa nahi; hamein bas ek number chahiye jisse pata chale ye file pehle se hai ya nahi. Presigned URL me number jod sakte, par pata nahi wahan hota hai ya nahi, to wahan nahi. Number ka roop kuch bhi (string, number); mote register me rakho, pehle se hai to theek, nahi to nahi.
+Arpan: Pehli baat, S3 duplicate file handle nahi karta, to hamein apne server se kehna padega duplicate handle karo. Main server pe baitha hoon, ek aadmi moti file le ke aaya, maine bhej di.
+
+Kuch din baad wahi file dobara le aaya, phir bhej di; 3-4 baar aa raha. To uski file pe ek number chipka do, maan lo ABC123, aur DB (mote register) me rakh do.
+
+Number hash hoga: file ka content dekh ke koi bhi algorithm chalao, number nikla ABC123. Wahi file dobara aayi to dobara number nikala, wahi ABC123 nikla kyunki same file hai; to wo file upload nahi hone denge.
+
+Number phone nikaale ya server, wo design ka hissa nahi; hamein bas ek number chahiye jisse pata chale ye file pehle se hai ya nahi. Presigned URL me number jod sakte, par pata nahi wahan hota hai ya nahi, to wahan nahi.
+
+Number ka roop kuch bhi (string, number); mote register me rakho, pehle se hai to theek, nahi to nahi.
 Technical me: "file ke content se number" = content hash (jaise SHA-256), "mote register me number" = DB me hash, "pehle se hai to upload nahi" = deduplication (S3 khud nahi karta).
 
 **Maan lo pooche S3 khud dedup kyun nahi karta:**
@@ -169,11 +191,21 @@ Arpan: S3 ko to paise chahiye na. Tumne jitna GB use kiya uske hisaab se paise k
 Technical me: S3 ka bill = jitni jagah (GB-month), dedup hamari zimmedari.
 
 **Maan lo Priya wahi viral meme upload karti hai jo Ravi sabse pehle daal chuka (aur uske baad lakhon log bhi). Number register me mil gaya, upload ruk gaya, par Priya ki list me meme dikh hi nahi raha, kyunki uske naam pe kuch likha hi nahi gaya.**
-Arpan: Priya aur Ravi same meme upload kar rahe, to iske liye sochna padega. Priya ka upload hum rok nahi sakte, kyunki Ravi ne apna kiya, Priya ne apna. Agar app me login hi na hota to dekhte; par yahan login hai, Priya ki alag userId, Ravi ki alag. Hash same ho sakta hai kyunki meme same hai, par userId alag. Pehle Priya ke hisaab me dekhenge: kya Priya ne ye file kabhi upload ki thi? Nahi. Phir poore DB me dekha: ye file pehle se uploaded hai. To Priya ko bolo ki file upload ho gayi, aur jab Priya kabhi download kare to usi meme pe redirect kar denge, meme download ho jaayega, dikkat hi nahi. S3 andar duplicate ka kya karta, wo S3 jaane.
+Arpan: Priya aur Ravi same meme upload kar rahe, to iske liye sochna padega. Priya ka upload hum rok nahi sakte, kyunki Ravi ne apna kiya, Priya ne apna.
+
+Agar app me login hi na hota to dekhte; par yahan login hai, Priya ki alag userId, Ravi ki alag. Hash same ho sakta hai kyunki meme same hai, par userId alag.
+
+Pehle Priya ke hisaab me dekhenge: kya Priya ne ye file kabhi upload ki thi? Nahi. Phir poore DB me dekha: ye file pehle se uploaded hai.
+
+To Priya ko bolo ki file upload ho gayi, aur jab Priya kabhi download kare to usi meme pe redirect kar denge, meme download ho jaayega, dikkat hi nahi. S3 andar duplicate ka kya karta, wo S3 jaane.
 Technical me: "Priya ka upload mat roko, pehle uske hisaab me dekho" = hash + userId pe check, "poore DB me hai to usi pe redirect" = Priya ke naam nayi row jo purani S3 file ki taraf ishaara kare (reference / pointer, ek file kai maalik), alag users ke beech = cross-user dedup.
 
 **Maan lo Ravi ne wo meme delete kiya, peeche ki safai ne S3 se file hata di. Agle din Priya ne download dabaya, uska redirect usi file pe tha, error aaya.**
-Arpan: Har user ki alag copy rakh sakte, jagah nahi gherti, ek chhoti copy: ye Ravi ka hai, ye Priya ka. Ravi ne delete kiya, par dekh lo aur kisi user ka bhi hai kya; Priya ka nikla. To Ravi ke hisaab se hata denge, Priya ka S3 me pada rahega; jab Priya delete karegi tab S3 se bhi gayab. Dobara upload nahi karenge; server userId se Priya ka alag, Ravi ka alag rakhta. Ravi ne hataya to Ravi ki userId se khatam, Priya ki userId me hai to Priya ke paas jaayega, Ravi se lena-dena nahi.
+Arpan: Har user ki alag copy rakh sakte, jagah nahi gherti, ek chhoti copy: ye Ravi ka hai, ye Priya ka. Ravi ne delete kiya, par dekh lo aur kisi user ka bhi hai kya; Priya ka nikla.
+
+To Ravi ke hisaab se hata denge, Priya ka S3 me pada rahega; jab Priya delete karegi tab S3 se bhi gayab. Dobara upload nahi karenge; server userId se Priya ka alag, Ravi ka alag rakhta.
+
+Ravi ne hataya to Ravi ki userId se khatam, Priya ki userId me hai to Priya ke paas jaayega, Ravi se lena-dena nahi.
 Technical me: "ye Ravi ka, ye Priya ka" = har user ki apni row (reference), "aur kisi ka bhi hai to mat hatao, aakhri wala hataye tab S3 se" = reference counting (ginti 0 tabhi S3 se safai).
 
 &nbsp;

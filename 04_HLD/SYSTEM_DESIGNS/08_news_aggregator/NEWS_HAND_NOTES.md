@@ -69,7 +69,11 @@ Technical me: per-source timeout + circuit breaker (ek dheemi site baaki ko na r
 Arpan: Site 10 minute baad wapas aayi to ekdam poora load nahi daalna; pehle thodi-thodi request, chal gayi to dheere-dheere poora. Tab tak doosre source se khabar le aao.
 Technical me: circuit breaker half-open, dheere-dheere load badhao.
 
-**DB kaunsa:** Arpan (21-Nov): News me consistency honi chahiye: khabar kahan se laa rahe, title, URL, category, time, ye sab theek chahiye. Isliye shuruaat Postgres (ya MySQL) se karunga, Cassandra ekdum se nahi ghusa sakta. Kaunsa DB, iska jawab FR se milega: interviewer bole "likhai bahut hai, 50,000 fetcher, har fetcher 100-1000 khabar laa raha, har minute DB me update", tab write-heavy hai aur Cassandra ka sense banta. Bole "padhai zyada, likhai me itni dikkat nahi", to Cassandra lunga hi nahi, Postgres se kaam chal jaayega. Badi companiyan dono rakh sakti: ACID wala bhi aur NoSQL bhi (key-value / JSON me khabar ka title, khabar).
+**DB kaunsa:** Arpan (21-Nov): News me consistency honi chahiye: khabar kahan se laa rahe, title, URL, category, time, ye sab theek chahiye. Isliye shuruaat Postgres (ya MySQL) se karunga, Cassandra ekdum se nahi ghusa sakta.
+
+Kaunsa DB, iska jawab FR se milega: interviewer bole "likhai bahut hai, 50,000 fetcher, har fetcher 100-1000 khabar laa raha, har minute DB me update", tab write-heavy hai aur Cassandra ka sense banta.
+
+Bole "padhai zyada, likhai me itni dikkat nahi", to Cassandra lunga hi nahi, Postgres se kaam chal jaayega. Badi companiyan dono rakh sakti: ACID wala bhi aur NoSQL bhi (key-value / JSON me khabar ka title, khabar).
 Technical me: shuruaat = Postgres (row: title, url, category, time, consistency); FR me write-heavy aaye = Cassandra; dono saath = polyglot persistence.
 
 **Maan lo chhotu 7 ke paas 100 site thi, aur wo beech me mar gaya.**
@@ -101,7 +105,15 @@ Arpan: Server badhao, aage LB. Yahan likhna kuch nahi, sab wahi result padh rahe
 Technical me: read replica.
 
 **Maan lo Priya ne teen category chuni: tech, cricket, business. Use EK feed dikhani, upar sabse nayi.**
-Arpan: Alag-alag teen parchi rakhne ka koi matlab nahi. Ek parchi pe sabki pasand likh lunga: Priya ko tech, business, cricket; Rahul ko ye teen. Khabar aayi, maine apna algorithm chala ke chhaant liya: ye tech ki, ye cricket ki, ye business ki. Shabdon ki list hogi (iPhone, AI), word by word dekhte hain, to kabhi non-tech bhi chali jaayegi, hota bhi hai. Khabar to sabki ek hi hai: AI launch hua to poori duniya ke liye, Rahul aur Priya ko alag khabar thodi. Pasand dekh ke us category ki khabar unki feed me push, Twitter jaisa, taaki app kholte hi turant dikhe; neeche scroll karo to apne aap load. Login hai to pasand ke hisaab se, category chunne ka option; login nahi to bas normal khabar. Ye FR me likh sakte.
+Arpan: Alag-alag teen parchi rakhne ka koi matlab nahi. Ek parchi pe sabki pasand likh lunga: Priya ko tech, business, cricket; Rahul ko ye teen.
+
+Khabar aayi, maine apna algorithm chala ke chhaant liya: ye tech ki, ye cricket ki, ye business ki. Shabdon ki list hogi (iPhone, AI), word by word dekhte hain, to kabhi non-tech bhi chali jaayegi, hota bhi hai.
+
+Khabar to sabki ek hi hai: AI launch hua to poori duniya ke liye, Rahul aur Priya ko alag khabar thodi.
+
+Pasand dekh ke us category ki khabar unki feed me push, Twitter jaisa, taaki app kholte hi turant dikhe; neeche scroll karo to apne aap load.
+
+Login hai to pasand ke hisaab se, category chunne ka option; login nahi to bas normal khabar. Ye FR me likh sakte.
 Technical me: "pasand ki ek parchi" = user preference store, "shabdon ki list se chhaanto" = keyword-based classification (category tag), "feed me push" = fan-out on write, "neeche scroll pe load" = pagination / infinite scroll, "login nahi to normal khabar" = logged-out default / trending feed.
 
 **Aur neeche (chhotu kya laaye):**
@@ -141,7 +153,13 @@ Arpan: Gadbad parchi se pehle hui. DB se pehle mara to dikkat nahi, doosra daal 
 Technical me: parchi = Redis feed · "status" = khabar ka state (DB me -> feed me), agla worker / consumer adhoora kaam poora karta; "logging" = outbox wali soch (outbox = DB ki table, kaam ke saath usi transaction me likhi).
 
 **12. App ko 6 mahine ho gaye. Roz 5000 site se ~1 khabar / sec, photo ke saath. "Khabar" table mota, disk ka bill har mahine badh raha, feed banate waqt itne bade table me chhaantna dheema. Par Ravi aur Priya 2-3 din se purani khabar kabhi kholte hi nahi.**
-Arpan: Sabse pehle FR me tay karo ki purani khabar kab tak rahegi. Jaise main akhbaar padhta hoon, ghar me akhbaar jama hote rehte hain. Aaj ka padh liya, wo dheere-dheere raddi ban jaata hai, phir raddi me bech dete hain, ghar me nahi rakhte. Same yahan: purani khabar mote register me rakhne ka matlab nahi. Shard karna sense nahi banata: shard tab karo jab dono hisse ka data kaam me aa raha ho. Ek mahine purani khabar kaun dobara padhta, koi nahi. Koi bolega partition kar do, usse bhi fayda nahi; jab tak DB me padi hai, matlab nahi. Ek saal purani khabar kaun padhega? Use mote register se nikaalo, panna nikaal ke alag rakh do.
+Arpan: Sabse pehle FR me tay karo ki purani khabar kab tak rahegi. Jaise main akhbaar padhta hoon, ghar me akhbaar jama hote rehte hain.
+
+Aaj ka padh liya, wo dheere-dheere raddi ban jaata hai, phir raddi me bech dete hain, ghar me nahi rakhte. Same yahan: purani khabar mote register me rakhne ka matlab nahi.
+
+Shard karna sense nahi banata: shard tab karo jab dono hisse ka data kaam me aa raha ho. Ek mahine purani khabar kaun dobara padhta, koi nahi. Koi bolega partition kar do, usse bhi fayda nahi; jab tak DB me padi hai, matlab nahi.
+
+Ek saal purani khabar kaun padhega? Use mote register se nikaalo, panna nikaal ke alag rakh do.
 Technical me: "FR me tay kab tak" = data retention policy, "raddi, register se nikaal ke alag" = archival (purana data DB se hata ke sasti jagah, jaise S3 / cold storage); jo data padha hi nahi jaata uska shard / partition bekaar.
 
 **13. Ravi ne search me "Kohli century" likha. Server mote register me 7 din ki lakhon khabron ki poori likhai me ek-ek karke "Kohli" dhoondh raha, Ravi 8 second se gola dekh raha.**
@@ -156,8 +174,20 @@ Arpan: Koi "Kohli ne century maari", koi "aaj Kohli ki shatakiya paari". Hamari 
 Technical me: Elasticsearch = alag search index (black box, PSP jaisa) (bana-banaya: AWS OpenSearch / Elastic Cloud; hum sirf sikhate kya aur kaise dhoondhna, Foundations 12); koi pooche to: har shabd ke saamne khabar ki list, jaise kitaab ke peeche ka index ("Kohli" -> khabar 3, 7, 9), isliye poori likhai nahi padhni padti (inverted index); "sabki jad" = stemming / synonyms (analyzer), "ek baat ke 5 paper ek saath" = milti-julti khabar ka group (clustering, kadam 3 jaisa).
 
 **Maan lo headline me ekdum "Kohli century" likha, khabar 9:00 pe register me gayi, feed me turant dikhi. Ravi ne 9:00:20 pe search kiya, kuch nahi mila; 9:02 pe mil gayi.**
-Arpan: Feed mote register se banti, isliye turant dikhi. Elasticsearch alag dabba hai, us tak abhi baat pahunchi nahi, isliye search me nahi aayi. Do raaste: (1) register aur Elasticsearch ko sync me rakho, khabar aaye to register me likho aur Elasticsearch me bhi bhar do, dono ek saath. (2) feed turant, Elasticsearch peeche-peeche, search me kuch second ki der; user 20 second ruk lega, dikkat nahi. Dono raaste sahi. Search kitna ruk sakta, FR me tay. Sync job fail ho jaaye to alert lagao, failover karo ya dobara bharo.
-Arpan (phir, wahi baat khol ke): Pehle mujhe laga Elasticsearch bas ek API service hai; diagram dekh ke pata chala ye alag dabba hai aur feed alag dabba, tab jawab apne aap aa gaya. Do raaste: (1) pehle dono ko sync me rakho, phir feed dikhao; 30-40 sec me dono sync, to khabar khulte hi search me bhi turant. (2) search pe gola ghuma do (user 10-15 sec ruk leta), peeche sync chalta rahe, sync hua aur result aa gaya. Kaunsa, ye requirement: user kitne second ruk sakta. Elasticsearch ko hum batate hain kya aur kaise dhoondhna; andar kaise karta, wo Elasticsearch jaane.
+Arpan: Feed mote register se banti, isliye turant dikhi. Elasticsearch alag dabba hai, us tak abhi baat pahunchi nahi, isliye search me nahi aayi.
+
+Do raaste: (1) register aur Elasticsearch ko sync me rakho, khabar aaye to register me likho aur Elasticsearch me bhi bhar do, dono ek saath.
+
+(2) feed turant, Elasticsearch peeche-peeche, search me kuch second ki der; user 20 second ruk lega, dikkat nahi. Dono raaste sahi. Search kitna ruk sakta, FR me tay.
+
+Sync job fail ho jaaye to alert lagao, failover karo ya dobara bharo.
+Arpan (phir, wahi baat khol ke): Pehle mujhe laga Elasticsearch bas ek API service hai; diagram dekh ke pata chala ye alag dabba hai aur feed alag dabba, tab jawab apne aap aa gaya.
+
+Do raaste: (1) pehle dono ko sync me rakho, phir feed dikhao; 30-40 sec me dono sync, to khabar khulte hi search me bhi turant.
+
+(2) search pe gola ghuma do (user 10-15 sec ruk leta), peeche sync chalta rahe, sync hua aur result aa gaya. Kaunsa, ye requirement: user kitne second ruk sakta.
+
+Elasticsearch ko hum batate hain kya aur kaise dhoondhna; andar kaise karta, wo Elasticsearch jaane.
 Technical me: mota register = DB, alag dabba = Elasticsearch · "dono me ek saath bharo" = dual write, "peeche-peeche" = async indexing (eventual consistency), "kitni der chalegi, FR me" = search lag tay, "sync fail to alert" = alert + reindex.
 
 &nbsp;

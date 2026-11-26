@@ -42,7 +42,13 @@ saath me: Redis gira -> dono khule (OTP + feed), gateway apni kachchi ginti se 5
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
-Arpan: Request aayi, usko dekho, had me hai to jaane do, had me nahi hai to 429 de do, thodi der baad try kar lega. Doosra, mamla theek rehna chahiye, consistent rehna chahiye: 20 request alag-alag server pe jaa rahi to iska matlab ye thodi ki wo alag-alag account ginegi, ek hi hai. Redis gira, to wo NFR ho gayi. Office ke IP se 500 log aa rahe to unko bhi dekh lenge. VPN se region badal raha to uske hisaab se dekho, uske home server pe bhejna hai. NFR me: consistent rehna chahiye, available hona chahiye, aisa nahi ki wahi down ho gaya to poora server down; bahut saare region aaye to ek hi home region; kuch bhi gira to failover. Ye FR / NFR dikkat ki chain se nikla.
+Arpan: Request aayi, usko dekho, had me hai to jaane do, had me nahi hai to 429 de do, thodi der baad try kar lega.
+
+Doosra, mamla theek rehna chahiye, consistent rehna chahiye: 20 request alag-alag server pe jaa rahi to iska matlab ye thodi ki wo alag-alag account ginegi, ek hi hai. Redis gira, to wo NFR ho gayi.
+
+Office ke IP se 500 log aa rahe to unko bhi dekh lenge. VPN se region badal raha to uske hisaab se dekho, uske home server pe bhejna hai.
+
+NFR me: consistent rehna chahiye, available hona chahiye, aisa nahi ki wahi down ho gaya to poora server down; bahut saare region aaye to ek hi home region; kuch bhi gira to failover. Ye FR / NFR dikkat ki chain se nikla.
 Technical me: "had paar to 429, baad me try" = 429 Too Many Requests + Retry-After, "alag server pe gayi to bhi ek ginti" = central counter (Redis), "consistent" = atomic ginti (Lua), "wahi gira to poora down nahi" = availability (fail-open + local fallback), "office ke IP se 500" = per-user had (IP nahi), "VPN se region badle to ghar region" = home region.
 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
@@ -108,9 +114,19 @@ Arpan: Mere ghar me ek security guard hai, wo kehta 10,000 log andar nahi aa sak
 Technical me: "guard andar kamre me" = limiter service ke andar, "guard bahar gate pe" = limiter API gateway pe.
 
 **6. Gate ka guard ginti Redis se dekhta, Redis gira. Ya sabko jaane de ya sabko rok de. OTP button ke liye kya, home page (feed) ke liye kya?**
-Arpan: Redis gira hai, API gateway (bouncer) thodi gira. Redis ki to ek copy (replica) bhi hai; worst case sab gira. OTP band nahi kar sakte: kisi ka zaroori bank transfer ho raha, OTP nahi aaya to wo kya karega, rate limiter ka kaam ye nahi. Feed band karna bhi galat, koi zaroori reel upload kar raha ho. To dono khule rakho. Bouncer bahar khada hai, use bol do "ek saath 1000 andar mat bhejna, 5-5 karke bhejna". Gateway ke andar ka kaam mujhe pata nahi, par aisa kuch kar sakte. Interviewer poochhe "OTP kyun band kiya, mera bank transfer atka", to wo jawab galat lagega.
+Arpan: Redis gira hai, API gateway (bouncer) thodi gira. Redis ki to ek copy (replica) bhi hai; worst case sab gira.
+
+OTP band nahi kar sakte: kisi ka zaroori bank transfer ho raha, OTP nahi aaya to wo kya karega, rate limiter ka kaam ye nahi. Feed band karna bhi galat, koi zaroori reel upload kar raha ho. To dono khule rakho.
+
+Bouncer bahar khada hai, use bol do "ek saath 1000 andar mat bhejna, 5-5 karke bhejna". Gateway ke andar ka kaam mujhe pata nahi, par aisa kuch kar sakte.
+
+Interviewer poochhe "OTP kyun band kiya, mera bank transfer atka", to wo jawab galat lagega.
 Arpan (aage): OTP band karne ka matlab sabke liye band nahi. Shaq wala kaun, ye dekho: kisi ne 2-3 second me 5 OTP maang liye to wo suspicious, sirf uske liye gate band. Jo apni time range me baith ke OTP maang raha, use mana nahi kar sakte, warna dikkat. Interviewer poochhe "OTP kaise band kar doge, mera bank transaction atka", to bolo: sir sabka nahi, sirf usi ka jisne ek second me 3-4 maang liye.
-Arpan (aage, chor kaun): Chor wo jo sach me chor hai, mooh pe mask pehen ke aaya: 1 second me 5-6 OTP dhadadhad maang liye, wo suspicious, uske liye gate band, warna faltu pareshan karta rahega. Bhala-changa aadmi bole "papa ka dost hoon" to pehle papa se verify karao: "naam bata", "Ravi"; "papa, Ravi ko jaante ho?" "haan" to andar bulao. Jo 2 minute me 1 OTP maang raha, wo suspicious nahi. Aur suspicious kaun, ye dekhna rate limiter ka kaam hi nahi; rate limiter ne apna kaam kar diya (OTP bhi chalu, feed bhi), kaun suspicious ye system ka alag hissa dekhe.
+Arpan (aage, chor kaun): Chor wo jo sach me chor hai, mooh pe mask pehen ke aaya: 1 second me 5-6 OTP dhadadhad maang liye, wo suspicious, uske liye gate band, warna faltu pareshan karta rahega.
+
+Bhala-changa aadmi bole "papa ka dost hoon" to pehle papa se verify karao: "naam bata", "Ravi"; "papa, Ravi ko jaante ho?" "haan" to andar bulao. Jo 2 minute me 1 OTP maang raha, wo suspicious nahi.
+
+Aur suspicious kaun, ye dekhna rate limiter ka kaam hi nahi; rate limiter ne apna kaam kar diya (OTP bhi chalu, feed bhi), kaun suspicious ye system ka alag hissa dekhe.
 Technical me: "dono khule, bouncer 5-5 karke bheje" = Redis gira to fail-open, par har gateway apni memory me kachchi ginti se had lagaye (local fallback limiter, thoda dheela par pura khula nahi); "2-3 second me 5 OTP = shaq, sirf uska band" = OTP pe band sirf us user ka jo pattern tode (per-user block), baaki sabke liye khula; "suspicious kaun, limiter ka kaam nahi" = abuse / fraud detection alag hissa, limiter sirf had lagaye; Redis ki replica pehle. · local fallback me har gateway ko had / N (100 / 5 gateway = 20), warna user 5 gateway ghoom ke 500 le jaata.
 
 **Isi pe ek aur misaal (club ka bodyguard):**
@@ -128,7 +144,15 @@ Arpan: Kafka peeche chhod do, Kafka se pattern nikalo ki ye kitni baar aaya, kya
 Technical me: "Kafka se pattern" = request log events -> Kafka -> consumer (abuse detection), "kaunse endpoint jhaanke" = endpoint scanning pakadna, phir WAF block list. "Ban kuch der ka" = IP ban pe umar (TTL), kyunki IP badalta aur ek IP ke peeche asli log bhi; upar wala "permanent band" = pakka pakda gaya user / account. Dono saath chalte.
 
 **8. OTP login se pehle, had phone number pe. Ravi ki script har baar naya number daalti, har number ki ginti 1. Had IP pe lagai to subah 9 baje office ke 500 log ek hi WiFi (IP) se, 5 OTP ke baad poora office atka.**
-Arpan: User login ho gaya to uski saari information aa jaati, userId hamare paas, wahan koi dikkat nahi; kuch kare to ban kar do. Login se pehle ki dikkat hai, to login pe thodi dheeli had chhod do. Par itni dheeli nahi ki koi script hazaar baar chala de. Google pe password kitni baar guess karega, 2, 3, 5 baar. Hazaar baar koi haath se type nahi karta, karega to intention theek nahi. Ek banda roz hazaar baar password reset kar raha, kal dekha phir hazaar, ye insaan ke liye possible nahi, us IP ko WAF me daal do. Office me hazaar log hain par hazaar log ek saath password nahi bhoolte, bhoole bhi to ek-do din, isliye pattern notice karte hain. Ek second me login button pe 10,000 request, ek office WiFi bhi ye nahi kar sakta. 1 lakh me 50,000 bhool gaye to aisa to main har design tod dun, perfect design koi nahi, aaj bhi Google, YouTube toot-ta hai.
+Arpan: User login ho gaya to uski saari information aa jaati, userId hamare paas, wahan koi dikkat nahi; kuch kare to ban kar do. Login se pehle ki dikkat hai, to login pe thodi dheeli had chhod do.
+
+Par itni dheeli nahi ki koi script hazaar baar chala de. Google pe password kitni baar guess karega, 2, 3, 5 baar. Hazaar baar koi haath se type nahi karta, karega to intention theek nahi.
+
+Ek banda roz hazaar baar password reset kar raha, kal dekha phir hazaar, ye insaan ke liye possible nahi, us IP ko WAF me daal do.
+
+Office me hazaar log hain par hazaar log ek saath password nahi bhoolte, bhoole bhi to ek-do din, isliye pattern notice karte hain. Ek second me login button pe 10,000 request, ek office WiFi bhi ye nahi kar sakta.
+
+1 lakh me 50,000 bhool gaye to aisa to main har design tod dun, perfect design koi nahi, aaj bhi Google, YouTube toot-ta hai.
 Technical me: "login ke baad userId hamare paas" = userId pe kadi had, "login pe dheeli had" = login se pehle IP pe dheeli had, "insaan hazaar baar nahi, pattern notice" = script pattern pakadna, "IP ko WAF me daal do" = WAF.
 
 **Aur neeche (bot cloud machine se aata):**
@@ -140,7 +164,11 @@ Arpan: Har user ki had: login pe uski apni had ki kitna login kar sakta, aur baa
 Technical me: per-endpoint limit (login ki alag kadi had, baaki API ki alag), had paar = 429 + Retry-After.
 
 **Maan lo had asli user pe hi bhaari padi:**
-Arpan: Main JP Morgan me kaam kar raha, wahan 5 baar galat password pe had; maine 5 baar galat daal diya to main ruk gaya, zaroori kaam tha, login nahi kar pa raha. Ek user bhi hamari wajah se pareshan hua. Iska koi permanent solution nahi: IP pe lagao to wahan dikkat, na lagao to bahut dikkat. Jahan tak mujhe lagta hai perfect solution passkeys aur Google / Microsoft Authenticator hai: code uske paas hai hi nahi, to bot chhathi baar koshish hi nahi kar sakta. Aajkal har company yahi karti hai.
+Arpan: Main JP Morgan me kaam kar raha, wahan 5 baar galat password pe had; maine 5 baar galat daal diya to main ruk gaya, zaroori kaam tha, login nahi kar pa raha. Ek user bhi hamari wajah se pareshan hua.
+
+Iska koi permanent solution nahi: IP pe lagao to wahan dikkat, na lagao to bahut dikkat.
+
+Jahan tak mujhe lagta hai perfect solution passkeys aur Google / Microsoft Authenticator hai: code uske paas hai hi nahi, to bot chhathi baar koshish hi nahi kar sakta. Aajkal har company yahi karti hai.
 Technical me: "had asli user pe bhaari" = false positive (lockout), "passkeys / Authenticator" = MFA / passwordless (password guess ka raasta hi band), had + MFA saath.
 
 **9. Result ka din, subah 10 baje 1 crore bachche OTP maangte. Har bachcha apni had me, phir bhi OTP Service aur SMS company dono gire.**
@@ -164,11 +192,25 @@ Arpan: Phone number har desh ka alag hota hai, hamara +91 se shuru. VPN IP badal
 Technical me: "+91 se pata" = phone number ka country code se home region (koi alag register nahi chahiye), "IP badle, number nahi" = VPN se bachav.
 
 **11. Ravi ka dabba Redis me, abhi khaali (saare token use kar chuka). Ye app sirf OTP login nahi, ek dukaan bhi hai: home page (feed, kadam 6 wala) aur product page. Kharcha bachane ko company ne usi Redis me home page / product page ka cache bhi daal diya. Diwali sale ki raat sab page khol rahe, cache badhta gaya, Redis ki memory bhar gayi. Jagah banane ko Redis purani keys phenkne laga (LRU), Ravi ka dabba bhi chala gaya. Bouncer ko dabba mila nahi, naya Ravi samajh ke bhara dabba (5 token) bana diya, script 5 OTP aur le gayi, kisi ko pata nahi chala.**
-Arpan: Pehli baat to hum sochenge ki alag-alag Redis me rakho: home page / feed alag Redis me, Ravi ka alag Redis me, to kabhi dikkat nahi aayegi. Agar ek me hi rakhna hai (kharcha bachana hai) to phir hum LRU nahi laga sakte, kyunki dono important hain, kuch evict nahi kar sakte. Ravi ke token aise evict karne ke nahi, wo to use honge. LRU lagaya to usne Ravi ka token hata diya, wahi dikkat ho jaayegi. To LRU eviction policy hata do, Ravi ka mat hatao. Product page Diwali ke baad ek-do din me thanda ho jaayega, tab use hata denge, baaki Redis apna chalta rahega, dikkat hi nahi.
+Arpan: Pehli baat to hum sochenge ki alag-alag Redis me rakho: home page / feed alag Redis me, Ravi ka alag Redis me, to kabhi dikkat nahi aayegi.
+
+Agar ek me hi rakhna hai (kharcha bachana hai) to phir hum LRU nahi laga sakte, kyunki dono important hain, kuch evict nahi kar sakte. Ravi ke token aise evict karne ke nahi, wo to use honge.
+
+LRU lagaya to usne Ravi ka token hata diya, wahi dikkat ho jaayegi. To LRU eviction policy hata do, Ravi ka mat hatao.
+
+Product page Diwali ke baad ek-do din me thanda ho jaayega, tab use hata denge, baaki Redis apna chalta rahega, dikkat hi nahi.
 Technical me: "feed alag Redis, Ravi ka alag" = sach (limiter ka dabba) aur cache alag Redis me, "LRU hata do, Ravi ka mat hatao" = maxmemory-policy noeviction (Redis kuch nahi phenkta), "Diwali ke baad thanda, tab hatao" = cache pe TTL.
 
 **Maan lo ek hi Redis, LRU hata diya (noeviction). Diwali ki raat page itne padhe gaye ki TTL khatam hone se pehle hi memory bhar gayi. Ravi ki agli request pe bouncer ko dabbe se token nikaal ke likhna hai.**
-Arpan: Ab hamare paas raaste kam ho gaye, kyunki Redis ko bol diya kuch mat phenk; Redis itna bhar sakta hai ki kuch rakh hi na paaye. OTP wali cheez (Ravi ka dabba) nahi phenk sakte, warna dikkat. To product page me kuch karna padega. Hamari team pehle se soche ki Redis bhar sakta hai: jo product page logon ne dekh liya, uska TTL kam kar do, wo jaldi Redis se nikal jaayega; doosra dekh liya to uska bhi kam kar do, Redis balance rahega. Jo nahi dekha uska TTL wahi, dheere-dheere wo bhi nikalta jaayega. Product page to DB se bhi la sakte hain, thodi loading zyada dikhegi, par Redis theek chalega. Redis gira to replica hai. Phir bhi zyada dikkat hui to sabse baad me Redis tod do: product page ka Redis alag, Ravi (OTP) ka alag. Thodi peak DB aur Redis se sambhal li, Diwali thandi padi, phir Redis se sab hata denge, baaki chalta rahega.
+Arpan: Ab hamare paas raaste kam ho gaye, kyunki Redis ko bol diya kuch mat phenk; Redis itna bhar sakta hai ki kuch rakh hi na paaye. OTP wali cheez (Ravi ka dabba) nahi phenk sakte, warna dikkat.
+
+To product page me kuch karna padega.
+
+Hamari team pehle se soche ki Redis bhar sakta hai: jo product page logon ne dekh liya, uska TTL kam kar do, wo jaldi Redis se nikal jaayega; doosra dekh liya to uska bhi kam kar do, Redis balance rahega.
+
+Jo nahi dekha uska TTL wahi, dheere-dheere wo bhi nikalta jaayega. Product page to DB se bhi la sakte hain, thodi loading zyada dikhegi, par Redis theek chalega. Redis gira to replica hai.
+
+Phir bhi zyada dikkat hui to sabse baad me Redis tod do: product page ka Redis alag, Ravi (OTP) ka alag. Thodi peak DB aur Redis se sambhal li, Diwali thandi padi, phir Redis se sab hata denge, baaki chalta rahega.
 Technical me: "dekh liya to TTL kam kar do" = cache pe chhota TTL (bheed me jaldi expire), "product page DB se, thodi loading" = cache miss pe DB, thoda dheema chalega (graceful degradation), "Ravi ka dabba nahi phenk sakte" = sach wali key kabhi evict nahi, "sabse baad me Redis tod do" = sach aur cache alag Redis.
 
 &nbsp;

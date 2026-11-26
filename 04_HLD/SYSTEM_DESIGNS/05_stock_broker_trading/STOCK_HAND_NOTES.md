@@ -58,7 +58,11 @@ har cheez ka record = 5, 6.
 &nbsp;
 
 **1. Arpan aur Ravi ek-doosre ko jaante hi nahi. Unke jaise lakhon log, koi 3490 pe kharidna chahta, koi 3510 pe bechna, har second hazaron naye order. Arpan ka order Ravi ke order se kaun milayega?**
-Arpan: Ek cheez bitha de beech me. Jo kharidne wala hai use behtar bhaav chahiye, jo bechne wala hai use bhi behtar bhaav chahiye. Main beech me baitha: achha Arpan ye kharidna chah raha, Ravi ye bechna chah raha. Jaante nahi, mujhe kya lena-dena. Arpan ko is bhaav me chahiye, Ravi ko is bhaav me, dono ka bhaav theek hai to dono ko aapas me sell aur buy kar do. Khatam kahani. Na Arpan ne Ravi ko jaana na Ravi ne Arpan ko, unka kaam ho gaya, beech me ek aadmi baith gaya tha.
+Arpan: Ek cheez bitha de beech me. Jo kharidne wala hai use behtar bhaav chahiye, jo bechne wala hai use bhi behtar bhaav chahiye. Main beech me baitha: achha Arpan ye kharidna chah raha, Ravi ye bechna chah raha.
+
+Jaante nahi, mujhe kya lena-dena. Arpan ko is bhaav me chahiye, Ravi ko is bhaav me, dono ka bhaav theek hai to dono ko aapas me sell aur buy kar do. Khatam kahani.
+
+Na Arpan ne Ravi ko jaana na Ravi ne Arpan ko, unka kaam ho gaya, beech me ek aadmi baith gaya tha.
 Technical me: "beech me ek aadmi" = matching engine, "Arpan is bhaav me, Ravi is bhaav me, dono theek to sauda" = order book me bhaav milna (match).
 
 **Maan lo pooche book dikhti kaisi:**
@@ -94,7 +98,11 @@ Arpan: Dukaan pe 10 Maggi maangi, mere paas 4 hain. Turant 10 chahiye to "mere s
 Technical me: partial fill vs Fill-or-Kill.
 
 **Maan lo Arpan ne 3500 pe 10 TCS ka order daala, TCS 3600 pe hi raha, 3:30 baje market band, order bika nahi, Arpan cancel bhool gaya.**
-Arpan: Main beech me baitha hoon. Bechne wale sab TCS 3600 maang rahe, Arpan bola mujhe 3500 ka chahiye, jab koi 3500 pe bechne aaye mujhe de dena. Theek hai, par pehle paise de ja, warna har koi aake bolega "mere liye rakh lena". Din bhar koi 3500 pe nahi aaya, koi baat nahi, paisa hold pe hi rahega, kyunki app usi liye bana hai. Wo order daal ke so gaya to bhi theek. Agle din TCS 4000 pe chala gaya, to saaf baat: lena hai to le, nahi lena to order cancel kar, paisa wapas tere paas. 3500 pe koi bechne aaya to tab de dunga.
+Arpan: Main beech me baitha hoon. Bechne wale sab TCS 3600 maang rahe, Arpan bola mujhe 3500 ka chahiye, jab koi 3500 pe bechne aaye mujhe de dena. Theek hai, par pehle paise de ja, warna har koi aake bolega "mere liye rakh lena".
+
+Din bhar koi 3500 pe nahi aaya, koi baat nahi, paisa hold pe hi rahega, kyunki app usi liye bana hai. Wo order daal ke so gaya to bhi theek.
+
+Agle din TCS 4000 pe chala gaya, to saaf baat: lena hai to le, nahi lena to order cancel kar, paisa wapas tere paas. 3500 pe koi bechne aaya to tab de dunga.
 Technical me: "jab tak cancel na kare order khula, paisa hold" = GTC (Good Till Cancelled) order, cancel pe hold wapas available me.
 
 **Maan lo Ravi ke paas 10 TCS, usne 3600 pe 10 bechne ka order daala, bika nahi, phir 3650 pe 10 ka doosra order daal diya; dono bik gaye to 20 bech diye.**
@@ -102,11 +110,19 @@ Arpan: Ravi ke paas 10 hi share hain to wo 20 kaise bechega, ganit (maths) hi na
 Technical me: "10 share usi order se bandhe" = share hold (holdings block, free se blocked me; doosra sell order reject), "usi order ka bhaav badlo" = modify order (naya order nahi, wahi order update).
 
 **Maan lo order khula pada hai (35,000 hold) aur Arpan ne "withdraw to bank" se 20,000 nikalne chahe.**
-Arpan: Ek aadmi 35,000 de gaya, maine entry bana di aur manager ko vaada kar diya ki 35,000 aa rahe. Thodi der baad bola "20,000 urgent chahiye". Beech me se nahi dunga, kyunki saamne vaada ho chuka. Do raaste: order cancel kar, poore 35,000 wapas tere account me, phir jitne nikalne nikaal; ya UI me modify ho to order chhota kar (15,000 ka), 20,000 free. Aadha-aadha nahi. Paisa uska hai, hold hamesha ke liye nahi, cancel ka raasta hamesha khula (har trading app deta).
+Arpan: Ek aadmi 35,000 de gaya, maine entry bana di aur manager ko vaada kar diya ki 35,000 aa rahe. Thodi der baad bola "20,000 urgent chahiye". Beech me se nahi dunga, kyunki saamne vaada ho chuka.
+
+Do raaste: order cancel kar, poore 35,000 wapas tere account me, phir jitne nikalne nikaal; ya UI me modify ho to order chhota kar (15,000 ka), 20,000 free. Aadha-aadha nahi.
+
+Paisa uska hai, hold hamesha ke liye nahi, cancel ka raasta hamesha khula (har trading app deta).
 Technical me: withdraw sirf available se (balance - blocked = 0, isliye reject + "order cancel / modify karo"), cancel = hold wapas available me, modify order = hold chhota.
 
 **4. 9:15 baje bheed, engine tez karne ko 4 thread. Do thread ne ek saath TCS ki book dekhi, dono ko Ravi ke wahi 10 share dikhe. Ek ne Arpan ko bech diye, doosre ne Mohan ko. 10 share, bik gaye 20.**
-Arpan: Sabko ek line me le. Mere paas 10 share hain, maine apni ek copy bana di aur thodi door khada kar diya. Ek ladka mere paas aaya, ek copy ke paas, dono ne 10 khareed liye, 20 bik gaye, mere paas the 10, galat ho gaya. To maine copy ko apne paas kheench liya, mujhme mil ja, yahin khada ho ja. Arpan aaya, Mohan bhi aaya: Mohan ne copy se maanga, Arpan ne mujhse. Copy ko bola thodi der ruk, pehle mujhe bechne de. Bech diya, mere paas zero, copy ko kaha apne zero kar le. Ab Mohan aaya, bola 10 share chahiye, copy ne mana kar diya. Matlab sabko ek hi jagah rakho, alag-alag mat baanto.
+Arpan: Sabko ek line me le. Mere paas 10 share hain, maine apni ek copy bana di aur thodi door khada kar diya. Ek ladka mere paas aaya, ek copy ke paas, dono ne 10 khareed liye, 20 bik gaye, mere paas the 10, galat ho gaya.
+
+To maine copy ko apne paas kheench liya, mujhme mil ja, yahin khada ho ja. Arpan aaya, Mohan bhi aaya: Mohan ne copy se maanga, Arpan ne mujhse. Copy ko bola thodi der ruk, pehle mujhe bechne de.
+
+Bech diya, mere paas zero, copy ko kaha apne zero kar le. Ab Mohan aaya, bola 10 share chahiye, copy ne mana kar diya. Matlab sabko ek hi jagah rakho, alag-alag mat baanto.
 Technical me: ladka = ek order (thread) · "copy door khadi, dono ne bech diya" = do thread ek book pe (race), "sabko ek line me, ek jagah, alag mat baanto" = ek share ki book ek hi thread (single-threaded per symbol).
 
 **Aur neeche (hot IPO pe sab ek saath burst):**
@@ -114,7 +130,11 @@ Arpan: Hot IPO aaya, sab ek saath burst. Baantna nahi hai, baant diya to race se
 Technical me: "ek line, counter" = symbol ki ek queue, ek thread (sequencer), "baanta to race" = shard ek symbol ke andar nahi.
 
 **5. Tez chalne ko TCS ki book RAM me. 10:30 baje machine mar gayi. Book ke saare order, Arpan ka 3500 wala adhoora order bhi, RAM ke saath ud gaye.**
-Arpan: RAM me kyun rakh raha, sabko kisi permanent dabbe me rakh lo. Wo dheema pade to us dabbe ki 3-4 copy bana ke rakh lo, kal gira to doosri ya teesri copy hai. Kaata-jodi RAM me rakhna mujhe galat lag raha, kaata-jodi main DB me, primary DB me. Zyada bheed hai, zyada writes hain, to DB ko alag-alag shard kar do. Ye paise ki cheez hai, RAM me karna risky hai, RAM udi to kya karoge. Humne upar numbers discuss nahi kiye; numbers dekho to itni bheed nahi aati ki ek shard ya ek thread jhel na paaye.
+Arpan: RAM me kyun rakh raha, sabko kisi permanent dabbe me rakh lo. Wo dheema pade to us dabbe ki 3-4 copy bana ke rakh lo, kal gira to doosri ya teesri copy hai.
+
+Kaata-jodi RAM me rakhna mujhe galat lag raha, kaata-jodi main DB me, primary DB me. Zyada bheed hai, zyada writes hain, to DB ko alag-alag shard kar do. Ye paise ki cheez hai, RAM me karna risky hai, RAM udi to kya karoge.
+
+Humne upar numbers discuss nahi kiye; numbers dekho to itni bheed nahi aati ki ek shard ya ek thread jhel na paaye.
 Aur adhoora order: bag pack kar raha, saara saamaan aaya nahi, to poora bag khaali karo aur dobara jamao. Subah ek parchi banayi, Bangalore ja raha, 10 kapde rakhne hain, 5 ye, 3 ye. Jo rakha us pe tick, to-do ki tarah. Bag se nikaalna ho to sab hata do, par wo parchi mere paas utni ki utni hai. Wo parchi dekh ke dobara jama lo.
 Technical me: "permanent dabba" = DB, "3-4 copy" = replica / standby, "numbers discuss nahi kiye, itni bheed nahi" = pehle numbers, phir RAM ya DB ka faisla, "subah se ek parchi, utni ki utni rehti" = order log (append-only), "parchi dekh ke bag dobara jamao" = log replay se book wapas.
 
@@ -127,7 +147,13 @@ Arpan: Hum match dekh rahe hain aur ek banda har event ek book me likh raha. Bee
 Technical me: "har event book me likhna" = event log (append-only, Kafka ya disk), "light gayi, book se wapas" = replay, "kaun kya kab" = audit trail.
 
 **Maan lo replay me wo order bhi wapas aa gaye jo crash se pehle match hoke trade ban chuke the (Arpan ke 10 share Ravi ko bik chuke, dono ke portfolio bhi update). Phir se match hue to 10 share dobara bikenge.**
-Arpan: Aisa nahi hone ka. Jiska order pakka ho gaya, wo DB me likh do, mote register me. Parchi se replay karte waqt mote register me dekh lo: kis-kis ka order tha, kya ho gaya; Arpan aur Ravi dono ka ho gaya, dono ke dashboard me dikh gaya, to inhe book me mat lagao, hatao. Parchi bhi kaam ki hai, par tab jab saath me mota register ho, kyunki aakhri sach (source of truth) mota register hai: kuch bhi bika, trade hua, portfolio me idhar se udhar gaya, wo register me pada hai. Jo order trade ho gaya, use dobara RAM me laane ka matlab hi nahi.
+Arpan: Aisa nahi hone ka. Jiska order pakka ho gaya, wo DB me likh do, mote register me.
+
+Parchi se replay karte waqt mote register me dekh lo: kis-kis ka order tha, kya ho gaya; Arpan aur Ravi dono ka ho gaya, dono ke dashboard me dikh gaya, to inhe book me mat lagao, hatao.
+
+Parchi bhi kaam ki hai, par tab jab saath me mota register ho, kyunki aakhri sach (source of truth) mota register hai: kuch bhi bika, trade hua, portfolio me idhar se udhar gaya, wo register me pada hai.
+
+Jo order trade ho gaya, use dobara RAM me laane ka matlab hi nahi.
 Technical me: "pehle kahin aur likh, phir RAM" = order log pehle (write-ahead), "replay pe mota register dekho, ho chuke hatao" = trade DB = source of truth, replay me sirf khule (unfilled) order book me wapas, dobara match nahi.
 
 **Maan lo matching engine hi mar gaya:**
@@ -139,7 +165,11 @@ Arpan: Main apne paas 10 ladke ikatthe karunga: tu aa, tu aa, le ye information,
 Technical me: "10 ladkon ki fauj" = Kafka (trades topic), "har ladka apna kaam" = har service ka alag consumer group, "main khud kuch nahi karunga" = engine sirf ek baar daal ke aage.
 
 **7. Sauda pakka. Arpan ke portfolio me "10 TCS" likhna tha, us waqt portfolio wala DB band. Paisa kat chuka, share dikh nahi rahe.**
-Arpan: Pehle kahin likh lo, hamare paas logs hain. Yahan rollback nahi kar sakte, matching engine ka poora system hi ye hai ki tumhara match ho gaya. Ab kahein "match nahi hua tha" to wo case kar dega, baat consumer court chali jaayegi. Use bata do thodi der baad, abhi service thodi dheeli hai, ghabrao nahi, mail pe ya app me dikha denge jab ho jaayega. Parchi apne paas rakh lo. 10-15 minute baad DB wapas aaya: "le ye meri parchi, ye kaam karna hai, jaldi kar, mere grahak intezaar kar rahe."
+Arpan: Pehle kahin likh lo, hamare paas logs hain. Yahan rollback nahi kar sakte, matching engine ka poora system hi ye hai ki tumhara match ho gaya.
+
+Ab kahein "match nahi hua tha" to wo case kar dega, baat consumer court chali jaayegi. Use bata do thodi der baad, abhi service thodi dheeli hai, ghabrao nahi, mail pe ya app me dikha denge jab ho jaayega.
+
+Parchi apne paas rakh lo. 10-15 minute baad DB wapas aaya: "le ye meri parchi, ye kaam karna hai, jaldi kar, mere grahak intezaar kar rahe."
 Technical me: "rollback nahi, consumer court" = sauda ulta nahi, "thodi der baad dikha denge" = settlement PENDING, "parchi apne paas, DB aaye to de do" = message Kafka me pada, DB aate hi retry.
 
 **Maan lo portfolio DB 2 ghante band:**

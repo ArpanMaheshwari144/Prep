@@ -47,7 +47,15 @@ Arpan: Payment hua nahi matlab wo cheez uske cart me hi hai, kharidi nahi gayi. 
 Technical me: ginti Buy pe nahi, payment pe ghate (koi reserve nahi). Ghatana ek hi kaam: "ek kam karo, sirf tab jab kam se kam 1 ho" (`UPDATE ... SET qty = qty - 1 WHERE ... AND qty >= 1`, atomic conditional update), do log ek saath aayein to ek ko mila, doosre ko "nahi hai".
 
 **Maan lo Ravi aur Arpan dono ne aakhri iPhone cart me daala aur ek hi second me pay kar diya. Dono ke paise kate, ghatane me Arpan jeeta, Ravi ko zero row mili. Ravi ka paisa to kat chuka.**
-Arpan: Ye design ka hissa hai aur bahut jagah hota bhi hai, Amazon, Flipkart jaisi company me sale me bahut hota. Mere paas iPhone ek hi hai. Do raaste: ya to kahin se arrange karke doosra iPhone de do; Delhi ki inventory me nahi hai par Haryana, Punjab ki inventory me pada hai, Ravi ko to iPhone chahiye, doosri inventory se de do. Doosra case, kahin bhi iPhone nahi hai, to bolo "tumhare paise kat gaye, iPhone ka stock khatam ho gaya, out of stock tha", aur paise refund kar do; 2, 3 ya 7 din, jo bhi bank ki timeline ho. Amazon jaisi badi company ko ek customer naraaz ho to farak nahi padta, order cancel, refund aa raha. Par main chhota store hoon, ya abhi apni popularity badhana chahta hoon, to kahin na kahin se iPhone arrange karke dunga; Ravi ke paise kat gaye, Ravi ko nahi pata mere paas ek hi iPhone tha, use lena-dena nahi.
+Arpan: Ye design ka hissa hai aur bahut jagah hota bhi hai, Amazon, Flipkart jaisi company me sale me bahut hota. Mere paas iPhone ek hi hai.
+
+Do raaste: ya to kahin se arrange karke doosra iPhone de do; Delhi ki inventory me nahi hai par Haryana, Punjab ki inventory me pada hai, Ravi ko to iPhone chahiye, doosri inventory se de do.
+
+Doosra case, kahin bhi iPhone nahi hai, to bolo "tumhare paise kat gaye, iPhone ka stock khatam ho gaya, out of stock tha", aur paise refund kar do; 2, 3 ya 7 din, jo bhi bank ki timeline ho.
+
+Amazon jaisi badi company ko ek customer naraaz ho to farak nahi padta, order cancel, refund aa raha.
+
+Par main chhota store hoon, ya abhi apni popularity badhana chahta hoon, to kahin na kahin se iPhone arrange karke dunga; Ravi ke paise kat gaye, Ravi ko nahi pata mere paas ek hi iPhone tha, use lena-dena nahi.
 Technical me: "doosri inventory se de do" = doosre godown se sourcing (kadam 4 wala hub), "kahin nahi to refund" = order cancel + refund (E-com wala), store ka faisla = business rule (chhota store maal laaye, bada refund kare).
 
 **2. Diwali se pehle Delhi godown me 1000 naye iPhone aaye. Diwali sale, raat 12 baje, ek second me 2 lakh log "Pay", sab ek hi row pe "ek kam karo". DB taala laga ke ek-ek ko line me chalata, log 20 second se spinner dekh rahe.**
@@ -67,11 +75,21 @@ Arpan: Ya to shuruaat me hi zyada phone mangwao, tumhe pata hai sale pe zyada lo
 Technical me: sale ka stock pehle se plan (forecast), khatam = out of stock, cart = reservation nahi.
 
 **3. Mahine ke ant me manager rack pe ginta hai: 48 iPhone. System bolta 50. "Ye 2 kab gaye, kis order me, ya kabhi aaye hi nahi?" Hamare paas sirf ek number, kitne = 50.**
-Arpan: Jaise-jaise iPhone bikta rahe, bill banta rahe, register me likhta jaun: Ravi ne ek iPhone liya, bill ban gaya. Usi waqt system me bhi chadha do. Ya raat ko dukaan pe chhotu chhod jao: "ye aaj ke bill hain, dekh kisne kya kharida aur system me kitne bache." Sab sync rakho. Phir bhi kabhi fark aaya to register me sab likha hai, dekh lenge ki 2 iPhone bike par likhe nahi gaye, ya likha kuch aur gaya. Ye cheez dono taraf ho sakti hai, isliye register hi sach batayega.
+Arpan: Jaise-jaise iPhone bikta rahe, bill banta rahe, register me likhta jaun: Ravi ne ek iPhone liya, bill ban gaya. Usi waqt system me bhi chadha do.
+
+Ya raat ko dukaan pe chhotu chhod jao: "ye aaj ke bill hain, dekh kisne kya kharida aur system me kitne bache." Sab sync rakho.
+
+Phir bhi kabhi fark aaya to register me sab likha hai, dekh lenge ki 2 iPhone bike par likhe nahi gaye, ya likha kuch aur gaya. Ye cheez dono taraf ho sakti hai, isliye register hi sach batayega.
 Technical me: register = stock ledger (har badlaav ki entry: kab, kitna, kis order se), raat ka chhotu = reconciliation job (ledger aur ginti ka milaan).
 
 **4. Ravi Bangalore me iPhone order karta hai. Bangalore godown khaali, Delhi godown me 50, Mumbai godown me 10.**
-Arpan: Ek main warehouse hota hai, Amazon jaisi company ka maal asal me wahin se aata hai, phir chhote godown tak pahunchta hai. Pehle dekhunga Bangalore me iPhone hai kya, hai to wahin se. Nahi hai to main warehouse dekhunga, wahan hai to wahan se utha ke Bangalore bhej do, Ravi ko out of stock nahi dikhega. Mumbai ka iPhone Bangalore bhejna, ye FR pe hai. FR bole "maal hai to order poora karo", to Delhi ya Mumbai se bhejo. FR bole har shehar ka maal usi shehar ke liye, to main warehouse aur Bangalore dono khaali hone pe out of stock dikha do, kyunki kal Mumbai me 10 log aaye to unke liye wahan maal rehna chahiye.
+Arpan: Ek main warehouse hota hai, Amazon jaisi company ka maal asal me wahin se aata hai, phir chhote godown tak pahunchta hai. Pehle dekhunga Bangalore me iPhone hai kya, hai to wahin se.
+
+Nahi hai to main warehouse dekhunga, wahan hai to wahan se utha ke Bangalore bhej do, Ravi ko out of stock nahi dikhega. Mumbai ka iPhone Bangalore bhejna, ye FR pe hai.
+
+FR bole "maal hai to order poora karo", to Delhi ya Mumbai se bhejo.
+
+FR bole har shehar ka maal usi shehar ke liye, to main warehouse aur Bangalore dono khaali hone pe out of stock dikha do, kyunki kal Mumbai me 10 log aaye to unke liye wahan maal rehna chahiye.
 Technical me: main warehouse + shehar ke godown = hub and spoke, kahan se maal uthana = fulfilment / sourcing rule (FR tay kare).
 
 **Aur neeche (Delhi se Bangalore pahunchega kaise):**
@@ -79,15 +97,33 @@ Arpan: Maal Delhi se Bangalore kaise pahunchega, delivery ki baat yahan nahi kar
 Technical me: delivery / logistics = alag system, inventory design ke scope se bahar.
 
 **5. Agli sale (Republic Day) se ek din pehle iPhone ka page 1 crore log khol rahe, "sirf X bache". Har page khulne pe DB se saare dabbon ka jod. Order koi nahi, sirf log dekh rahe, phir bhi DB pe bojh.**
-Arpan: Bahut log aa rahe aur bas daam / ginti pata karke chale jaate, dukaan me bheed aur faltu ka drama. To ek banner pe chhapwa ke bahar taang do, padh ke nikal jao, andar mat aao; kharidna ho tab andar aao. Ya chhotu ko baar-baar andar bhej raha "bata ye kitne hain", chhotu bina matlab thak raha; to chhotu ek baar copy pe sab likh ke de de, main copy saamne khol ke bata deta hoon. Chhotu aaram se ice cream kha raha, main bhi, DB pe koi nahi ja raha.
+Arpan: Bahut log aa rahe aur bas daam / ginti pata karke chale jaate, dukaan me bheed aur faltu ka drama. To ek banner pe chhapwa ke bahar taang do, padh ke nikal jao, andar mat aao; kharidna ho tab andar aao.
+
+Ya chhotu ko baar-baar andar bhej raha "bata ye kitne hain", chhotu bina matlab thak raha; to chhotu ek baar copy pe sab likh ke de de, main copy saamne khol ke bata deta hoon.
+
+Chhotu aaram se ice cream kha raha, main bhi, DB pe koi nahi ja raha.
 Technical me: chhotu = har baar DB se ginti poochhna · banner / copy = cache (Redis), page pe thodi purani ginti chalti hai, asli jaanch Pay pe (NFR 2).
 
 **6. Ravi ne iPhone return kiya, courier ne box godown pe chhoda, aate hi ginti +1. 10 minute me wahi iPhone Priya ko bika: box khula, screen tooti.**
-Arpan: Jaanch wahin darwaze pe: delivery wale ko bol do jis haalat me gaya usi haalat me phone chahiye. Phone khol ke dekh, kaisa hai; kuch dikkat hai to return wahin reject. Inventory me maan ke daal dene ke baad nahi; agar maan ke inventory me daal diya aur doosre user ko bik gaya to Priya naraaz. Badi company jhel le, chhoti company ke liye ye bahut badi dikkat. Jaise mere se koi ghee ka dabba le gaya, 2-3 ghante baad lautane aaya, seal khuli, thoda ghee nikla hua; nahi lunga, ise main kisi ko bech nahi sakta. Seal pack hai to lenge, nahi to nahi.
+Arpan: Jaanch wahin darwaze pe: delivery wale ko bol do jis haalat me gaya usi haalat me phone chahiye. Phone khol ke dekh, kaisa hai; kuch dikkat hai to return wahin reject.
+
+Inventory me maan ke daal dene ke baad nahi; agar maan ke inventory me daal diya aur doosre user ko bik gaya to Priya naraaz. Badi company jhel le, chhoti company ke liye ye bahut badi dikkat.
+
+Jaise mere se koi ghee ka dabba le gaya, 2-3 ghante baad lautane aaya, seal khuli, thoda ghee nikla hua; nahi lunga, ise main kisi ko bech nahi sakta. Seal pack hai to lenge, nahi to nahi.
 Technical me: return pe doorstep quality check, ginti sirf sellable stock me badhe, kharab maal alag khaane me (damaged).
 
 **7. Delhi me iPhone 5 se neeche aa gaye. Ab kya: sirf manager ko email, ya kuch aur?**
-Arpan: 5 se kam ka matlab hamara kaam badh gaya, par grahak ko mat roko. Pehle dekho saari inventory me iPhone hai ya nahi: Bangalore se order aaya to Bangalore, phir main warehouse. Maal hai to order chalta rahe, 5 hon ya 100 order aayein. Kitni inventory hai, ye FR me tay karenge. 2-3 inventory hain to batao "is inventory me khatam, doosri inventory me dekh lo". Ek hi inventory hai to usme sab jagah iPhone nahi bhar sakte, aur bhi maal chahiye; to 2-3 bache tab hi har jagah siren baja do, sabko alert. Alert kisi bhi raaste pahunche: email nahi ja raha to SMS, WhatsApp, ek email company nahi to doosri; siren matlab bas alert. Khatam ho gaya to out of stock, aur alert "inventory khaali, jahan se deal karte ho wahan se deal karo". iPhone kahan se mangwana hai, wo manager / purchase team tay karegi, is design ka scope nahi; inventory ka kaam utna hi hai. Naya stock jaldi aa raha ho to order lete raho, 1 mahina lagega to out of stock dikhao.
+Arpan: 5 se kam ka matlab hamara kaam badh gaya, par grahak ko mat roko. Pehle dekho saari inventory me iPhone hai ya nahi: Bangalore se order aaya to Bangalore, phir main warehouse.
+
+Maal hai to order chalta rahe, 5 hon ya 100 order aayein. Kitni inventory hai, ye FR me tay karenge. 2-3 inventory hain to batao "is inventory me khatam, doosri inventory me dekh lo".
+
+Ek hi inventory hai to usme sab jagah iPhone nahi bhar sakte, aur bhi maal chahiye; to 2-3 bache tab hi har jagah siren baja do, sabko alert.
+
+Alert kisi bhi raaste pahunche: email nahi ja raha to SMS, WhatsApp, ek email company nahi to doosri; siren matlab bas alert.
+
+Khatam ho gaya to out of stock, aur alert "inventory khaali, jahan se deal karte ho wahan se deal karo". iPhone kahan se mangwana hai, wo manager / purchase team tay karegi, is design ka scope nahi; inventory ka kaam utna hi hai.
+
+Naya stock jaldi aa raha ho to order lete raho, 1 mahina lagega to out of stock dikhao.
 Technical me: had pe alert (low stock / reorder point alert), line me, order nahi rukta (Kafka event, async), kai raaste (email, SMS, WhatsApp, backup provider). Order lene se pehle saare godown ka jod (available to promise across warehouses), kitne godown = FR. Maal mangwana = purchase / procurement system, inventory ke scope se bahar. Jaldi aane wala maal ho to order lete raho (backorder), der ho to out of stock (restock lead time, FR tay kare).
 Arpan (email server down ho to): Kuch second ruko aur alert bajwa do, poore godown me siren; 2-3 email server, ek down to doosra; SMS bhi bhej do. Alert store ke manager se upar, CTO tak bhi chala jaaye. Ek khidki band ho to darwaza.
 Technical me: alert ki seedhi (escalation: manager -> upar), kai channel failover.

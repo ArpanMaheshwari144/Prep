@@ -98,7 +98,13 @@ Arpan: Jab pata hai log kis liye aa rahe, to wo cheez pehle se laa ke rakh lo. P
 Technical me: "pehle se laa ke rakho" = release se pehle raat ko dabba bharna (proactive fill), "badlegi nahi" = video static hai, isliye CDN pe rakhna safe.
 
 **Isi pe ek aur raasta (round me: kahan maang, Netflix ko pata):**
-Arpan: Netflix ko pata hai bada season aa raha aur kahan-kahan maang zyada hogi: Spain jaise desh me (Money Heist wahi bani), India, Australia, New Zealand. Har baar maangne pe laana Netflix ke liye bahut dikkat: Spain me lakhon dekhenge tab laao, India dekhe tab laao, Australia dekhe tab. Isliye Mumbai ke server pe pehle se laga ke rakh do; ek baar laao, rakh lo, phir sabko serve karte raho. Main roz CA se sign karwane doosre shehar kyun jaaun, dost roz aata-jaata hai, wahi le aayega. Video ek baar bani to badalne ki nahi, isliye rakhne me dikkat nahi.
+Arpan: Netflix ko pata hai bada season aa raha aur kahan-kahan maang zyada hogi: Spain jaise desh me (Money Heist wahi bani), India, Australia, New Zealand.
+
+Har baar maangne pe laana Netflix ke liye bahut dikkat: Spain me lakhon dekhenge tab laao, India dekhe tab laao, Australia dekhe tab.
+
+Isliye Mumbai ke server pe pehle se laga ke rakh do; ek baar laao, rakh lo, phir sabko serve karte raho. Main roz CA se sign karwane doosre shehar kyun jaaun, dost roz aata-jaata hai, wahi le aayega.
+
+Video ek baar bani to badalne ki nahi, isliye rakhne me dikkat nahi.
 Technical me: region ke hisaab se maang pata = kis desh ke dabbe me kya pehle se bharna (proactive fill per region).
 
 **3. Mumbai ke dabbe ki jagah seemit, Netflix ka saara maal (har film x kai size) nahi samaata.**
@@ -106,7 +112,11 @@ Arpan: Ek dabba nahi, kai dabbe le lo, jaise maal ek truck me na aaye to 3-4 tru
 Technical me: dabba = CDN box (ISP ke paas) · "garam paas" = popularity se kya rakhna (region-wise), "bade dabbe se mangwa lo" = upar wala bada store / tier, "garmaahat khatam to wapas" = thanda maal dabbe se nikalna.
 
 **Isi pe ek aur raasta (round me: mahina bhar garam, thande ka chhota tukda):**
-Arpan: Saara maal main server pe banta (US me), bahar se to laana hi padega. Par jo garam cheez baar-baar maangi ja rahi, use baar-baar bahar se laane ka fayda nahi. Money Heist ka season aaya, public jaanti ye mahina bhar chalega, karodon India me dekh rahe: paas wale dabbe pe rakh do, wahin se serve. Stranger Things abhi garam nahi, 1-2 request aa rahi to koi dikkat nahi: uska chhota tukda rakh do, koi dobara maange to bade se le aao. Garam maal paas, thanda door; thande ki thodi request aaye to thodi der ke liye paas.
+Arpan: Saara maal main server pe banta (US me), bahar se to laana hi padega. Par jo garam cheez baar-baar maangi ja rahi, use baar-baar bahar se laane ka fayda nahi.
+
+Money Heist ka season aaya, public jaanti ye mahina bhar chalega, karodon India me dekh rahe: paas wale dabbe pe rakh do, wahin se serve.
+
+Stranger Things abhi garam nahi, 1-2 request aa rahi to koi dikkat nahi: uska chhota tukda rakh do, koi dobara maange to bade se le aao. Garam maal paas, thanda door; thande ki thodi request aaye to thodi der ke liye paas.
 Technical me: popularity se tier: garam = edge dabba, thanda = maang pe bade store se (cache miss -> upar se bharo), thodi der rakh ke nikaalo (evict).
 
 **4. Mumbai me 20 dabbe, kuch me Money Heist hai kuch me nahi, ek ki saans phool rahi. Ravi ke TV ko kaise pata kis dabbe se maange?**
@@ -118,7 +128,11 @@ Arpan: Ravi ne Money Heist ke banner pe click kiya to Netflix ko pata lag gaya y
 Technical me: play request me content id aata, server usi se dabba chunta (steering).
 
 **Maan lo aadhe episode pe dabba 3 band ya dheema.**
-Arpan: Saans phoolne wali baat, traffic baant do, ek dabba nahi. Money Heist ka garam season chal raha, pelam pel log dekh rahe, to use 20 dabbon me baant do. Ek dabbe me rakha aur dhadadhad log aaye ja rahe, haath badhata hoon nikaalta hoon, haath dukh gaya; to main apne 10 dost ko phone karunga: aao, ye dabbe lo, isme Money Heist hai, nikaal ke do. Ab akela bhaad nahi uthana padta. Ravi ke TV ko kaise pata 20 me se kis dabbe se maange? Hamein to pata hai Money Heist kis dabbe me hai, server use route kar dega.
+Arpan: Saans phoolne wali baat, traffic baant do, ek dabba nahi. Money Heist ka garam season chal raha, pelam pel log dekh rahe, to use 20 dabbon me baant do.
+
+Ek dabbe me rakha aur dhadadhad log aaye ja rahe, haath badhata hoon nikaalta hoon, haath dukh gaya; to main apne 10 dost ko phone karunga: aao, ye dabbe lo, isme Money Heist hai, nikaal ke do. Ab akela bhaad nahi uthana padta.
+
+Ravi ke TV ko kaise pata 20 me se kis dabbe se maange? Hamein to pata hai Money Heist kis dabbe me hai, server use route kar dega.
 Technical me (TV ki taraf se): ek dabba dheema / band to TV ke paas 2-3 dabbon ke naam, doosre se le (client failover).
 Technical me: "2-3 dabbon ke naam" = server player ko kai CDN dabbon ki list deta, ek atka to player khud agle pe (client side failover).
 
@@ -139,11 +153,21 @@ Arpan: Parchi cache me nahi, DB me rakhunga. Netflix andar kya use karta mujhe n
 Technical me: dekhne ki jagah = DB (pakka), cache sirf tez padhne ke liye.
 
 **Isi pe ek aur raasta (round me: apna cache uda do tab bhi 27):**
-Arpan: Netflix account banwata hai, sign in karwata hai, matlab account me bahut kuch rakhta: is ladke ne kya-kya kahan tak dekha, kya dekh raha, kya recommendation. Arpan ne phone pe 27 minute dekha to server ko pata laga, aur wo bahar jaake chilla deta: Arpan ne 27 tak dekh liya, jahan-jahan iska account hai sab sync kar lo. Ab account kahin bhi khule, TV, laptop, phone, London ho ya India, 27 se chalega. Parchi account pe hai. Apne phone ka cache uda diya to bhi Netflix ke paas 27 hi rahega: wo tera cache hai, Netflix ka apna alag. Netflix andar kaise sync karta wo public nahi, hum bas itna bolenge: account pe sync.
+Arpan: Netflix account banwata hai, sign in karwata hai, matlab account me bahut kuch rakhta: is ladke ne kya-kya kahan tak dekha, kya dekh raha, kya recommendation.
+
+Arpan ne phone pe 27 minute dekha to server ko pata laga, aur wo bahar jaake chilla deta: Arpan ne 27 tak dekh liya, jahan-jahan iska account hai sab sync kar lo.
+
+Ab account kahin bhi khule, TV, laptop, phone, London ho ya India, 27 se chalega. Parchi account pe hai. Apne phone ka cache uda diya to bhi Netflix ke paas 27 hi rahega: wo tera cache hai, Netflix ka apna alag.
+
+Netflix andar kaise sync karta wo public nahi, hum bas itna bolenge: account pe sync.
 Technical me: watch position server pe account ke saath (asli sach), device ka cache sirf apni copy.
 
 **Maan lo TV ka net gaya, TV ne "27:00" apne paas rakh liya. Subah phone pe 37 tak dekha, shaam ko TV on hote hi purana 27 pahuncha aur 37 ke upar likh gaya.**
-Arpan: Netflix phone, laptop, TV sab me sync rehta, alag nahi ho sakta. Main Netflix ka server hoon: tukde main hi bhej raha, to 27 ke baad agla tukda nahi maanga matlab 25-27 ke aas-paas band kiya. Phir usne phone pe 27 se 37 dekh liya, naya point 37, parchi pe 37. Shaam ko TV khula aur purana 27 aaya: nahi, isne to 37 tak dekh liya, 27 purana hai, discard; 37 se chalao. Account ek hi hai, kahin se bhi login karo wahi dikhe; TV khulte hi net se account ka sach padhta hai, apna purana nahi thopta. Naya 37 aaya to purana 27 kaat ke 37 likh do.
+Arpan: Netflix phone, laptop, TV sab me sync rehta, alag nahi ho sakta. Main Netflix ka server hoon: tukde main hi bhej raha, to 27 ke baad agla tukda nahi maanga matlab 25-27 ke aas-paas band kiya.
+
+Phir usne phone pe 27 se 37 dekh liya, naya point 37, parchi pe 37. Shaam ko TV khula aur purana 27 aaya: nahi, isne to 37 tak dekh liya, 27 purana hai, discard; 37 se chalao.
+
+Account ek hi hai, kahin se bhi login karo wahi dikhe; TV khulte hi net se account ka sach padhta hai, apna purana nahi thopta. Naya 37 aaya to purana 27 kaat ke 37 likh do.
 Technical me: "naya point jeete, purana 27 discard" = har position ke saath uska waqt (timestamp), baad wala jeete (last-write-wins, event time se, aane ke waqt se nahi), "main Netflix hoon, tukde main hi bhej raha" = ISP wala dabba bhi Netflix ka (Open Connect), agla tukda nahi maanga to andaza 25-27 ke aas-paas.
 
 **Isi pe ek aur misaal (round me: librarian):**
@@ -155,7 +179,13 @@ Arpan: Race me har kadam thodi likhte, jab ruk jaaye tab likho. Abhi parchi paas
 Technical me: "parchi paas" = position pehle fast store me, "ruk gaya to register" = DB me sirf aakhri / kabhi-kabhi likhna (write kam).
 
 **Isi pe ek aur raasta (round me: chhotu ki sync job):**
-Arpan: Har baar Postgres pe likhne ka matlab nahi, server ki parchi (cache) pe rakh lo. Register sab padh rahe: Arpan 27 page tak, Ravi itne page tak, sab mere paas likha; har baar peeche wale mote register (DB) me update karne nahi jaunga. Thodi der baad sync job: chhotu idhar aa, ye sab likha hai, peeche DB me update karta ja. Chhotu gira to pata nahi kahan tak hua: DB se poochho "tu kahan tak update hua", DB bata dega. Parchi ki 3-4 copy apne paas. Peeche DB ki replica hai to wo bhi theek. Chhotu gira to doosra chhotu. DB ki saans nahi phoolegi, kyunki hum baar-baar DB pe nahi jaate, batch me kaam karte.
+Arpan: Har baar Postgres pe likhne ka matlab nahi, server ki parchi (cache) pe rakh lo.
+
+Register sab padh rahe: Arpan 27 page tak, Ravi itne page tak, sab mere paas likha; har baar peeche wale mote register (DB) me update karne nahi jaunga.
+
+Thodi der baad sync job: chhotu idhar aa, ye sab likha hai, peeche DB me update karta ja. Chhotu gira to pata nahi kahan tak hua: DB se poochho "tu kahan tak update hua", DB bata dega. Parchi ki 3-4 copy apne paas.
+
+Peeche DB ki replica hai to wo bhi theek. Chhotu gira to doosra chhotu. DB ki saans nahi phoolegi, kyunki hum baar-baar DB pe nahi jaate, batch me kaam karte.
 Technical me: pehle cache me (copy ke saath), phir sync job batch me DB me (write-behind / batch write); job gira to DB me jahan tak likha wahan se aage.
 
 **Maan lo tukde ISP ke dabbe se aa rahe, AWS ke server ko kaise pata ki ruk gaya?**
@@ -174,11 +204,29 @@ Pehle tasveer (round me Claude ne dikhayi):
      (Netflix ka dimaag)      (ISP ke andar, Open Connect)
      parchi / DB yahan        sirf video rakhta aur bhejta
 ```
-Arpan: Aisa ho hi nahi sakta ki do dabbe aapas me baat na karein; microservice me bhi sabko pata hota. Jaise HDFC: mera account Khatauli me khula, main Delhi gaya, to wo kahenge saari jaankari home branch me milegi, par itni yahan bhi de sakte. Game parlour ka maalik saare computer apne main computer se jod leta: koi bhi site khole to use pata, kyunki kal ko phansega wahi. Waise hi dabba AWS ko event bhej de: is bande ne yahan tak dekha. Ya ISP pe ek parchi / chhotu job rakh lo jo sab AWS tak sync kar de; ye kabhi bhi, raat ko jab bheed kam ho, ya subah 5 baje. AWS ke DB me sab update ho gaya (Ravi 27, Arpan 25), to sab jagah sync: Mumbai, Delhi, Jio / Airtel ke dabbe.
+Arpan: Aisa ho hi nahi sakta ki do dabbe aapas me baat na karein; microservice me bhi sabko pata hota.
+
+Jaise HDFC: mera account Khatauli me khula, main Delhi gaya, to wo kahenge saari jaankari home branch me milegi, par itni yahan bhi de sakte.
+
+Game parlour ka maalik saare computer apne main computer se jod leta: koi bhi site khole to use pata, kyunki kal ko phansega wahi. Waise hi dabba AWS ko event bhej de: is bande ne yahan tak dekha.
+
+Ya ISP pe ek parchi / chhotu job rakh lo jo sab AWS tak sync kar de; ye kabhi bhi, raat ko jab bheed kam ho, ya subah 5 baje.
+
+AWS ke DB me sab update ho gaya (Ravi 27, Arpan 25), to sab jagah sync: Mumbai, Delhi, Jio / Airtel ke dabbe.
 Technical me: dabba / player playback report AWS ko bhejta (event), wahan parchi update; dabbe pe sirf video.
 
 **6. App khola, server pasand wali list banane baitha: 3 saal ka itihaas, karodon logon se milaan, 6 second khaali screen.**
-Arpan: Ravi hamara 3 saal ka user hai, hamein pata lag gaya. Main roz cafe / parlour jaata hoon game khelne, pelam pel 3-4 saal se: kisi din GTA, kisi din God of War, God Hand, Valhalla, kisi din PUBG PC. Ek din nahi gaya, doosre din parlour wala bola "kal kahan reh gaye the, tumhara game intezaar karta tha, maine sab chala rakha tha ki kuch na kuch khelega; koi baat nahi, main hamesha tumhare liye taiyaar cheez rakhunga taaki tumhe wait na karna pade". Pattern hai, pattern yaad kar lo. Ravi ne 3 saal me app me kya kiya: Money Heist kitni baar search kiya, Stranger Things, Breaking Bad, kya-kya dekha; us hisaab se uska pattern hai. Ravi app kholega to hamein pata hai use kya dikhana hai, kya suggest karna hai: Money Heist dobara, Stranger Things, Breaking Bad se milte-julte shows; India me hai to Dhurandhar, aajkal latest. Netflix ko pata hai wo kya dekhega, to wo cheez uske app me hi daal do. Ye same to same Twitter wala feed hai jo hum seedha push kar dete, uske aane ka wait nahi karte; app kholega to turant dikhega, ek second ki loading nahi. Palak jhapakte content saamne hota, jaadu thodi ho raha: feed me pehle se push kar diya, app khola, content saamne.
+Arpan: Ravi hamara 3 saal ka user hai, hamein pata lag gaya. Main roz cafe / parlour jaata hoon game khelne, pelam pel 3-4 saal se: kisi din GTA, kisi din God of War, God Hand, Valhalla, kisi din PUBG PC.
+
+Ek din nahi gaya, doosre din parlour wala bola "kal kahan reh gaye the, tumhara game intezaar karta tha, maine sab chala rakha tha ki kuch na kuch khelega; koi baat nahi, main hamesha tumhare liye taiyaar cheez rakhunga taaki tumhe wait na karna pade".
+
+Pattern hai, pattern yaad kar lo. Ravi ne 3 saal me app me kya kiya: Money Heist kitni baar search kiya, Stranger Things, Breaking Bad, kya-kya dekha; us hisaab se uska pattern hai.
+
+Ravi app kholega to hamein pata hai use kya dikhana hai, kya suggest karna hai: Money Heist dobara, Stranger Things, Breaking Bad se milte-julte shows; India me hai to Dhurandhar, aajkal latest.
+
+Netflix ko pata hai wo kya dekhega, to wo cheez uske app me hi daal do. Ye same to same Twitter wala feed hai jo hum seedha push kar dete, uske aane ka wait nahi karte; app kholega to turant dikhega, ek second ki loading nahi.
+
+Palak jhapakte content saamne hota, jaadu thodi ho raha: feed me pehle se push kar diya, app khola, content saamne.
 Technical me: "pehle se laga ke rakhta" = list raat ko pehle se banti (batch), "app khole to saamne" = cache se uthao, sochna nahi.
 
 **Maan lo list raat 2 baje bani, Ravi ne 11 baje Dhurandhar khatam ki, 11:05 pe sabse upar wahi.**
@@ -194,13 +242,25 @@ Arpan: Netflix ko nahi pata Priya Ravi ki behen hai, wo Ravi ke account se nahi 
 Technical me: pasand account / profile ke hisaab se, rishta nahi pata; naye account pe region ke trending (cold start).
 
 **Isi pe ek aur misaal (round me: library):**
-Arpan: Ravi 3 saal se hamare paas, uska sab dekha hua pata: pehle Stranger Things, phir Money Heist, phir Breaking Bad. Pattern: chori wali series, sci-fi drama. Use unhi jaisi suggest karo (Narcos), taaki zyada der Netflix pe rahe. Library: 100 tarah ki kitab, 50 log roz aate jo 5 tarah ki padhte (drama, thodi horror); main unke liye usi jaisi aur kitab laaunga taaki wo zyada der library me rahein, unhe dekh ke aur log aayein, library famous ho. Naya user, koi itihaas nahi: us waqt jo famous chal raha wo dikhao, "most watched", "most loved". List pehle se bana ke rakho, Twitter wala hi.
+Arpan: Ravi 3 saal se hamare paas, uska sab dekha hua pata: pehle Stranger Things, phir Money Heist, phir Breaking Bad. Pattern: chori wali series, sci-fi drama.
+
+Use unhi jaisi suggest karo (Narcos), taaki zyada der Netflix pe rahe.
+
+Library: 100 tarah ki kitab, 50 log roz aate jo 5 tarah ki padhte (drama, thodi horror); main unke liye usi jaisi aur kitab laaunga taaki wo zyada der library me rahein, unhe dekh ke aur log aayein, library famous ho.
+
+Naya user, koi itihaas nahi: us waqt jo famous chal raha wo dikhao, "most watched", "most loved". List pehle se bana ke rakho, Twitter wala hi.
 Technical me: pasand = itihaas se milti cheez, naya user = trending (cold start), list pehle se (precompute, kadam 6).
 
 &nbsp;
 
 **7. Ravi metro me Money Heist dekh raha, 4 sec ka tukda chal raha. Tunnel aayi, net 3 second poora gaya. Tukda khatam, player ne agla maanga, kuch nahi aaya, gola ghoomne laga, video ruk gayi.**
-Arpan: Main doodh wala hoon. Amul har ghar aake packet nahi deta, mohalle ki dukaan ko deta, log dukaan se lete. Mere paas 10 packet, aa gaye 15 log, 5 laut gaye; 3-4 din aisa chala, nuksaan. To pehle hi Amul se bolunga 10 ki jagah 20 bhej, 18 bhi aa gaye to sabko mil jaayega, 2 bache to fridge me pade rahenge. Waise hi Ravi ke liye agla 4 sec ka tukda pehle hi apne paas rakh lo, thode tukde aage ke; peeche se data aata rahega. Amul ne mana kar diya to Mother Dairy se le aaunga: Amul jaisa nahi, par theek, kaam chal jaayega. Aur Amul ko bolunga raat ko de jaaya kar, 12-1 baje, jab bheed na ho.
+Arpan: Main doodh wala hoon. Amul har ghar aake packet nahi deta, mohalle ki dukaan ko deta, log dukaan se lete. Mere paas 10 packet, aa gaye 15 log, 5 laut gaye; 3-4 din aisa chala, nuksaan.
+
+To pehle hi Amul se bolunga 10 ki jagah 20 bhej, 18 bhi aa gaye to sabko mil jaayega, 2 bache to fridge me pade rahenge.
+
+Waise hi Ravi ke liye agla 4 sec ka tukda pehle hi apne paas rakh lo, thode tukde aage ke; peeche se data aata rahega. Amul ne mana kar diya to Mother Dairy se le aaunga: Amul jaisa nahi, par theek, kaam chal jaayega.
+
+Aur Amul ko bolunga raat ko de jaaya kar, 12-1 baje, jab bheed na ho.
 Technical me: "agla tukda pehle se paas rakh lo" = player buffer (aage ke kuch tukde pehle se; sirf ek tukda aage = tunnel me ruk jaata), "Mother Dairy, kaam chal jaayega" = kam quality ka tukda (ABR, P3 ka Alto), "raat ko de jaaya kar" = raat ko bharai (kadam 2).
 
 **Isi pe ek aur misaal (round me: moti file):**
@@ -212,7 +272,13 @@ Technical me: aage ke tukde pehle se (prefetch + player buffer).
 **Padhai wala hissa (mock se pehle samjha, scene me nahi poocha gaya)**
 
 **P1. Bahar ka CDN (CloudFront / Akamai) kyun nahi, apna dabba kyun?**
-Doodh company ki kahani: courier company har litre ka paisa leti hai, aur Netflix ke liye ye "litre" roz ke hazaaron TB hain, bill aasmaan pe. Netflix ne har mohalle ki dukaan me apna fridge muft me rakh diya: Jio / Airtel jaise ISP ke andar apna dabba. Teen fayde: paisa (dabba ek baar ka kharcha, per-GB bill nahi), paas (video ISP ke andar se aata, buffering kam), ISP bhi khush (uska bahar jaane wala bandwidth bachta). Aur aam CDN tab file laata jab koi pehli baar maange, Netflix raat ko jab net khaali hota tab pehle se bhar deta. Doodh wala subah se pehle fridge bhar deta, maangne ka intezaar nahi karta.
+Doodh company ki kahani: courier company har litre ka paisa leti hai, aur Netflix ke liye ye "litre" roz ke hazaaron TB hain, bill aasmaan pe.
+
+Netflix ne har mohalle ki dukaan me apna fridge muft me rakh diya: Jio / Airtel jaise ISP ke andar apna dabba.
+
+Teen fayde: paisa (dabba ek baar ka kharcha, per-GB bill nahi), paas (video ISP ke andar se aata, buffering kam), ISP bhi khush (uska bahar jaane wala bandwidth bachta).
+
+Aur aam CDN tab file laata jab koi pehli baar maange, Netflix raat ko jab net khaali hota tab pehle se bhar deta. Doodh wala subah se pehle fridge bhar deta, maangne ka intezaar nahi karta.
 Technical me: courier = per-GB bill wala CDN (CloudFront / Akamai), mohalle ka fridge = Open Connect (ISP ke andar, free), raat ko pehle se = proactive fill (off-peak).
 
 **P2. Phir AWS kis kaam ka?**
@@ -229,7 +295,13 @@ Awaaz aur subtitle alag files: ek hi 1080p ke saath Hindi ya English kuch bhi ch
 Technical me: Ferrari / Alto = transcoding (kai size) + ABR, 4 sec tukde + manifest = segments + seek, har film ki apni seedhi = per-title encode ladder, kai roop = codec, ek baar banao = AWS pe batch encoding (parallel workers / consumers), awaaz / subtitle alag = alag audio / subtitle tracks.
 
 **P4. Pasand wali list ke baaki tukde**
-Mohalle ka chaiwala tujhe roz dekhta, tere aane se pehle jaanta tu adrak wali kam cheeni maangega. Netflix tera itihaas leta (kya dekha, kitna dekha, beech me chhoda, kya search kiya) aur tere jaise logon ka bhi ("jinhone Money Heist dekha, unhone Squid Game bhi dekha"). Raat ko badi machines har user ki list bana ke rakh deti. App khola to list uthao aur thoda abhi ke hisaab se badlo: "abhi raat hai to thriller upar", "tu TV pe hai". Tasveer bhi teri: ek film ki 5-6 tasveer, tu action zyada dekhta to Money Heist ki goli wali, koi romance dekhta to usi film ki pyaar wali. Film wahi, darwaza alag.
+Mohalle ka chaiwala tujhe roz dekhta, tere aane se pehle jaanta tu adrak wali kam cheeni maangega.
+
+Netflix tera itihaas leta (kya dekha, kitna dekha, beech me chhoda, kya search kiya) aur tere jaise logon ka bhi ("jinhone Money Heist dekha, unhone Squid Game bhi dekha"). Raat ko badi machines har user ki list bana ke rakh deti.
+
+App khola to list uthao aur thoda abhi ke hisaab se badlo: "abhi raat hai to thriller upar", "tu TV pe hai".
+
+Tasveer bhi teri: ek film ki 5-6 tasveer, tu action zyada dekhta to Money Heist ki goli wali, koi romance dekhta to usi film ki pyaar wali. Film wahi, darwaza alag.
 `tera dekhna / chhodna / search -> Kafka -> raat ka batch: har user ki list; app khola -> list uthao (cache) + thoda abhi ka mod`
 Technical me: chaiwala = offline / batch recommendation (tera + tere jaise logon ka itihaas), thoda abhi ka mod = online halka re-rank, apni tasveer = personalized thumbnail, dekhna -> Kafka = events ka stream batch tak.
 

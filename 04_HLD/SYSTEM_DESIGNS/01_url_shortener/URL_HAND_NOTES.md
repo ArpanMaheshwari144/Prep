@@ -32,7 +32,11 @@ User  -->  LB  -->  kai counter (app server)
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
-Arpan: Hum hamesha URL ki baat kar rahe, to FR me wahi jaayega ki lamba URL le ke chhota banana. Jo dikkat design me dekh rahe, wahi FR / NFR banti: do logon ko same token na mile, lambe ka chhota hamesha theek ho, garam (hot) URL sambhale, sab mote register pe na jaaye, machine se hazaar chit na aaye. NFR me: consistency kaise, jaldi kaise, copies, local kaise rakhein. Dikkat se hi FR bante, unse hi NFR bhi; ye aaj pakka ho gaya. Numbers tab jab sach me zaroorat ho; 1 million ho ya 1 billion, shard waise bhi lagana padega.
+Arpan: Hum hamesha URL ki baat kar rahe, to FR me wahi jaayega ki lamba URL le ke chhota banana.
+
+Jo dikkat design me dekh rahe, wahi FR / NFR banti: do logon ko same token na mile, lambe ka chhota hamesha theek ho, garam (hot) URL sambhale, sab mote register pe na jaaye, machine se hazaar chit na aaye.
+
+NFR me: consistency kaise, jaldi kaise, copies, local kaise rakhein. Dikkat se hi FR bante, unse hi NFR bhi; ye aaj pakka ho gaya. Numbers tab jab sach me zaroorat ho; 1 million ho ya 1 billion, shard waise bhi lagana padega.
 Technical me: "do logon ko same token na mile" = uniqueness (counter / range), "lambe ka chhota hamesha theek" = consistency (quorum read / write), "garam URL sambhale" = hot key (cache, copies), "sab mote register pe na jaaye" = cache hit ratio, "machine se hazaar chit nahi" = rate limit, "jaldi" = low latency, "copies" = replication / availability.
 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
@@ -124,7 +128,15 @@ Arpan (jab 9 almari bhar gayi, 10vi aayi): Hum mod karte the na, to mod se ab ha
 Technical me: "mod se har cheez badal jaayegi" = hash % N me N badla to lagbhag saare token nayi almari pe, "gol chakkar, sabse paas wali" = consistent hashing (ring pe agli machine).
 
 **Isi pe ek aur raasta (hash ki jagah state ke hisaab se kaato).**
-Arpan: Register 100 page, phir 200, phir 10,000, phir 20,000; kitna mota karenge, ek limit to hogi. To mote register ko tod do: 50,000 page ka hai to 15,000 alag, 15,000 alag, 20,000 alag. Par ab 3 register hain, kisi ko data kahan milega, teeno me dhoondhne me pagal ho jaayenge. To baantte waqt har register ke upar thappa laga do ki isme ye pattern hai. Register baantna achhi baat, par trade-off: dhoondhne me samay lagega, isliye tabhi jab sach me bahut zaroorat ho; aur shard karna AWS ka kaam, hum utna gehra nahi padhte. Scene: mote register pe Delhi, Ambala, Chandigarh, Punjab sab ke log aa rahe. To Delhi wali information kaat ke Delhi ke office me rakh do, Punjab wali Punjab me, UP ki East UP aur West UP me. Ab Punjab ke log Punjab ke register pe, Delhi ke Delhi me, UP ke UP me; dhoondhne ki zaroorat nahi kyunki pata hai kaunsa kis ka.
+Arpan: Register 100 page, phir 200, phir 10,000, phir 20,000; kitna mota karenge, ek limit to hogi. To mote register ko tod do: 50,000 page ka hai to 15,000 alag, 15,000 alag, 20,000 alag.
+
+Par ab 3 register hain, kisi ko data kahan milega, teeno me dhoondhne me pagal ho jaayenge. To baantte waqt har register ke upar thappa laga do ki isme ye pattern hai.
+
+Register baantna achhi baat, par trade-off: dhoondhne me samay lagega, isliye tabhi jab sach me bahut zaroorat ho; aur shard karna AWS ka kaam, hum utna gehra nahi padhte.
+
+Scene: mote register pe Delhi, Ambala, Chandigarh, Punjab sab ke log aa rahe. To Delhi wali information kaat ke Delhi ke office me rakh do, Punjab wali Punjab me, UP ki East UP aur West UP me.
+
+Ab Punjab ke log Punjab ke register pe, Delhi ke Delhi me, UP ke UP me; dhoondhne ki zaroorat nahi kyunki pata hai kaunsa kis ka.
 Technical me: "region ke hisaab se kaato" = sharding by region (geo-partition), "register pe thappa" = shard ka record (kaunsa data kahan).
 
 **Isi pe ek aur misaal (toofan me paas wala shelter):**
@@ -132,7 +144,11 @@ Arpan: Gaadi chala raha hoon, toofan aaya, to sabse paas wala shelter dhoondhung
 Technical me: consistent hashing, sirf pados ki keys move.
 
 **Maan lo Ravi ne Delhi me link banaya, Delhi ke register me gaya. Mumbai wala dost kholta hai; counter ke paas bas token aB3x9. Use kaise pata Delhi ke register me jaana hai?**
-Arpan: Ek code bana lo: Delhi ka 01, Punjab ka 03, UP ka koi aur; state 25-30 hain to 30 number kaafi. Ye code link me sabko nahi dikhega, server chupchaap aage ya peeche jod dega. Ek bada bhai beech me baitha hai, uske paas list hai: 01 wali, 02 wali. Use bol diya: tere paas link aayega, uske shuru ke 2 digit uthaana, list se milana kis state ka hai, aur request wahin bhej dena. Mumbai se aaya, shuru me 01 likha, list me 01 = Delhi, to Delhi bhejo. Kahani khatam.
+Arpan: Ek code bana lo: Delhi ka 01, Punjab ka 03, UP ka koi aur; state 25-30 hain to 30 number kaafi. Ye code link me sabko nahi dikhega, server chupchaap aage ya peeche jod dega.
+
+Ek bada bhai beech me baitha hai, uske paas list hai: 01 wali, 02 wali. Use bol diya: tere paas link aayega, uske shuru ke 2 digit uthaana, list se milana kis state ka hai, aur request wahin bhej dena.
+
+Mumbai se aaya, shuru me 01 likha, list me 01 = Delhi, to Delhi bhejo. Kahani khatam.
 Technical me: "token me state ka code" = shard key ID ke andar (shard id prefix), "bada bhai list dekh ke bheje" = router / lookup (shard map).
 
 **9. Almari number 3 me aag lagi, uske saare token jal gaye.**
@@ -140,7 +156,19 @@ Arpan: Ek almari mat rakho, unhi ki copy bana do. 3 number ki almari gir gayi to
 Technical me: "almari ki copy" = 3 copy (replica), "acknowledge aaye tab pakka" = quorum write (W=2).
 
 **Aur neeche (poori building / shehar me aag to):**
-Arpan: Delhi me aag lage to Delhi ka register jal jaaye, pagal thodi hain. Copy alag-alag rakh do: building me Delhi ka register hai, mujhe pata wo bahut important hai, to socho is floor pe ya building me aag lag gayi to dikkat; isliye copy Lajpat Nagar, ISBT, Kashmiri Gate rakh do. Trade-off: copy peeche chal sakti hai, ek link copy tak pahunchte-pahunchte beech me gir gaya; koi baat nahi. Ek link bana, par kaise na kaise DB me save nahi hua: server gira, sab crash, rollback karna pada, link ka kuch ata-pata nahi. To user ko dikha do "tera link bana nahi, dobara banana padega"; aisa nahi ki "save" bol diya aur link khatam. Hamare paas arabon number hain, ek-do number aise bekaar ho bhi jaayein to dikkat nahi, doosra number le ke naya bana lo. Beech me ek central authority rakh dunga: jo bhi aaye pehle uske paas, wo apne paas likhe aur phir ISBT, Kashmiri Gate ko pass on kare. Wo bhi kabhi gir jaaye to uski jagah uski ek aur copy rakh do. Peeche kaam chalta rahega, copiyan update hoti rahengi.
+Arpan: Delhi me aag lage to Delhi ka register jal jaaye, pagal thodi hain.
+
+Copy alag-alag rakh do: building me Delhi ka register hai, mujhe pata wo bahut important hai, to socho is floor pe ya building me aag lag gayi to dikkat; isliye copy Lajpat Nagar, ISBT, Kashmiri Gate rakh do.
+
+Trade-off: copy peeche chal sakti hai, ek link copy tak pahunchte-pahunchte beech me gir gaya; koi baat nahi.
+
+Ek link bana, par kaise na kaise DB me save nahi hua: server gira, sab crash, rollback karna pada, link ka kuch ata-pata nahi.
+
+To user ko dikha do "tera link bana nahi, dobara banana padega"; aisa nahi ki "save" bol diya aur link khatam.
+
+Hamare paas arabon number hain, ek-do number aise bekaar ho bhi jaayein to dikkat nahi, doosra number le ke naya bana lo.
+
+Beech me ek central authority rakh dunga: jo bhi aaye pehle uske paas, wo apne paas likhe aur phir ISBT, Kashmiri Gate ko pass on kare. Wo bhi kabhi gir jaaye to uski jagah uski ek aur copy rakh do. Peeche kaam chalta rahega, copiyan update hoti rahengi.
 Technical me: "copy alag-alag jagah" = replica (alag zone), "central authority pehle likhe phir bheje" = coordinator (jo request leta, ring me aas-paas ki copies ko aage bhejta), "copy peeche chale, baad me update" = async replication lag (save fail to user ko "dobara banao", number bekaar gaya to naya number, arabon hain), "authority ki bhi copy" = wo gire to koi aur coordinator ban jaaye. Cassandra andar se kaise karta, wo uska kaam, design ka hissa nahi.
 
 **10. Teen copy A, B, C. Arpan ne naya token banaya, A aur B ne haan bola, C peeche. Turant dost ne token dikhaya, counter wale ne C se padha, "nahi mila".**
@@ -156,22 +184,64 @@ Arpan: Sabko wahi token chahiye. To us chhote register ko bahut saaron me baant 
 Technical me: "chhote register ki photocopy, divide" = Redis replica (padhai copies me bantna).
 
 **Maan lo copy 10 ho ya 100, har baar counter wale ko kursi se uth ke register tak jaana padta. 1 crore log, 1 crore chakkar.**
-Arpan: Us counter wale ko bol: ye information tu rakh le, baar-baar uth ke kyun ja raha hai. Ek chhoti parchi le, uska token aur information apne paas rakh. Maan le roz 100 log aaye, ek hi information maang rahe, aur wo mere se pachaas kadam door hai, mujhe har baar wahin jaana padta. Main wo information utha ke apne paas ek page pe likh lunga, aur apni kursi pe baith gaya. Ab koi poochhe to "le bhai, teri information ye rahi". Mujhe dobara kahin jaana nahi padta.
+Arpan: Us counter wale ko bol: ye information tu rakh le, baar-baar uth ke kyun ja raha hai. Ek chhoti parchi le, uska token aur information apne paas rakh.
+
+Maan le roz 100 log aaye, ek hi information maang rahe, aur wo mere se pachaas kadam door hai, mujhe har baar wahin jaana padta. Main wo information utha ke apne paas ek page pe likh lunga, aur apni kursi pe baith gaya.
+
+Ab koi poochhe to "le bhai, teri information ye rahi". Mujhe dobara kahin jaana nahi padta.
 Technical me: "counter wala apne paas parchi rakhe" = local cache (app server ki memory me garam link kuch second).
 
 **Maan lo wahi cricket wala token roz ka garam hai, 10 photocopy pe pelam pel log. Theek 7 baje photocopy 7 pe uski umar khatam, wahan ek lakh log ek saath, ladke ko mote register se aane me 2 second. Aur purani information? Wo to umar khatam hote hi mit gayi.**
-Arpan: Sabse pehle to aisi parchi ko ek hi baar me khatam hone hi nahi dunga. Wo parchi bahut garam hai, us pe pel ke users aa rahe, 1000 nahi, 10 lakh, 20 lakh, pelam pel. To main us pe nazar rakhunga: chhotu dekh, sun idhar aa, iski umar abhi 20 second ki hai, badha de, 60 kar de, phir +60, phir +60. Aur 10 lakh log aa rahe to ek counter pe nahi, 10 pe baant do, aur sabki umar ek saath khatam nahi hogi, kisi me thoda jitter, kisi ki 20 second me, kisi ki 30 me, kisi ki 50 me. Maan lo kuch der ke liye meri nazar hat gayi aur counter 7 ki umar khatam ho gayi, wahan ek saath ek lakh request aa gayi. Kya wo ek lakh DB pe jaayengi? Nahi. Mote register pe bheed lag jaayegi, aur bhi log wahan apna kaam kar rahe, unke liye dikkat hogi. To main bolunga: sab ruko, chupchaap, ekdam shaanti. Chhotu bhai ja, yahan parchi ud gayi hai, mote register me ja, jo ye log maang rahe uska pata la, aur yahan likh de. Chhotu parchi le ke aaya, maine dekha kya likha hai, likh liya: aa jao sab, dobara aa jao. Ek parchi nahi hai. Mujhe pata hai 60 second me ye khatam ho gayi to sab log ek saath aa jaayenge, mujhe dikkat ho jaayegi. To main chupchaap ise ek aur parchi pe likh ke apne paas rakh leta hoon, jisme information pehle se hai. Asli wali khatam ho gayi to bolunga: bhai abhi ke liye ye le lo, thodi der purana dekh lo. Phir wahi chhotu jaayega, la ke parchi dega: le bhai, updated information, ab sab yahan se padh lo. Apni parchi maine phaad ke phenk di, khatam kahani. Purani information app ke cache se, browser ke cache se bhi de sakte; un pe thodi umar rakho, 60 second purana dekh lenge, koi baat nahi, phir wo udega aur log Redis pe aayenge, wahan naya mil jaayega. Chhotu gir gaya to ek aur chhotu laga do: yaar ye to 2 second ka kaam hai, use 10 second ho gaye, chhodo use, tu chala ja. Backoff tab, jab maine 10 chhotu bheje aur ek bhi nahi aaya; tab maanunga ki hamara server gira. Ek chhotu gira to server nahi gira, baaki counter to chal rahe hain.
+Arpan: Sabse pehle to aisi parchi ko ek hi baar me khatam hone hi nahi dunga. Wo parchi bahut garam hai, us pe pel ke users aa rahe, 1000 nahi, 10 lakh, 20 lakh, pelam pel.
+
+To main us pe nazar rakhunga: chhotu dekh, sun idhar aa, iski umar abhi 20 second ki hai, badha de, 60 kar de, phir +60, phir +60.
+
+Aur 10 lakh log aa rahe to ek counter pe nahi, 10 pe baant do, aur sabki umar ek saath khatam nahi hogi, kisi me thoda jitter, kisi ki 20 second me, kisi ki 30 me, kisi ki 50 me.
+
+Maan lo kuch der ke liye meri nazar hat gayi aur counter 7 ki umar khatam ho gayi, wahan ek saath ek lakh request aa gayi. Kya wo ek lakh DB pe jaayengi? Nahi.
+
+Mote register pe bheed lag jaayegi, aur bhi log wahan apna kaam kar rahe, unke liye dikkat hogi. To main bolunga: sab ruko, chupchaap, ekdam shaanti.
+
+Chhotu bhai ja, yahan parchi ud gayi hai, mote register me ja, jo ye log maang rahe uska pata la, aur yahan likh de. Chhotu parchi le ke aaya, maine dekha kya likha hai, likh liya: aa jao sab, dobara aa jao. Ek parchi nahi hai.
+
+Mujhe pata hai 60 second me ye khatam ho gayi to sab log ek saath aa jaayenge, mujhe dikkat ho jaayegi. To main chupchaap ise ek aur parchi pe likh ke apne paas rakh leta hoon, jisme information pehle se hai.
+
+Asli wali khatam ho gayi to bolunga: bhai abhi ke liye ye le lo, thodi der purana dekh lo. Phir wahi chhotu jaayega, la ke parchi dega: le bhai, updated information, ab sab yahan se padh lo.
+
+Apni parchi maine phaad ke phenk di, khatam kahani.
+
+Purani information app ke cache se, browser ke cache se bhi de sakte; un pe thodi umar rakho, 60 second purana dekh lenge, koi baat nahi, phir wo udega aur log Redis pe aayenge, wahan naya mil jaayega.
+
+Chhotu gir gaya to ek aur chhotu laga do: yaar ye to 2 second ka kaam hai, use 10 second ho gaye, chhodo use, tu chala ja. Backoff tab, jab maine 10 chhotu bheje aur ek bhi nahi aaya; tab maanunga ki hamara server gira.
+
+Ek chhotu gira to server nahi gira, baaki counter to chal rahe hain.
 Technical me: (jawab me "counter 7" = photocopy 7, "10 counter pe baant do" = 10 photocopy, "chhotu" = kadam 5 wala ladka.) "umar badhate raho" = hot key TTL extend (refresh-ahead), "photocopy ki umar alag" = TTL jitter, "chupchaap doosri parchi" = stale copy (soft / hard TTL, stale-while-revalidate; kadam 6 wali purani information yahi), "counter ki parchi chhoti umar" = local cache short TTL, "10 na aayein tab backoff" = backoff: ladka bheja, nahi aaya, thoda ruko, doosra bheja, nahi aaya, ab thoda zyada ruko, teesra bheja; har baar intezaar badhta (1, 2, 4 sec), mote register pe bombard nahi. 10 me se ek bhi na aaye tab maano mota register (DB) gira. Jitter iska hissa nahi: jitter upar wala "photocopy ki umar alag" hai, photocopy ki umar me thoda +1, +2 jod do taaki sab ek saath na mitein.
 
 **Maan lo 50 counter hain, log kabhi kisi counter pe, kabhi kisi pe (LB). Photocopy 7 pe token nahi mila, to har counter wale ne apna-apna ladka bhej diya. Mote register pe ek ki jagah 50 ladke.**
-Arpan: Sahi baat hai, LB to round robin se bhej raha, kabhi kisi pe, kabhi kisi pe: pehla aaya counter 1 pe gaya, phir counter 10 pe, phir 17 pe, phir 20 pe, aur har counter ka apna chhotu mote register ki taraf bhaaga. To main bahar saamne khada hoon, sab counter ko dekh raha hoon. Ruko sab, hold on, chup, ekdam shaanti banaye rakho. Saare 50 counter ko roko, bas 1 second, kuch nahi. Chhotu log chup ho jao, shor nahi, sabke chhotu apne counter pe jaake chup khade ho jao. Ek counter ka chhotu bulaya: bhai chhotu sun, ye sab pagal hain, inki baat na sun, faltu ki baat kar rahe tere se, idhar aa, mote register pe ja, usme information padi hogi, padh ke sabko de de, khatam kahani. 50 chhotu ko jaane ki zaroorat hi nahi, 50 ki jagah 1 chhotu bhi kaam kar lega. Ek information hi to laani hai yaar, 50 chhotu kyun bhejne? Ek chhotu jaayega, 50 ka apne aap update ho jaayega.
+Arpan: Sahi baat hai, LB to round robin se bhej raha, kabhi kisi pe, kabhi kisi pe: pehla aaya counter 1 pe gaya, phir counter 10 pe, phir 17 pe, phir 20 pe, aur har counter ka apna chhotu mote register ki taraf bhaaga.
+
+To main bahar saamne khada hoon, sab counter ko dekh raha hoon. Ruko sab, hold on, chup, ekdam shaanti banaye rakho. Saare 50 counter ko roko, bas 1 second, kuch nahi.
+
+Chhotu log chup ho jao, shor nahi, sabke chhotu apne counter pe jaake chup khade ho jao.
+
+Ek counter ka chhotu bulaya: bhai chhotu sun, ye sab pagal hain, inki baat na sun, faltu ki baat kar rahe tere se, idhar aa, mote register pe ja, usme information padi hogi, padh ke sabko de de, khatam kahani.
+
+50 chhotu ko jaane ki zaroorat hi nahi, 50 ki jagah 1 chhotu bhi kaam kar lega. Ek information hi to laani hai yaar, 50 chhotu kyun bhejne? Ek chhotu jaayega, 50 ka apne aap update ho jaayega.
 Technical me: (yahan "counter" = counter wala, yaani hamara server; "chhotu" = us counter ka ladka.) "sabke saamne ek banda, sirf ek ladka" = distributed lock (saajha lock, Redis me ek key: SET NX + umar). Kadam 5 ka ladka sirf ek counter ka ho to 50 counter ke 50 ladke jaate, isliye lock saajha.
 **Isi ki doosri kahani:**
 Arpan: 3-4 counter phans gaye to unke chhotu ko bol do: ek chhotu jaayega, information laake teeno chhotuon ke kaan me daal dega, wo apne register me khud update kar lenge; 3 chhotu ek saath nahi jaayenge. Waise 5-10 chhotu ek saath mote register pe jaayein to utna wo sambhal lega, AWS ke server itna sambhalte hain; dikkat ho tabhi.
 Technical me: "ek chhotu laake sabke kaan me" = request coalescing (ek fetch, baaki ko wahi jawab), saajha lock ke saath.
 
 **Isi pe ek aur raasta (Redis tak aane hi mat do: local cache + alag dabba):**
-Arpan: Sabse pehle, link badal nahi raha, to use local cache aur server ke cache me daal dunga, Redis tak aane hi nahi dunga. Redis dheema hua to copiyan jod do. Aur us link ke naam ka ek alag dabba, alag Redis rakh do: bheed wo jhelta rahe, apna baaki kaam chalta rahe. Saath rakha to kuch log apna important mail ya kaam dekh rahe, IPL ki request ke peeche unki dikkat ho jaayegi. 1 crore log aa rahe to ek alag dabba, wo yahin aayenge. Uski 1-2 copy aur rakh do, kharcha badhega, par DB ya poora app girne se bacha lenge. Ye consistent hashing nahi hai, isliye uska yahan koi matlab nahi: link update nahi ho raha, bas match dekhne ke liye. Main bas Redis ki copiyan ek ring me rakhta hoon: ek copy yahan, ek yahan, ek yahan; aas-paas koi gira to agli copy pe aake information pass on kar dega.
+Arpan: Sabse pehle, link badal nahi raha, to use local cache aur server ke cache me daal dunga, Redis tak aane hi nahi dunga. Redis dheema hua to copiyan jod do.
+
+Aur us link ke naam ka ek alag dabba, alag Redis rakh do: bheed wo jhelta rahe, apna baaki kaam chalta rahe. Saath rakha to kuch log apna important mail ya kaam dekh rahe, IPL ki request ke peeche unki dikkat ho jaayegi.
+
+1 crore log aa rahe to ek alag dabba, wo yahin aayenge. Uski 1-2 copy aur rakh do, kharcha badhega, par DB ya poora app girne se bacha lenge.
+
+Ye consistent hashing nahi hai, isliye uska yahan koi matlab nahi: link update nahi ho raha, bas match dekhne ke liye.
+
+Main bas Redis ki copiyan ek ring me rakhta hoon: ek copy yahan, ek yahan, ek yahan; aas-paas koi gira to agli copy pe aake information pass on kar dega.
 Technical me: "server ke paas" = local cache, "us link ka alag dabba" = hot key isolation (alag Redis / alag pool, baaki link na atkein), "1-2 copy" = hot key replicas, "copiyan ring me, gira to agli copy" = replicas ring pe (failover agli copy pe), consistent hashing nahi.
 
 **12. Kisi ka idea: har aadmi pata apne phone me hi likh le, counter pe aaye hi nahi. Hafte baad pata chala ek token ka pata dhokhe wali site ka hai, use band karna hai, par log seedha phone wale pate pe ja rahe.**

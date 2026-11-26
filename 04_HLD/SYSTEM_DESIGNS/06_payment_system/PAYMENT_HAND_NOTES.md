@@ -85,7 +85,15 @@ Technical me: "beech me banda jo batata rahe hua ya nahi" = poochne wala job (PE
 Arpan: Pakka jawab ke teen raaste: PSP ka event, beech ka banda atki parchi pe PSP se poochhe, aur raat ko PSP ki file aur apne register ki file milao. Atka ya ulta mila to dobara bhejo ya paisa wapas.
 Technical me: webhook + status poll + raat ka milaan (settlement file vs payment table, nightly reconciliation).
 
-**Jaankari (sirf jaankari hai, hamare design me ye asal me nahi; reel se, UPI ke andar kya hota, NPCI ke andar tak koi nahi poochta):** QR me sirf UPI ID hoti hai, bank ki detail nahi. PIN phone pe hi taale me band ho jaata hai, Google Pay bhi use nahi padh sakta, sirf tera bank. Google Pay request aage badhata hai: apne partner bank ko, wahan se NPCI (jo saare bank aapas me jodta). NPCI tere bank se 500 kaatne ko kehta, pump wale ke bank se 500 jodne ko; dono taraf se haan aaya tab green tick. Par green tick ke waqt sirf dono bank ke register badle hain, asli paisa bank se bank abhi gaya hi nahi. Din me kuch fixed waqt pe NPCI sab ka jod-ghata karta hai (kis bank ko kitna dena, kitna lena) aur sirf bacha hua paisa ek saath jaata hai, jaise YouTube me 10-10 rupaye jama karke ek saath bank. Isiliye hamare paas bhi PSP ka paisa aur settlement file baad me aati hai, aur raat ka milaan zaroori.
+**Jaankari (sirf jaankari hai, hamare design me ye asal me nahi; reel se, UPI ke andar kya hota, NPCI ke andar tak koi nahi poochta):** QR me sirf UPI ID hoti hai, bank ki detail nahi.
+
+PIN phone pe hi taale me band ho jaata hai, Google Pay bhi use nahi padh sakta, sirf tera bank. Google Pay request aage badhata hai: apne partner bank ko, wahan se NPCI (jo saare bank aapas me jodta).
+
+NPCI tere bank se 500 kaatne ko kehta, pump wale ke bank se 500 jodne ko; dono taraf se haan aaya tab green tick. Par green tick ke waqt sirf dono bank ke register badle hain, asli paisa bank se bank abhi gaya hi nahi.
+
+Din me kuch fixed waqt pe NPCI sab ka jod-ghata karta hai (kis bank ko kitna dena, kitna lena) aur sirf bacha hua paisa ek saath jaata hai, jaise YouTube me 10-10 rupaye jama karke ek saath bank.
+
+Isiliye hamare paas bhi PSP ka paisa aur settlement file baad me aati hai, aur raat ka milaan zaroori.
 Technical me: NPCI = UPI chalane wala, saare bank usi se jude (har bank har bank se nahi) · green tick = dono bank ke ledger me entry · bacha hua ek saath = deferred net settlement (RBI me rakhe bank khaaton ke beech).
 
 **Maan lo PSP ka message raste me kho gaya, ya beech wala banda bhi der se pahuncha.** (BookMyShow 6c wala hi jawab)
@@ -136,11 +144,21 @@ Arpan: Apne office se ek ladka pakdunga: "ye 500 mera hai, us tukde me jaana hai
 Technical me: "ladka 500 le ke us tukde me" = saga do shard ke beech, "diary" = saga ka har kadam likha (beech ka khaata, hold), "wapas aake paise de dega" = fail pe ulta kadam.
 
 **11. Ravi ka wallet top-up 500, PSP-1 30 second se chup. Pata nahi PSP-1 mara hai ya bas dheema, aur Ravi ke bank se paisa kata ya nahi. Doosra PSP khada hai.**
-Arpan: Chhotu ko 500 de ke bheja, wo laut ke nahi aaya. Ho sakta hai bhaag gaya, ho sakta hai line me khada ho aur dukaan pe paise de bhi diye hon. Agar pehle se pata hai ki PSP-1 down hai, to payment wahan jaane hi mat do, seedha PSP-2. Par agar pata nahi aur paise shayad kat chuke hain, to PSP-2 ko bheja to wo bhi kaat lega. Isliye Ravi ko bolo "tumhara payment process ho raha hai", aur PSP-1 ko saaf bol do: chhotu, tere paas itna waqt hai, ya haan bol ya naa. Haan aaya to kaam ho gaya, naa aaya to Ravi ke paise wapas. Koi perfect raasta nahi hai, par Ravi ko bekaar me ghanton atka ke nahi rakhna.
+Arpan: Chhotu ko 500 de ke bheja, wo laut ke nahi aaya. Ho sakta hai bhaag gaya, ho sakta hai line me khada ho aur dukaan pe paise de bhi diye hon.
+
+Agar pehle se pata hai ki PSP-1 down hai, to payment wahan jaane hi mat do, seedha PSP-2. Par agar pata nahi aur paise shayad kat chuke hain, to PSP-2 ko bheja to wo bhi kaat lega.
+
+Isliye Ravi ko bolo "tumhara payment process ho raha hai", aur PSP-1 ko saaf bol do: chhotu, tere paas itna waqt hai, ya haan bol ya naa. Haan aaya to kaam ho gaya, naa aaya to Ravi ke paise wapas.
+
+Koi perfect raasta nahi hai, par Ravi ko bekaar me ghanton atka ke nahi rakhna.
 Technical me: chhotu = PSP ko gayi payment request · "pehle se pata down hai" = circuit breaker OPEN, tab hi fallback PSP-2, "pata nahi kata ya nahi" = unknown state, PENDING (PSP-2 pe nahi, warna do baar katega) -> par user ko ghanton nahi rokte: 30-55 sec ke baad neeche wala "Maan lo PSP-1 chup" jawab (chain me 11b) (FAILED dikhao + PSP-2, kata nikla to REFUND_PENDING), "itna waqt, haan ya naa" = timeout + status job PSP-1 se poochhe, "naa to paise wapas" = refund (PSP bola "naa" matlab kata hi nahi, to bas FAILED, wapas kuch nahi; kata tha par haan der se aaya, to refund).
 
 **Maan lo PSP-1 chup hai, Ravi ko ghanton nahi rok sakte, aur PSP-2 pe bhejne se darr hai ki do baar na kat jaaye.** (BookMyShow 6c wala hi jawab)
-Arpan: PSP-1 kitni der lega, wo hamare haath me nahi, uska design hai. Zyada der Ravi ko nahi rok sakte. To 30 se 55 second rukte hain, phir Ravi ko saaf bolo: "payment abhi ho nahi pa raha, paisa kata hoga to apne aap wapas aa jaayega, dobara karo". Dobara wala PSP-2 pe. Pehla DB me FAILED, peeche PSP-1 se poochte raho aur uska event bhi aayega. Baad me pata chala PSP-1 pe bhi kata tha, to PSP-1 ko bolo "is user ka paisa lautao"; bank se poochhne ka haq PSP-1 ka hai, hamara nahi. Do baar kata bhi to ek wapas, Ravi ka nuksaan nahi.
+Arpan: PSP-1 kitni der lega, wo hamare haath me nahi, uska design hai. Zyada der Ravi ko nahi rok sakte.
+
+To 30 se 55 second rukte hain, phir Ravi ko saaf bolo: "payment abhi ho nahi pa raha, paisa kata hoga to apne aap wapas aa jaayega, dobara karo". Dobara wala PSP-2 pe.
+
+Pehla DB me FAILED, peeche PSP-1 se poochte raho aur uska event bhi aayega. Baad me pata chala PSP-1 pe bhi kata tha, to PSP-1 ko bolo "is user ka paisa lautao"; bank se poochhne ka haq PSP-1 ka hai, hamara nahi. Do baar kata bhi to ek wapas, Ravi ka nuksaan nahi.
 Haan, onboard karte waqt PSP-1 se SLA zaroor lo: unka system kitna chalega (uptime, jaise 99.9%) aur down hua to kitni der me khabar + theek karenge. Bank kitni der lega, wo nahi. Diwali jaisi badi sale ho to 3-4 company (Razorpay jaisi doosri service) line me rakho.
 Technical me: "30-55 sec" = hamara client timeout, "pehla DB me FAILED" = us koshish ka attempt FAILED (payment ka sach event / poll se), "dobara PSP-2 pe" = PSP failover, "PSP-1 se poochte + event" = status poll + webhook, "kata nikla to lautao" = DB me REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe, "onboard pe SLA" = uptime SLA + incident response (latency ka nahi), "3-4 company" = backup PSP.
 

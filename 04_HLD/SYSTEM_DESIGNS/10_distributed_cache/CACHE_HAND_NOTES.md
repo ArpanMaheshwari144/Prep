@@ -63,7 +63,13 @@ Arpan: Tod do. 10 crore ko tod do, 2-2 crore ya 3-3 crore ek dabbe me rakh do. W
 Technical me: "tod do, alag dabbe me" = sharding, "hash, same pe chala jaayega" = key ka hash batata machine, same key hamesha same machine.
 
 **4. 10 machine, formula `hash(key) % 10`, Ravi machine 3 pe. 11vi machine judi, formula `% 11`, Ravi ke liye machine 7, jahan data hi nahi. Lagbhag har key ki jagah badli, saari request miss, sab DB pe, DB baith gaya.**
-Arpan: Consistent hashing kar do, jo ring me discuss ki thi. Ek ring me machines paas-paas hain. Key ka hash do khaanon ke beech gira to sabse pehle khaane pe chala jaayega. Kho-kho dekha hai? Jab bada bhaagta hai to main sabse paas wale bande ko dhakka deta hoon: chal tu pakad jaake. Ya do padaav hain, ek 50 km pe, agla 100 km pe. Gaadi ki headlight kharab hui to main sabse paas wale padaav pe chupchaap ruk jaunga, 100 km pe nahi jaunga. Ring me bahut saare server, beech me jo gira wo sabse paas wale pe jaake baith jaayega. Jaise highway pe petrol 50 km ka bacha to paas ka pump dhoondhta hoon, door wala nahi (yahi soch leaderboard 6 me: score ke aas-paas).
+Arpan: Consistent hashing kar do, jo ring me discuss ki thi. Ek ring me machines paas-paas hain. Key ka hash do khaanon ke beech gira to sabse pehle khaane pe chala jaayega. Kho-kho dekha hai?
+
+Jab bada bhaagta hai to main sabse paas wale bande ko dhakka deta hoon: chal tu pakad jaake. Ya do padaav hain, ek 50 km pe, agla 100 km pe.
+
+Gaadi ki headlight kharab hui to main sabse paas wale padaav pe chupchaap ruk jaunga, 100 km pe nahi jaunga. Ring me bahut saare server, beech me jo gira wo sabse paas wale pe jaake baith jaayega.
+
+Jaise highway pe petrol 50 km ka bacha to paas ka pump dhoondhta hoon, door wala nahi (yahi soch leaderboard 6 me: score ke aas-paas).
 Technical me: "ring me machines paas-paas" = consistent hashing (ring), "sabse pehle khaane pe" = key ghadi ki disha me agli machine pe (hamesha aage wali, peeche wali nahi, chahe peeche wali zyada paas ho; ek hi disha tay hai, isliye dhoondhne pe har baar wahi machine milti). "kho-kho, headlight, paas ka petrol pump" = machine giri to uski keys aage wali agli machine sambhalti, door wali nahi.
 
 **Maan lo key 47 pe giri. Peeche machine 45 pe (2 door), aage machine 52 pe (5 door). "Sabse paas" to 45 hua, key kahan jaayegi?**
@@ -72,7 +78,11 @@ Technical me: "U-turn nahi, aage wala pump" = ring pe ek hi disha (clockwise), k
 
 **Maan lo saare dabbe bhar gaye, to unhe ring se hata ke alag kamre me kyun nahi rakhte:**
 Arpan: Maine socha bank locker jaisa: dabbe bhar gaye to unme ab kuch aana hi nahi, to unhe ek alag kamre me daal do, khaali dabbe doosre kamre me. Beech me ek aadmi khada kar do jo bataye "teri key is kamre me", aur nayi key khaali kamre me.
-Par ring me aise nahi chalta. Ring me dabbe bank locker ki tarah ek-ek karke nahi bharte. Hash har key ko ring pe kahin bhi giraata hai, to saare dabbe ek saath, barabar bharte hain. Koi dabba "khatam" nahi hota, nayi key purane me bhi aati rehti hai, aur dhoondhne ke liye bhi wahi ring chahiye. Sab bharne lage to naya dabba lagao, wo paas wale ka kuch hissa le leta hai, dono me jagah. (Mera do kamre wala tareeka bhi kahin chalta hai, par beech wale aadmi ko crore key ka hisaab yaad rakhna padega, aur har request ek kadam extra.)
+Par ring me aise nahi chalta. Ring me dabbe bank locker ki tarah ek-ek karke nahi bharte. Hash har key ko ring pe kahin bhi giraata hai, to saare dabbe ek saath, barabar bharte hain.
+
+Koi dabba "khatam" nahi hota, nayi key purane me bhi aati rehti hai, aur dhoondhne ke liye bhi wahi ring chahiye. Sab bharne lage to naya dabba lagao, wo paas wale ka kuch hissa le leta hai, dono me jagah.
+
+(Mera do kamre wala tareeka bhi kahin chalta hai, par beech wale aadmi ko crore key ka hisaab yaad rakhna padega, aur har request ek kadam extra.)
 Technical me: dabba = cache ki ek machine · "bank locker, ek-ek karke bharna + beech ka aadmi" = range partitioning + lookup / directory, "saare ek saath bharte" = hash se barabar baant.
 
 **Maan lo ring ke saare dabbe phir bhar gaye:**
@@ -96,7 +106,11 @@ Arpan: Wahi key dekho jo update hui, baaki se lena-dena nahi. Ek saath 1 TB upda
 Technical me: "pichhle ghante me update hui" = DB me updated_at pe query (index), sirf un key ka cache milao / theek karo; "time badha do" = window chhoti-badi.
 
 **6. Kuch hafte baad Priya ka craze utar gaya, log uska profile kam kholne lage, aur kadam 2 wale LRU ne uski parchi dabbe se nikaal di. Aaj raat 9 baje uska naya video phir viral, ek second me 10,000 log, sabko miss, sab ek saath DB pe, Priya ki ek hi query 10,000 baar.**
-Arpan: 10,000 log ek saath DB jaayenge to DB maar dega, pehle unhe roko. Main chupchaap ek chhotu bhejunga: chhotu bhai, jaldi se DB me jaa, Priya ki parchi hot hai, le aa. Parchi pe likh lunga aur sabko yahin se bhaga dunga, mote register ki taraf koi nahi jaayega. Chhotu raaste me gir gaya ya dheema pad gaya, to kuch second dekh lo. Nahi aaya to unme se ek aadmi pakdunga: ae bhai tu idhar aa, mote register pe jaa, jo data tu maang raha wo utha la aur mujhe bhi de dena. Wo laya, cache me daal diya, sabko bhej diya. Ye mera backup plan.
+Arpan: 10,000 log ek saath DB jaayenge to DB maar dega, pehle unhe roko. Main chupchaap ek chhotu bhejunga: chhotu bhai, jaldi se DB me jaa, Priya ki parchi hot hai, le aa.
+
+Parchi pe likh lunga aur sabko yahin se bhaga dunga, mote register ki taraf koi nahi jaayega. Chhotu raaste me gir gaya ya dheema pad gaya, to kuch second dekh lo.
+
+Nahi aaya to unme se ek aadmi pakdunga: ae bhai tu idhar aa, mote register pe jaa, jo data tu maang raha wo utha la aur mujhe bhi de dena. Wo laya, cache me daal diya, sabko bhej diya. Ye mera backup plan.
 Technical me: parchi = cache me Priya ki key, mota register = DB · "10,000 ek saath DB pe" = cache stampede, "ek chhotu bhejo, baaki yahin se" = single flight (lock), "kuch second dekho, phir bheed me se ek" = lock ki umar (timeout).
 
 **Maan lo interviewer poochhe, aur raaste?**
@@ -107,7 +121,13 @@ Technical me: do chhotu = redundant fetch, hot key lambi umar = longer TTL, alag
 Arpan: Yahan dikkat chhotu ki nahi, DB ki hai, to ilaaj bhi DB ka. 10-15 chhotu aur bhejne ka fayda nahi, wo bhi dheeme DB pe atkenge. Padhne wale zyada hain to DB ki 2-3 copy bana do: ek primary jo likhta hai, baaki padhne ke liye. Chhotu ne dekha ye copy dheemi hai, to use chhod ke doosri pe jaaye, wahan se jaldi jawab mila, cache me rakha, aur 9,999 sab free, cache se utha ke le gaye. Copy sync karna AWS (RDS) ka kaam hai, hamara nahi.
 Technical me: "DB ki copy, padhne ke liye" = read replica, "dheemi copy chhod ke doosri pe" = timeout + retry on another replica, "sync AWS ka kaam" = managed replication (RDS).
 
-Isi Maan lo me aur neeche (saari copy bhi dheemi): Pehle replica se serve karne ki koshish. Wo bhi dheemi, to thodi der ke liye purani (stale) jaankari dikha do. Logon ko pata hi nahi ki Priya ne kya badla; Priya ne naam badla to baaki refresh karein to purana naam dikhega, koi baat nahi, ye sirf Priya ko, hamare server ko aur hume pata hai. Priya ko UI pe dikha do "tumhari jaankari peeche update ho rahi hai". DB kyun dheema, wo HLD ke bahar. Purani jaankari local cache me rakh do, saath me TTL (jaise 30-45 second), taaki baar-baar Redis tak bhi na aayein. DB theek hua, chhotu dobara gaya, nayi jaankari Redis me daali, local ka TTL khatam hua, sab dobara aake naya le gaye.
+Isi Maan lo me aur neeche (saari copy bhi dheemi): Pehle replica se serve karne ki koshish. Wo bhi dheemi, to thodi der ke liye purani (stale) jaankari dikha do.
+
+Logon ko pata hi nahi ki Priya ne kya badla; Priya ne naam badla to baaki refresh karein to purana naam dikhega, koi baat nahi, ye sirf Priya ko, hamare server ko aur hume pata hai.
+
+Priya ko UI pe dikha do "tumhari jaankari peeche update ho rahi hai". DB kyun dheema, wo HLD ke bahar. Purani jaankari local cache me rakh do, saath me TTL (jaise 30-45 second), taaki baar-baar Redis tak bhi na aayein.
+
+DB theek hua, chhotu dobara gaya, nayi jaankari Redis me daali, local ka TTL khatam hua, sab dobara aake naya le gaye.
 Technical me: "thodi der purani jaankari" = serve stale (stale-while-revalidate), "Priya ko UI pe batao" = read-your-writes ka UI message, "local cache + TTL 30-45 sec" = local cache with short TTL, "DB theek, chhotu dobara" = background refresh.
 
 **Maan lo chhotu parchi bhar laaya, ab baaki bheed ka kya:**
@@ -143,15 +163,43 @@ Arpan: Priya ne naam badla to copy tak pahunchne me time lagta, thodi der Priya 
 Technical me: read-your-own-writes (thodi der primary se).
 
 **Maan lo Priya ab roz ki mashhoor hai, uski parchi machine 4, 8, 9 pe garam padi rehti, pelam pel log padhte. Aaj theek 8 baje parchi ki umar khatam, ek saath lakhon log, chhotu ko mote register se aane me 2 second.**
-Arpan: Sabse pehle to aisi parchi ko ek hi baar me khatam hone hi nahi dunga. Wo parchi bahut garam hai, us pe pel ke users aa rahe, 1000 nahi, 10 lakh, 20 lakh, pelam pel. To main us pe nazar rakhunga: chhotu dekh, sun idhar aa, iski umar abhi 20 second ki hai, badha de, 60 kar de, phir +60, phir +60. Aur 10 lakh log aa rahe to ek counter pe nahi, 10 pe baant do, aur sabki umar ek saath khatam nahi hogi, kisi me thoda jitter, kisi ki 20 second me, kisi ki 30 me, kisi ki 50 me. Maan lo kuch der ke liye meri nazar hat gayi aur counter 7 ki umar khatam ho gayi, wahan ek saath ek lakh request aa gayi. Kya wo ek lakh DB pe jaayengi? Nahi. Mote register pe bheed lag jaayegi, aur bhi log wahan apna kaam kar rahe, unke liye dikkat hogi. To main bolunga: sab ruko, chupchaap, ekdam shaanti. Chhotu bhai ja, yahan parchi ud gayi hai, mote register me ja, jo ye log maang rahe uska pata la, aur yahan likh de. Chhotu parchi le ke aaya, maine dekha kya likha hai, likh liya: aa jao sab, dobara aa jao.
+Arpan: Sabse pehle to aisi parchi ko ek hi baar me khatam hone hi nahi dunga. Wo parchi bahut garam hai, us pe pel ke users aa rahe, 1000 nahi, 10 lakh, 20 lakh, pelam pel.
+
+To main us pe nazar rakhunga: chhotu dekh, sun idhar aa, iski umar abhi 20 second ki hai, badha de, 60 kar de, phir +60, phir +60.
+
+Aur 10 lakh log aa rahe to ek counter pe nahi, 10 pe baant do, aur sabki umar ek saath khatam nahi hogi, kisi me thoda jitter, kisi ki 20 second me, kisi ki 30 me, kisi ki 50 me.
+
+Maan lo kuch der ke liye meri nazar hat gayi aur counter 7 ki umar khatam ho gayi, wahan ek saath ek lakh request aa gayi. Kya wo ek lakh DB pe jaayengi? Nahi.
+
+Mote register pe bheed lag jaayegi, aur bhi log wahan apna kaam kar rahe, unke liye dikkat hogi. To main bolunga: sab ruko, chupchaap, ekdam shaanti.
+
+Chhotu bhai ja, yahan parchi ud gayi hai, mote register me ja, jo ye log maang rahe uska pata la, aur yahan likh de. Chhotu parchi le ke aaya, maine dekha kya likha hai, likh liya: aa jao sab, dobara aa jao.
 Technical me: mota register = DB · (jawab me "counter" = Priya ki copy wali machine (4, 8, 9...), "10 counter pe baant do" = 10 copy, "counter 7 ki umar khatam" = jis copy ki parchi mit gayi, jaise machine 8.) "garam parchi pe nazar, umar badhate raho" = hot key ka TTL extend (refresh-ahead), "copies ki umar alag" = TTL jitter, "sab ruko, ek chhotu jaaye" = single flight (lock, kadam 6).
 
 **Maan lo chhotu gira, aur tune kaha thodi der purani information de do. Par umar khatam hote hi machine 8 ki parchi to mit gayi, purani doge kahan se?**
-Arpan: Ek parchi nahi hai. Mujhe pata hai 60 second me ye khatam ho gayi to sab log ek saath aa jaayenge, mujhe dikkat ho jaayegi. To main chupchaap ise ek aur parchi pe likh ke apne paas rakh leta hoon, jisme information pehle se hai. Asli wali khatam ho gayi to bolunga: bhai abhi ke liye ye le lo, thodi der purana dekh lo. Phir wahi chhotu jaayega, la ke parchi dega: le bhai, updated information, ab sab yahan se padh lo. Apni parchi maine phaad ke phenk di, khatam kahani. Purani information app ke cache se, browser ke cache se bhi de sakte; un pe thodi umar rakho, 60 second purana dekh lenge, koi baat nahi, phir wo udega aur log Redis pe aayenge, wahan naya mil jaayega. Chhotu gir gaya to ek aur chhotu laga do: yaar ye to 2 second ka kaam hai, use 10 second ho gaye, chhodo use, tu chala ja. Backoff tab, jab maine 10 chhotu bheje aur ek bhi nahi aaya; tab maanunga ki DB gira. Ek chhotu gira to DB nahi gira, baaki counter to chal rahe hain.
+Arpan: Ek parchi nahi hai. Mujhe pata hai 60 second me ye khatam ho gayi to sab log ek saath aa jaayenge, mujhe dikkat ho jaayegi.
+
+To main chupchaap ise ek aur parchi pe likh ke apne paas rakh leta hoon, jisme information pehle se hai. Asli wali khatam ho gayi to bolunga: bhai abhi ke liye ye le lo, thodi der purana dekh lo.
+
+Phir wahi chhotu jaayega, la ke parchi dega: le bhai, updated information, ab sab yahan se padh lo. Apni parchi maine phaad ke phenk di, khatam kahani.
+
+Purani information app ke cache se, browser ke cache se bhi de sakte; un pe thodi umar rakho, 60 second purana dekh lenge, koi baat nahi, phir wo udega aur log Redis pe aayenge, wahan naya mil jaayega.
+
+Chhotu gir gaya to ek aur chhotu laga do: yaar ye to 2 second ka kaam hai, use 10 second ho gaye, chhodo use, tu chala ja. Backoff tab, jab maine 10 chhotu bheje aur ek bhi nahi aaya; tab maanunga ki DB gira.
+
+Ek chhotu gira to DB nahi gira, baaki counter to chal rahe hain.
 Technical me: "chupchaap doosri parchi, thodi der purana" = stale copy (soft / hard TTL: soft umar nikli to purana turant do aur peeche se naya lao = stale-while-revalidate), "app / browser ka purana, chhoti umar" = local cache pe chhota TTL, "ek gira to doosra chhotu" = retry, "10 na aayein tab backoff" = backoff: chhotu bheja, nahi aaya, thoda ruko, doosra bheja, nahi aaya, ab thoda zyada ruko, teesra bheja; har baar intezaar badhta (1, 2, 4 sec), mote register pe bombard nahi. 10 me se ek bhi na aaye tab maano mota register (DB) gira. Jitter yahan nahi: jitter kadam 7 wala hai (chain me 7c), counter / copies ki umar me thoda +1, +2 jod do taaki sab ek saath na mitein.
 
 **Maan lo machine 8 tak log seedhe nahi aate, hamare 50 server ke raaste aate hain. Har server ne dekha parchi nahi hai, har server ne apna-apna chhotu bhej diya. Mote register pe ek ki jagah 50 chhotu khade.**
-Arpan: Sahi baat hai, LB to round robin / load ke hisaab se bhej raha, kabhi kisi pe, kabhi kisi pe: pehla aaya counter 1 pe gaya, phir counter 10 pe, phir 17 pe, phir 20 pe, aur har counter ka apna chhotu mote register ki taraf bhaaga. To main bahar saamne khada hoon, sab counter ko dekh raha hoon. Ruko sab, hold on, chup, ekdam shaanti banaye rakho. Saare 50 counter ko roko, bas 1 second, kuch nahi. Chhotu log chup ho jao, shor nahi, sabke chhotu apne counter pe jaake chup khade ho jao. Ek counter ka chhotu bulaya: bhai chhotu sun, ye sab pagal hain, inki baat na sun, faltu ki baat kar rahe tere se, idhar aa, mote register pe ja, usme information padi hogi, padh ke sabko de de, khatam kahani. 50 chhotu ko jaane ki zaroorat hi nahi, 50 ki jagah 1 chhotu bhi kaam kar lega. Ek information hi to laani hai yaar, 50 chhotu kyun bhejne? Ek chhotu jaayega, 50 ka apne aap update ho jaayega.
+Arpan: Sahi baat hai, LB to round robin / load ke hisaab se bhej raha, kabhi kisi pe, kabhi kisi pe: pehla aaya counter 1 pe gaya, phir counter 10 pe, phir 17 pe, phir 20 pe, aur har counter ka apna chhotu mote register ki taraf bhaaga.
+
+To main bahar saamne khada hoon, sab counter ko dekh raha hoon. Ruko sab, hold on, chup, ekdam shaanti banaye rakho. Saare 50 counter ko roko, bas 1 second, kuch nahi.
+
+Chhotu log chup ho jao, shor nahi, sabke chhotu apne counter pe jaake chup khade ho jao.
+
+Ek counter ka chhotu bulaya: bhai chhotu sun, ye sab pagal hain, inki baat na sun, faltu ki baat kar rahe tere se, idhar aa, mote register pe ja, usme information padi hogi, padh ke sabko de de, khatam kahani.
+
+50 chhotu ko jaane ki zaroorat hi nahi, 50 ki jagah 1 chhotu bhi kaam kar lega. Ek information hi to laani hai yaar, 50 chhotu kyun bhejne? Ek chhotu jaayega, 50 ka apne aap update ho jaayega.
 Technical me: (yahan "counter" = hamara server, "50 counter" = 50 server, har server ka apna chhotu.) "sabke saamne ek banda, sirf ek chhotu jaaye" = distributed lock (sab server ke beech saajha lock: Redis me ek key, SET NX + umar; jisne pehle liya wahi DB jaaye, baaki ruk ke cache dekhein). Kadam 6 ka lock sirf ek server ke andar ho to 50 server ke 50 chhotu jaate; isliye lock saajha.
 
 

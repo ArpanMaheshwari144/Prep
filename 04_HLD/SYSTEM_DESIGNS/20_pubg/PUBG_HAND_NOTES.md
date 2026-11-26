@@ -26,7 +26,11 @@ Phone  -->  khula taar (WebSocket / UDP)  -->  LB  -->  India ka game server (ek
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
-Arpan: FR badhiya. Start dabane pe match me jodna, PUBG karta bhi hai. Match me aas-paas ke log, goli, gaadi chalegi, noise aayegi. Goli lagi to mara hua dikhao; sar pe lagi to headshot, kahin bhi lagi to dead dikhao. NFR me ping kam aayega. Phone garam na ho, ye NFR me nahi aayega: ye physical hardware ki dikkat hai, hatao. Hacker na jeete theek, match khatam hone pe DB theek. Har kadam pe 120 ms ka kichad: client-side prediction NFR me daal sakte. Phone pe 3 kadam aage, server bole ruk gaya, goli ke pal tak peeche: ye bhi NFR me aa sakta. Chicken dinner NFR me nahi, wo PUBG ka khaas hai. 1 second me 500 meter namumkin, wo hacker wale me aa gaya.
+Arpan: FR badhiya. Start dabane pe match me jodna, PUBG karta bhi hai. Match me aas-paas ke log, goli, gaadi chalegi, noise aayegi. Goli lagi to mara hua dikhao; sar pe lagi to headshot, kahin bhi lagi to dead dikhao.
+
+NFR me ping kam aayega. Phone garam na ho, ye NFR me nahi aayega: ye physical hardware ki dikkat hai, hatao. Hacker na jeete theek, match khatam hone pe DB theek.
+
+Har kadam pe 120 ms ka kichad: client-side prediction NFR me daal sakte. Phone pe 3 kadam aage, server bole ruk gaya, goli ke pal tak peeche: ye bhi NFR me aa sakta. Chicken dinner NFR me nahi, wo PUBG ka khaas hai. 1 second me 500 meter namumkin, wo hacker wale me aa gaya.
 Technical me: "button dabate hi chale" = low input latency (client-side prediction), "goli ke pal tak peeche" = fair hit registration (lag compensation), "faisla server ka" = server authoritative.
 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
@@ -92,11 +96,19 @@ API     POST /matchmaking          -> "Start" dabaya, 100 ke match me jodo, squa
 &nbsp;
 
 **1. Raat 9 baje 1 lakh log ek saath "Start" dabate hain. Ek match me 100 chahiye, Arpan ke match me abhi 37. Tabhi America se ek ladka aaya, Mumbai server tak ping 300 ms, wo bhi isi match me jud gaya.**
-Arpan: America wala ladka America ke server pe jaayega, uska yahan matlab nahi. PUBG me aisa hota bhi nahi ki bahar se log aayein; online bhi kholo to India ke log hi judenge. Design India tak, India ke servers pe. PUBG me log hamesha 4-4 ke squad me baithte hain: tere 4 dost hain to tere 4 jud jaayenge. Akela hai aur match chahiye to kisi random squad me daal do jahan 3 log pehle se hain. 4 zaroori bhi nahi, 2 ya 3 ka squad bhi match shuru kar sakta hai. (Raat 3 baje 37 pe atka match: ye matchmaking ki baat hai, main design ye nahi, aage badho.)
+Arpan: America wala ladka America ke server pe jaayega, uska yahan matlab nahi. PUBG me aisa hota bhi nahi ki bahar se log aayein; online bhi kholo to India ke log hi judenge. Design India tak, India ke servers pe.
+
+PUBG me log hamesha 4-4 ke squad me baithte hain: tere 4 dost hain to tere 4 jud jaayenge. Akela hai aur match chahiye to kisi random squad me daal do jahan 3 log pehle se hain.
+
+4 zaroori bhi nahi, 2 ya 3 ka squad bhi match shuru kar sakta hai. (Raat 3 baje 37 pe atka match: ye matchmaking ki baat hai, main design ye nahi, aage badho.)
 Technical me: "America wala America ke server pe" = region-based matchmaking (har desh ka apna server, ping kam), "akele ko 3 wale squad me" = squad fill, "2-3 ka squad bhi chalega" = flexible squad size.
 
 **2. Match shuru. Server har second (maan lo) 20 baar sabki jagah sabko bhej raha: 100 logon ko 99-99 ki khabar. Arpan Pochinki ke ghar me chhupa, 6 km door Military Base me 30 log lad rahe, unki har goli, har kadam Arpan ke phone pe. Phone garam, data jal raha.**
-Arpan: Ek khula taar rakh lo, phone mangwa nahi raha, khabar apne aap aa rahi. Par 6 km door ki awaaz PUBG me aati hi nahi, mere aas-paas ki aayegi. Goli chali to ek event bana; server dekhe kaun-kaun us jagah ke aas-paas hai, sirf unko bhejo. Saamne wali building me goli chali to mujhe sunai de, Military Base wali nahi. Ye Uber jaisa hai: hamein aas-paas ka dikhana hai, Arpan ke aas-paas kya ho raha, wahi Arpan ke kaano me jaana chahiye. Map pe bhi aas-paas ke log dikhenge, door ke nahi.
+Arpan: Ek khula taar rakh lo, phone mangwa nahi raha, khabar apne aap aa rahi. Par 6 km door ki awaaz PUBG me aati hi nahi, mere aas-paas ki aayegi.
+
+Goli chali to ek event bana; server dekhe kaun-kaun us jagah ke aas-paas hai, sirf unko bhejo. Saamne wali building me goli chali to mujhe sunai de, Military Base wali nahi.
+
+Ye Uber jaisa hai: hamein aas-paas ka dikhana hai, Arpan ke aas-paas kya ho raha, wahi Arpan ke kaano me jaana chahiye. Map pe bhi aas-paas ke log dikhenge, door ke nahi.
 Technical me: "khula taar" = WebSocket / UDP connection (push), "sirf aas-paas walon ko event" = area of interest / interest management (map ko dabbon me baanto, Uber ke geohash jaisa, har player ko sirf aas-paas ke dabbon ki khabar).
 
 **Maan lo pooche aas-paas kitna:**
@@ -106,7 +118,13 @@ Technical me: area of interest radius ~500 m - 1 km.
 **Isi pe ek aur raasta (round me: 150-200 meter):** Poore map se awaaz nahi aa sakti, awaazon ka bombardment ho jaayega, phone 2 minute me garam. Arpan ko uske aas-paas 150 se 200 meter ke beech ki awaaz aani chahiye; 1 km bahut bada area ho jaayega.
 
 **2b. Arpan ka phone Mumbai server se 60 ms door, jaana-aana 120 ms. Arpan "aage chal" dabata, phone server ko batata, server "haan" bole tab player ek kadam chalta. Har kadam pe 120 ms ki der, jaise kichad me chal raha ho.**
-Arpan: Hum is cheez ke liye server pe rely kar rahe, aur server door bhi ho sakta hai. To client side hi kar lo: player ko chala do, apni screen pe dikha do gudda chal raha, jaise Zomato me dikhate hain. Server peeche-peeche andaza lagata rahega ki wo kahan se kahan ja raha. Seedhi line me koi dikkat nahi. Player idhar se udhar ja raha to client peeche ek chhoti line bana de; server thoda lag me chal raha ho to bhi us line se pata lag jaayega ki ye yahan ghoom raha, iski aakhri jagah ye hogi. Exact nahi keh sakte, kabhi lag ho jaata, par server aaram se andaza laga leta. Player ka button smooth, server apni location nikaal lega; na server ki dikkat, na uski.
+Arpan: Hum is cheez ke liye server pe rely kar rahe, aur server door bhi ho sakta hai. To client side hi kar lo: player ko chala do, apni screen pe dikha do gudda chal raha, jaise Zomato me dikhate hain.
+
+Server peeche-peeche andaza lagata rahega ki wo kahan se kahan ja raha. Seedhi line me koi dikkat nahi.
+
+Player idhar se udhar ja raha to client peeche ek chhoti line bana de; server thoda lag me chal raha ho to bhi us line se pata lag jaayega ki ye yahan ghoom raha, iski aakhri jagah ye hogi.
+
+Exact nahi keh sakte, kabhi lag ho jaata, par server aaram se andaza laga leta. Player ka button smooth, server apni location nikaal lega; na server ki dikkat, na uski.
 Technical me: "player ko turant apni screen pe chala do, server ka intezaar nahi" = client-side prediction, "peeche chhoti line, server usse jagah pakde" = phone apni chaal (input) server ko bhejta rehta, server apna hisaab chalata (server authoritative).
 
 **Isi pe ek aur misaal (round me: server ko guddi nahi dikhta):**
@@ -116,19 +134,37 @@ Technical me: "player ko turant apni screen pe chala do, server ka intezaar nahi
 - Ping me 150-200 ms lagte, to server ke hisaab se tu yahan khada, asal me thoda aage. Mudne pe Zomato ke driver jaisa: server andaza lagata, kabhi seedha nikal ke wapas aata.
 
 **3. Ek hacker ka phone server ko bolta "meri goli Arpan ko lagi", jabki goli deewar pe lagi ya Arpan se 5-6 meter door. Server ne phone ki baat maan li, Arpan mar gaya.**
-Arpan: Aisa to wo sabko maar dega, wahi king ban jaayega. Faisla main (server) karunga ki goli kisko, kab, kahan lagi. Goli kahan se chali, beech me koi deewar to nahi aayi? Arpan 5 minute se ek hi jagah khada tha, saanp ban ke chhupa. Goli chalne se pehle, chalne ke baad aur lagne tak Arpan wahin tha, aur goli uske 5-6 meter door lagi; thoda idhar-udhar bhi karun to bhi nahi lagti. To Arpan nahi marega. Aur maan lo maine (baagi motu) Claude ko goli maar di: server ek seedhi line kheenchega, kya Claude us line pe tha? Claude ka gudda bana ke dekha goli kahan lagi: upar lagi to headshot, neeche lagi to "Arpan killed Claude".
+Arpan: Aisa to wo sabko maar dega, wahi king ban jaayega. Faisla main (server) karunga ki goli kisko, kab, kahan lagi. Goli kahan se chali, beech me koi deewar to nahi aayi?
+
+Arpan 5 minute se ek hi jagah khada tha, saanp ban ke chhupa. Goli chalne se pehle, chalne ke baad aur lagne tak Arpan wahin tha, aur goli uske 5-6 meter door lagi; thoda idhar-udhar bhi karun to bhi nahi lagti.
+
+To Arpan nahi marega. Aur maan lo maine (baagi motu) Claude ko goli maar di: server ek seedhi line kheenchega, kya Claude us line pe tha?
+
+Claude ka gudda bana ke dekha goli kahan lagi: upar lagi to headshot, neeche lagi to "Arpan killed Claude".
 Technical me: "server line kheenche, deewar dekhe, gudda bana ke dekhe" = server-side hit validation (raycast: goli ki line, beech me deewar, player ka hitbox), "upar lagi to headshot" = hitbox (sar / body / pair alag), phone sirf "maine is disha me goli chalayi" bhejta, faisla server ka.
 
 **Isi pe ek aur misaal (round me: hamari goli bas animation):** Arpan ne enemy ko dekh ke goli chalayi. Server scene recreate karta: jahan se goli chali wahan se seedhi line us guddi tak; beech me deewar to nahi, player chhupa to nahi. Goli seedhi uske sar pe lagi = turant headshot. Hamari goli kuch nahi karti, bas animation hai; jo chala wo sab server ne kiya. Guddi wahan khada nahi hota to goli miss, koi dikkat nahi.
 
 **3b. Phone ne Arpan ko turant 3 kadam aage dikha diya. 120 ms baad server ka jawab: us pal se pehle hi Claude ki goli lag chuki thi, Arpan ruk gaya tha, 3 kadam chala hi nahi. Phone pe ek jagah, server ke hisaab se doosri.**
-Arpan: Server ki hi maanenge, server hi sach hai. 3 kadam aage chale to 3 kadam peeche. Maan lo Claude ne mujhe dekha, main uske dekhne ke baad 3 kadam aage badh gaya, aur Claude ne wahan goli chala di. Server is scene ko recreate karega: goli kahan se chali, Arpan us waqt kahan tha, sab calculate karega. 2-3 millisecond ka delay hoga, server replay karega; agar main us waqt goli ke bilkul saamne khada tha to goli mujhe lagti hui nazar aayegi, bhale main 3 kadam aage chala gaya. Ek aur scene: saamne se goliyan chal rahi, main bhaag ke ekdum deewar ke peeche gaya, phir bhi mar gaya. Bahut baar hua, PUBG kya, GTA jaise bahut game me hota. Server ki aankhen thodi hain, wo API se, ping se baat kar raha. Goli seedhi line me chali; deewar pe lagti to server mana karta, wo deewar wala scene pata hai. Par server mujhe (delay jitna) peeche karke dekhega aur goli aayi; agar main wahan tha to goli seedhi mujhe lagi, khatam kahani.
+Arpan: Server ki hi maanenge, server hi sach hai. 3 kadam aage chale to 3 kadam peeche. Maan lo Claude ne mujhe dekha, main uske dekhne ke baad 3 kadam aage badh gaya, aur Claude ne wahan goli chala di.
+
+Server is scene ko recreate karega: goli kahan se chali, Arpan us waqt kahan tha, sab calculate karega.
+
+2-3 millisecond ka delay hoga, server replay karega; agar main us waqt goli ke bilkul saamne khada tha to goli mujhe lagti hui nazar aayegi, bhale main 3 kadam aage chala gaya.
+
+Ek aur scene: saamne se goliyan chal rahi, main bhaag ke ekdum deewar ke peeche gaya, phir bhi mar gaya. Bahut baar hua, PUBG kya, GTA jaise bahut game me hota. Server ki aankhen thodi hain, wo API se, ping se baat kar raha.
+
+Goli seedhi line me chali; deewar pe lagti to server mana karta, wo deewar wala scene pata hai. Par server mujhe (delay jitna) peeche karke dekhega aur goli aayi; agar main wahan tha to goli seedhi mujhe lagi, khatam kahani.
 Technical me: "server ki maano, 3 kadam peeche" = server reconciliation, jhatke se peeche aana = rubber banding, "server scene recreate / replay kare, mujhe peeche karke dekhe" = lag compensation (server rewind: goli wale ke ping jitna duniya peeche, Valve ne apne games me likha), "deewar ke peeche phir bhi mara" = lag compensation ka asar, corner se nikal ke maarne wale ko isi se fayda = peeker's advantage (Riot ne kam karne ko Valorant me 128 tick server).
 
 **Isi pe ek aur misaal (round me: dost aage nikal gaya phir bhi mara):** Dost chal ke ja raha tha, saamne se goli aayi, wo 1-2 second aage nikal chuka tha phir bhi mar gaya. Kyunki goli chali to server ne scene dobara banaya aur dekha dost aakhri baar kahan khada tha; wahin goli lagi. Server dobara chala ke dekhta hai, isliye aage nikal ke bhi mar jaate.
 
 **4. Kadam 3 wala wahi hacker agle match me phir aaya. Is baar uski goli imaandaar thi. Dikkat ye ki wo 1 second me 500 meter daud ke Arpan ke peeche pahuncha, phone ne bas bola "main ab Arpan ke peeche hoon".**
-Arpan: Ye wahi Uber aur Zomato wala design hai. 500 meter to PUBG me ek poori jagah hai, poora School paar. Server ke paas pichhli jagah hai: 1 second baad player ya to wahin hoga ya aas-paas 1 meter me. Jaise Koramangala me khadi gaadi 1 second baad Whitefield nahi pahunch sakti, namumkin. To gadbad hai: ye update phenk do (discard), ye bot hai ya hacker. Is baar ghus gaya to ghus gaya, uski koi baat mat maano, aur agli baar match me ghusne hi mat do.
+Arpan: Ye wahi Uber aur Zomato wala design hai. 500 meter to PUBG me ek poori jagah hai, poora School paar. Server ke paas pichhli jagah hai: 1 second baad player ya to wahin hoga ya aas-paas 1 meter me.
+
+Jaise Koramangala me khadi gaadi 1 second baad Whitefield nahi pahunch sakti, namumkin. To gadbad hai: ye update phenk do (discard), ye bot hai ya hacker.
+
+Is baar ghus gaya to ghus gaya, uski koi baat mat maano, aur agli baar match me ghusne hi mat do.
 Technical me: "pichhli jagah se 1 second me itna hi" = server-side movement validation (speed ki had, namumkin chaal reject), "update phenk do" = discard / server ki jagah sach, "agli baar ghusne mat do" = anti-cheat ban.
 
 **Isi pe ek aur raasta (round me: ping chhoot gaya to):** Pochinki se School 5-6 minute ka raasta, ye 1 second me pahunch gaya.
@@ -140,7 +176,13 @@ Technical me: "pichhli jagah se 1 second me itna hi" = server-side movement vali
 Technical me: "server khud pakde, maane hi nahi" = server-side movement validation (server authoritative), "ping chhoota to chhalaang dikhi hi nahi" = packet loss se beech ka gap, "baad me logs dekh ke radd + ban" = offline cheat review + ban.
 
 **5. "Winner winner chicken dinner." Raat 10 baje 5,000 match lagbhag ek saath khatam, 5 lakh players ke kills, damage, rank points ek pal me DB pe. DB ghut gaya, Arpan ki screen pe "Rank points updating..." 2 minute se.**
-Arpan: Har cheez turant DB pe? Arpan ne itne kill kiye, Shubham ne itne, Claude ne itne (Claude bechara mar gaya). Mujhe aisa DB chahiye jo likhai dhadadhad pel de: Cassandra, kyunki yahan paise jaisi pakki consistency nahi chahiye, wo kaam server dekh raha. Aur 5,000 to kam bole, lakhon match hote hain. Docs wala scene: har click pe DB pe mat jao; match ke beech parchi pe likho "Arpan ne itna kiya", match khatam ho to ek saath DB me. Lakh match = lakh parchi, parchi kho jaaye to uski copy rakho. Phir sab parchiyan le jao aur DB me bharo, DB pe achanak itna bojh nahi.
+Arpan: Har cheez turant DB pe? Arpan ne itne kill kiye, Shubham ne itne, Claude ne itne (Claude bechara mar gaya).
+
+Mujhe aisa DB chahiye jo likhai dhadadhad pel de: Cassandra, kyunki yahan paise jaisi pakki consistency nahi chahiye, wo kaam server dekh raha. Aur 5,000 to kam bole, lakhon match hote hain.
+
+Docs wala scene: har click pe DB pe mat jao; match ke beech parchi pe likho "Arpan ne itna kiya", match khatam ho to ek saath DB me. Lakh match = lakh parchi, parchi kho jaaye to uski copy rakho.
+
+Phir sab parchiyan le jao aur DB me bharo, DB pe achanak itna bojh nahi.
 Technical me: "likhai dhadadhad" = write-heavy DB (Cassandra), "match ke beech parchi, end me ek saath" = game server memory me jama, match end pe batch, "parchi line me + copy, phir DB" = queue (Kafka) + async write, copy = durable queue (Arpan ko DB ka intezaar nahi, agla match turant).
 
 **Isi pe ek aur raasta (round me: coordinate kyun likhein):** Cassandra me aise hi kuch bhi nahi likh dete.

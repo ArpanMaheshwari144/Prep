@@ -48,7 +48,11 @@ turant dikhe, kisi ka mite nahi = 1, 1b, 3, 3c · kaun edit kar sakta, hataya to
 &nbsp;
 
 **1. Jo "Save" dabata hai, uska poora text server pe jaake purane ko hata deta hai. Arpan ne upar "Goa jaayenge" likh ke Save kiya, Ravi ne neeche "budget 20k" likh ke Save kiya. Ravi ki screen pe purana text tha, to Arpan ki line gayab.**
-Arpan: Dono ka text dikhao, kisi ko gayab kyun karna. Ye to last write wins wali situation ho rahi, Google Docs me last write wins nahi chalne ka, warna Google Docs ka matlab hi khatam. Poora text nahi bhej sakte, poora bhejenge to overwrite ho jaayega. Operation bhej do: insert, delete, add. Maine likha "Goa jaayenge", Ravi ne kuch kiya to uska operation bhejenge: is letter ke baad add kar do. Main Ravi ka operation laaunga: isne ye likha to "Goa jaayenge" ke baad budget likh dunga, ya neeche, ya beech me kahin. Google andar se kaise karta, wahan jaana bhi nahi chahta, main khud kaise karunga wo dekh raha.
+Arpan: Dono ka text dikhao, kisi ko gayab kyun karna. Ye to last write wins wali situation ho rahi, Google Docs me last write wins nahi chalne ka, warna Google Docs ka matlab hi khatam.
+
+Poora text nahi bhej sakte, poora bhejenge to overwrite ho jaayega. Operation bhej do: insert, delete, add. Maine likha "Goa jaayenge", Ravi ne kuch kiya to uska operation bhejenge: is letter ke baad add kar do.
+
+Main Ravi ka operation laaunga: isne ye likha to "Goa jaayenge" ke baad budget likh dunga, ya neeche, ya beech me kahin. Google andar se kaise karta, wahan jaana bhi nahi chahta, main khud kaise karunga wo dekh raha.
 Technical me: "last write wins nahi" = dono ka badlaav bache, "poora text nahi, operation bhej do: insert, delete" = operation (op) bhejna, "is letter ke baad add kar do" = op me jagah (position).
 
 **Maan lo Ravi ka "budget 20k" wala op dobara chala gaya ("mil gaya" kho gaya).**
@@ -110,7 +114,11 @@ OT ke saath                                      delete jagah 1 pe hua, insert j
 ```
 
 **Maan lo server ka ek banda bole: seedha hal hai, jo pehle likhne aaya wo doc pe taala laga de, doosra tab tak ruka rahe.**
-Arpan: Phir Google Docs ka matlab hi nahi rahega; Google Docs ka matlab hi sharing document hai. Ek pe taala laga doge to saara matlab mitti paleet. Wahi baat hogi ki YouTube pe video upload karne gaya aur YouTube ne pehle hi mana kar diya. Taala laga ke baith jaoge to doosra banda bas dekhta rahega, jo galat hai. Google Docs me taala jaisa koi feature ho sakta hai, par usme hum nahi jaate, wo design ka part nahi. Tum likho, Google Docs apne hisaab se use aage-peeche karta hai.
+Arpan: Phir Google Docs ka matlab hi nahi rahega; Google Docs ka matlab hi sharing document hai. Ek pe taala laga doge to saara matlab mitti paleet.
+
+Wahi baat hogi ki YouTube pe video upload karne gaya aur YouTube ne pehle hi mana kar diya. Taala laga ke baith jaoge to doosra banda bas dekhta rahega, jo galat hai.
+
+Google Docs me taala jaisa koi feature ho sakta hai, par usme hum nahi jaate, wo design ka part nahi. Tum likho, Google Docs apne hisaab se use aage-peeche karta hai.
 Technical me: taala = locking (ek likhe, baaki ruke), mil ke likhne wale doc me nahi chalta; OT me sab ek saath likhte, kram server tay karta.
 
 **Maan lo dono ne bilkul ek hi jagah (0 pe) likha:**
@@ -124,7 +132,15 @@ Technical me: same jagah = tie-break (userId / timestamp), CRDT = har akshar ki 
 Arpan: Ek centralized system bana do. Do ladke apne-apne server pe likh rahe, main Google Docs hoon: dono ka mere tak aaya, main dono ka sentence padh ke sahi se likh dunga, "Hum Goa kal jaayenge", aur dono ki screen pe wahi, ek hi version.
 Par sabka ek nahi hoga: har doc ke liye alag. Main aur Ravi ek doc pe to hum dono ka ek centralized system. 100 log ek doc pe to un 100 ka ek, 1 lakh log to unka ek. Us centralized system ka koi na koi maalik hoga, uske hisaab se chalega.
 
-Arpan (aur neeche: Arpan Mumbai server pe, Ravi Delhi server pe, centralized kaise): Pehle saare operation apne paas jama kar lunga, Redis me ya kahin bhi, abhi DB me nahi (DB baith jaayega). Arpan ne index 0 pe "ARPAN" likha, Ravi ne index 2 pe "RAVI". Dono operation Google Docs ke andar ek jagah aayenge, wahan dekha jaayega: pehle ARPAN, phir Ravi index 2 pe, wahan "P" hai. Noob sochega Arpan ka kaat ke Ravi ka overwrite kar do, ya "AR" + "RAVI" likh ke "PAN" kho do; dono galat, phir sharing doc ka matlab hi khatam. To "P" ko khiska do, beech me poora "RAVI" daal do: "AR RAVI PAN". Jaise main Madhya Pradesh me beech me baitha hoon, Ravi Delhi se, Arpan Mumbai se likh rahe: dono ka mere paas aaya, merge karke poora sentence dono ko ek jaisa dikha dunga. Upar se aajkal Docs me har likhne wale ki rang wali vertical line (cursor) dikhti hai, Jira me bhi.
+Arpan (aur neeche: Arpan Mumbai server pe, Ravi Delhi server pe, centralized kaise): Pehle saare operation apne paas jama kar lunga, Redis me ya kahin bhi, abhi DB me nahi (DB baith jaayega).
+
+Arpan ne index 0 pe "ARPAN" likha, Ravi ne index 2 pe "RAVI". Dono operation Google Docs ke andar ek jagah aayenge, wahan dekha jaayega: pehle ARPAN, phir Ravi index 2 pe, wahan "P" hai.
+
+Noob sochega Arpan ka kaat ke Ravi ka overwrite kar do, ya "AR" + "RAVI" likh ke "PAN" kho do; dono galat, phir sharing doc ka matlab hi khatam. To "P" ko khiska do, beech me poora "RAVI" daal do: "AR RAVI PAN".
+
+Jaise main Madhya Pradesh me beech me baitha hoon, Ravi Delhi se, Arpan Mumbai se likh rahe: dono ka mere paas aaya, merge karke poora sentence dono ko ek jaisa dikha dunga.
+
+Upar se aajkal Docs me har likhne wale ki rang wali vertical line (cursor) dikhti hai, Jira me bhi.
 Technical me: "centralized system, ek hi version" = ek jagah kram aur OT, "har doc ka alag centralized system, uska maalik" = har doc ka ek owner server.
 
 **Aur neeche (owner server kaun):**
@@ -164,7 +180,15 @@ Arpan: Ya Redis gira to thodi der server ke local cache me rakh lo, phir Redis m
 Technical me: temporary local buffer.
 
 **6. Arpan doc ka maalik, usne Ravi ko hata diya. Par Ravi ke server ke paas permission ki purani copy, "Ravi = editor". Hatne ke baad bhi Ravi 2 minute likhta raha.**
-Arpan: Main apni memory me chhota note daal dunga: ye banda editor nahi, iska koi bhi operation aaye, accept nahi karunga. Ravi alag server pe hai, to main ek parchi rakhunga "Ravi ab editor nahi", aur wo parchi ek tez bhaagne wale bachche ko dunga: jahan bhi Ravi ki permission hai wahan sab ja aur bata de "Ravi ab editor nahi". Ek centralized authority hai jo sab likh rahi. Us centralized authority ne (main bande ne) mana kar diya ki Ravi ab edit nahi, to chhota banda building ke bahar khada hoke chilla de "suno, Ravi editor nahi", to Ravi jis bhi server pe ho wahan se uska editor note hat chuka hoga. Bahut se answer ho sakte, ek sahi answer nahi: Redis pub/sub bolo ya building ke bahar koi chilla de.
+Arpan: Main apni memory me chhota note daal dunga: ye banda editor nahi, iska koi bhi operation aaye, accept nahi karunga.
+
+Ravi alag server pe hai, to main ek parchi rakhunga "Ravi ab editor nahi", aur wo parchi ek tez bhaagne wale bachche ko dunga: jahan bhi Ravi ki permission hai wahan sab ja aur bata de "Ravi ab editor nahi".
+
+Ek centralized authority hai jo sab likh rahi.
+
+Us centralized authority ne (main bande ne) mana kar diya ki Ravi ab edit nahi, to chhota banda building ke bahar khada hoke chilla de "suno, Ravi editor nahi", to Ravi jis bhi server pe ho wahan se uska editor note hat chuka hoga.
+
+Bahut se answer ho sakte, ek sahi answer nahi: Redis pub/sub bolo ya building ke bahar koi chilla de.
 Technical me: parchi = Ravi editor nahi ki khabar (pub/sub) · "centralized authority" = permission ka asli sach (SQL), "iska operation accept nahi" = server pe permission check, "tez bhaagne wala bachcha, building ke bahar chilla de" = pub/sub invalidation.
 
 **Maan lo Ravi hatne ke waqt offline tha, laptop pe likhta raha, aadhe ghante baad net aaya aur saare edits ek saath server pe aaye.**

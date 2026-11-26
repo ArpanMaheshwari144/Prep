@@ -42,7 +42,11 @@ Ravi  -->  LB  -->  tweet server  -->  Kafka ("post ho gaya, nikal")  -->  worke
 ```
 
 **FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
-Arpan: Twitter ko engagement ke hisaab se dekhna hai. Naya banda aaya, kisi ko follow nahi karta, to khaali page nahi dikhaunga; trending dikhaunga: aaj ye hua, Elon ne SpaceX me ye kiya, SpaceX aur Tesla ka merger. Instagram bhi yahi karta: main kisi ko follow nahi karta tha phir bhi bahut kuch aata; GTA 6 baar-baar search kiya to GTA 6 aane laga. Ravi 1000 logon ko follow karta, uski feed khatam nahi hoti, wahan scroll me dohrav nahi; refresh pe purana dobara aa jaaye to theek, Twitter iska hisaab nahi rakhta.
+Arpan: Twitter ko engagement ke hisaab se dekhna hai. Naya banda aaya, kisi ko follow nahi karta, to khaali page nahi dikhaunga; trending dikhaunga: aaj ye hua, Elon ne SpaceX me ye kiya, SpaceX aur Tesla ka merger.
+
+Instagram bhi yahi karta: main kisi ko follow nahi karta tha phir bhi bahut kuch aata; GTA 6 baar-baar search kiya to GTA 6 aane laga.
+
+Ravi 1000 logon ko follow karta, uski feed khatam nahi hoti, wahan scroll me dohrav nahi; refresh pe purana dobara aa jaaye to theek, Twitter iska hisaab nahi rakhta.
 Technical me: "khaali page nahi, trending dikhao" = cold start / recommendation (follow ke alawa), "jo search kiya wahi aane laga" = interest se ranking, "scroll me dohrav nahi" = cursor (kadam 18).
 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
@@ -104,7 +108,13 @@ Arpan: thodi der galat dikhega na. Peeche ek job chala do, ek ladka laga do, wo 
 Technical me: ladka = background job · "thodi der galat" = eventual consistency, "peeche ek job" = background job copies update kare.
 
 **6. Har account ka dabba memory me. Ravi ke dabbe me 3 saal ke tweet. 30 crore log mahino se app nahi khol rahe, par unke dabbe bhi roz bhar rahe. Memory ka bill aasmaan pe.**
-Arpan: Parchi chhoti karo: bas last 500. Itna koi scroll nahi karta, karega bhi to DB se query karke Redis me rakhne me koi bada teer nahi lagta. 3 saal, 4 saal purana mote register me mat rakho, alag permanent diary me, jise aam bhasha me S3 kehte, archive. Aur jo 30 crore log aa hi nahi rahe: main unki parchi taiyaar kar raha, wo saale 10 din, 20 din, 30 din se aa nahi rahe, bekaar ki mehnat. Threshold: 30 din se app nahi khola to Redis me kuch taiyaar nahi. 40 din baad aaya to "thodi der ruk, 2 second me teri parchi la raha", DB se laake Redis me daal denge, thodi loading chalegi.
+Arpan: Parchi chhoti karo: bas last 500. Itna koi scroll nahi karta, karega bhi to DB se query karke Redis me rakhne me koi bada teer nahi lagta.
+
+3 saal, 4 saal purana mote register me mat rakho, alag permanent diary me, jise aam bhasha me S3 kehte, archive.
+
+Aur jo 30 crore log aa hi nahi rahe: main unki parchi taiyaar kar raha, wo saale 10 din, 20 din, 30 din se aa nahi rahe, bekaar ki mehnat. Threshold: 30 din se app nahi khola to Redis me kuch taiyaar nahi.
+
+40 din baad aaya to "thodi der ruk, 2 second me teri parchi la raha", DB se laake Redis me daal denge, thodi loading chalegi.
 Technical me: parchi = Ravi ka inbox (Redis), mota register = DB · "last 500" = inbox ki had, "DB se query karke Redis me" = cache miss pe DB, "permanent diary, S3, archive" = purana data S3, "30 din se nahi khola to kuch taiyaar nahi" = inactive user ka inbox nahi, "lautne pe DB se Redis me" = on-demand inbox banana.
 
 **7. Saare tweet ek SQL DB me, din me 50 crore naye, likhne ki line itni lambi ki machine hile. Aur dabba banane ke liye har baar "Arpan ke naye 500" poori table me dhoondhna.**
@@ -113,7 +123,11 @@ Aur Arpan ke saare tweet ek jagah: naam se todo, par naam do logon ke same ho sa
 Technical me: "likhai bahut, bada bhai" = Cassandra (write-heavy; andar ring = consistent hashing), "replica bhi wo kar leta" = Cassandra ki apni copy, "naam se nahi, id se baant do" = partition key = user id, "mera saara data ek jagah" = ek partition (author id se hissa, andar tweet id se tweet: key = author id + tweet id), "follow ka track" = graph DB Neo4j.
 
 **Maan lo har baar "Arpan ke naye 500" poori table me dhoondhna pad raha:**
-Arpan: Mujhe naye tweet chahiye, purane se koi matlab nahi. Main ek pattern note kar raha: har din ek banda aata, "Arpan ke naye 40, 50, 500" maangta; samajh gaya wo uska follower hai, use ye chahiye. To unhe thodi der ke liye apne paas rakh le, jo poori table na khojni pade. "Le bhai, Arpan ne aaj 50 kiye, rakh le"; "aaj Arpan ne kuch nahi kiya, sorry"; "aaj bas ek, le le". Har baari poori table pe mat jao, apne paas rakh lo, kyunki per day pattern hai, har din aayega.
+Arpan: Mujhe naye tweet chahiye, purane se koi matlab nahi. Main ek pattern note kar raha: har din ek banda aata, "Arpan ke naye 40, 50, 500" maangta; samajh gaya wo uska follower hai, use ye chahiye.
+
+To unhe thodi der ke liye apne paas rakh le, jo poori table na khojni pade. "Le bhai, Arpan ne aaj 50 kiye, rakh le"; "aaj Arpan ne kuch nahi kiya, sorry"; "aaj bas ek, le le".
+
+Har baari poori table pe mat jao, apne paas rakh lo, kyunki per day pattern hai, har din aayega.
 Technical me: "naye tweet thodi der apne paas" = author ke recent tweets ka cache (Redis, TTL), "per day pattern" = recent data hi garam (time-based: naye tweet baar-baar padhe jaate), poori table scan nahi.
 
 **Aur neeche (Cassandra hi kyun, aur key kya):**
@@ -161,11 +175,19 @@ Arpan: Uski wajah se mera kaam ruk raha. "Tu thoda rest le, ye tera replacement,
 Technical me: "atka to replacement" = timeout pe slow worker / consumer ka hissa doosre ko, "kahan tak chhoda" = checkpoint.
 
 **Isi Maan lo me aur neeche ("zinda hoon" kaafi nahi, kaam kahan tak hua):**
-Arpan: "zinda hoon" kaafi nahi. Chhotu tu zinda hai na? Haan. Kaam kahan tak hua? "Main zinda hoon, kaam kar raha hoon." Mujhe ye bata kaam kahan tak hua. "Abhi kuch feed reh rahi." In 10 ne kaam kar liya, tere paas aisa kya kaam? Ek aur chhotu ko bhej ke dekho: "Arpan bhai, iske paas bahut bada chunk hai, akele sambhal nahi pa raha, thak chuka." Kisi ke paas 10 newspaper the, kisi ke 20, is bande ke paas 50 aa gaye. To 2-3 chhotu extra bhej do, madad kar lein, feed taiyaar ho jaayegi aur log subah akhbaar padhne aayein to taaza mile.
+Arpan: "zinda hoon" kaafi nahi. Chhotu tu zinda hai na? Haan. Kaam kahan tak hua? "Main zinda hoon, kaam kar raha hoon." Mujhe ye bata kaam kahan tak hua. "Abhi kuch feed reh rahi." In 10 ne kaam kar liya, tere paas aisa kya kaam?
+
+Ek aur chhotu ko bhej ke dekho: "Arpan bhai, iske paas bahut bada chunk hai, akele sambhal nahi pa raha, thak chuka." Kisi ke paas 10 newspaper the, kisi ke 20, is bande ke paas 50 aa gaye.
+
+To 2-3 chhotu extra bhej do, madad kar lein, feed taiyaar ho jaayegi aur log subah akhbaar padhne aayein to taaza mile.
 Technical me: "zinda hoon != kaam ho raha" = heartbeat ke saath progress report, "bada chunk" = data skew (ek hisse pe zyada kaam), "2-3 chhotu madad" = hissa tod ke baanto (work stealing / split).
 
 **Maan lo worker / consumer 7 ke 50 me se 30 ban chuke, 2 naye chhotu bheje; unhe kaise pata 31 se shuru karna, warna pehle ke 30 do baar.**
-Arpan: Har chhotu ke paas ek parchi hogi: mera kaam yahan tak ho gaya. Sabko bol diya "apne kaam ka hamesha track rakho", kyunki kisi din bimaar pad gaye, ekdum kuch ho gaya, to main aaunga, kaise dekhunga kaam kahan tak hua. Wo track DB me, Redis me, kahin bhi; technical naam me nahi jaate, problem kaise samajh rahe wo dekhte hain. Kisi ne 5 kiye, kisi ne 7, kisi ne 10, sab likhte gaye. Worker / consumer 7 ne likh diya "30 khatam". Naye chhotu ko kaha pehle iski parchi dekho, isne kahan tak khatam kiya; 31 pe lag jaao, 10 tu sambhal, 10 tu sambhal, kaam jaldi nipta do.
+Arpan: Har chhotu ke paas ek parchi hogi: mera kaam yahan tak ho gaya. Sabko bol diya "apne kaam ka hamesha track rakho", kyunki kisi din bimaar pad gaye, ekdum kuch ho gaya, to main aaunga, kaise dekhunga kaam kahan tak hua.
+
+Wo track DB me, Redis me, kahin bhi; technical naam me nahi jaate, problem kaise samajh rahe wo dekhte hain. Kisi ne 5 kiye, kisi ne 7, kisi ne 10, sab likhte gaye. Worker / consumer 7 ne likh diya "30 khatam".
+
+Naye chhotu ko kaha pehle iski parchi dekho, isne kahan tak khatam kiya; 31 pe lag jaao, 10 tu sambhal, 10 tu sambhal, kaam jaldi nipta do.
 Technical me: chhotu = worker / consumer · "kahan tak hua ki parchi" = checkpoint (DB / Redis me), naya worker / consumer wahin se shuru (resume), baaki bacha kaam baant ke.
 
 **14. Ravi 2:00 pe khiskata hai six dekhne, par phone 0:00 se 2:00 tak sab kheench raha, faaltu data, six late.**
@@ -211,19 +233,35 @@ Arpan: Ye ek tarah recommendation hi hai. Peeche kaunsa algorithm / machine lear
 Technical me: "jisse zyada judta wo pehle" = ranking (kisse baat karta, post kitni nayi, likes), "algorithm design ka hissa nahi" = ranking model alag; hum list dete, ranked list lete. Netflix 6 ("tere liye") se juda.
 
 **18. Ravi scroll kar raha, 20 dekhe, agle 20 maange. Beech me upar 5 naye aa gaye, agle page pe wahi 5 dobara.**
-Arpan: 20 padhe, agle 20 maange, beech me upar 5 aa gaye, to neeche wale 5 khisak ke agle page me chale gaye; isliye wahi 5 dobara. Hal: Ravi ne kahan tak padha, thodi der ke liye yaad rakh lo. "Ravi ne yahan tak padh liya, ab iske baad wale do." Naye 5 upar hain, upar scroll karega to dikhenge. Refresh pe purani post dobara aa sakti hai, Instagram ka kaam hi engage rakhna, wo chalta hai; par interviewer poochhega to use batana padega, to main yahi karunga: Ravi ne kahan tak padha wo yaad rakh ke agle dikha dunga.
+Arpan: 20 padhe, agle 20 maange, beech me upar 5 aa gaye, to neeche wale 5 khisak ke agle page me chale gaye; isliye wahi 5 dobara. Hal: Ravi ne kahan tak padha, thodi der ke liye yaad rakh lo.
+
+"Ravi ne yahan tak padh liya, ab iske baad wale do." Naye 5 upar hain, upar scroll karega to dikhenge.
+
+Refresh pe purani post dobara aa sakti hai, Instagram ka kaam hi engage rakhna, wo chalta hai; par interviewer poochhega to use batana padega, to main yahi karunga: Ravi ne kahan tak padha wo yaad rakh ke agle dikha dunga.
 Technical me: "page number se agle 20" = offset pagination (isi se khisakta), "kahan tak padha yaad rakh" = cursor (har page ke saath aakhri dikhayi post lautao, agla uske theek baad se), "thodi der yaad" = ranked feed me ranked list thodi der save, cursor usi list me aage.
 
 **19. Reply ki 3 copy (A, B, C) (Twitter me Cassandra, koi leader nahi; SQL shard ho to leader + copy). Tune Ravi ki DP pe reply kiya "mast DP bhai", ye A aur B me likha, C tak abhi nahi. Ravi ka "thank you bhai" C me pehle pahunch gaya. Priya C se padh rahi: sirf "thank you bhai" dikha, tera reply gaayab.**
 Arpan: Sabse pehle to ye bolunga ki thodi der leader se padhwa do. Interviewer cross-question karega: leader pe bahut bojh padega, phir? To phir neeche wala (do pe likho, do se padho).
 Technical me: "thodi der leader se padhwa do" = naya likhne ke baad kuch der read leader se (read-your-writes / leader read), "leader pe bojh" = trade-off: saari read leader pe = leader garam, isliye phir quorum.
 "Thodi der" kitni: andaza nahi; copy khud bataye kahan tak pahunchi, uski likhai tak aa gayi to copy se, nahi to leader se (banking kadam 9).
-Arpan (phir): Ye to pehle kar rakha hai: do pe likho, do se padho. 3 copy hain, update kisi me bhi ja sakta hai. Maan le DB shard karke ek leader aur neeche 3 copy rakhi. Leader ne "mast DP" likha, wo copy pe jaa raha. Jab tak leader aur kisi 2 copy ne rakh nahi liya, tab tak usko pura mano hi mat. Phir Priya ki request aayi to wo kisi 2 copy se poochhegi: C aur A se poochha, C me nahi to A me hai; B aur A se poochha, B me nahi to A me hai. Aur Twitter me to humne Cassandra lagaya hai, Cassandra ye apne aap karta hai (andar consistent hashing bhi).
+Arpan (phir): Ye to pehle kar rakha hai: do pe likho, do se padho. 3 copy hain, update kisi me bhi ja sakta hai. Maan le DB shard karke ek leader aur neeche 3 copy rakhi. Leader ne "mast DP" likha, wo copy pe jaa raha.
+
+Jab tak leader aur kisi 2 copy ne rakh nahi liya, tab tak usko pura mano hi mat. Phir Priya ki request aayi to wo kisi 2 copy se poochhegi: C aur A se poochha, C me nahi to A me hai; B aur A se poochha, B me nahi to A me hai.
+
+Aur Twitter me to humne Cassandra lagaya hai, Cassandra ye apne aap karta hai (andar consistent hashing bhi).
 Instagram pe bhi yahi hota: profile photo update ki, turant refresh kiya to purani photo dikhi, thodi der baad nayi.
 Technical me: "do pe likho, do se padho" = quorum (3 copy me W = 2, R = 2, W + R > 3, isliye padhne wali do me se ek me naya reply zaroor), "leader aur 2 copy ne rakh liya tabhi pura mano" = write tabhi OK jab 2 copy ne haan bola (ack), "Cassandra apne aap karta" = Cassandra me koi leader nahi, quorum ka level khud set hota (QUORUM read / write), URL kadam 9-10 wala hi. Instagram me "photo update ki, refresh pe purani" = replication lag (nayi photo leader me, refresh pe padhna copy se jo abhi peeche).
 
 **20. Priya ne kal hi Twitter join kiya, sirf 2 logon ko follow karti, un dono ne 2 hi tweet kiye. Priya ne dono dekh liye, ab neeche scroll kare to kya dikhe? Khaali page?**
-Arpan: Twitter engagement ke hisaab se dekhna hai. Koi banda naya-naya join kiya, kisi ko follow nahi karta, to kya khaali page dikhaunga? Nahi. Use trending dikhaunga: aaj ye hua, wo hua, Elon Musk ne SpaceX ka ye kiya, SpaceX aur Tesla ka merger hua, jisse engagement bane. Instagram bhi same karta: main kisi ko follow nahi karta, phir bhi bahut cheezein aati hain; jaise-jaise engagement hua, maine follow karna shuru kiya, ab wahi dikhata. Google pe GTA 6 baar-baar search kiya to GTA 6 ka aane laga. Twitter aur Instagram almost same algorithm pe: engagement rakhna. Ek ko follow kiya, uska ek hi tweet dikha diya to Twitter ka revenue kat jaayega; us waqt Elon Musk, Bill Gates kisi ka bhi suggest karunga, beech-beech me random tweet bhi.
+Arpan: Twitter engagement ke hisaab se dekhna hai. Koi banda naya-naya join kiya, kisi ko follow nahi karta, to kya khaali page dikhaunga? Nahi.
+
+Use trending dikhaunga: aaj ye hua, wo hua, Elon Musk ne SpaceX ka ye kiya, SpaceX aur Tesla ka merger hua, jisse engagement bane.
+
+Instagram bhi same karta: main kisi ko follow nahi karta, phir bhi bahut cheezein aati hain; jaise-jaise engagement hua, maine follow karna shuru kiya, ab wahi dikhata. Google pe GTA 6 baar-baar search kiya to GTA 6 ka aane laga.
+
+Twitter aur Instagram almost same algorithm pe: engagement rakhna.
+
+Ek ko follow kiya, uska ek hi tweet dikha diya to Twitter ka revenue kat jaayega; us waqt Elon Musk, Bill Gates kisi ka bhi suggest karunga, beech-beech me random tweet bhi.
 Ravi ka case alag: wo 1000 logon ko follow karta, unke tweet kabhi khatam nahi, wo apna dekhta rahega. Baat unki hai jo 1-2 logon ko follow karte aur jinhone 1-2 tweet kiye.
 Technical me: follow wale khatam / naya user = trending + suggested (cold start), engagement se dheere-dheere apni pasand (personalized); following feed ke neeche doosron ke tweet.
 
