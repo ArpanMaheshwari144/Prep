@@ -127,7 +127,7 @@ Goli chali to ek event bana; server dekhe kaun-kaun us jagah ke aas-paas hai, si
 
 Ye Uber jaisa hai: hamein aas-paas ka dikhana hai, Arpan ke aas-paas kya ho raha, wahi Arpan ke kaano me jaana chahiye. Map pe bhi aas-paas ke log dikhenge, door ke nahi.
 
-*Technical me:* "khula taar" = WebSocket / UDP connection (push), "sirf aas-paas walon ko event" = area of interest / interest management (map ko dabbon me baanto, Uber ke geohash jaisa, har player ko sirf aas-paas ke dabbon ki khabar).
+*Technical me:* "khula taar" = WebSocket / UDP connection (push; jagah UDP pe: purani jagah kho gayi to dobara nahi mangwate, nayi aa hi rahi), "sirf aas-paas walon ko event" = area of interest / interest management (map ko dabbon me baanto, Uber ke geohash jaisa, har player ko sirf aas-paas ke dabbon ki khabar).
 
 **Maan lo pooche aas-paas kitna:**
 

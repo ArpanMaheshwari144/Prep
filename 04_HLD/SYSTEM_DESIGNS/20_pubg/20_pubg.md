@@ -13,24 +13,6 @@ second me Whitefield namumkin" = kadam 4. Neeche sirf naya.
 
 ---
 
-## Pehle ye (padhai: online game andar se kaise chalta)
-
-Ye hissa scene-mock se pehle samjhaya tha, interview me "goli kaise lagti hai" pooche to yahi kahani.
-
-- **Faisla server ka:** tu trigger dabata hai to phone bas itna bhejta: "maine is waqt, is disha me goli chalayi".
-  Lagi ya nahi, server referee ki tarah tay karta. Phone khud bole "headshot laga" to hacker har goli headshot bata de.
-- **Goli udti dikhna = phone ka cartoon:** asli hisaab (goli kitni tez, kitni neeche giri, raaste me kaun aaya)
-  server pe; screen pe sirf animation.
-- **Dushman smooth chalta dikhe:** server second me (maan lo) 20-30 baar sabki jagah bhejta, beech ka hissa phone andaze se
-  bharta. Wahi Uber wala gudda; dushman achanak kood jaaye to wahi U-turn wali kood.
-- **Lag:** tera net 100 ms peeche. Tune jahan dushman dekh ke maara, wo 100 ms pehle wahan tha. Server ghadi peeche
-  ghuma ke dekhta goli chalne ke pal wo kahan tha (lag compensation). Leaderboard ke event time jaisa: kaam kab hua,
-  khabar kab pahunchi nahi. Isliye kabhi deewar ke peeche chhup ke bhi mar jaate ho.
-- **Jagah UDP pe:** purani jagah raaste me kho gayi to dobara mangwane ka fayda nahi, nayi aa hi rahi (Uber: sach
-  wahi jo abhi aaya).
-
----
-
 **Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
 ```
 Phone  -->  khula taar (WebSocket / UDP)  -->  LB  -->  India ka game server (ek match, 100 log)
@@ -168,7 +150,7 @@ awaaz PUBG me aati hi nahi. Goli chali to ek event bana; server dekhe kaun us ja
 Saamne wali building me goli chali to Arpan ko sunai de, Military Base wali nahi. Ye Uber jaisa hai: Arpan ke
 aas-paas kya ho raha, wahi Arpan ke kaano me. Map pe bhi aas-paas ke log, door ke nahi.
 
-**Asli naam:** khula taar = WebSocket / UDP connection (push), sirf aas-paas walon ko event = area of interest /
+**Asli naam:** khula taar = WebSocket / UDP connection (push; jagah UDP pe: purani jagah kho gayi to dobara nahi mangwate, nayi aa hi rahi), sirf aas-paas walon ko event = area of interest /
 interest management (naksha dabbon me, Uber ke geohash jaisa; har player ko sirf apne aur pados ke dabbon ki khabar).
 
 ![Sirf aas-paas ki khabar: Arpan aur Claude Pochinki me, Military Base ki khabar nahi](../00_IMG/20_pubg_kadam2_aas_paas.svg)
