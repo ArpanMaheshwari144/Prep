@@ -113,7 +113,7 @@ DB       likhai bahut (har goli, har kadam ke coordinate, America, India, China,
 relational DB (Postgres), "kuch rakhna pade" = cache (Redis).
 
 **API (round me):**
-Arpan (API): Zyadatar POST hongi, kyunki client se server ko jaata hai: POST match shuru, POST guddi chala, POST goli chali, POST headshot laga, POST kaun mara, sab coordinate ke saath; server unse line banata. Server se jo aata (ping), wo server khud bhejta. Match khatam (winner winner chicken dinner): GET match ke result.
+Arpan (API): Match shuru = POST (Start dabaya, match me jodo). Match ke andar har baar POST nahi: ek baar khula taar (WebSocket), phir guddi chala, goli chali jaise chhote message coordinate ke saath jaate; server unse line banata. Headshot laga, kaun mara, ye phone nahi bhejta, server tay karta; warna hacker khud bol dega "maine maara". Server se jo aata (ping, aas-paas ki khabar), wo server khud bhejta. Wahi chaal / goli wale message server peeche logs / DB me likhta, hacker ka pattern wahin se. Match khatam (winner winner chicken dinner): GET match ke result.
 ```
 API     POST /matchmaking          -> "Start" dabaya, 100 ke match me jodo, squad bhar do       (FR 1, kadam 1)
         match ke andar REST nahi, khule taar (WebSocket / UDP) pe chhote message:
