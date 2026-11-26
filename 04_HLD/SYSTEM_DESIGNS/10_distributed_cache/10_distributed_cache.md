@@ -89,8 +89,8 @@ lakhon log uska profile khol rahe, par uske liye jagah nahi. Aur dabbe me 3 saal
 se kisi ne nahi khola. To RAM ko thoda khaali karo: jo purana hai, jo kam use ho raha hai, use nikaal do, use
 lena-dena hi nahi. Jo ab use nahi ho raha aur RAM me pada hai, wo befaltu ki jagah ghere hai.
 
-**Asli naam:** RAM khaali karo = eviction, jo purana aur kam use ho raha wo nikaalo = LRU (Least Recently Used; andar
-HashMap + doubly linked list, sab O(1), wahi LC 146).
+**Asli naam:** RAM khaali karo = eviction, jo purana aur kam use ho raha wo nikaalo = LRU (Least Recently Used; Redis
+me `maxmemory-policy allkeys-lru`, andaze wala LRU; khud banao to HashMap + doubly linked list, LC 146).
 
 **Aur neeche (LRU kyun, LFU kyun nahi):** LRU chunta hoon, LFU nahi, kyunki banana aasaan aur jo der se nahi chhua wo kaam ka nahi.
 **Asli naam:** LRU = haal me kab chhua, LFU = kitni baar chhua.

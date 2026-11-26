@@ -23,7 +23,7 @@ Arpan (Whitefield) --> Zomato app --> server --> Redis (menu + area ki restauran
  0   menu baar-baar DB se                         ->  menu Redis me, menu badle to job DB se cache update kare (cache + write pe update)
  1   15 km ke restaurant kaise                    ->  lat / long se gola, area ki ek list cache me, TTL, band = "closed" nishaan (area list cache)
  2   Neha kinare pe, Whitefield bahut bada        ->  bade area ke andar chhote area, har ek ki apni list (grid / geohash cell, Uber jaisa)
- 3   order Burger Singh tak                       ->  accept -> notification -> ready -> 5 km ke driver -> delivering (order status flow)
+ 3   order Burger Singh tak                       ->  accept (auto / restaurant) -> notification -> ready -> 5 km ke driver -> delivering (order status flow)
  4   burger ready, driver 15 min door             ->  quantity se ready time, driver ko wahi time bhejo (prep-time dispatch)
  5   (khud accept wala restaurant) chup rahe      ->  2-3 min window, phir order fail, paisa nahi kata / wapas (accept timeout)
  6   Diwali, 300 burger, 2 min me 800 log         ->  har order pe ginti atomic ghatao, stock tha to order placed (auto-accept), 0 pe out of stock; Kafka nahi (capacity gate)
@@ -158,7 +158,7 @@ webhook, driver dispatch (radius).
 flowchart TB
     A["Arpan: order"]:::card
     subgraph G["ORDER STATUS FLOW (DB me)"]
-        S1(["placed"]):::pill --> S2(["accepted<br/>(Burger Singh ne)"]):::pill --> S3(["ready"]):::pill --> S4(["delivering<br/>(5 km ka driver)"]):::pill --> S5(["delivered"]):::good
+        S1(["placed"]):::pill --> S2(["accepted<br/>(stock tha to auto,<br/>ya restaurant ne)"]):::pill --> S3(["ready"]):::pill --> S4(["delivering<br/>(5 km ka driver)"]):::pill --> S5(["delivered"]):::good
     end
     N["Arpan ko notification"]:::card
     A --> S1
