@@ -448,6 +448,10 @@ Ek array diya hai. Peak wo number hai jo apne dono padosiyon se bada ho (array k
 ```
 
 > [!IMPORTANT]
+> **PEHCHAAN:** array SORTED NAHI, phir bhi O(log n) maanga = binary search. Mid pe dekh ke ek aadha phenk sako (chadhaai -> choti right me pakka) to BS lagta hai, sorted hona zaroori nahi.
+> TRAP (26-Nov grill): O(log n) dekh ke "pehle sort kar dun" socha; sort kiya to index hi badal jaate, khel khatam. Sort nahi, seedha mid.
+
+> [!IMPORTANT]
 > **CHAABI:** mid ko `mid + 1` se compare: CHADHAAI (`nums[mid] < nums[mid+1]`) -> `low = mid + 1`; DHALAAN -> `high = mid`.
 
 > [!WARNING]
