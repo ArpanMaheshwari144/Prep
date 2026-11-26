@@ -2,7 +2,7 @@
 
 Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpan ke shabd ka naam).
 
-**Scene:** Arpan Bangalore me Whitefield ke PG me baitha Zomato kholta hai. Use 15 km ke andar ke restaurant dikhne chahiye, rating ya doori se sort. Wo 10 km door "Burger Singh" se burger mangata hai. Peeche teen log hain: user (Arpan), restaurant (Burger Singh) aur driver. (Pehle se aaya: aas-paas ka area / geohash aur driver ki tracking = Uber; ek counter pe atomic ghatana = banking, inventory; "order placed" dikha ke Kafka line = BMS, e-com.)
+**Scene:** Arpan Bangalore me Whitefield ke PG me baitha Zomato kholta hai. Use 15 km ke andar ke restaurant dikhne chahiye, rating ya doori se sort. Wo 10 km door "Burger Singh" se burger mangata hai. Peeche teen log hain: user (Arpan), restaurant (Burger Singh) aur driver. (Pehle se aaya: aas-paas ka area / geohash aur driver ki tracking = Uber; ek counter pe atomic ghatana = banking, inventory.)
 
 **Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
 ```
@@ -11,17 +11,16 @@ Arpan (Whitefield) --> Zomato app --> server --> Redis (menu + area ki restauran
                                          v          |
                                    AWS RDS Postgres (2 replica)  <-- ek counter: Burger Singh ke aaj ke burger
                                          |
-                    Diwali pe: Kafka line (restaurant-wise) --> worker --> Burger Singh ka app --> driver (5 km)
+                    order: counter pe ginti ghatao (stock ho to) --> order placed --> Burger Singh ka app --> driver (5 km)
 
  0   menu baar-baar DB se                         ->  menu Redis me, menu badle to job DB se cache update kare (cache + write pe update)
  1   15 km ke restaurant kaise                    ->  lat / long se gola, area ki ek list cache me, TTL, band = "closed" nishaan (area list cache)
  2   Neha kinare pe, Whitefield bahut bada        ->  bade area ke andar chhote area, har ek ki apni list (grid / geohash cell, Uber jaisa)
  3   order Burger Singh tak                       ->  accept -> notification -> ready -> 5 km ke driver -> delivering (order status flow)
  4   burger ready, driver 15 min door             ->  quantity se ready time, driver ko wahi time bhejo (prep-time dispatch)
- 5   Burger Singh chup, na accept na reject       ->  2-3 min window, phir order fail, paisa nahi kata / wapas (accept timeout)
- 6   Diwali, Burger Singh pe 2 min me 500         ->  subah stock poocho, zyada ko gate pe mana, andar walon ki Kafka line (capacity gate + queue)
+ 5   (khud accept wala restaurant) chup rahe      ->  2-3 min window, phir order fail, paisa nahi kata / wapas (accept timeout)
+ 6   Diwali, 300 burger, 2 min me 800 log         ->  har order pe ginti atomic ghatao, stock tha to order placed (auto-accept), 0 pe out of stock; Kafka nahi (capacity gate)
  7   349 pe Arpan + Rahul ek pal me               ->  ek hi counter, check + ghatao ek saath, pehle wale ko (atomic decrement)
- 8   address khaali wala order, saari line atki   ->  3 baar retry, phir alag line, alert; line chalti rahe (retry limit + DLQ, reel se)
 ```
 
 **Arpan ka nichod:** "Yahan do system design hain: ek user ke order ka (Arpan wala), ek restaurant aur driver ka (Zomato andar wala). User ko driver kaun hai ye sab nahi dikhta, restaurant ko dekhna padta. Zomato andar kya karta mujhe nahi pata, docs padh ke jawab nahi dunga; main hota to ye karta."
@@ -34,6 +33,7 @@ FR      1  aas-paas (15 km) ke restaurant dikhao, rating ya doori se sort       
         2  menu dekho, order karo, khana pahunche                                -> kadam 0, 3
         3  driver ko map pe track kar sake (Uber wali tracking)                  -> kadam 3
         4  restaurant kitni door hai (jaise 15 km), app pe pehle se dikhe        -> kadam 1
+        (pehle sawaal: restaurant khud accept kare ya stock dekh ke auto-accept? hamara: stock ho to auto-accept, warna out of stock.)
         (pehle sawaal: order ka paisa PSP (Razorpay jaisa) se; uska andar ka kaam design ka hissa nahi.
          Interviewer se poochho: PSP ka timeout kitna, ya PSP scope se bahar? Wo bole "30-60 sec bahut" to wahi timeout,
          uske baad FAILED aur alag column "kitni der baad kata" (BMS 6c jaisa))
@@ -133,7 +133,7 @@ Zomato andar kya karta mujhe nahi pata, jaanna bhi nahi, docs padh ke jawab nahi
 
 ---
 
-**5. Raat 9 baje order gaya, par Burger Singh ki taraf se na accept aaya, na reject (app band pada, ya counter pe koi nahi). Arpan "order placed" ki screen dekh raha. System kya karega?**
+**5. (Jab FR me restaurant khud accept dabaye; auto-accept wale design me ye scene nahi banta.) Raat 9 baje order gaya, par Burger Singh ki taraf se na accept aaya, na reject (app band pada, ya counter pe koi nahi). Arpan "order placed" ki screen dekh raha. System kya karega?**
 
 **Arpan:** Yahan jawab hamare paksh ya vipaksh me nahi. Onboarding pe poochh lenge kitni der me jawab doge; unhone kaha 1-2 minute. Us din 2-3 min me jawab nahi diya, to ek time window hogi, kyunki user ko atka ke nahi rakh sakte.
 
@@ -147,25 +147,21 @@ Zomato ki terms andar kya hain mujhe nahi pata, wo net pe bhi nahi milti; main h
 
 ---
 
-**6. Diwali ki raat 9 baje 50,000 log ek saath order kar rahe, akele Burger Singh pe 2 minute me 500 aaye, sab seedha server se Postgres me. Kya karega, Kafka lagayega ya nahi, kyun?**
+**6. Diwali ki raat 9 baje. Subah Burger Singh ne app me bataya aaj 300 burger bana sakta hai. 9 baje 2 minute me 800 log Burger Singh pe "order" dabate. Order Burger Singh tak kaise, "order placed" kab, aur baaki 500 ka kya?**
 
-**Arpan:** Itna traffic ek saath server, Postgres nahi jhel sakte, app hang, sabko gola ghoomta rahega. Pehli baat quantity: Burger Singh ke paas 500 burger hain ya 300? 300 hain to 500 ka matlab nahi.
+**Arpan:** Pehli baat quantity: onboarding pe aur roz restaurant batata aaj kitni capacity, kitni dish bana sakta. Burger Singh ne kaha 300, to 300 hi andar.
 
-Zomato ke app me Amazon jaisa "itne bache" nahi hota; to Diwali ki subah Burger Singh aur aas-paas ke restaurant ko notification bhejo: aaj Diwali hai, kiske paas kitna stock, bata do taaki app me update karein, utne hi bhejenge.
+Ek aaya, quantity dekhi, hai, to atomic transaction me ek kam: 300 -> 299 -> 298 ... -> 1 -> 0. 0 hote hi khatam, agle ko order hi nahi hoga, out of stock.
 
-Burger Singh ne kaha 300-350 bana dunga, kisi ne 300 rasmalai.
+Kafka ki zaroorat hi nahi padi: DB transaction milli second me hota, Postgres / AWS RDS ke liye chutkiyon ka kaam, 1 lakh pe bhi. Kafka wahan jahan 10-20 million log ek saath aa rahe; 1 lakh order ke liye Kafka lagaya to design bekaar me complex.
 
-Ab 500 aaye to 350 ko hi line ke andar jaane do, baaki 150 ko pehle hi hata do, out of stock; baad me fail aur refund karne se bachna hai, ek-do order ke liye theek, zyada ke liye dikkat.
+Order placed tabhi dikhao jab stock ho: stock tha to order placed, khatam. Burger Singh ke app me "Arpan ka order aaya, taiyaar karo, driver bulao". Accept ka button nahi: 100 ek saath aaye to wo 100 baar dabayega? Stock hai to order hoga hi, Burger Singh cancel nahi kar sakta; stock nahi to out of stock apne aap, use cancel ka mauka hi nahi. Maal khatam to restaurant app me out of stock laga de.
 
-50,000 ko ek saath serve karne ka matlab nahi, line lagwa do: ek line Burger Singh ki, ek is restaurant ki, ek us ki.
-
-Andar walon ko "order placed" dikha do, gola ghumane ka matlab nahi, aur beech me Kafka laga do, Kafka worker peeche apna kaam karta rahega: ek-ek order Burger Singh tak, accept hua, ready hua, driver tak gaya.
-
-*Technical me:* "subah stock poocho, utne hi andar" = capacity gate (baaki out of stock), "har restaurant ki line + order placed + worker peeche" = restaurant-wise queue (Kafka, key = restaurant) + async processing.
+*Technical me:* "har order pe ginti dekho, ek kam" = atomic conditional update (`UPDATE ... SET qty = qty - 1 WHERE qty > 0`), "300 hi andar" = capacity gate, "stock tha to order placed, button nahi" = auto-accept (asal Zomato partner app me accept hota, kai restaurant POS se auto-accept lagaate), "Kafka nahi" = is scale pe queue ki zaroorat nahi (zaroori nahi, galat nahi).
 
 ---
 
-**7. Burger Singh ki ginti 350, abhi 349 ho chuke. Arpan aur Rahul ek hi pal me order dabate, dono ko "1 bacha" dikhta, dono andar, 351. Kaise rokega? (Claude ne dikhaya: Diwali pe kai server, dono server ne ginti ek hi pal me 349 padhi, likhne se pehle.)**
+**7. Burger Singh ki ginti 300, abhi 299 ho chuke. Arpan aur Rahul ek hi pal me order dabate, dono ko "1 bacha" dikhta, dono andar, 301. Kaise rokega? (Claude ne dikhaya: Diwali pe kai server, dono server ne ginti ek hi pal me 299 padhi, likhne se pehle.)**
 
 **Arpan:** Ginti ka counter ek hi hai, chahe Redis me chahe kisi me; dono server usi se baat kar rahe. Redis ek baar me ek hi command chalata, do ko ek saath nahi le sakta.
 
@@ -177,16 +173,6 @@ Dono bilkul ek hi pal me aaye (bahut rare) to bhi ek ko hi milega, jo lucky; tra
 
 *Technical me:* "ek counter, check + ghatao ek saath" = atomic decrement (Redis DECR / Lua, ya `UPDATE ... SET bacha = bacha - 1 WHERE bacha >= 1`), pehle wale ko = first come first served; banking ke do counter aur inventory ke aakhri iPhone jaisa.
 
----
-
-**8. (Reel se, Swiggy; scene-mock nahi, Arpan: "dead letter queue padh rakhi, Kafka ke offset / partition pata, seedha Zomato me daal do".) Dinner rush, kisi ko "order confirmed" message nahi aa raha. Server sab chal rahe, kuch crash nahi. Ek order ka address khaali tha: worker padhte hi fail, message line se hata nahi, timeout ke baad wahi wapas, phir fail. Line kram se chalti, pehla nahi hata to peeche wale atke.**
-Reel ka jawab (Arpan ka padha hua, Kafka 8 / 8b jaisa): retry se network ki gadbad theek hoti, kharab data nahi; wo har baar fail, retry = kabhi na khatam hone wala chakkar.
-
-Fix 1: retry ki had (jaise 3 baar), had paar to message alag line me (dead letter queue), line khul jaati, baaki order ke message turant; kharab order engineer baad me aaram se dekhte.
-
-Fix 2: dead letter line pe alert, ek bhi aaye to team ko turant pata. Ek pech: kram wali line se message hataya to kram toot sakta (Kafka 8b: usi order / key ke baaki message bhi parking me).
-
-*Technical me:* "baar-baar fail, line atki" = poison message, "had" = retry limit (SQS me maxReceiveCount; Kafka me N retry ke baad DLQ topic me daalo aur offset aage), "alag line" = dead letter queue (DLQ), "team ko pata" = DLQ pe alert.
 
 &nbsp;
 

@@ -18,17 +18,16 @@ Arpan (Whitefield) --> Zomato app --> server --> Redis (menu + area ki restauran
                                          v          |
                                    AWS RDS Postgres (2 replica)  <-- ek counter: Burger Singh ke aaj ke burger
                                          |
-                    Diwali pe: Kafka line (restaurant-wise) --> worker --> Burger Singh ka app --> driver (5 km)
+                    order: counter pe ginti ghatao (stock ho to) --> order placed --> Burger Singh ka app --> driver (5 km)
 
  0   menu baar-baar DB se                         ->  menu Redis me, menu badle to job DB se cache update kare (cache + write pe update)
  1   15 km ke restaurant kaise                    ->  lat / long se gola, area ki ek list cache me, TTL, band = "closed" nishaan (area list cache)
  2   Neha kinare pe, Whitefield bahut bada        ->  bade area ke andar chhote area, har ek ki apni list (grid / geohash cell, Uber jaisa)
  3   order Burger Singh tak                       ->  accept -> notification -> ready -> 5 km ke driver -> delivering (order status flow)
  4   burger ready, driver 15 min door             ->  quantity se ready time, driver ko wahi time bhejo (prep-time dispatch)
- 5   Burger Singh chup, na accept na reject       ->  2-3 min window, phir order fail, paisa nahi kata / wapas (accept timeout)
- 6   Diwali, Burger Singh pe 2 min me 500         ->  subah stock poocho, zyada ko gate pe mana, andar walon ki Kafka line (capacity gate + queue)
- 7   349 pe Arpan + Rahul ek pal me               ->  ek hi counter, check + ghatao ek saath, pehle wale ko (atomic decrement)
- 8   address khaali wala order, saari line atki   ->  3 baar retry, phir alag line, alert; line chalti rahe (retry limit + DLQ, reel se)
+ 5   (khud accept wala restaurant) chup rahe      ->  2-3 min window, phir order fail, paisa nahi kata / wapas (accept timeout)
+ 6   Diwali, 300 burger, 2 min me 800 log         ->  har order pe ginti atomic ghatao, stock tha to order placed (auto-accept), 0 pe out of stock; Kafka nahi (capacity gate)
+ 7   299 pe Arpan + Rahul ek pal me               ->  ek hi counter, check + ghatao ek saath, pehle wale ko (atomic decrement)
 ```
 
 **Arpan ka nichod:** "Yahan do system design hain: ek user ke order ka (Arpan wala), ek restaurant aur driver ka (Zomato andar wala). User ko driver kaun hai ye sab nahi dikhta, restaurant ko dekhna padta. Zomato andar kya karta mujhe nahi pata, docs padh ke jawab nahi dunga; main hota to ye karta."
@@ -42,6 +41,7 @@ FR      1  aas-paas (15 km) ke restaurant dikhao, rating ya doori se sort       
         2  menu dekho, order karo, khana pahunche                                -> kadam 0, 3
         3  driver ko map pe track kar sake (Uber wali tracking)                  -> kadam 3
         4  restaurant kitni door hai (jaise 15 km), app pe pehle se dikhe        -> kadam 1
+        (pehle sawaal: restaurant khud accept kare ya stock dekh ke auto-accept? hamara: stock ho to auto-accept, warna out of stock.)
         (pehle sawaal: order ka paisa PSP (Razorpay jaisa) se; uska andar ka kaam design ka hissa nahi.
          Interviewer se poochho: PSP ka timeout kitna, ya PSP scope se bahar? Wo bole "30-60 sec bahut" to wahi timeout,
          uske baad FAILED aur alag column "kitni der baad kata" (BMS 6c jaisa))
@@ -198,6 +198,7 @@ flowchart TB
 
 ## 5. Burger Singh chup (accept timeout)
 
+(Jab FR me restaurant khud accept dabaye; auto-accept wale design me ye scene nahi banta.)
 Na accept, na reject. User ko atka ke nahi rakh sakte: order 2-3 min (ya 1-1.5 min) restaurant ki screen pe, user ko gola
 "abhi final nahi". Window me accept nahi to order fail, "dobara try karo". Order place tabhi jab restaurant accept kare, to
 paisa kata hi nahi; kata hai to refund. Restaurant ka app hi band ho to order hota hi nahi.
@@ -223,28 +224,29 @@ flowchart TB
     style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 6. Diwali, Burger Singh pe 2 min me 500 (capacity gate + Kafka line)
+## 6. Diwali, 300 burger, 2 min me 800 log (capacity gate, Kafka nahi)
 
-50 hazaar ek saath seedha server aur Postgres pe = app hang. Diwali ki subah restaurant se stock poocho (Burger Singh:
-300-350). 500 aaye to 350 hi andar, baaki 150 ko pehle hi "out of stock" (baad me fail + refund se bachna). Har restaurant
-ki apni line; andar walon ko "order placed" dikhao aur Kafka me daalo, worker peeche se ek-ek order restaurant tak le jaata
-(accept, ready, driver).
+Subah Burger Singh ne app me bataya aaj 300 burger; 9 baje 2 min me 800 log order dabate. Onboarding pe aur roz
+restaurant batata aaj kitni capacity, to 300 hi andar. Har order pe ginti dekho: hai to atomic transaction me ek kam
+(300 -> 299 -> ... -> 0); 0 hote hi agle ko out of stock, order hi nahi. Kafka ki zaroorat nahi: Postgres / AWS RDS ye
+milli second me kar leta, 1 lakh pe bhi; Kafka tab jab 10-20 million ek saath. Stock tha to usi pal order placed, Burger
+Singh ke app me "Arpan ka order, taiyaar karo, driver bulao". Accept ka button nahi (100 ek saath aaye to 100 baar
+dabayega?): stock hai to order hoga hi, Burger Singh cancel nahi kar sakta. Maal khatam to restaurant out of stock laga de.
 
-**Asli naam:** capacity gate, restaurant-wise queue (Kafka, key = restaurant id), async processing.
+**Asli naam:** capacity gate, atomic conditional update (`UPDATE ... SET qty = qty - 1 WHERE qty > 0`), auto-accept (asal
+Zomato partner app me accept hota, kai restaurant POS se auto-accept lagaate); is scale pe queue (Kafka) zaroori nahi.
 
 ```mermaid
 flowchart TB
-    X["Diwali: 2 min me 500 order,<br/>seedha Postgres = app hang"]:::bad
-    subgraph G["CAPACITY GATE + LINE<br/>(capacity gate + Kafka)"]
-        S(["Subah stock: Burger Singh 350"]):::pill
-        K(["350 andar: order placed,<br/>Kafka line (key = restaurant)"]):::pill
+    X["Diwali: 300 burger,<br/>2 min me 800 order"]:::bad
+    subgraph G["CAPACITY GATE<br/>(atomic ginti, Kafka nahi)"]
+        C[("Har order: qty > 0 to ek kam<br/>300 -> 299 -> ... -> 0")]:::pill
     end
-    O["150: out of stock"]:::card
-    W["Worker -> Burger Singh -> driver"]:::card
-    X --> S
-    S --> K
-    S --> O
-    K --> W
+    P["300: order placed (auto-accept)<br/>Burger Singh ke app me"]:::good
+    O["500: out of stock"]:::card
+    X --> C
+    C --> P
+    C --> O
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -253,9 +255,9 @@ flowchart TB
     style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 7. 349 pe Arpan + Rahul ek pal me (atomic decrement)
+## 7. 299 pe Arpan + Rahul ek pal me (atomic decrement)
 
-Diwali pe kai server; dono server ne ginti 349 ek hi pal me padhi aur dono andar, 351. Ilaaj: ginti ka counter ek hi
+Diwali pe kai server; dono server ne ginti 299 ek hi pal me padhi aur dono andar, 301. Ilaaj: ginti ka counter ek hi
 (Redis ya Postgres), aur padhna + ghatana ek hi kaam me. Redis ek baar me ek command chalata; Postgres me `UPDATE ... SET
 bacha = bacha - 1 WHERE bacha >= 1`. Jo pehle pahuncha usko burger, doosre ko "out of stock". Bilkul ek pal me aaye to
 bhi ek ko hi milega, kismat se.
@@ -264,7 +266,7 @@ bhi ek ko hi milega, kismat se.
 
 ```mermaid
 flowchart TB
-    X["Ginti 349: do server ne ek pal me padhi,<br/>dono andar = 351"]:::bad
+    X["Ginti 299: do server ne ek pal me padhi,<br/>dono andar = 301"]:::bad
     subgraph G["EK COUNTER, ATOMIC<br/>(atomic decrement)"]
         C[("UPDATE bacha = bacha - 1<br/>WHERE bacha >= 1")]:::pill
     end
@@ -281,43 +283,14 @@ flowchart TB
     style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 8. Address khaali wala order, saari line atki (retry limit + DLQ, reel se)
-
-Dinner rush, "order confirmed" message kisi ko nahi. Ek order ka address khaali: worker fail, message line me wapas, phir
-fail; line kram se chalti, to peeche wale atke (poison message). Retry se network ki gadbad theek hoti, kharab data nahi.
-Ilaaj: retry ki had (jaise 3), phir message alag line (dead letter queue) me, line chal padi; DLQ pe alert, team baad me
-dekhe. Pech: kram wali line se hataya to kram toot sakta, usi order ke baaki message bhi parking me ([Kafka](../12_message_queue_kafka/12_message_queue_kafka.md) 8 / 8b).
-
-**Asli naam:** poison message, retry limit (SQS maxReceiveCount; Kafka me N retry ke baad DLQ topic + offset commit),
-dead letter queue (DLQ), DLQ alert.
-
-```mermaid
-flowchart TB
-    X["Address khaali order:<br/>fail, wapas line, phir fail, line atki"]:::bad
-    subgraph G["RETRY KI HAD + DLQ"]
-        R(["3 baar retry"]):::pill
-        D(["Dead letter queue + alert"]):::pill
-    end
-    L["Baaki order chal pade"]:::good
-    X --> R
-    R -- "had paar" --> D
-    D --> L
-    linkStyle default stroke:#8fa3c7,stroke-width:2px
-    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
-    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
-    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
-    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
-```
-
 ---
 
 ## Wrap
 
 Arpan ki location se 15 km ka gola, area ke andar chhote area, har cell ki list Redis me (TTL, band = closed) -> menu bhi
-Redis me, DB badle to update -> order Burger Singh ke app pe, accept ki 2-3 min window, warna fail -> accept ke baad
-quantity se ready time, utne time pe 5 km ka driver -> delivering, tracking Uber wali -> Diwali pe subah stock, gate pe
-capacity, andar walon ki Kafka line -> aakhri burger ek hi counter pe atomic ghatao -> kharab order line na roke: 3 retry, phir DLQ + alert. Do system: user ka order, aur
+Redis me, DB badle to update -> order: stock tha to usi pal placed (auto-accept; khud accept wale restaurant me 2-3 min window, warna fail) ->
+quantity se ready time, utne time pe 5 km ka driver -> delivering, tracking Uber wali -> Diwali pe subah stock, har order pe
+ginti atomic ghatao, 0 pe out of stock (Kafka nahi) -> aakhri burger ek hi counter pe atomic ghatao. Do system: user ka order, aur
 restaurant + driver ka.
 
 ---
@@ -330,9 +303,7 @@ flowchart LR
     S --> R[("Redis<br/>menu + area list, TTL")]:::new
     S --> P[("Postgres (RDS)<br/>order, status, stock counter")]:::card
     P -- "menu / khula-band badla<br/>cache update" --> R
-    S -- "Diwali: order placed" --> K["Kafka line<br/>restaurant-wise"]:::new
-    K --> W["Worker"]:::card
-    W --> B["Burger Singh ka app<br/>accept, 2-3 min window"]:::card
+    S -- "stock tha: order placed<br/>(ginti atomic ghati)" --> B["Burger Singh ka app<br/>taiyaar karo, driver bulao"]:::card
     B -- "ready time ke saath" --> D(["Driver 5 km"]):::pill
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
