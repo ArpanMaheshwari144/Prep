@@ -323,7 +323,7 @@ Ek dabbe pe kai thappe ho sakte (Bangalore me 500 se 1,000, 10,000 se 20,000, 50
 
 **Arpan:** Maan le India se 10 lakh log. Meri rank 5,000 dekhni hai to 10 lakh me kahan dhoondhega.
 
-Isliye data aisa baanto ki dhoondhna aasaan ho: map pe gole, Delhi ka gola (aas-paas ke Haryana, UP wale bhi Delhi ke dabbe me), Mumbai ka (Pune bhi), Bangalore, Chennai, Darjeeling, Gujarat ke gole. Desh kai tukdon me bat gaya.
+Isliye data aisa baanto ki dhoondhna aasaan ho (upar jaisa): dabbe score ki range se, naam bas shehar ke gole jaise, Delhi, Mumbai, Bangalore, Chennai, Darjeeling, Gujarat. Desh kai tukdon me bat gaya.
 
 Har dabbe pe range ka thappa: Delhi me is range se is range tak.
 
@@ -331,7 +331,7 @@ Mujhe Arpan ki 5,000 wali rank chahiye, upar se dekha kis dabbe me hai: Delhi pe
 
 (Pehle "IP" shabd bola tha, matlab tha jagah ke hisaab se gola.)
 
-*Technical me:* "shehar ke gole" = geo partitioning (location se shard), "dabbe pe range ka thappa" = shard map (kis shard me kaunsi range), "seedha Delhi ke dabbe pe" = query sirf us ek shard pe, poore 10 lakh pe nahi.
+*Technical me:* "dabbe range se, naam shehar ke" = range partitioning (score range pe shard, naam sirf pehchaan), "dabbe pe range ka thappa" = shard map (kis shard me kaunsi range), "seedha Delhi ke dabbe pe" = query sirf us ek shard pe, poore 10 lakh pe nahi.
 Bolne ki line: "FR ke hisaab se poora world board. Contest ek time zone me (UTC). Pehle sawaal gino, paanchon wale pehle; ek jitne sawaal me jo pehle khatam kare wo upar, phir milli second, phir naam. Result aate jaayein, board banta jaaye, rank thodi der me theek."
 
 *Technical me:* poora world board = global leaderboard (aggregator sab region ke result mila ke ek sorted board), "pehle sawaal gino, phir waqt, ms, naam" = sort key (solved desc, finish time asc, ms, naam) = composite score (kadam 2), "paanchon wale pehle, baaki baad me" = solved count ke hisaab se bucket, "rank dheere theek" = eventual consistency.
