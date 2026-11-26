@@ -822,7 +822,7 @@ int evalRPN(vector<string> &tokens) {
     stack<int> st;
     for (auto &token : tokens) {
         if (token == "+" || token == "-" || token == "/" || token == "*") {
-            int b = st.top();               // pehle nikla = doosra number
+            int b = st.top();               // copy pe 13 / 5 chalaya: pehle 5 nikla = b
             st.pop();
             int a = st.top();
             st.pop();
