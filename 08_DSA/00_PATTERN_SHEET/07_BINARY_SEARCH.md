@@ -503,17 +503,18 @@ Ek SORTED array me har number theek do baar aata hai, sirf ek number akela (ek b
   kyun: 1,1 jodi · 2 ka jodidaar nahi · baaki 3,3 4,4 8,8 jodi -> 2
 ```
 
-### DRY-RUN (single = 2 @ idx 2)
+### TASVEER: [1,1,2,3,3,4,4,8,8] -> 2
 
 ```
-── DRY-RUN -- ISKO paper pe dekh, prose bhool (single = 2 @ idx 2) ──
-   idx:  0  1  2  3  4  5  6  7  8
-   arr:  1  1  2  3  3  4  4  8  8
-   low0 high8 -> mid=4 (EVEN) : nums[4]=3 == nums[3]=3 -> high=4-1=3
-   low0 high3 -> mid=1 (ODD)  : nums[1]=1 == nums[0]=1 -> low=1+1=2
-   low2 high3 -> mid=2 (EVEN) : nums[2]=2 != nums[1]=1 -> low=2+1=3
-   low3 high3 -> mid=3 (ODD)  : nums[3]=3 != nums[2]=2 -> high=3-1=2
-   low3 > high2 -> STOP -> return nums[high]=nums[2]= 2  (sahi)
+   idx:    0  1  |  2   |  3  4  |  5  6  |  7  8
+   arr:    1  1  |  2   |  3  3  |  4  4  |  8  8
+   jodi: (E, O)  | akela| (O, E) | (O, E) | (O, E)
+
+   single se PEHLE jodi (even, odd)  ·  single ke BAAD jodi (odd, even)   <- bas yahi badlaav pakadna
+
+   mid nikalo, peeche wala (mid - 1) dekho:
+     mid EVEN aur peeche wala SAME  -> jodi (odd, even) = badlaav ho chuka -> single PEECHE -> high = mid - 1
+     mid ODD  aur peeche wala SAME  -> jodi (even, odd) = sab theek      -> single AAGE   -> low  = mid + 1
 ```
 
 > [!IMPORTANT]
