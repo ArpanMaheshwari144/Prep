@@ -315,3 +315,27 @@ vector<int> partitionLabels(string s) {
     return ans;
 }
 ```
+
+**DRY RUN: "ababcc"**
+```
+index:   0 1 2 3 4 5
+s:       a b a b c c
+
+mp banana (har akshar ka AAKHRI index, aage wala purane ko overwrite karta):
+  i=0 a -> mp[a]=0 · i=1 b -> mp[b]=1 · i=2 a -> mp[a]=2 · i=3 b -> mp[b]=3 · i=4 c -> mp[c]=4 · i=5 c -> mp[c]=5
+  ant me:  a=2  b=3  c=5
+
+tukda 1: i=0, end = mp[a] = 2
+  j=0 (a):  0 < 2 -> end = max(2, mp[a]=2) = 2
+  j=1 (b):  1 < 2 -> end = max(2, mp[b]=3) = 3     <- b beech me aaya, uska aakhri 3 pe, end khiska
+  j=2 (a):  2 < 3 -> end = max(3, mp[a]=2) = 3
+  j=3:      3 < 3 nahi -> ruko
+  lambai = j - i + 1 = 3 - 0 + 1 = 4   ("abab"),  i = 4
+
+tukda 2: i=4, end = mp[c] = 5
+  j=4 (c):  4 < 5 -> end = max(5, 5) = 5
+  j=5:      5 < 5 nahi -> ruko
+  lambai = 5 - 4 + 1 = 2   ("cc"),  i = 6 -> khatam
+
+ans = [4, 2]
+```
