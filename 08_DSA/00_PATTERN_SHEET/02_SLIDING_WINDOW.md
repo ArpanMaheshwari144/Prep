@@ -448,15 +448,36 @@ Q: sirf DONO ENDS (front/back) se TOTAL k cards lo -> unka sum MAXIMIZE.
 >
 > (4) taken MAX = untaken MIN -> answer = Total - min.  ("hard" flip ke baad TRIVIAL.)
 
+**DRY RUN (tere code se): [1,2,3,4,5,6,1], k=3 -> 12**
+```
+index:   0  1  2  3  4  5  6
+cards:   1  2  3  4  5  6  1          n = 7, k = 3
+
+FLIP: k=3 card kinaron se liye  =  beech ki lagaatar window (n-k = 4) chhodi
+      [ 1  2  3  4 ]  5  6  1   -> chhodi 1+2+3+4 = 10, liye 5+6+1 = 12
+       \__ chhodi __/  \_liye_/
+
+maxScore: Total = 1+2+3+4+5+6+1 = 22,  n-k = 4 != 0  ->  minSumK(nums, 4)
+
+minSumK (window size 4, i=0, sum=0, minSum=INT_MAX):
+  j  nums[j]  sum   j-i+1 >= 4?   kya hua                                   minSum   i
+  0    1       1      1  nahi     -                                          INT_MAX  0
+  1    2       3      2  nahi     -                                          INT_MAX  0
+  2    3       6      3  nahi     -                                          INT_MAX  0
+  3    4      10      4  haan     window [1,2,3,4]=10 -> min; sum -= 1 -> 9     10    1
+  4    5      14      4  haan     window [2,3,4,5]=14 -> min 10; sum -= 2 -> 12 10    2
+  5    6      18      4  haan     window [3,4,5,6]=18 -> min 10; sum -= 3 -> 15 10    3
+  6    1      16      4  haan     window [4,5,6,1]=16 -> min 10; sum -= 4 -> 12 10    4
+
+answer = Total - minSum = 22 - 10 = 12   (liye: peeche ke 5 + 6 + 1)
+
+galti (1) yahan dikhti: front se 3 + back se 3 = 6 card ho jaate, par k = 3 TOTAL hai;
+  isliye chhodi window n - k = 4, n - 2k = 1 NAHI.
+```
+
 > [!IMPORTANT]
 > = MAX-SUM-SIZE-K (pattern-01) ka cousin -- SAME fixed-window mechanic, bas 3 DELTA:
 > (a) window size = L-k  (b) MAX ki jagah MIN dhundo  (c) answer = Total - min.
-
-### DRY-RUN
-
-```
-DRY-RUN [1,2,3,4,5,6,1] k=3: Total=22, win=4 -> [1,2,3,4]=10 · [2,3,4,5]=14 · [3,4,5,6]=18 · [4,5,6,1]=16 -> min=10 -> 22-10=12.
-```
 
 **FAMILY:** fixed-size SW + COMPLEMENT trick ("kya NAHI liya" gino). trap = k cards TOTAL (dono end milake), na har end se k.
 
