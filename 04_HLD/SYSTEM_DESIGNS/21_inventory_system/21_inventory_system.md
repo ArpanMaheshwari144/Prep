@@ -55,12 +55,14 @@ behtar, galat "haan" bolne se. Par product page pe "sirf 3 bache" thoda purana c
 pe (condition dekh ke) ek zyada, out of stock dikhao, thoda late dikhna chalega (kitna, 1-2 second ya turant, discuss).
 NFR me return policy aur ginti hamesha sahi. CAP ka sawaal nahi: ek hi hub, apne paas nahi to main warehouse se poochho,
 wahan bhi nahi to out of stock. User -> app server (kai) -> DB (AWS RDS, Postgres jaisa, atomic transaction, replica).
-Sirf India, isliye CDN ka matlab nahi (AWS pe hosted). ~30-40 lakh DAU. Launch pe bheed sirf daam dekhne aati, to bahar
-dabba = Redis (local cache bhi). Cart me daalne se ginti nahi ghat-ti. Return me toota phone reject, theek ho to +1.
+Sirf India, isliye CDN ka matlab nahi (AWS pe hosted). ~30-40 lakh DAU = itni baar DB pe. Launch pe bheed sirf daam dekhne
+aati, to bahar dabba ya iPhone alag dabbe me = Redis (local cache bhi), DB pe bojh nahi. Dekhna + ghatana ek atomic
+transaction me: ek ne liya, zero, sabko out of stock. Cart me daalne se ginti nahi ghat-ti. Return me toota phone reject, theek ho to +1.
 
 ```
-API     POST pay   -> kaunsa product, kitni quantity     (FR order pe ghatao)
-        GET  product id se -> kitne bache                (FR kitne, kahan)
+API     GET  product id se -> kitne bache                (FR kitne, kahan)
+        POST quantity      -> +2 kiya                     (cart, ginti nahi ghat-ti)
+        POST pay           -> kitni quantity, pay        (FR order pe ghatao)
 ```
 
 ---
