@@ -536,15 +536,26 @@ Extra jagah O(1) honi chahiye.
 > [!WARNING]
 > `abs(nums[i])` lo (value pehle hi -ve ho sakti) aur `nums[index] > 0` guard. Bina guard duplicate pe `-(-x)` wapas +ve: `[2,2]` pe `[1,2]`, sahi `[1]`.
 
-**SAAR**
+**DRY RUN: [4,3,2,7,8,2,3,1] -> [5,6]**
 ```
-DRY-RUN [4,3,2,7,8,2,3,1]: mark index 3,2,1,6,7,1(already),2(already),0 -ve
-  -> +ve bache index 4,5 -> missing = 5,6.
+pehla loop: value ka ghar = index (abs(value) - 1), ghar +ve hai to -ve kar do
 
-  index      :   0    1    2    3    4    5    6    7
-  shuru      :   4    3    2    7    8    2    3    1
-  mark baad  :  -4   -3   -2   -7   (8)  (2)  -3   -1
-  +ve index 4, 5 -> missing value 5, 6
+  i   nums[i]   abs - 1 = index   nums[index] > 0 ?   array
+  0     4           3               7   haan -> -7    [ 4,  3,  2, -7,  8,  2,  3,  1]
+  1     3           2               2   haan -> -2    [ 4,  3, -2, -7,  8,  2,  3,  1]
+  2    -2           1               3   haan -> -3    [ 4, -3, -2, -7,  8,  2,  3,  1]
+  3    -7           6               3   haan -> -3    [ 4, -3, -2, -7,  8,  2, -3,  1]
+  4     8           7               1   haan -> -1    [ 4, -3, -2, -7,  8,  2, -3, -1]
+  5     2           1              -3   nahi          (2 dobara aaya, ghar pehle se -ve)
+  6    -3           2              -2   nahi          (3 dobara aaya)
+  7    -1           0               4   haan -> -4    [-4, -3, -2, -7,  8,  2, -3, -1]
+
+doosra loop: jo index abhi bhi +ve, uska number kabhi aaya hi nahi
+
+  index:   0   1   2   3   4   5   6   7
+  array:  -4  -3  -2  -7   8   2  -3  -1
+                           ^   ^
+                          +ve +ve  ->  4 + 1 = 5,  5 + 1 = 6   ->  [5,6]
 ```
 
 **CODE**
