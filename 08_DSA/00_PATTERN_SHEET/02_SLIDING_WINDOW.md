@@ -450,29 +450,56 @@ Q: sirf DONO ENDS (front/back) se TOTAL k cards lo -> unka sum MAXIMIZE.
 
 **DRY RUN (tere code se): [1,2,3,4,5,6,1], k=3 -> 12**
 ```
-index:   0  1  2  3  4  5  6
-cards:   1  2  3  4  5  6  1          n = 7, k = 3
+maxScore(nums, 3):
+  Total = 1+2+3+4+5+6+1 = 22
+  nums.size() - k = 7 - 3 = 4, 0 nahi
+  minSum = minSumK(nums, 4)
 
-FLIP: k=3 card kinaron se liye  =  beech ki lagaatar window (n-k = 4) chhodi
-      [ 1  2  3  4 ]  5  6  1   -> chhodi 1+2+3+4 = 10, liye 5+6+1 = 12
-       \__ chhodi __/  \_liye_/
+minSumK(nums, 4):   sum = 0, minSum = INT_MAX, i = 0, j = 0
 
-maxScore: Total = 1+2+3+4+5+6+1 = 22,  n-k = 4 != 0  ->  minSumK(nums, 4)
+j=0:  sum += nums[0] (1)  -> sum = 1
+      j-i+1 = 0-0+1 = 1 >= 4 ?  nahi
+      j++
 
-minSumK (window size 4, i=0, sum=0, minSum=INT_MAX):
-  j  nums[j]  sum   j-i+1 >= 4?   kya hua                                   minSum   i
-  0    1       1      1  nahi     -                                          INT_MAX  0
-  1    2       3      2  nahi     -                                          INT_MAX  0
-  2    3       6      3  nahi     -                                          INT_MAX  0
-  3    4      10      4  haan     window [1,2,3,4]=10 -> min; sum -= 1 -> 9     10    1
-  4    5      14      4  haan     window [2,3,4,5]=14 -> min 10; sum -= 2 -> 12 10    2
-  5    6      18      4  haan     window [3,4,5,6]=18 -> min 10; sum -= 3 -> 15 10    3
-  6    1      16      4  haan     window [4,5,6,1]=16 -> min 10; sum -= 4 -> 12 10    4
+j=1:  sum += nums[1] (2)  -> sum = 3
+      j-i+1 = 1-0+1 = 2 >= 4 ?  nahi
+      j++
 
-answer = Total - minSum = 22 - 10 = 12   (liye: peeche ke 5 + 6 + 1)
+j=2:  sum += nums[2] (3)  -> sum = 6
+      j-i+1 = 2-0+1 = 3 >= 4 ?  nahi
+      j++
 
-galti (1) yahan dikhti: front se 3 + back se 3 = 6 card ho jaate, par k = 3 TOTAL hai;
-  isliye chhodi window n - k = 4, n - 2k = 1 NAHI.
+j=3:  sum += nums[3] (4)  -> sum = 10
+      j-i+1 = 3-0+1 = 4 >= 4 ?  haan
+         minSum = min(INT_MAX, 10) = 10
+         sum -= nums[0] (1)  -> sum = 9
+         i++ -> i = 1
+      j++
+
+j=4:  sum += nums[4] (5)  -> sum = 14
+      j-i+1 = 4-1+1 = 4 >= 4 ?  haan
+         minSum = min(10, 14) = 10
+         sum -= nums[1] (2)  -> sum = 12
+         i++ -> i = 2
+      j++
+
+j=5:  sum += nums[5] (6)  -> sum = 18
+      j-i+1 = 5-2+1 = 4 >= 4 ?  haan
+         minSum = min(10, 18) = 10
+         sum -= nums[2] (3)  -> sum = 15
+         i++ -> i = 3
+      j++
+
+j=6:  sum += nums[6] (1)  -> sum = 16
+      j-i+1 = 6-3+1 = 4 >= 4 ?  haan
+         minSum = min(10, 16) = 10
+         sum -= nums[3] (4)  -> sum = 12
+         i++ -> i = 4
+      j++ -> j = 7, loop khatam
+
+  return minSum = 10
+
+maxScore: return Total - minSum = 22 - 10 = 12
 ```
 
 > [!IMPORTANT]
