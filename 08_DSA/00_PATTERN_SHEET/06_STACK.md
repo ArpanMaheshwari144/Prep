@@ -835,3 +835,39 @@ int evalRPN(vector<string> &tokens) {
     return st.top();
 }
 ```
+
+
+---
+
+### ▸ CAR FLEET (LC 853)  = sawaal greedy jaisa (sort + waqt), stack bas fleet ginne ko
+
+**SAWAAL**
+```
+Ek-lane sadak, manzil target pe. Gaadi i position[i] pe, speed[i] se chalti. Overtake nahi: tez gaadi aage wali dheemi ko pakde to uske peeche usi speed se = ek FLEET (manzil pe saath pahunche to bhi ek). Kitne fleet pahunchenge?
+  e.g. target=12, position=[10,8,0,5,3], speed=[2,4,1,1,3] -> 3 · target=10, [7,4], [2,5] -> 1
+  kyun: 10 aur 8 dono 1 ghante -> ek · 0 akela 12 ghante · 5 aur 3 dono 7 ghante -> ek  ·  7 wali 1.5, 4 wali 1.2 -> peeche wali pakad leti -> ek
+```
+
+> [!WARNING]
+> `stack<double>` (waqt double hai). `stack<int>` me 1.5 -> 1 ban jaata, phir 1.2 > 1 = galat naya fleet. Stub ke 10 test pass the, `[7,4],[2,5]` pe pakda.
+
+**CODE**
+```cpp
+int carFleet(int target, vector<int> &position, vector<int> &speed) {
+    // {(10, 2), (8, 4), (5, 1)}
+    int n = position.size();
+    vector<pair<int, int>> cars;
+    for (int i = 0; i < n; i++)
+        cars.push_back({position[i], speed[i]});
+    sort(begin(cars), end(cars), greater<pair<int, int>>());   // manzil ke paas wali pehle
+    stack<double> st;                                           // ★ double, int nahi
+    for (auto &it : cars) {
+        int pos = it.first;
+        int speed = it.second;
+        double timeTaken = (double)(target - pos) / speed;
+        if (st.empty() || timeTaken > st.top())   // aage wale se zyada waqt = pakad nahi paayi = naya fleet
+            st.push(timeTaken);                   // kam ya barabar = aage wale me mil gayi, push nahi
+    }
+    return st.size();
+}
+```
