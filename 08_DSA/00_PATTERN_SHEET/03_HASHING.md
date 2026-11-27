@@ -538,6 +538,10 @@ Extra jagah O(1) honi chahiye.
 
 **DRY RUN: [4,3,2,7,8,2,3,1] -> [5,6]**
 ```
+TRICK: har value ka apna ghar = index (value - 1)      4 ka ghar index 3, 1 ka ghar index 0
+       array me jo value dikhe, uske ghar wale number ko MINUS kar do
+       ant me jo ghar MINUS nahi hua -> us ghar ki value (index + 1) array me kabhi aayi hi nahi
+
 pehla loop: value ka ghar = index (abs(value) - 1), ghar +ve hai to -ve kar do
 
   i   nums[i]   abs - 1 = index   nums[index] > 0 ?   array
