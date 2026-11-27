@@ -6,7 +6,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ```
 SAFAR (March: khaali folder)  ->  aaj (27-Nov)
   Java + Spring poora · LLD 11 · 6 project
-  HLD: 24 design (main file + hand notes) · 8 POORA (FR se ant tak + API) · 19 foundation · 7 hands-on
+  HLD: 24 design (main file + hand notes) · 11 POORA (FR se ant tak + API) · 19 foundation · 7 hands-on
   DSA: 18 pattern · 186 problem + 169 REDO = 355 .cpp · pattern sheet (19 file, 182 sawaal)
   STAR 12 kahani · PR review framework · DB internals
 ```
@@ -127,9 +127,9 @@ SAFAR (March: khaali folder)  ->  aaj (27-Nov)
   - [19 YouTube (reel wala scene)](04_HLD/SYSTEM_DESIGNS/19_youtube/19_youtube.md) — **POORA** (FR se ant tak + API)
   - [20 PUBG (Arpan + Claude ka squad, Pochinki)](04_HLD/SYSTEM_DESIGNS/20_pubg/20_pubg.md) — **POORA** (FR se ant tak + API)
   - [21 Inventory (Arpan ki online dukaan, teen godown)](04_HLD/SYSTEM_DESIGNS/21_inventory_system/21_inventory_system.md) — **POORA** (FR se ant tak + API)
-  - [22 Where Is My Train (bina net / GPS ke train kahan)](04_HLD/SYSTEM_DESIGNS/22_where_is_my_train/22_where_is_my_train.md)
-  - [23 Yelp search (5 km ke andar burger)](04_HLD/SYSTEM_DESIGNS/23_yelp_search/23_yelp_search.md)
-  - [24 Zomato (Whitefield ke PG se Burger Singh)](04_HLD/SYSTEM_DESIGNS/24_zomato/24_zomato.md)
+  - [22 Where Is My Train (bina net / GPS ke train kahan)](04_HLD/SYSTEM_DESIGNS/22_where_is_my_train/22_where_is_my_train.md) — **POORA** (FR se ant tak + API)
+  - [23 Yelp search (5 km ke andar burger)](04_HLD/SYSTEM_DESIGNS/23_yelp_search/23_yelp_search.md) — **POORA** (FR se ant tak + API)
+  - [24 Zomato (Whitefield ke PG se Burger Singh)](04_HLD/SYSTEM_DESIGNS/24_zomato/24_zomato.md) — **POORA** (FR se ant tak + API)
 
 - ★★ **HAND NOTES** — Arpan ke shabd, revision yahin se.
   - [01 URL (token counter)](04_HLD/SYSTEM_DESIGNS/01_url_shortener/URL_HAND_NOTES.md)
@@ -153,9 +153,9 @@ SAFAR (March: khaali folder)  ->  aaj (27-Nov)
   - [19 YouTube (reel wala scene)](04_HLD/SYSTEM_DESIGNS/19_youtube/YOUTUBE_HAND_NOTES.md) — **POORA** (FR se ant tak + API)
   - [20 PUBG (Pochinki drop)](04_HLD/SYSTEM_DESIGNS/20_pubg/PUBG_HAND_NOTES.md) — **POORA** (FR se ant tak + API)
   - [21 Inventory (teen godown)](04_HLD/SYSTEM_DESIGNS/21_inventory_system/INVENTORY_HAND_NOTES.md) — **POORA** (FR se ant tak + API)
-  - [22 Where Is My Train (patri, tower)](04_HLD/SYSTEM_DESIGNS/22_where_is_my_train/TRAIN_HAND_NOTES.md)
-  - [23 Yelp (5 km ke andar burger)](04_HLD/SYSTEM_DESIGNS/23_yelp_search/YELP_HAND_NOTES.md)
-  - [24 Zomato (Whitefield ke PG se Burger Singh)](04_HLD/SYSTEM_DESIGNS/24_zomato/ZOMATO_HAND_NOTES.md)
+  - [22 Where Is My Train (patri, tower)](04_HLD/SYSTEM_DESIGNS/22_where_is_my_train/TRAIN_HAND_NOTES.md) — **POORA** (FR se ant tak + API)
+  - [23 Yelp (5 km ke andar burger)](04_HLD/SYSTEM_DESIGNS/23_yelp_search/YELP_HAND_NOTES.md) — **POORA** (FR se ant tak + API)
+  - [24 Zomato (Whitefield ke PG se Burger Singh)](04_HLD/SYSTEM_DESIGNS/24_zomato/ZOMATO_HAND_NOTES.md) — **POORA** (FR se ant tak + API)
 
 
 - **[FOUNDATIONS](04_HLD/FOUNDATIONS)** — building-blocks (har design inhi se bante) — [01 hld-kya-hai](04_HLD/FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity-estimation](04_HLD/FOUNDATIONS/02_capacity_estimation.md) · [03 load-balancing](04_HLD/FOUNDATIONS/03_load_balancing.md) · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) · [05 replication](04_HLD/FOUNDATIONS/05_database_replication.md) · [06 sharding](04_HLD/FOUNDATIONS/06_database_sharding.md) · [07 message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) · [08 CAP](04_HLD/FOUNDATIONS/08_cap_theorem.md) · [09 db-what-when](04_HLD/FOUNDATIONS/09_databases_what_when.md) (+ interview me kaunsa DB: 4 sawaal) · [10 ms-communication](04_HLD/FOUNDATIONS/10_ms_communication.md) (+ 3 service se maal jodna: timeout · breaker · PARTIAL) · [11 reliability/SPOF](04_HLD/FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch](04_HLD/FOUNDATIONS/12_elasticsearch_search.md) · [13 snowflake-id](04_HLD/FOUNDATIONS/13_distributed_id_snowflake.md) · [14 jab-ilaaj-hi-bimari-bane](04_HLD/FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md) (HUB: LB, cache, limiter, queue, CAP, SPOF, CDN ki ek hi shakal) · [15 CDN](04_HLD/FOUNDATIONS/15_cdn.md) · [16 DNS](04_HLD/FOUNDATIONS/16_dns.md) · [17 WAF](04_HLD/FOUNDATIONS/17_waf.md) · [18 monitoring](04_HLD/FOUNDATIONS/18_monitoring.md) · [19 url-browser-journey](04_HLD/FOUNDATIONS/19_url_browser_journey.md)
