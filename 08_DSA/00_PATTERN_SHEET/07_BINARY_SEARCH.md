@@ -604,32 +604,25 @@ Kul number odd hon to beech wala, even hon to beech ke do ka average. O(log) me 
   kyun: mila ke 1,3,7,8,9,11,15,18,19,21,25 = 11 number -> beech wala (6th) = 11
 ```
 
-### TASVEER + DRY RUN: A=[1,3,8,9,15] (m=5), B=[7,11,18,19,21,25] (n=6) -> 11
+### DRY RUN: A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> 11
 
 ```
-1. Px, Py KYUN:  kul 11 number -> LEFT aadhe me (m+n+1)/2 = 6 number chahiye (+1: odd pe left me ek zyada)
-                 A se Px lo, baaki B se:  Py = 6 - Px      ->  BS sirf Px pe (chhote array A pe, 0 .. m)
+kul 11 number  ->  median = 6th number  ->  LEFT me 6 chahiye:  (5 + 6 + 1) / 2 = 6
+A se Px lo, baaki B se Py = 6 - Px.   BS sirf Px pe (A chhota, Px = 0 .. 5).   low = 0, high = 5
 
-2. SAHI CUT KAB:  LEFT ke sab <= RIGHT ke sab.
-                 A apne me sorted, B apne me sorted -> sirf CROSS check bacha:
-                    x1 = A ka left aakhri   x3 = A ka right pehla
-                    x2 = B ka left aakhri   x4 = B ka right pehla
-                 x1 <= x4  &&  x2 <= x3   ->  sahi cut
+Px = 2  ->  Py = 6 - 2 = 4
+     A:  1  3 | 8  9  15                LEFT  = 1 3 7 11 18 19
+     B:  7 11 18 19 | 21 25             RIGHT = 8 9 15 21 25
+     19 LEFT me hai, 8 RIGHT me  ->  galat (left ka koi right se bada nahi hona chahiye)
+     B ne zyada de diya, A se KAM liya  ->  A se zyada lo  ->  low = 3      (x2 = 19 > x3 = 8)
 
-3. LOW AAGE / HIGH PEECHE KYUN:
-                 x2 > x3  ->  B ka left bada, matlab A se KAM liya   ->  A se zyada lo  ->  low  = Px + 1
-                 x1 > x4  ->  A ka left bada, matlab A se ZYADA liya ->  A se kam lo    ->  high = Px - 1
+Px = 4  ->  Py = 6 - 4 = 2
+     A:  1  3  8  9 | 15                LEFT  = 1 3 8 9 7 11
+     B:  7 11 | 18 19 21 25             RIGHT = 15 18 19 21 25
+     LEFT ka sabse bada 11  <=  RIGHT ka sabse chhota 15  ->  sahi cut       (9 <= 18 && 11 <= 15)
+     kul 11 = odd  ->  median = LEFT ka sabse bada = max(9, 11) = 11
 
-DRY RUN (tere code se):  low = 0, high = 5
-
-  Px = 2, Py = 4:   A:  1  3 | 8  9  15            x1 = 3    x3 = 8
-                    B:  7 11 18 19 | 21 25         x2 = 19   x4 = 21
-                    x2 (19) > x3 (8)  ->  A se kam liya  ->  low = 3
-
-  Px = 4, Py = 2:   A:  1  3  8  9 | 15            x1 = 9    x3 = 15
-                    B:  7 11 | 18 19 21 25         x2 = 11   x4 = 18
-                    9 <= 18  &&  11 <= 15  ->  sahi cut
-                    kul 11 = odd  ->  median = max(x1, x2) = max(9, 11) = 11
+ulta hota (A ka left aakhri RIGHT wale B se bada, x1 > x4) to A ne ZYADA liya  ->  high = Px - 1
 ```
 
 > [!IMPORTANT]
