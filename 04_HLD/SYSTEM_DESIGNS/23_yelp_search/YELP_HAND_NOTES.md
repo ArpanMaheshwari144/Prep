@@ -58,6 +58,13 @@ NFR     1  band dukaan search me "Closed" dikhe (search thodi der peeche chalega
 
 *Technical me:* "event bhej do ES ko" = change event (DB -> search index sync) · "hexagon bada karte rahenge" = ring badhana (H3 k-ring) · "users ki rating se data theek" = crowdsourced data.
 
+**API (Arpan):** "API yahan koi lambi kahani nahi: user search POST karega, saath me uske coordinates; GET se apne result."
+
+```
+API     POST search   -> "burger" + Ravi ke coordinates (lat / long)
+        GET  results  -> aas-paas ke, sort kiye hue, pehle 10
+```
+
 &nbsp;
 
 ---
