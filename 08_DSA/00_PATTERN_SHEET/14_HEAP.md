@@ -73,6 +73,22 @@ Dono raaste ek hi jagah pahunchte hain.)
 - **e.g.** `[3,7,2] -> 2`
 - **kyun:** 7,3 -> 4 bacha · 4,2 -> 2 bacha · ek hi bacha = 2
 
+```
+MAX-heap: sabse bada upar
+stones :  3  7  2
+
+                                 (7 3)     (4 2)
+                                   ^         ^
+        .---.   .---.   .---.    .-|-.     .-|-.    .---.
+        |  3|   |  7|   |  7|    |  7|     |  4|    |  2|
+        '---'   |  3|   |  3|    |  3|     |  2|    '---'
+                '---'   |  2|    |  2|     '---'
+                        '---'    '---'
+daala : +3      +7      +2      phir +4   phir +2   bacha
+
+ans = 2 (ek hi bacha)
+```
+
 > [!WARNING]
 > `pq.empty() ? 0 : pq.top()` me empty PEHLE: sab khatam ho gaye to `top()` crash.
 
@@ -106,9 +122,19 @@ int lastStoneWeight(vector<int> &stones) {  // har turn 2 SABSE BHAARI smash, di
 - **kyun:** bade se gino 6, 5 -> 2nd = 5
 
 ```
-bade se line:   6  5 | 4  3  2  1
-                k=2  | baaki bahar
-heap (MIN, size 2) me ant tak bache = {5, 6} -> top (sabse chhota) = 5 = jawab
+MIN-heap: sabse chhota upar (size > k pe top bahar)
+nums :  3  2  1  5  6  4      k = 2
+
+                         (1)     (2)     (3)     (4)
+                          ^       ^       ^       ^
+        .---.   .---.   .-|-.   .-|-.   .-|-.   .-|-.   .---.
+        |  3|   |  2|   |  1|   |  2|   |  3|   |  4|   |  5|
+        '---'   |  3|   |  2|   |  3|   |  5|   |  5|   |  6|
+                '---'   |  3|   |  5|   |  6|   |  6|   '---'
+                        '---'   '---'   '---'   '---'
+daala : +3      +2      +1      +5      +6      +4      bache
+
+top = 5 = ans
 ```
 
 > [!IMPORTANT]
@@ -136,6 +162,21 @@ int findKthLargest(vector<int> &nums, int k) {   // top-K ka core
 
 - **e.g.** `[[1,3],[-2,2]], k=1 -> [[-2,2]]`
 - **kyun:** [1,3] = 1+9 = 10, [-2,2] = 4+4 = 8 -> 8 chhota
+
+```
+MAX-heap {dist, point}: sabse door upar
+points :  [1,3]  [-2,2]      k = 1
+
+                       10 [1,3]      8 [-2,2]
+                           ^             ^
+        .---------.   .----|----.   .----|----.
+        | 10 [1,3]|   | 10 [1,3]|   | 8 [-2,2]|
+        '---------'   | 8 [-2,2]|   '---------'
+                      '---------'
+daala : +10 [1,3]     +8 [-2,2]     bacha = ans
+
+ans = [[-2,2]]
+```
 
 > [!IMPORTANT]
 > **CHAABI:** kth-largest ka MIRROR: MAX-heap `pair<dist, point>`, `size > k` pe pop (sabse DOOR evict), bache k paas wale; `.second` = point.
@@ -172,6 +213,22 @@ vector<vector<int>> kClosest(vector<vector<int>> &points, int k) {
 
 - **e.g.** `[1,1,1,2,2,3], k=2 -> [1,2]`
 - **kyun:** 1 -> 3 baar, 2 -> 2 baar, 3 -> 1 baar -> top 2 = 1, 2
+
+```
+MIN-heap {freq, num}: sabse kam freq upar
+freq :  1 -> 3,  2 -> 2,  3 -> 1      k = 2   (map jis kram me de)
+
+                                {1,3}    {2,2} {3,1}
+                                  ^           ^
+        .------.   .------.   .---|--.    .---|--.
+        | {1,3}|   | {1,3}|   | {1,3}|    | {2,2}|
+        '------'   | {2,2}|   | {2,2}|    | {3,1}|
+                   '------'   | {3,1}|    '------'
+                              '------'
+daala : +{1,3}     +{2,2}     +{3,1}     bache = ans
+
+ans = 2 1 (kram kuch bhi chalega)
+```
 
 > [!IMPORTANT]
 > **CHAABI:** pehle map se freq, phir MIN-heap me `{freq, num}` size k (`size > k` pe pop). Bache k = jawab, `.second` nikaalo.
@@ -220,6 +277,30 @@ L2:  1 -> 3 -> 4
 L3:  2 -> 6
 heap me har list ka sirf AAGE wala:  {1, 1, 2} -> 1 nikla, uska agla 4 andar -> {1, 2, 4} -> 1 nikla ...
 heap me kabhi 3 se zyada nahi (ek list = ek node)
+```
+
+```
+MIN-heap: sabse chhota upar (har list ka sirf aage wala)
+
+                                  (1)       (1)       (2)       (3)       (4)
+                                   ^         ^         ^         ^         ^
+        .---.   .---.   .---.    .-|-.     .-|-.     .-|-.     .-|-.     .-|-.
+        |  1|   |  1|   |  1|    |  1|     |  1|     |  2|     |  3|     |  4|
+        '---'   |  1|   |  1|    |  1|     |  2|     |  3|     |  4|     |  4|
+                '---'   |  2|    |  2|     |  4|     |  4|     |  6|     |  6|
+                        '---'    '---'     '---'     '---'     '---'     '---'
+daala : +1      +1      +2      phir +4   phir +3   phir +6   phir +4   phir +5
+
+         (4)     (5)     (6)
+          ^       ^       ^
+        .-|-.   .-|-.   .-|-.
+        |  4|   |  5|   |  6|
+        |  5|   |  6|   '---'
+        |  6|   '---'
+        '---'
+daala :
+
+ans = 1 1 2 3 4 4 5 6
 ```
 
 > [!IMPORTANT]
@@ -273,6 +354,23 @@ sorted:   2  3  5  6  8  9 10
 isliye index 0 ka jawab pehle k+1 = 4 me hi: {6, 5, 3, 2} -> min 2
 ```
 
+```
+arr :  6  5  3  2  8 10  9      k = 3
+
+                                         (2)     (3)     (5)     (6 8 9 10)
+                                          ^       ^       ^          ^
+        .---.   .---.   .---.   .---.   .-|-.   .-|-.   .-|-.      .-|-.
+        |  6|   |  5|   |  3|   |  2|   |  2|   |  3|   |  5|      |  6|
+        '---'   |  6|   |  5|   |  3|   |  3|   |  5|   |  6|      |  8|
+                '---'   |  6|   |  5|   |  5|   |  6|   |  8|      |  9|
+                        '---'   |  6|   |  6|   |  8|   |  9|      | 10|
+                                '---'   |  8|   | 10|   | 10|      '---'
+                                        '---'   '---'   '---'
+daala : +6      +5      +3      +2      +8      +10     +9       khatam
+
+ans = 2 3 5 6 8 9 10
+```
+
 > [!IMPORTANT]
 > **CHAABI:** MIN-heap = sliding buffer: buffer bhar gaya to top nikaal ke `ans` me. End me bache sab = sorted tail.
 >
@@ -314,6 +412,24 @@ vector<int> sortKSorted(vector<int> &arr, int k) {
 
 - **e.g.** `add 5, 15, 1, 3 -> findMedian = 4.0`
 - **kyun:** sorted 1,3,5,15 -> beech ke do 3,5 -> (3+5)/2 = 4
+
+```
+maxH = MAX-heap (chhoti team, sabse bada upar) · minH = MIN-heap (badi team, sabse chhota upar)
+add 5, 15, 1, 3
+
+        maxH  minH    maxH  minH    maxH  minH    maxH  minH    maxH  minH
+                                                   (5)
+                                                    ^
+        .---. .---.   .---. .---.   .---. .---.   .-|-. .---.   .---. .---.
+        |  5| '---'   |  5| | 15|   |  5| | 15|   |  5| | 15|   |  3| |  5|
+        '---'         '---' '---'   |  1| '---'   |  3| '---'   |  1| | 15|
+                                    '---'         |  1|         '---' '---'
+                                                  '---'
+daala : +5            +15           +1            +3, farak 2   5 minH me
+med   : 5             10            5                           4
+
+ans = findMedian = (3 + 5) / 2 = 4
+```
 
 > [!WARNING]
 > **★ EDGE:**
@@ -400,6 +516,31 @@ public:
 - **e.g.** `"aab" -> "aba" · "aaab" -> ""`
 - **kyun:** aab: b dono a ke beech · aaab: 3 a alag karne 2 diwaar chahiye, b sirf 1
 
+```
+MAX-heap {count, char}: sabse zyada count upar
+s = "aab"
+
+                              {2,a} {1,b}
+                                   ^
+        .------.   .------.    .---|--.            .------.
+        | {1,b}|   | {2,a}|    | {2,a}|            | {1,a}|
+        '------'   | {1,b}|    | {1,b}|            '------'
+                   '------'    '------'
+daala : +{1,b}     +{2,a}     phir +{1,a}   akela {1,a}: 1 -> jodo
+
+s = "aaab"
+
+                              {3,a} {1,b}
+                                   ^
+        .------.   .------.    .---|--.             .------.
+        | {1,b}|   | {3,a}|    | {3,a}|             | {2,a}|
+        '------'   | {1,b}|    | {1,b}|             '------'
+                   '------'    '------'
+daala : +{1,b}     +{3,a}     phir +{2,a}   akela {2,a}: 2 > 1 -> ""
+
+ans: "aab" -> "aba" · "aaab" -> ""
+```
+
 > [!IMPORTANT]
 > **PEHCHAN:** "rearrange so adjacent not same" / "sabse-zyada wala spread karo"
 > -> MAX-HEAP {count,char}. (top-k-frequent ka cousin: wahan k nikaale,
@@ -477,6 +618,36 @@ val  :   4   2   9   1   7   3
 2 (idx 1) uthao -> idx 0 hata    :   _  [2]  _  [1]  _   3
 3 (idx 5) uthao (idx 4 pehle hata):  _  [2]  _  [1]  _  [3]   -> 1 + 2 + 3 = 6
 padosi = ORIGINAL index wale (i-1, i+1), bache hue me naye padosi nahi bante
+```
+
+```
+MIN-heap {val, idx}: sabse chhota upar
+val :  4  2  9  1  7  3   (idx 0 se 5)
+
+        .------.   .------.   .------.   .------.   .------.   .------.
+        | {4,0}|   | {2,1}|   | {2,1}|   | {1,3}|   | {1,3}|   | {1,3}|
+        '------'   | {4,0}|   | {4,0}|   | {2,1}|   | {2,1}|   | {2,1}|
+                   '------'   | {9,2}|   | {4,0}|   | {4,0}|   | {3,5}|
+                              '------'   | {9,2}|   | {7,4}|   | {4,0}|
+                                         '------'   | {9,2}|   | {7,4}|
+                                                    '------'   | {9,2}|
+                                                               '------'
+daala : +{4,0}     +{2,1}     +{9,2}     +{1,3}     +{7,4}     +{3,5}
+
+          {1,3}      {2,1}      {3,5}      {4,0}      {7,4}      {9,2}
+            ^          ^          ^          ^          ^          ^
+        .---|--.   .---|--.   .---|--.   .---|--.   .---|--.   .---|--.
+        | {1,3}|   | {2,1}|   | {3,5}|   | {4,0}|   | {7,4}|   | {9,2}|
+        | {2,1}|   | {3,5}|   | {4,0}|   | {7,4}|   | {9,2}|   '------'
+        | {3,5}|   | {4,0}|   | {7,4}|   | {9,2}|   '------'
+        | {4,0}|   | {7,4}|   | {9,2}|   '------'
+        | {7,4}|   | {9,2}|   '------'
+        | {9,2}|   '------'
+        '------'
+daala : lo         lo         lo         hata hua   hata hua   hata hua
+
+hata hua = vis true tha, pop karke chhoda
+ans = 1 + 2 + 3 = 6
 ```
 
 > [!IMPORTANT]

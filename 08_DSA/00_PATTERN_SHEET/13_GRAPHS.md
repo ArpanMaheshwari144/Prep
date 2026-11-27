@@ -454,6 +454,22 @@ ready   = {0, 2, 3}   -> sabse chhota 0 bano
 ans     = 0 1 2 3
 ```
 
+```
+MIN-heap: ready me sabse chhota upar
+n = 4, [0 -> 1]
+
+                                  (0)      (1)     (2)     (3)
+                                   ^        ^       ^       ^
+        .---.   .---.   .---.    .-|-.    .-|-.   .-|-.   .-|-.
+        |  0|   |  0|   |  0|    |  0|    |  1|   |  2|   |  3|
+        '---'   |  2|   |  2|    |  2|    |  2|   |  3|   '---'
+                '---'   |  3|    |  3|    |  3|   '---'
+                        '---'    '---'    '---'
+daala : +0      +2      +3      phir +1
+
+ans = 0 1 2 3
+```
+
 > [!IMPORTANT]
 > **CHAABI:** Course Schedule hi, bas `queue` -> min-heap: ready me se sabse chhota pehle. indegree / adj / ghatana / end-check SAME.
 
@@ -637,6 +653,32 @@ bool isBipartite(vector<vector<int>> &graph) {
   2 ------- 3
        5
 kam edge != kam weight: 0->1 seedha 4, ghoom ke 0->2->1 = 3 -> dist = [0,3,1,4]
+```
+
+```
+MIN-heap {dist, node}: sabse kam dist upar
+src = 0
+
+                          {0,0}                {1,2}            {3,1}
+                            ^                    ^                ^
+        .------.        .---|--.             .---|--.         .---|--.
+        | {0,0}|        | {0,0}|             | {1,2}|         | {3,1}|
+        '------'        '------'             | {4,1}|         | {4,1}|
+                                             '------'         | {6,3}|
+                                                              '------'
+daala : +{0,0}     phir +{4,1} +{1,2}   phir +{3,1} +{6,3}   phir +{4,3}
+
+          {4,1}      {4,3}      {6,3}
+            ^          ^          ^
+        .---|--.   .---|--.   .---|--.
+        | {4,1}|   | {4,3}|   | {6,3}|
+        | {4,3}|   | {6,3}|   '------'
+        | {6,3}|   '------'
+        '------'
+daala : purana                purana
+
+purana = wt > dist[node], pop karke chhoda
+ans = dist [0,3,1,4]
 ```
 
 > [!IMPORTANT]
