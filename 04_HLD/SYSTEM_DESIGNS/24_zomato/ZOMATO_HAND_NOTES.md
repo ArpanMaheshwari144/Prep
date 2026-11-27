@@ -43,6 +43,28 @@ NFR     1  door se aaya khana thoda thanda ho sakta, garam ka jhootha vaada nahi
 ```
 **Numbers (Arpan):** bahut bada scale nahi. Bangalore me ~5,000, average 8-10 hazaar DAU; India level pe 60-80 hazaar ya 1 lakh tak. Diwali / Navratri pe peak, maan lo 50 hazaar ek saath. Isliye NoSQL / Cassandra / MongoDB / DynamoDB ki zaroorat nahi: Cassandra "big bull" hai, use laana hi nahi, ladai karna hoga. Simple Postgres, AWS RDS le liya (wo replica, backup sab sambhal leta), 2 replica bahut.
 
+**Dhaancha (tasveer):**
+
+```
+   +-----------------+     +------+     +--------------------+     +---------------+     +---------+
+   | User (Arpan)    | --> |  LB  | --> | App server (2-3)   | --> | Local cache   | --> |  Redis  |
+   | Whitefield,     |     +------+     | har shehar ka alag |     +---------------+     | menu,   |
+   | address bhara   |                  +--------------------+                           | TTL     |
+   +-----------------+                           |                                       +---------+
+                                                 v                                            ^
+                                   +----------------------------+                             |
+                                   | DB: AWS RDS Postgres       | -- menu / stock badla: event (parchi phaad)
+                                   | menu, ginti (stock),       |
+                                   | order  + replica           |
+                                   +----------------------------+
+
+   Auto-accept: restaurant ka POS (UrbanPiper jaisa) Zomato se juda; andar ka hissa design se bahar
+```
+
+**Round me Arpan:** App kholo to aas-paas ke restaurant aur menu dikhe, rating ya doori se sort, keemat dikhe, order aur pay, out of stock pehle hi dikhe. NFR: door se khana thanda ho sakta hai, aakhri order do logon ko na bike. Address hamesha bhara hota (use my location), design pe asar nahi. 2-3 server, LB, replica; har shehar ka alag, 10-20 lakh order bhi AWS RDS sambhal leta. 15 km ka gola geohash / hexagon se. Feed ke liye fan-out (Twitter jaisa) bhi soch sakte, par restaurant itne nahi, isliye Redis. Menu Redis me TTL (3-4 min), chhotu dobara laaye; menu badle to DB se event, Redis update. Aakhri burger: atomic transaction, check aur ghatao ek saath. Auto-accept POS integration se hota hai (net pe dekha), wo Zomato aur vendor ke andar ka, design me nahi.
+
+*Technical me:* "fan-out vs Redis" = push model vs pull + cache · "TTL + chhotu dobara le" = cache-aside with TTL · "DB se event, Redis update" = write pe cache invalidation.
+
 &nbsp;
 
 ---
@@ -173,6 +195,14 @@ Dono bilkul ek hi pal me aaye (bahut rare) to bhi ek ko hi milega, jo lucky; tra
 
 *Technical me:* "ek counter, check + ghatao ek saath" = atomic decrement (Redis DECR / Lua, ya `UPDATE ... SET bacha = bacha - 1 WHERE bacha >= 1`), pehle wale ko = first come first served; banking ke do counter aur inventory ke aakhri iPhone jaisa.
 
+
+---
+
+**8. Raat 9:00:10 pe Burger Singh ka aakhri burger bik gaya. Redis ka menu abhi "burger available" (TTL 9:03 tak). 9:01 pe Ravi app kholta, burger dikhta, order dabata. "Out of stock pehle hi dikhe" wala FR kaise bachega?**
+
+**Arpan:** Redis me ginti rakhta hi nahi, sirf menu; ginti DB me. Ginti bhi Redis me rakhi to bahut saare restaurant, Redis bahut bada. DB me out of stock hua to event jaaye, chhotu Redis ko bole parchi phaad de: menu hata do ya out of stock kar do. Peeche ek job Redis aur DB ka milaan karti rahe; TTL khatam pe naya menu aa hi jaayega.
+
+*Technical me:* cache invalidation (event se, TTL ka intezaar nahi), source of truth DB, reconciliation job.
 
 &nbsp;
 

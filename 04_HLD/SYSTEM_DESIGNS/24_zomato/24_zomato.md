@@ -52,6 +52,28 @@ NFR     1  door se aaya khana thoda thanda ho sakta, garam ka jhootha vaada nahi
 **Numbers (Arpan):** Bangalore me ~5,000, average 8-10 hazaar DAU; India me 60-80 hazaar ya 1 lakh tak; Diwali pe peak
 ~50 hazaar ek saath. Bahut bada scale nahi, isliye NoSQL / Cassandra nahi: simple Postgres (AWS RDS, 2 replica).
 
+**Dhaancha (tasveer):**
+
+```
+   +-----------------+     +------+     +--------------------+     +---------------+     +---------+
+   | User (Arpan)    | --> |  LB  | --> | App server (2-3)   | --> | Local cache   | --> |  Redis  |
+   | Whitefield,     |     +------+     | har shehar ka alag |     +---------------+     | menu,   |
+   | address bhara   |                  +--------------------+                           | TTL     |
+   +-----------------+                           |                                       +---------+
+                                                 v                                            ^
+                                   +----------------------------+                             |
+                                   | DB: AWS RDS Postgres       | -- menu / stock badla: event (parchi phaad)
+                                   | menu, ginti (stock),       |
+                                   | order  + replica           |
+                                   +----------------------------+
+
+   Auto-accept: restaurant ka POS (UrbanPiper jaisa) Zomato se juda; andar ka hissa design se bahar
+```
+
+**Round me Arpan:** App kholo to aas-paas ke restaurant aur menu dikhe, rating ya doori se sort, keemat dikhe, order aur pay, out of stock pehle hi dikhe. NFR: door se khana thanda ho sakta hai, aakhri order do logon ko na bike. Address hamesha bhara hota (use my location), design pe asar nahi. 2-3 server, LB, replica; har shehar ka alag, 10-20 lakh order bhi AWS RDS sambhal leta. 15 km ka gola geohash / hexagon se. Feed ke liye fan-out (Twitter jaisa) bhi soch sakte, par restaurant itne nahi, isliye Redis. Menu Redis me TTL (3-4 min), chhotu dobara laaye; menu badle to DB se event, Redis update. Aakhri burger: atomic transaction, check aur ghatao ek saath. Auto-accept POS integration se hota hai (net pe dekha), wo Zomato aur vendor ke andar ka, design me nahi.
+
+*Technical me:* "fan-out vs Redis" = push model vs pull + cache · "TTL + chhotu dobara le" = cache-aside with TTL · "DB se event, Redis update" = write pe cache invalidation.
+
 ### DB kaunsa: SQL ya NoSQL?
 Data kya: restaurant, menu, order, order ka status, aaj ka stock. Kaam kya: order aur stock ki ginti sahi rahe (do log
 aakhri burger na le jaayein), aur scale itna bada nahi. Isliye SQL (Postgres, AWS RDS): transaction, aur RDS replica /
@@ -275,6 +297,36 @@ flowchart TB
     X --> C
     C --> A
     C --> R
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+## 8. Aakhri burger bik gaya, Redis ka menu abhi "available" (event se parchi phaad)
+
+9:00:10 pe aakhri burger bika, Redis ka menu TTL 9:03 tak "available" dikhata. Ginti Redis me nahi rakhte, sirf menu;
+ginti DB me (bahut saare restaurant ki ginti Redis me = Redis bahut bada). DB me out of stock hote hi event jaata,
+chhotu Redis ko bolta parchi phaad de: menu hatao ya out of stock karo. Peeche ek job Redis aur DB ka milaan karti;
+TTL khatam pe naya menu aa hi jaata. Ravi ne beech me dabaya bhi to DB ka atomic check (kadam 7) order rok deta.
+
+**Asli naam:** cache invalidation (event se), source of truth DB, reconciliation job.
+
+```mermaid
+flowchart TB
+    X["9:00:10 aakhri burger bika<br/>Redis menu: available (9:03 tak)"]:::bad
+    subgraph G["PARCHI PHAAD"]
+        D[("DB: ginti 0<br/>out of stock")]:::card
+        E(["Event -> chhotu:<br/>Redis menu hatao / out of stock"]):::pill
+        J(["Peeche job:<br/>Redis aur DB ka milaan"]):::pill
+    end
+    T(["Ravi ko out of stock dikhe"]):::good
+    X --> D
+    D --> E
+    E --> T
+    J --> T
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
