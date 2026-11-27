@@ -72,7 +72,8 @@
 > 2 ke neeche -1: arm lo to 1, chhodo to 2 -> negative arm LENA nuksaan.
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ 3 DFS TRAVERSALS (LC-144 / 94 / 145)
 
@@ -121,7 +122,8 @@ void postorder(TreeNode *root, vector<int> &res) {   // POST = left -> right -> 
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: recurse + COMBINE (answer = return-value; jo combine karo wahi return) ──
 
@@ -156,7 +158,8 @@ int maxDepth(TreeNode *root) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ INVERT TREE (LC-226)  = recurse + swap(left, right)
 
@@ -192,7 +195,8 @@ TreeNode *invertTree(TreeNode *root) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ SAME TREE (LC-100)  = dono tree saath recurse, COMBINE = &&
 
@@ -232,7 +236,8 @@ bool isSameTree(TreeNode *p, TreeNode *q) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ SYMMETRIC TREE (LC-101)  = SAME-TREE + CROSS
 
@@ -277,7 +282,8 @@ bool isSymmetric(TreeNode *root) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: return-ONE + track-ANOTHER (parent ko HEIGHT return, asli ANSWER global / ref me; post-order) ──
 
@@ -323,7 +329,8 @@ int diameterOfBinaryTree(TreeNode *root) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ MAX PATH SUM (LC-124, Hard)  = DIAMETER ka SUM-version
 
@@ -391,7 +398,8 @@ int maxPathSum(TreeNode *root) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ BUILD TREE from PREORDER + INORDER (LC-105)  = preorder se ROOT, inorder me todo (map), recurse
 
@@ -464,7 +472,8 @@ TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ BALANCED TREE (LC-110)  = MAX-DEPTH + (-1 SENTINEL)
 
@@ -516,7 +525,8 @@ bool isBalanced(TreeNode *root) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: search + BUBBLE-UP (jise dhundh rahe wo mila -> UPAR return; DONO taraf se mila = answer) ──
 
@@ -567,7 +577,8 @@ TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {   // 
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: carry-value DOWN + root-to-LEAF (target ghatao, LEAF pe check, combine = OR) ──
 
@@ -606,7 +617,8 @@ bool hasPathSum(TreeNode *root, int targetSum) {   // root se LEAF tak sum == ta
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: BFS / LEVEL-ORDER (QUEUE FIFO, recursion nahi; while ka ek chakkar = ek LEVEL) ──
 
@@ -659,7 +671,8 @@ vector<vector<int>> levelOrder(TreeNode *root) {   // har level ki alag list. FI
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ RIGHT SIDE VIEW (LC-199)  = LEVEL-ORDER + 1 line
 
@@ -709,7 +722,8 @@ vector<int> rightSideView(TreeNode *root) { // daaye se har level ka SIRF right-
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ ZIGZAG LEVEL ORDER (LC-103)  = LEVEL-ORDER + reverse
 
@@ -763,7 +777,8 @@ vector<vector<int>> zigzagLevelOrder(TreeNode *root) {   // 0: L->R · 1: R->L �
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ MINIMUM DEPTH (LC-111)   = LEVEL-ORDER + EARLY-STOP
 
@@ -816,7 +831,8 @@ int minDepth(TreeNode *root) {              // root se sabse PAAS wale LEAF tak
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: BST (left < node < right; INORDER = SORTED -> "sorted / kth chahiye? -> INORDER") ──
 
@@ -862,7 +878,8 @@ int kthSmallest(TreeNode *root, int k) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ VALIDATE BST (LC-98)  = RANGE carry-DOWN
 

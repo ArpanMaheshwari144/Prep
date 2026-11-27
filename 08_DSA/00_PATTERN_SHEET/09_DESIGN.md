@@ -12,7 +12,9 @@
 > [!WARNING]
 > **★ DHYAAN:** LRU me map se bhi hatana mat bhoolna
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ DESIGN HASHMAP (LLD)
 
@@ -141,7 +143,8 @@ public:
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ DESIGN HASHSET (LLD)  = HASHMAP ka EXACT code, bas VALUE nikaal do
 
@@ -235,7 +238,9 @@ public:
 };
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ LRU CACHE (LC146) — COMBO: hashmap + doubly-linked-list
 

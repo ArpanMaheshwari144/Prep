@@ -15,7 +15,9 @@
 >
 > ★ DHYAAN: gas station: tank minus hua -> agla station naya start
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ ASSIGN COOKIES (LC-455)  = greedy intro (sort + 2-pointer)
 
@@ -57,7 +59,9 @@ int findContentChildren(vector<int> &g, vector<int> &s) {
 }
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ JUMP GAME (LC-55)  = greedy REACHABILITY (farthest-reach track)
 
@@ -97,7 +101,9 @@ bool canJump(vector<int> &nums) {  // nums[i] = us index se max kitna kood sakte
 //   rang)
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ NON-OVERLAPPING INTERVALS (LC-435)  = greedy interval-scheduling (keep SMALLER-END) · MERGE INTERVALS ka bhai (sort + overlap check)
 
@@ -151,7 +157,9 @@ int eraseOverlapIntervals(vector<vector<int>> intervals) {   // MIN kitne HATAO 
 //   (alt: END pe sort -> pehla wala hamesha chhota-end -> ye if gayab)
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ GAS STATION (LC-134)  = greedy running-tank + reset-start
 
@@ -199,7 +207,9 @@ int canCompleteCircuit(vector<int> &gas, vector<int> &cost) {
 // cookies / jump / interval se FARAK: sort NAHI. circular + 2 accumulator (possible? + start kahan)
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ TASK SCHEDULER (LC-621)  = greedy IDLE-SLOTS (most-frequent frame)
 
@@ -275,7 +285,7 @@ int leastInterval(vector<char> &tasks, int n) {
 
 
 
----
+████████████████████████████████████████████████
 
 ### ▸ PARTITION LABELS (LC 763)
 

@@ -66,6 +66,10 @@ Dono raaste ek hi jagah pahunchte hain.)
 > [!IMPORTANT]
 > **KAB:** top K / k-th sabse bada ya chhota · baar-baar min / max aur data badal raha · merge K list · median stream
 
+
+
+████████████████████████████████████████████████
+
 ### ▸ LAST STONE WEIGHT (LC-1046, Easy)  = MAX-HEAP smash
 
 **SAWAAL** stones[] me pattharon ka wazan diya hai. Har baari do sabse bhaari patthar takraate hain: barabar hon to dono khatam, warna bhaari wala farak jitna bachta hai. Aakhir me jo patthar bache uska wazan lautao, koi na bache to 0.
@@ -112,7 +116,8 @@ int lastStoneWeight(vector<int> &stones) {  // har turn 2 SABSE BHAARI smash, di
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ KTH LARGEST ELEMENT (LC-215, Medium)  = MIN-HEAP of size k
 
@@ -154,7 +159,8 @@ int findKthLargest(vector<int> &nums, int k) {   // top-K ka core
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ K CLOSEST POINTS TO ORIGIN (LC-973, Medium)  = MAX-HEAP of size k
 
@@ -205,7 +211,8 @@ vector<vector<int>> kClosest(vector<vector<int>> &points, int k) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ TOP K FREQUENT ELEMENTS (LC-347, Medium)  = MIN-HEAP size k on FREQUENCY
 
@@ -260,7 +267,8 @@ vector<int> topKFrequent(vector<int> &nums, int k) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: MIN-heap of current candidates (har baar sabse chhota nikaalo, uska agla daalo) ──
 
@@ -337,7 +345,8 @@ ListNode *mergeKLists(vector<ListNode *> &lists) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ SORT NEARLY-SORTED (k-sorted) ARRAY  = MIN-HEAP size k+1 (sliding buffer)
 
@@ -402,7 +411,8 @@ vector<int> sortKSorted(vector<int> &arr, int k) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: TWO-HEAPS (do team, dono top = beech ke border) ──
 
@@ -505,7 +515,8 @@ public:
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: MAX-heap + greedy (har round sabse zyada wala lagao) ──
 
@@ -600,7 +611,8 @@ string reorganizeString(string s) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: MIN-heap + vis[] (lazy delete) ──
 

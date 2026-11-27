@@ -11,7 +11,9 @@
 
 **★ MILTE-JULTE** (container / trapping / histogram): 00_SHURU me NAAM-SE-CONFUSE A dekh.
 
----
+
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: slow/fast OVERWRITE (fast scan, rakhne wala slow pe; teeno same skeleton) ──
 
@@ -44,7 +46,8 @@ void moveZeroes(vector<int> &nums) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ REMOVE DUP (SORTED)  = MOVE ZEROES ka bhai (yahan slow++ PEHLE, overwrite BAAD)
 
@@ -76,7 +79,8 @@ int removeDuplicates(vector<int> &nums) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ REMOVE ELEMENT  = MOVE ZEROES ka bhai (write PEHLE, slow++ BAAD)
 
@@ -107,6 +111,9 @@ int removeElement(vector<int> &nums, int val) {
 ```
 
 
+
+████████████████████████████████████████████████
+
 #### ── FAMILY: left/right COMPARE-CONVERGE (dono chhor se andar, har step compare) ──
 
 ### ▸ VALID PALINDROME (SIMPLE)
@@ -135,7 +142,8 @@ bool isPalindrome(string s) {               // sirf lowercase letters wala aasan
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ VALID PALINDROME (FULL, LC-125)  = SIMPLE wala + sirf alnum, case ignore
 
@@ -169,7 +177,8 @@ bool isPalindrome(string s) {               // mixed char: sirf alnum ginna, cas
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ VALID PALINDROME II  = SIMPLE wala + mismatch pe EK delete (left YA right)
 
@@ -207,7 +216,8 @@ bool validPalindrome(string s) {            // palindrome YA ek char delete kark
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ REVERSE VOWELS
 
@@ -246,6 +256,9 @@ string reverseVowels(string s) {            // sirf vowels aapas me ulte, baaki 
 }
 ```
 
+
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: left/right by-VALUE decision (sum / area ki value dekh ke kaunsa pointer chale) ──
 
@@ -298,7 +311,8 @@ int maxArea(vector<int> &height) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ TWO SUM II (SORTED)  = left/right by-VALUE (unsorted two sum = hashmap)
 
@@ -330,7 +344,8 @@ vector<int> twoSum(vector<int> &nums, int target) {   // UNSORTED two sum = hash
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ SUM OF SQUARE NUMBERS  = TWO SUM II jaisa (2 number ki jodi), low=0 high=sqrt(c)
 
@@ -362,6 +377,9 @@ bool judgeSquareSum(long long c) {          // a² + b² == c ? (LC 633) 2 numbe
 }
 ```
 
+
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: fill-from-END (result peeche se bharo, bada element end me) ──
 
@@ -401,7 +419,8 @@ vector<int> sortedSquares(vector<int> &nums) {   // sabse BADA square dono chhor
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ MERGE SORTED ARRAY  = SQUARES jaisa fill-from-END
 
@@ -455,6 +474,9 @@ void merge(vector<int> &nums1, int m, vector<int> &nums2, int n) {   // nums1 ke
 ```
 
 
+
+████████████████████████████████████████████████
+
 #### ── FAMILY: PARTITION / swap-in-place (category me baanto, galat jagah pe swap) ──
 
 ### ▸ SORT COLORS (0,1,2)
@@ -493,7 +515,8 @@ void sortColors(vector<int> &nums) {        // Dutch flag, 3 pointer
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ SORT ARRAY BY PARITY  = SORT COLORS ka 2-category wala (left/right swap)
 
@@ -526,6 +549,10 @@ vector<int> sortArrayByParity(vector<int> nums) {   // even pehle, odd baad (aap
 
 
 ── (STANDALONE — apni alag trick) ──
+
+
+
+████████████████████████████████████████████████
 
 ### ▸ 3SUM (LC-15)  = SORT + ek fix + baaki 2-pointer (+ duplicate skip)
 
@@ -573,7 +600,8 @@ vector<vector<int>> threeSum(vector<int> &nums) {   // saare UNIQUE triplet jink
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ IS SUBSEQUENCE
 
@@ -607,7 +635,8 @@ bool isSubsequence(string s, string t) {    // s, t me order se hai? beech ke ch
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ TRAPPING RAIN WATER (LC-42)
 
@@ -702,7 +731,8 @@ rightMax 0 hi raha: right wali deewar 5 hamesha badi thi, else wala hissa ek baa
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ PALINDROMIC SUBSTRINGS (LC-647)  = EXPAND AROUND CENTER
 

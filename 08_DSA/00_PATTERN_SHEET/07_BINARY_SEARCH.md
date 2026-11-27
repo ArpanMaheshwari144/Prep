@@ -38,7 +38,9 @@
 
 **KAB:** SORTED + ek jagah / threshold dhoondhna · "MIN / MAX value jisme condition sach" (answer pe BS)
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ BINARY SEARCH (BASIC)
 
@@ -69,7 +71,8 @@ int search(vector<int> &nums, int target) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ SEARCH INSERT POSITION  = BASIC BS, na mile to low (daalne ki jagah)
 
@@ -102,7 +105,8 @@ int searchInsert(vector<int> &nums, int target) {   // [1,3,5,6], 2 -> 1 (1 aur 
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ FIRST & LAST POSITION (LC-34)  = BASIC BS x2, mila to ruko mat (ek taraf aur chalo)
 
@@ -165,6 +169,9 @@ vector<int> searchRange(vector<int> &nums, int target) {
 ```
 
 
+
+████████████████████████████████████████████████
+
 #### ── FAMILY: ROTATED (ek comparison se kaunsa half sorted / pivot kidhar, wahi half rakho) ──
 
 ### ▸ SEARCH IN ROTATED (LC-33)  = rotated sorted array me target, O(log n)
@@ -219,7 +226,8 @@ int search(vector<int> &nums, int target) { // [4,5,6,7,0,1,2] me target ka inde
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ FIND MIN IN ROTATED  = ROTATED ka KHUD-ANSWER wala (mid vs HIGH, high = mid, low < high)
 
@@ -292,7 +300,9 @@ ISI FAMILY KE AUR (kahani alag, shell wahi):
                                "max" maanga hai -> HAAN pe BADA try (ans = mid, low = mid + 1)  range 1 .. max - min
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ KOKO BANANAS (LC-875) -- min eating-speed
 
@@ -335,7 +345,8 @@ int minEatingSpeed(vector<int> &piles, int h) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ SHIP WITHIN D DAYS (LC-1011) -- min capacity  = KOKO wala shell, sirf range + solve alag
 
@@ -383,7 +394,8 @@ int shipWithinDays(vector<int> &weights, int days) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ SPLIT ARRAY LARGEST SUM (LC-410) -- min largest part-sum  = SHIP WITHIN D DAYS hi (D din = k hisse)
 
@@ -439,6 +451,9 @@ int splitArray(vector<int> &nums, int k) {
 ```
 
 
+
+████████████████████████████████████████████████
+
 #### ── FAMILY: HALF-DISCARD (array pura sorted nahi, phir bhi ek comparison se aadha safe discard) ──
 
 ### ▸ FIND PEAK ELEMENT (LC-162)
@@ -486,7 +501,8 @@ int findPeakElement(vector<int> &nums) {    // peak = dono padosi se bada; edges
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ SINGLE ELEMENT (SORTED, LC-540)  = INDEX-PARITY binary search
 
@@ -545,6 +561,9 @@ int singleNonDuplicate(vector<int> &nums) {
 ```
 
 
+
+████████████████████████████████████████████████
+
 #### ── FAMILY: 2D-index-map (2D matrix = 1D sorted array, index -> (row, col)) ──
 
 ### ▸ SEARCH 2D MATRIX  = BASIC BS, poori matrix ek 1D sorted array (index -> row, col)
@@ -587,6 +606,9 @@ bool searchMatrix(vector<vector<int>> &matrix, int target) {
 }
 ```
 
+
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: BS-on-PARTITION / CUT (value pe nahi, 2 sorted array me CUT-position pe BS) ──
 

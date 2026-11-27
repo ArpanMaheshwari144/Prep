@@ -24,7 +24,9 @@
 > [!WARNING]
 > **★ DHYAAN:** 1-to-1 mapping (isomorphic / word pattern) -> DO map, ek kaafi nahi
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ ISOMORPHIC STRINGS
 
@@ -67,7 +69,8 @@ bool isIsomorphic(string s, string t) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ WORD PATTERN  = ISOMORPHIC ka bhai (char <-> WORD)
 
@@ -113,6 +116,9 @@ bool wordPattern(string pattern, string s) {   // = ISOMORPHIC, bas char <-> WOR
 ── (STANDALONE — apni alag trick) ──
 
 
+
+████████████████████████████████████████████████
+
 ### ▸ TWO SUM
 
 **SAWAAL** Ek array aur ek target diya hai. Wo do index lautao jin pe rakhe numbers ka jod target ke barabar ho. Jawab hamesha ek hi hai, aur ek hi number do baar nahi le sakte.
@@ -140,7 +146,8 @@ vector<int> twoSum(vector<int> &nums, int target) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ VALID ANAGRAM
 
@@ -174,7 +181,8 @@ bool isAnagram(string s, string t) {        // har char ka count barabar? (count
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ GROUP ANAGRAMS
 
@@ -211,7 +219,8 @@ vector<vector<string>> groupAnagrams(vector<string> &strs) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ SUBARRAY SUM = K  = prefix-sum + hashmap {prefixSum -> count}
 
@@ -262,7 +271,8 @@ int subarraySum(vector<int> &nums, int k) { // prefix-sum + hashmap {prefixSum -
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ LONGEST SUBARRAY SUM = K  (03/15)  = SUBARRAY SUM = K ka bhai, GINTI ki jagah LAMBAI
 
@@ -323,7 +333,8 @@ int longestSubarraySumK(vector<int> &nums, int k) { // prefix-sum + hashmap {pre
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ COUNT DIVISIBLE PAIRS  = two-sum/hashmap-complement, par KEY = REMAINDER
 
@@ -382,7 +393,8 @@ long long countDivisiblePairs(vector<int> &nums, int k) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ LONGEST CONSECUTIVE SEQ (LC-128)  = SET + har chain sirf START se gino
 
@@ -432,7 +444,8 @@ int longestConsecutive(vector<int> &nums) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ MAJORITY ELEMENT (LC-169, >n/2)  = BOYER-MOORE VOTING (do alag cancel)
 
@@ -470,7 +483,8 @@ int majorityElement(vector<int> &nums) {    // BOYER-MOORE VOTING, O(1) space
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ FIND DISAPPEARED NUMBERS (LC-448)  = ARRAY-KHUD-hashmap · index-negation, O(1) space
 
@@ -533,7 +547,9 @@ vector<int> findDisappearedNumbers(vector<int> &nums) {
 //   (array modify NA kar sakte -> Floyd cycle)
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: PER-KEY STREAK (log line todo -> har KEY ki apni chalti ginti; Wise OA 27-Oct) ──
 
@@ -586,7 +602,9 @@ int countAlerts(vector<string> &logs) {
 // SAME shakal: "user ke lagaataar 3 galat password -> lock", "card ke lagaataar fail" -> key = user / card
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ CSV MARKS TOTAL  (03/13)
 
@@ -618,7 +636,9 @@ map<string, int> totalMarks(vector<string> &lines) {
 }
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ SHIFT MINUTES  (03/14, HH:MM)
 

@@ -14,7 +14,9 @@
 
 **★ MILTE-JULTE (max sum vs count sum == K):** 00_SHURU me NAAM-SE-CONFUSE C dekh.
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ BUY/SELL STOCK (LC-121)  = running MIN cache (aaj ka daam - ab tak ka sasta)
 
@@ -53,7 +55,8 @@ int maxProfit(vector<int> &prices) {        // aaj becho = aaj ka daam MINUS ab 
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ MAX SUBARRAY SUM (LC-53)  = KADANE ka BASE (running sum, negative = bojh -> 0)
 
@@ -84,7 +87,8 @@ int maxSubArray(vector<int> &nums) {        // running sum NEGATIVE = bojh -> su
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: flip ho to MIN bhi + 3 candidate + FREEZE (temp) · 53 sum · 152 product · 1749 abs ──
 
@@ -126,7 +130,8 @@ int maxProduct(vector<int> &nums) {         // neg*neg = BADA -> MIN bhi track (
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ MAX ABSOLUTE SUM (LC-1749)  = MAX PRODUCT ka skeleton, * -> +, ans me ABS
 
@@ -172,6 +177,9 @@ int maxAbsoluteSum(vector<int> &nums) {     // = MAX PRODUCT skeleton, 2 tweak: 
 
 ── (STANDALONE — apni alag trick) ──
 
+
+
+████████████████████████████████████████████████
 
 ### ▸ MAX SUM CIRCULAR SUBARRAY (LC-918)  = TRICK: total − MIN-subarray
 
@@ -235,7 +243,8 @@ int maxSubarraySumCircular(vector<int> &nums) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)  = KADANE (per index) + PREFIX / SUFFIX max + WALL
 

@@ -13,6 +13,10 @@
 > [!IMPORTANT]
 > **KAB:** har number 2 baar, ek akela · extra memory nahi
 
+
+
+████████████████████████████████████████████████
+
 ### ▸ SINGLE NUMBER (LC-136)
 
 **SAWAAL** Array me har number do baar aata hai, sirf ek number ek baar. Wo number lautao. O(n) time aur O(1) extra jagah me.

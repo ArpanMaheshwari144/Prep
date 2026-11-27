@@ -34,7 +34,9 @@
 node/list dikhta hai, par asli kaam MIN-HEAP of current heads ka hai
 (jodne ka engine — dummy + tail — wahi hai jo merge-TWO me hai)
 
----
+
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: FAST/SLOW (slow 1 kadam, fast 2 kadam ya gap; middle / cycle / palindrome / nth-from-end) ──
 
@@ -65,7 +67,8 @@ Node *middleNode(Node *head) {              // fast end pe -> slow MIDDLE pe
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ DETECT CYCLE  = MIDDLE wala fast/slow, milte hi cycle (Floyd)
 
@@ -103,7 +106,8 @@ bool hasCycle(Node *head) {                 // Floyd: cycle ho to tez-dheema MIL
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ FIND DUPLICATE NUMBER (LC-287)   [= DETECT CYCLE ka ARRAY-application]
 
@@ -144,7 +148,8 @@ int findDuplicate(vector<int> &nums) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ LINKED LIST CYCLE II (LC-142)   [= DETECT CYCLE + phase-2 ENTRY]
 
@@ -196,7 +201,8 @@ ListNode *detectCycle(ListNode *head) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ PALINDROME LL (LC-234)  = MIDDLE + REVERSE (2nd half) + compare
 
@@ -232,7 +238,8 @@ bool isPalindrome(Node *head) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ REMOVE NTH FROM END  = FAST/SLOW ka GAP wala (fast n aage, dummy nahi)
 
@@ -266,7 +273,8 @@ Node *removeNthFromEnd(Node *head, int n) { // FAST/SLOW GAP: pehle fast n kadam
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ REMOVE ELEMENTS (delete by val, LC-203)
 
@@ -302,7 +310,8 @@ Node *removeElements(Node *head, int val) { // val wale SAARE node hatao
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: DUMMY node (nakli head + tail; naye node jodte jao; ans = dummy->next; head ka case apne aap) ──
 
@@ -351,7 +360,8 @@ Node *mergeTwoLists(Node *a, Node *b) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ ADD TWO NUMBERS  = MERGE TWO jaisa DUMMY + tail, bas carry
 
@@ -401,7 +411,8 @@ Node *addTwoNumbers(Node *a, Node *b) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ SWAP NODES IN PAIRS  = DUMMY + 3-player rewire (order + temp-save)
 
@@ -439,7 +450,8 @@ Node *swapPairs(Node *head) {               // har do adjacent NODE ki jodi swap
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: REVERSE (3-pointer: prev / curr / next se link ulta; reverse khud + palindrome ka 2nd half) ──
 
@@ -473,7 +485,8 @@ Node *reverseList(Node *head) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ REVERSE NODES IN K-GROUP (LC-25)  = REVERSE-LL (3-ptr) + RECURSION
 
@@ -533,7 +546,8 @@ Node *reverseKGroup(Node *head, int k) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: HASHMAP-AS-GLUE (map<old*, new*> = purane node ko naye se jodne wala gond; LRU me bhi) ──
 

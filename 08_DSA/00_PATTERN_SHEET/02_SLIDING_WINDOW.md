@@ -63,7 +63,8 @@
 ## LAMBA wale (kharab hote hi chhota karo, while ke BAAD ans = max)
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ LC-3 LONGEST SUBSTRING NO-REPEAT  = variable window + freq-map
 
@@ -99,7 +100,8 @@ int lengthOfLongestSubstring(string s) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ LC-424 CHAR REPLACEMENT (LONGEST)  = variable window + freq-map (k badal sakte)
 **SAWAAL**  `"AABABBA", k=1 -> 4`. Max k char badal ke sabse lambi window jisme sab same.
@@ -137,7 +139,8 @@ int characterReplacement(string s, int k) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ LC-1004 MAX CONSECUTIVE ONES III  = LC-3 ka bhai: variable window + zeros-count (k flips)
 **SAWAAL**  `[1,1,1,0,0,0,1,1,1,1,0], k=2 -> 6`. Max k zero ko 1 bana ke sabse lambi 1 ki line.
@@ -177,7 +180,8 @@ int longestOnes(vector<int> &nums, int k) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ FRUIT INTO BASKETS  = longest subarray with AT MOST 2 DISTINCT
 **SAWAAL**  `[1,2,3,2,2] -> 4`. 2 basket, har basket me ek type. Lagaatar pedon ki sabse lambi line.
@@ -214,7 +218,8 @@ int totalFruit(vector<int> &fruits) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ LONGEST AT-MOST-K DISTINCT  = FRUIT ka GENERAL version (2 ki jagah k)
 **SAWAAL**  `"eceba", k=2 -> 3`. Sabse lambi substring jisme zyada se zyada k alag char.
@@ -250,7 +255,8 @@ int longestKDistinct(string s, int k) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ LC-1208 EQUAL SUBSTRING WITHIN BUDGET  = longest-subarray-sum <= k (string ke bhes me)
 **SAWAAL**  `s="abcd", t="bcdf", maxCost=3 -> 3`. s ke char ko t me badalne ki cost `|s[i]-t[i]|`. Kul cost budget ke andar, sabse lambi window.
@@ -292,6 +298,10 @@ int equalSubstring(string s, string t, int maxCost) {
 
 
 ## CHHOTA wala (theek rahe tab tak chhota karo, ans while ke ANDAR = min)
+
+
+
+████████████████████████████████████████████████
 
 ### ▸ LC-209 MIN SUBARRAY LEN (>=TARGET)  = SHORTEST window (longest se ULTA)
 **SAWAAL**  `target=7, [2,3,1,2,4,3] -> 2` ([4,3]). Positive numbers, sum >= target wala sabse chhota subarray.
@@ -338,6 +348,10 @@ int minSubArrayLen(int target, vector<int> &nums) {
 
 ## FIXED size k (while ki jagah IF)
 
+
+
+████████████████████████████████████████████████
+
 ### ▸ MAX SUM OF K (FIXED)  = fixed window size-k + running sum
 **SAWAAL**  `[2,1,5,1,3,2], k=3 -> 9`. Har size-k window ka sum, sabse bada.
 
@@ -367,7 +381,8 @@ int maxSumK(vector<int> &nums, int k) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ LC-1423 MAX POINTS FROM CARDS  = MAX-SUM-SIZE-K (01) + COMPLEMENT-twist
 **SAWAAL**  `[1,2,3,4,5,6,1], k=3 -> 12` (peeche se 5+6+1). Dono kinaron se kul k card lo, sum sabse bada.
@@ -467,7 +482,7 @@ int maxScore(vector<int> &nums, int k) {
 
 
 
----
+████████████████████████████████████████████████
 
 ### ▸ LC-219 CONTAINS DUPLICATE II  = fixed-window (size k) + HashSet
 **SAWAAL**  `[1,2,3,1], k=3 -> true`. Do barabar number jinka index ka farak <= k.
@@ -511,6 +526,10 @@ bool containsNearbyDuplicate(vector<int> &nums, int k) {
 
 
 ## KITNE (ginti, length nahi)
+
+
+
+████████████████████████████████████████████████
 
 ### ▸ SUBARRAY PRODUCT < K  = variable window + COUNT (running product)
 **SAWAAL**  `[10,5,2,6], k=100 -> 8`. Positive numbers, kitne subarray jinka guna k se kam.
@@ -564,7 +583,8 @@ int numSubarrayProductLessThanK(vector<int> &nums, int k) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ LC-992 SUBARRAYS WITH EXACTLY K DISTINCT  = FRUIT (atMost-k) x2, ghata do  [exactly-K trick]
 **SAWAAL**  `[1,2,1,2,3], k=2 -> 7`. Kitne lagaatar subarray hain jinme theek k alag number hon.
@@ -635,6 +655,10 @@ int subarraysWithKDistinct(vector<int> &nums, int k) {
 
 ## NEED-MAP (t ke saare char chahiye)
 
+
+
+████████████████████████████████████████████████
+
 ### ▸ LC-76 MIN WINDOW SUBSTRING (Hard)  -- need-map + COUNT, answer = MIN-track, loop ke ANDAR
 **SAWAAL**  `s="ADOBECODEBANC", t="ABC" -> "BANC"`. s ki sabse chhoti window jisme t ke saare akshar utni hi baar hon jitni baar t me hain (count ke saath; t="AA" ho to do A chahiye). Na mile to "".
 
@@ -680,7 +704,8 @@ string minWindow(string s, string t) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ LC-1358 SUBSTRINGS WITH ALL THREE (a, b, c)  = LC-76 ka SAME code, answer = COUNT, loop ke BAAD
 **SAWAAL**  `"abcabc" -> 10`. Kitne substring jinme a, b, c teeno.
@@ -731,6 +756,10 @@ int numberOfSubstrings(string s) {
 
 ## ANAGRAM (fixed size = p ki length)
 
+
+
+████████████████████████████████████████████████
+
 ### ▸ LC-438 FIND ALL ANAGRAMS  = FIXED window (p ki length) + do map ki ginti (PARENT)  = LC-76 ka bhai
 **SAWAAL**  `s="cbaebabacd", p="abc" -> [0,6]`. s me p ke saare anagram ki start index.
 
@@ -780,7 +809,8 @@ vector<int> findAnagrams(string s, string p) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ LC-567 PERMUTATION IN STRING  = FIND-ALL-ANAGRAMS ka EXACT same code
 **SAWAAL**  `s1="ab", s2="eidbaooo" -> true`. Kya s2 me s1 ka koi anagram (permutation) lagaatar substring ban ke maujood hai? true ya false.
@@ -818,6 +848,10 @@ bool checkInclusion(string s1, string s2) {
 
 
 ## WINDOW KA MAX (deque)
+
+
+
+████████████████████████████████████████████████
 
 ### ▸ LC-239 SLIDING WINDOW MAXIMUM  = monotonic DEQUE of INDICES (monotonic stack + front-expiry)
 **SAWAAL**  `[1,3,-1,-3,5,3,6,7], k=3 -> [3,3,5,5,6,7]`. Har k size ki window ka sabse bada number lautao.

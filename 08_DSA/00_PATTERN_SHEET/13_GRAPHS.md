@@ -110,7 +110,9 @@ PEHCHAAN EK LINE: shape kuch bhi chalegi -> DFS · seedhi deewar chahiye -> DFS 
 
 #### ── FAMILY: single-source traversal (ek source se ek BFS, target mila? koi OUTER-loop nahi) ──
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
 
@@ -159,6 +161,9 @@ bool validPath(int n, vector<vector<int>> &edges, int source, int destination) {
 }
 ```
 
+
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: COUNT components (outer-loop + FLOOD each; Islands = grid, CC = adj-list, bas neighbour badla) ──
 
@@ -211,7 +216,9 @@ int numIslands(vector<vector<char>> &grid) {
 }
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ CONNECTED COMPONENTS (LC-323)  = ISLANDS par ADJ-LIST graph (grid nahi) + BFS
 
@@ -265,7 +272,9 @@ int countComponents(int n, vector<vector<int>> &edges) {
 }
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ MAX AREA OF ISLAND (LC-695)  = Islands, par MAX AREA (count nahi)
 
@@ -313,6 +322,9 @@ int maxAreaOfIsland(vector<vector<int>> &grid) {
 }
 ```
 
+
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: MULTI-SOURCE / level-BFS (saare sources EK saath queue; sz-snapshot = ek level = ek minute) ──
 
@@ -381,6 +393,9 @@ int orangesRotting(vector<vector<int>> &grid) {   // tree LEVEL-ORDER grid pe; h
 ```
 
 
+
+████████████████████████████████████████████████
+
 #### ── FAMILY: TOPO-SORT / cycle-detect (DIRECTED; prereq + can-finish -> Kahn's = BFS + indegree) ──
 
 ### ▸ COURSE SCHEDULE (LC-207)  = TOPO-SORT (Kahn's), cycle-detect
@@ -435,7 +450,9 @@ bool canFinish(int numCourses, vector<vector<int>> &prerequisites) {
 }                                           //   nahi -> size < n -> false
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ BUILD ORDER — ready me se SABSE CHHOTA pehle  = COURSE SCHEDULE (Kahn's) + queue ki jagah MIN-HEAP
 
@@ -509,6 +526,10 @@ vector<int> buildOrder(int n, vector<vector<int>> &deps) {
 }
 ```
 
+
+
+████████████████████████████████████████████████
+
 #### ── FAMILY: CLONE / deep-copy (BFS + map purana -> naya; map = cycle-rok + clone-dhundo) ──
 
 ### ▸ CLONE GRAPH (LC-133)  = BFS/DFS + map(old->new)
@@ -569,6 +590,9 @@ Node *cloneGraph(Node *node) {
 // DFS: recursion + same map -> map me hai? return; nahi -> clone + map -> har nbr recurse + jodo
 ```
 
+
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: GRAPH-COLOURING / bipartite (2 group me baant sakte? odd-cycle? -> 2-COLOUR BFS) ──
 
@@ -634,6 +658,9 @@ bool isBipartite(vector<vector<int>> &graph) {
 }
 ```
 
+
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: WEIGHTED shortest-path (edges pe weight -> Dijkstra; kam edges != kam weight, BFS kaafi nahi) ──
 
@@ -742,6 +769,9 @@ vector<int> dijkstra(int n, vector<vector<int>> &edges, int src) {
 ```
 
 
+
+████████████████████████████████████████████████
+
 #### ── FAMILY: DSU / Union-Find (groups / same-set + edges ek-ek MERGE; BFS = pura traverse, DSU = incremental) ──
 
 ### ▸ DSU (Union-Find)  = parent[] + find + unite
@@ -809,7 +839,9 @@ int countComponents(int n, vector<vector<int>> &edges) {
 }
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ WORD LADDER (LC-127)  = BFS shortest-path (unweighted)
 

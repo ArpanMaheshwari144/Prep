@@ -30,6 +30,10 @@
 > [!IMPORTANT]
 > **KAB:** [start, end] diye · merge · meeting · kitne room · insert
 
+
+
+████████████████████████████████████████████████
+
 ### ▸ MERGE INTERVALS (LC-56)  = sort-by-start + merge
 
 **SAWAAL** intervals[] me [start, end] diye hain. Jo intervals aapas me overlap karte hain (ya bas chhoote hain), unhe jod ke ek kar do. Jude hue intervals ki list lautao.
@@ -74,7 +78,8 @@ vector<vector<int>> merge(vector<vector<int>> &intervals) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ MEETING ROOMS (LC-252, Easy)  = Merge ka SAME template, bas action alag
 
@@ -115,7 +120,8 @@ bool canAttendMeetings(vector<vector<int>> &intervals) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ INSERT INTERVAL (LC-57)  = already-SORTED -> 3 phase (no sort)
 
@@ -166,6 +172,9 @@ vector<vector<int>> insert(vector<vector<int>> &intervals, vector<int> &newInter
 }
 ```
 
+
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: SWEEP LINE (events + running count: kitna overlap, sirf "hai?" nahi) ──
 

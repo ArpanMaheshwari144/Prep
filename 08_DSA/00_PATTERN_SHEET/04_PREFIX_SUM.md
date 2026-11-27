@@ -18,7 +18,9 @@
 
 #### ── FAMILY: "assign PEHLE, update BAAD" (pehle current index ka result rakho, PHIR running value badlo) ──
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ PIVOT INDEX
 
@@ -51,7 +53,8 @@ int pivotIndex(vector<int> &nums) {         // index jahan left sum == right sum
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ PRODUCT EXCEPT SELF (LC-238)  = PIVOT jaisa "assign PEHLE, update BAAD", 2 pass
 
@@ -96,6 +99,9 @@ vector<int> productExceptSelf(vector<int> &nums) {
 ── (STANDALONE — apni alag trick) ──
 
 
+
+████████████████████████████████████████████████
+
 ### ▸ HIGHEST ALTITUDE  = running sum + max (simple prefix)
 
 **SAWAAL** Ek cyclist 0 altitude se shuru karta hai. gain[i] batata hai ki agle point tak altitude kitni badhi ya ghati. Raste me sabse unchi altitude kitni thi, wo lautao.
@@ -119,7 +125,9 @@ int largestAltitude(vector<int> &gain) {    // running sum chalao, max track (si
 }
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ SUBARRAY SUMS DIVISIBLE BY K (LC-974)  = SUBARRAY-SUM-K + REMAINDER-key
 
@@ -153,7 +161,8 @@ int subarraysDivByK(vector<int> &nums, int k) {   // count subarrays jinka sum %
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ COUNT SUBARRAYS WITH XOR = K  = SUBARRAY-SUM-K, bas + ki jagah ^
 
@@ -188,7 +197,8 @@ int subarrayXorK(vector<int> &nums, int k) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ COUNT SUBARRAYS WITH MAX == K  = BOUNDARY-index (2 pointer track, NO stack/SW)
 
@@ -263,7 +273,8 @@ long long countSubarraysMaxK(vector<int> &arr, int K) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ DIFFERENCE ARRAY / RANGE UPDATE (LC-1109 Corporate Flight Bookings)  = prefix-sum ka ULTA · SWEEP-LINE (MEETING ROOMS II) ka sagaa bhai
 

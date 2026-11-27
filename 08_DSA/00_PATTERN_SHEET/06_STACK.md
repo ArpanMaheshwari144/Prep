@@ -40,7 +40,9 @@ valid-parentheses CHECK karta hai (stack) · generate BANATA hai (choose/un-choo
 
 **KAB:** brackets match · "har element ka agla / pichhla bada ya chhota" · span · histogram
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ NEXT GREATER ELEMENT  = monotonic stack ka BASE
 
@@ -108,7 +110,9 @@ vector<int> nextGreater(vector<int> &nums) {
 }
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ NEXT SMALLER ELEMENT  = NEXT GREATER, sirf condition ULTI (>)
 
@@ -153,7 +157,9 @@ vector<int> nextSmaller(vector<int> &nums) {   // = next greater, sirf condition
 }
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ PREVIOUS SMALLER ELEMENT  = NEXT SMALLER, sirf LOOP ULTA (right->left)
 
@@ -199,7 +205,9 @@ vector<int> prevSmaller(vector<int> &nums) {   // = next smaller, sirf LOOP ULTA
 // prev smaller + next smaller = histogram ka building block
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ NEXT SMALLER + PREV GREATER  (06/13, naya sawaal 9-Nov, ek file me dono)  = disha + shart, dono ek saath
 
@@ -290,7 +298,9 @@ vector<int> prevGreater(vector<int> &nums)
 // dono 12/12 pehli baar me (9-Nov, histogram ke baad usi din)
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ LARGEST RECTANGLE IN HISTOGRAM (LC-84)  = PREV-SMALLER + NEXT-SMALLER (INDEX store + combine)
 
@@ -522,7 +532,9 @@ int largestRectangleArea(vector<int> &heights) {
 // [2,4]: nS default -1 hota to bar0 width = -1-(-1)-1 = -1 (galat); n=2 se width 2 -> area 4 (sahi)
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ MAXIMAL RECTANGLE (LC-85, 2D)  = LC-84 ka 2D bhai (har row = histogram)
 
@@ -578,7 +590,9 @@ int maximalRectangle(vector<vector<int>> &matrix) {
 }
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ DAILY TEMPERATURES  = NEXT GREATER, ans me VALUE nahi DISTANCE (i - top)
 
@@ -631,7 +645,9 @@ vector<int> dailyTemperatures(vector<int> &temps) {
 }
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ NEXT GREATER ELEM II  = NEXT GREATER + CIRCULAR (2n loop, i % n)
 
@@ -697,7 +713,9 @@ vector<int> nextGreaterElements(vector<int> &nums) {   // CIRCULAR: aakhri ka gr
 // [1,2,1]: aakhri 1 (idx 2) pehle chakkar me bacha -> i=4 -> 4%3=1 -> nums[1]=2 -> ans[2]=2. isliye 2n
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ ONLINE STOCK SPAN (LC-901)  = monotonic-stack + SUM-span DELTA
 
@@ -759,7 +777,9 @@ public:
 
 ── (STANDALONE — apni alag trick) ──
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ VALID PARENTHESES
 
@@ -818,7 +838,9 @@ bool isValid(string s) {
 }
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ MIN STACK
 
@@ -871,7 +893,9 @@ public:
 // push 5,3,7 -> min 3 · pop 7 -> 3 · pop 3 -> 5 WAPAS (pair me neeche wala min apne aap sahi)
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ MIN ADD MAKE VALID  = VALID PARENTHESES ka counter wala (stack nahi)
 
@@ -907,7 +931,9 @@ int minAddToMakeValid(string s) {           // COUNTER, stack nahi (sirf '(' ')'
 }
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ QUEUE USING STACKS (LC 232)  — Walmart R2 me aaya ("fully working code")
 
@@ -967,7 +993,8 @@ public:
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ EVALUATE REVERSE POLISH NOTATION (LC 150)
 
@@ -1036,7 +1063,8 @@ int evalRPN(vector<string> &tokens) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ CAR FLEET (LC 853)  = sawaal greedy jaisa (sort + waqt), stack bas fleet ginne ko
 

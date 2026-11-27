@@ -19,6 +19,10 @@
 
 ── (STANDALONE — har ek apni index-navigation) ──
 
+
+
+████████████████████████████████████████████████
+
 ### ▸ SET MATRIX ZEROES  = 2 marker array (zeroRow / zeroCol), 2 pass
 
 **SAWAAL** m x n matrix di hai. Jis cell me 0 hai, uski poori row aur poora column 0 kar do. Isi matrix me badlaav karna hai (in-place).
@@ -52,7 +56,9 @@ void setZeroes(vector<vector<int>> &matrix) {   // in-place, 2 marker array, O(m
 }
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ SPIRAL MATRIX (LC-54)  = 4 boundary andar simat-te (clockwise)
 
@@ -128,7 +134,8 @@ vector<int> spiralOrder(vector<vector<int>> &matrix) {
 ```
 
 
----
+
+████████████████████████████████████████████████
 
 ### ▸ TRANSPOSE  = ans[i][j] = matrix[j][i], naya col x row
 
@@ -153,7 +160,9 @@ vector<vector<int>> transpose(vector<vector<int>> &matrix) {
 }
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ COUNT SERVERS THAT COMMUNICATE (LC-1267, JP)  = SET MATRIX ZEROES ka cousin (row/col COUNT 2-pass)
 

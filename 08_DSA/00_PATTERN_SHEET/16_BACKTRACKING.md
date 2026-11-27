@@ -54,7 +54,9 @@
 > [!WARNING]
 > ★ DHYAAN: grid: visit mark -> explore -> UNMARK
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ SUBSETS (LC-78)  = har element pe 2 choice (INCLUDE / EXCLUDE)
 
@@ -122,7 +124,9 @@ void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &
 //   pe branch
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ PERMUTATIONS (LC-46)  = used[] + FULL-LENGTH base (har position pe koi bhi bacha)
 
@@ -170,7 +174,9 @@ void solve(vector<int> &nums, vector<int> &temp, vector<bool> &used, vector<vect
 // SUBSETS = 'start' (sirf AAGE, [1,2]==[2,1] repeat nahi) · PERMUTATION = used[] + loop 0 se, start NAHI
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ COMBINATIONS (LC-77)  = SUBSETS ka start-loop, bas base size==k
 
@@ -210,7 +216,9 @@ void solve(int n, int k, vector<vector<int>> &ans, int index, vector<int> &temp)
 // SUBSETS = start-aage, har node · COMBINATIONS = start-aage, size==k · PERM = used[] + loop 0, size==n
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ COMBINATION SUM (LC-39)  = REUSE allowed + TARGET-base
 
@@ -269,6 +277,9 @@ void solve2(vector<int> &candidates, int target, vector<vector<int>> &ans, int i
 // caller: solve(nums, ans, 0, temp, target)  ya  solve2(candidates, target, ans, 0, temp)
 ```
 
+
+
+████████████████████████████████████████████████
 
 #### ── FAMILY: GRID PATH (element choose / skip nahi, grid pe raasta: mark -> recurse -> un-mark) ──
 
@@ -350,6 +361,9 @@ bool exist(vector<vector<char>> &board, string word) {
 ```
 
 
+
+████████████████████████████████████████████████
+
 #### ── FAMILY: CONSTRAINT / LEVEL choices (har step pe choice, rule ya level se) ──
 
 ### ▸ GENERATE PARENTHESES (LC-22)  = CONSTRAINT-guided (open / close count)
@@ -389,7 +403,9 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
 // caller: solve(0, 0, "", ans, n). n=3 -> 5, n=4 -> 14 (kam aaye = koi branch kat rahi)
 ```
 
----
+
+
+████████████████████████████████████████████████
 
 ### ▸ LETTER COMBINATIONS OF A PHONE NUMBER (LC-17)  = FOR-LOOP backtracking, har digit pe uske letters (index == n pe record)
 
