@@ -119,6 +119,11 @@ PEHCHAAN EK LINE: shape kuch bhi chalegi -> DFS · seedhi deewar chahiye -> DFS 
 n node (0 se n-1), bina disha wale (undirected) edges, ek source aur ek destination diye hain. Kya source se destination tak koi rasta hai? true ya false lautao.
   e.g. n=6, edges=[[0,1],[0,2],[3,5],[5,4],[4,3]], src=0, dst=5 -> false
   kyun: 0 ke saath sirf 1,2 jude; 5 alag group {3,4,5} me, beech me koi edge nahi
+
+  0 --- 1        3 --- 5
+  |               \   /
+  2                 4
+  src 0 ka group {0,1,2}, dst 5 ka group {3,4,5}; beech me koi edge nahi -> false
 ```
 
 > [!IMPORTANT]
@@ -167,6 +172,11 @@ bool validPath(int n, vector<vector<int>> &edges, int source, int destination) {
 Ek grid di hai jisme '1' = zameen aur '0' = paani. Upar, neeche, daayein, baayein (4 disha) se jude '1' milke ek island bante hain. Kitne island hain, wo ginti lautao.
   e.g. [[1,1,0],[1,0,0],[0,0,1]] -> 2
   kyun: (0,0),(0,1),(1,0) ek group; (2,2) akela, uske 4 padosi paani; to 2
+
+  1 1 0        A A .
+  1 0 0   ->   A . .
+  0 0 1        . . B
+  A aur B do alag tukde (4 disha se jude nahi) -> 2
 ```
 
 > [!IMPORTANT]
@@ -213,6 +223,9 @@ int numIslands(vector<vector<char>> &grid) {
 n node (0 se n-1) aur bina disha wale edges diye hain. Graph me kitne alag-alag group (connected components) hain, wo ginti lautao.
   e.g. n=5, edges=[[0,1],[1,2],[3,4]] -> 2
   kyun: {0,1,2} ek group, {3,4} doosra; dono ke beech koi edge nahi
+
+  0 --- 1 --- 2        3 --- 4
+  do tukde, beech me koi edge nahi -> 2
 ```
 
 > [!IMPORTANT]
@@ -264,6 +277,10 @@ int countComponents(int n, vector<vector<int>> &edges) {
 Ek grid di hai jisme 1 = zameen aur 0 = paani (4 disha se jude 1 = ek island). Sabse bade island me kitne cell hain, wo lautao. Koi island na ho to 0.
   e.g. [[1,1,0],[1,0,0],[0,0,1]] -> 3
   kyun: island {(0,0),(0,1),(1,0)} = 3 cell, island {(2,2)} = 1 cell; max 3
+
+  1 1 0        A A .
+  1 0 0   ->   A . .      A = 3 cell, B = 1 cell
+  0 0 1        . . B      kitne island nahi, sabse bade ka SIZE maanga -> 3
 ```
 
 > [!IMPORTANT]
@@ -310,6 +327,12 @@ Ek grid me 0 = khaali, 1 = taaza santra, 2 = sada santra. Har minute har sada sa
 Saare santre sadne me kam se kam kitne minute lagenge, wo lautao. Kabhi na sad paayein to -1.
   e.g. [[2,1,1],[1,1,0],[0,1,1]] -> 4
   kyun: min 1: (0,1),(1,0) · min 2: (0,2),(1,1) · min 3: (2,1) · min 4: (2,2); sab sad gaye
+
+  shuru         kis minute me sada
+  2 1 1         0 1 2
+  1 1 0   ->    1 2 .
+  0 1 1         . 3 4
+  sabse der se sadne wala (2,2) minute 4 pe -> 4
 ```
 
 > [!IMPORTANT]
@@ -371,6 +394,12 @@ int orangesRotting(vector<vector<int>> &grid) {   // tree LEVEL-ORDER grid pe; h
 numCourses courses aur prerequisites diye hain, [a, b] ka matlab: a padhne se pehle b padhna zaroori hai. Kya saare course poore kiye ja sakte hain? true ya false lautao.
   e.g. numCourses=2, prereq=[[1,0],[0,1]] -> false
   kyun: 1 ke liye 0 pehle, 0 ke liye 1 pehle = CYCLE; dono ek doosre ka wait karte
+
+  0 ----> 1
+  ^       |
+  +-------+
+  0 ko 1 chahiye, 1 ko 0 chahiye.
+  Dono ka indegree 1 hai, kisi ka 0 nahi, isliye koi shuru hi nahi ho sakta -> false
 ```
 
 > [!IMPORTANT]
@@ -421,6 +450,13 @@ Jo module ready hain (jinki saari dependency ban chuki), unme se sabse chhote nu
   e.g. n=4, [0->1]  ->  0 1 2 3
   kyun: shuru me ready = {0, 2, 3} (1 ko 0 chahiye) -> sabse chhota 0 -> ab 1 bhi ready = {1, 2, 3} -> 1 -> 2 -> 3
   (queue lagate to 0 2 3 1 aata: 1 baad me ready hua to line me peeche lagta)
+
+  0 ----> 1        2        3
+  (1 ko 0 chahiye, 2 aur 3 pe koi shart nahi)
+
+  ready   = {0, 2, 3}   -> sabse chhota 0 bano
+  0 bana  -> 1 bhi ready = {1, 2, 3} -> 1 -> 2 -> 3
+  ans     = 0 1 2 3
 ```
 
 > [!IMPORTANT]
@@ -471,6 +507,11 @@ vector<int> buildOrder(int n, vector<vector<int>> &deps) {
 Ek juda hua (connected), bina disha wala graph ka ek node diya hai. Poore graph ki nayi copy (deep copy) banao: naye node aur naye neighbours, aur copy ka wahi node lautao.
   e.g. adjList [[2,4],[1,3],[2,4],[1,3]] -> [[2,4],[1,3],[2,4],[1,3]] (sab naye node)
   kyun: square 1-2-3-4-1; har node ka naya clone, aur clone ke neighbours bhi clone hi, purane nahi
+
+  purana:  1 --- 2        copy:  1' --- 2'
+           |     |               |      |
+           4 --- 3               4' --- 3'
+  copy ke node naye; 1' ke padosi 2', 4' (purane 2, 4 nahi)
 ```
 
 **SAAR**
@@ -594,6 +635,15 @@ bool isBipartite(vector<vector<int>> &graph) {
 n node, bina disha wale weight wale edges {u, v, w} aur ek source diya hai. Source se har node tak pahunchne ka sabse kam kul weight lautao.
   e.g. n=4, edges 0-1(4), 0-2(1), 1-2(2), 1-3(1), 2-3(5), src=0 -> [0,3,1,4]
   kyun: node 1: seedha 4 se sasta 0->2->1 = 3; node 3: 0->2->1->3 = 4 (0->2->3 = 6)
+
+         4
+    0 ------- 1
+    |       / |
+   1|    2/   |1
+    |   /     |
+    2 ------- 3
+         5
+  kam edge != kam weight: 0->1 seedha 4, ghoom ke 0->2->1 = 3 -> dist = [0,3,1,4]
 ```
 
 > [!IMPORTANT]
@@ -666,6 +716,10 @@ vector<int> dijkstra(int n, vector<vector<int>> &edges, int src) {
 n node (0 se n-1) aur bina disha wale edges diye hain. Union-Find (DSU) se batao ki kitne alag group hain.
   e.g. n=5, edges=[[0,1],[1,2],[3,4]] -> 2
   kyun: unite 0-1, 1-2 -> ek leader; 3-4 -> doosra leader; parent[i]==i wale 2 bache
+
+  0 --- 1 --- 2        3 --- 4
+  leader 0              leader 3
+  parent[i] == i sirf 0 aur 3 ka -> 2 group
 ```
 
 > [!IMPORTANT]

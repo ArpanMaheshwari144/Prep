@@ -25,6 +25,10 @@ g[] me har bachche ki bhookh (greed) aur s[] me har cookie ka size diya hai. Bac
 Zyada se zyada kitne bachche khush kar sakte ho, wo lautao.
   e.g. g=[1,2,3], s=[1,1] -> 1
   kyun: dono cookie size 1 -> sirf greed-1 wala khush
+
+  bachche (bhookh):  1    2    3
+  cookie (size)   :  1    1
+  cookie 1 -> bhookh 1 khush · doosri cookie 1 < 2 aur 1 < 3 -> kisi kaam ki nahi -> 1
 ```
 
 > [!IMPORTANT]
@@ -66,6 +70,13 @@ int findContentChildren(vector<int> &g, vector<int> &s) {
 nums[i] batata hai ki index i se zyada se zyada kitne kadam aage kood sakte ho. Index 0 se shuru karke kya aakhri index tak pahunch sakte ho? true ya false lautao.
   e.g. [2,3,1,1,4] -> true · [3,2,1,0,4] -> false
   kyun: 0->1->4 pahunche · doosre me har raasta index 3 (value 0) pe atakta
+
+  [2,3,1,1,4]   index:  0  1  2  3  4
+                nums :  2  3  1  1  4
+                i+nums: 2  4  3  4      -> index 1 se 4 tak pahunch -> true
+  [3,2,1,0,4]   index:  0  1  2  3  4
+                nums :  3  2  1  0  4
+                i+nums: 3  3  3  3      -> sab 3 pe rukte, 4 tak koi nahi -> false
 ```
 
 > [!IMPORTANT]
@@ -99,6 +110,12 @@ bool canJump(vector<int> &nums) {  // nums[i] = us index se max kitna kood sakte
 intervals[] diye hain. Kam se kam kitne interval hatane padenge taaki bache hue koi bhi do interval overlap na karein, wo lautao. Sirf chhoona (ek ka end = doosre ka start) overlap nahi maana jaata.
   e.g. [[1,2],[2,3],[3,4],[1,3]] -> 1
   kyun: [1,3] hatao -> [1,2],[2,3],[3,4] sirf chhoote, overlap nahi
+
+  time:    1   2   3   4
+  [1,2]    |---|
+  [2,3]        |---|
+  [3,4]            |---|
+  [1,3]    |-------|        <- [1,2] aur [2,3] dono se takraata, ise hatao -> 1
 ```
 
 > [!IMPORTANT]

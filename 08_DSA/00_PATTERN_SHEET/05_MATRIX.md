@@ -63,6 +63,13 @@ void setZeroes(vector<vector<int>> &matrix) {   // in-place, 2 marker array, O(m
 m x n matrix di hai. Uske saare numbers spiral kram me (bahar se andar ki taraf, ghadi ki sui ki disha me) ek list me lautao.
   e.g. [[1,2,3],[4,5,6],[7,8,9]] -> [1,2,3,6,9,8,7,4,5]
   kyun: upar 1,2,3 -> right col 6,9 -> neeche ulta 8,7 -> left col upar 4 -> beech 5
+
+  1 -> 2 -> 3
+            |
+  4 -> 5    6
+  ^         |
+  7 <- 8 <- 9
+  bahar ka gola pehle (1 2 3 6 9 8 7 4), phir andar ka (5)
 ```
 
 **SAAR**
@@ -163,6 +170,12 @@ Ek grid di hai jisme 1 = server. Do server baat kar sakte hain agar wo ek hi row
 Kitne server kisi doosre server se baat kar sakte hain, wo ginti lautao.
   e.g. [[1,1,0,0],[0,0,1,0],[0,0,1,1]] -> 5
   kyun: (0,0)-(0,1) row 0, (1,2)-(2,2) col 2, (2,3)-(2,2) row 2 -> paanchon ka saathi = 5
+
+         c0 c1 c2 c3
+   r0  [ 1  1  0  0 ]    r0 me do server -> dono ka saathi
+   r1  [ 0  0  1  0 ]    r1 me akela, par col 2 me neeche (2,2) hai
+   r2  [ 0  0  1  1 ]    r2 me do server
+  jis server ki row aur col dono me koi doosra nahi, sirf wahi ginti se bahar (yahan aisa koi nahi -> 5)
 ```
 
 > [!IMPORTANT]

@@ -574,6 +574,14 @@ Logs ki lines di hain, har line "<server> <code> <msg>". Kisi server ke lagaatar
 Beech me "success" aaya to us server ki ginti 0. Kul kitne alert hue, wo lautao.
   e.g. ["s1 500 error","s2 200 success","s1 500 error","s3 500 error","s1 500 error"] -> 1
   kyun: s1 ke 3 error (s2, s3 beech me aaye par s1 ki ginti nahi todte) -> 1 alert; s3 ka sirf 1 error
+
+  line               s1   s2   s3        (har server ki apni ginti)
+  s1 500 error        1    .    .
+  s2 200 success      1    0    .
+  s1 500 error        2    0    .
+  s3 500 error        2    0    1
+  s1 500 error        3 -> alert, s1 = 0
+  kul alert = 1
 ```
 
 > [!IMPORTANT]

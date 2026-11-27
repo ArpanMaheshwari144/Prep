@@ -284,6 +284,20 @@ height[] me khadi lines ki unchai di hai. Koi bhi do line chuno. Unke beech jitn
 Sabse zyada kitna paani rok sakte ho, wo lautao.
   e.g. [1,8,6,2,5,4,8,3,7] -> 49
   kyun: index 1 (8) aur index 8 (7): min 7 x doori 7 = 49
+
+  unchai
+    8 |     #              #
+    7 |     #  ~  ~  ~  ~  #  ~  #        # = line   ~ = ruka paani
+    6 |     #  #  ~  ~  ~  #  ~  #
+    5 |     #  #  ~  #  ~  #  ~  #
+    4 |     #  #  ~  #  #  #  ~  #
+    3 |     #  #  ~  #  #  #  #  #
+    2 |     #  #  #  #  #  #  #  #
+    1 |  #  #  #  #  #  #  #  #  #
+       +---------------------------
+  index  0  1  2  3  4  5  6  7  8
+  sirf do line (1 aur 8) chuni, beech wali lines paani nahi rokti (wo bas khadi hain).
+  paani chhoti line (7) tak hi rukta, upar se bah jaata -> 7 x 7 = 49
 ```
 
 > [!IMPORTANT]
@@ -433,6 +447,11 @@ Do sorted array hain. nums1 me pehle m asli number hain aur peeche n khaali jaga
 nums2 ko nums1 me hi milana hai (in-place), taaki poora nums1 sorted ho jaaye.
   e.g. nums1=[1,2,3,0,0,0] m=3, nums2=[2,5,6] -> nums1=[1,2,2,3,5,6]
   kyun: peeche se bharo (khaali jagah peeche hai), sabse bada pehle rakh do
+
+  nums1:  1  2  3  _  _  _      _ = khaali jagah (abhi 0 likha, m=3 ke baad n=3)
+  nums2:  2  5  6
+  peeche se rakhte gaye: 6, 5, 3, 2, 2, 1
+  nums1:  1  2  2  3  5  6      naya array nahi bana, nums1 hi bhar gaya
 ```
 
 > [!IMPORTANT]

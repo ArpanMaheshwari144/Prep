@@ -81,6 +81,12 @@ vector<vector<int>> merge(vector<vector<int>> &intervals) {
 meetings[] me [start, end] diye hain. Kya ek insaan saari meetings attend kar sakta hai, matlab koi do meeting takraati nahi? true ya false lautao.
   e.g. [[0,30],[5,10],[15,20]] -> false
   kyun: 5-10 shuru hui jab 0-30 abhi chal rahi (5 < 30) -> overlap
+
+  time:     0    5   10   15   20        30
+  [0,30]    |-----------------------------|
+  [5,10]         |----|
+  [15,20]                  |----|
+  0-30 ke andar hi baaki dono -> ek insaan ek saath do jagah nahi -> false
 ```
 
 > [!IMPORTANT]
@@ -117,6 +123,12 @@ bool canAttendMeetings(vector<vector<int>> &intervals) {
 intervals[] pehle se sorted hain aur aapas me overlap nahi karte. Ek newInterval daalna hai (overlap ho to jod do). Nayi sorted list lautao.
   e.g. [[1,3],[6,9]], new=[2,5] -> [[1,5],[6,9]]
   kyun: [2,5] aur [1,3] overlap -> [1,5]; [6,9] 5 ke baad -> alag
+
+  time:   1   2   3   4   5   6   7   8   9
+  [1,3]   |-------|
+  new         |-----------|
+  [6,9]                       |-----------|
+  [1,3] + new = [1,5] (5 < 6, isliye [6,9] alag)
 ```
 
 > [!IMPORTANT]

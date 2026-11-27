@@ -111,6 +111,10 @@ int lastStoneWeight(vector<int> &stones) {  // har turn 2 SABSE BHAARI smash, di
 Ek array aur ek number k diya hai. Array ka k-va sabse bada number lautao.
   e.g. [3,2,1,5,6,4], k=2 -> 5
   kyun: bade se gino 6, 5 -> 2nd = 5
+
+  bade se line:   6  5 | 4  3  2  1
+                  k=2  | baaki bahar
+  heap (MIN, size 2) me ant tak bache = {5, 6} -> top (sabse chhota) = 5 = jawab
 ```
 
 > [!IMPORTANT]
@@ -225,6 +229,12 @@ vector<int> topKFrequent(vector<int> &nums, int k) {
 k sorted linked list di hain. Sabko jod ke ek sorted linked list banao aur uska head lautao.
   e.g. [[1,4,5],[1,3,4],[2,6]] -> [1,1,2,3,4,4,5,6]
   kyun: har baar teeno ke current head me sabse chhota uthao: 1,1,2,3,4,4,5,6
+
+  L1:  1 -> 4 -> 5
+  L2:  1 -> 3 -> 4
+  L3:  2 -> 6
+  heap me har list ka sirf AAGE wala:  {1, 1, 2} -> 1 nikla, uska agla 4 andar -> {1, 2, 4} -> 1 nikla ...
+  heap me kabhi 3 se zyada nahi (ek list = ek node)
 ```
 
 > [!IMPORTANT]
@@ -270,6 +280,12 @@ ListNode *mergeKLists(vector<ListNode *> &lists) {
 Ek array diya hai jisme har number apni sahi (sorted) jagah se zyada se zyada k khaane door hai. Poora sorted array lautao.
   e.g. [6,5,3,2,8,10,9], k=3 -> [2,3,5,6,8,9,10]
   kyun: 2 abhi index 3 pe, sahi jagah index 0 -> 3 door = k ke andar
+
+  index :   0  1  2  3  4  5  6
+  arr   :   6  5  3  2  8 10  9
+  sorted:   2  3  5  6  8  9 10
+  6 (0 -> 3) aur 2 (3 -> 0) sabse door = 3 = k, baaki 0 ya 1 door
+  isliye index 0 ka jawab pehle k+1 = 4 me hi: {6, 5, 3, 2} -> min 2
 ```
 
 > [!IMPORTANT]
@@ -475,6 +491,13 @@ responseTimes[] diya hai. Har kadam pe bache hue numbers me se sabse chhota utha
 aur use aur uske dono padosi (i-1, i+1, jo bache hon) hata do. Ant me kul jod lautao.
   e.g. [4,2,9,1,7,3] -> 6
   kyun: 1 uthaya (9,7 hate) · 2 uthaya (4 hata) · 3 uthaya -> 1+2+3 = 6
+
+  index:   0   1   2   3   4   5
+  val  :   4   2   9   1   7   3
+  1 (idx 3) uthao -> idx 2, 4 hate :   4   2   _  [1]  _   3
+  2 (idx 1) uthao -> idx 0 hata    :   _  [2]  _  [1]  _   3
+  3 (idx 5) uthao (idx 4 pehle hata):  _  [2]  _  [1]  _  [3]   -> 1 + 2 + 3 = 6
+  padosi = ORIGINAL index wale (i-1, i+1), bache hue me naye padosi nahi bante
 ```
 
 > [!IMPORTANT]

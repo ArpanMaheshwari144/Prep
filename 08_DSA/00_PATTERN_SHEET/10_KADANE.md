@@ -23,6 +23,12 @@
 prices[i] din i ka share ka daam hai. Ek din kharido aur uske baad ke kisi din becho. Sabse zyada kitna munafa ho sakta hai, wo lautao. Munafa na ho to 0.
   e.g. [7,1,5,3,6,4] -> 5
   kyun: din 1 pe 1 me kharida, din 4 pe 6 me becha = 5; pehle-chhota baad-bada ka isse bada farak nahi
+
+  din:   0   1   2   3   4   5
+  daam:  7   1   5   3   6   4
+             ^           ^
+          kharido      becho      -> 6 - 1 = 5
+  7 sabse mehenga par din 0 pe, kharidne se PEHLE -> wahan bech hi nahi sakte
 ```
 
 > [!IMPORTANT]
@@ -180,6 +186,10 @@ int maxAbsoluteSum(vector<int> &nums) {     // = MAX PRODUCT skeleton, 2 tweak: 
 Ek gol (circular) array diya hai, matlab end ke baad shuru wala number aata hai. Lagaatar numbers ka sabse bada jod lautao (gol ghoom ke bhi le sakte ho, khaali nahi chalega).
   e.g. [5,-3,5] -> 10
   kyun: wrap: last 5 + first 5 = 10; total 7 - min-subarray (-3) = 10
+
+  5  -3   5  | 5  -3   5     (gol: aakhri 5 ke baad phir pehla 5)
+         [5  | 5]            -> 5 + 5 = 10, lagaatar hai, beech ka -3 chhoot gaya
+  bina ghoome sabse bada 5 + (-3) + 5 = 7 hi tha, isliye ghoom ke 10
 ```
 
 > [!IMPORTANT]

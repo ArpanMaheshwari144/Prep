@@ -185,6 +185,11 @@ vector<int> searchRange(vector<int> &nums, int target) {
 Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai, jaise [4,5,6,7,0,1,2]. Usme target ka index lautao, na mile to -1. O(log n) me.
   e.g. [4,5,6,7,0,1,2], target=0 -> 4
   kyun: [0,1,2,4,5,6,7] ghum ke [4,5,6,7,0,1,2] bana, 0 ab index 4 pe hai
+
+  idx:  0  1  2  3 | 4  5  6
+  val:  4  5  6  7 | 0  1  2
+        4 se 7 tak | gira, phir 0 se 2
+  do sorted tukde; 0 doosre tukde ke shuru me, index 4
 ```
 
 > [!IMPORTANT]
@@ -463,6 +468,12 @@ Ek array diya hai. Peak wo number hai jo apne dono padosiyon se bada ho (array k
   SHART (LC-162): do padosi kabhi barabar nahi (nums[i] != nums[i+1]). Isi se teesra case (barabar) aata hi nahi; [1,1] pe loop atak jaata
   e.g. [1,2,1,3,5,6,4] -> 5 (ya 1)
   kyun: index 5 pe 6 -> padosi 5 aur 4 dono chhote · index 1 pe 2 bhi (1 aur 1 se bada)
+
+  idx:   0   1   2   3   4   5   6
+  val:   1   2   1   3   5   6   4
+             ^               ^
+       peak (1 < 2 > 1)       peak (5 < 6 > 4)
+  sabse bada nahi maanga, koi bhi ek peak ka index chalega (1 ya 5)
 ```
 
 > [!IMPORTANT]
@@ -563,6 +574,11 @@ Ek matrix di hai jiski har row sorted hai, aur har row ka pehla number pichhli r
 Batao target matrix me hai ya nahi, true ya false.
   e.g. [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target=3 -> true
   kyun: 3 pehli row me index 1 pe mil gaya · target=13 hota to 11 aur 16 ke beech, nahi -> false
+
+  [  1   3   5   7 ]
+  [ 10  11  16  20 ]   ->   1  3  5  7 | 10 11 16 20 | 23 30 34 60   (ek lambi sorted line)
+  [ 23  30  34  60 ]        0  1  2  3    4  5  6  7    8  9 10 11
+  3 = line ka index 1 = row 0, col 1 -> true
 ```
 
 > [!IMPORTANT]

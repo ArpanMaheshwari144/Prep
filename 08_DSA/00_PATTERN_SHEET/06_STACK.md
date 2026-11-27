@@ -49,6 +49,13 @@ valid-parentheses CHECK karta hai (stack) · generate BANATA hai (choose/un-choo
 Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse bada number hai, wo lautao. Koi bada na mile to -1.
   e.g. [2,1,2,4,3] -> [4,2,4,-1,-1]
   kyun: 2 ke aage pehla bada 4 · 1 ke aage 2 · 2 ke aage 4 · 4 aur 3 ke aage koi bada nahi -> -1
+
+  2   1   2   4   3
+  2 ----------> 4         (1 chhota, 2 barabar = bada nahi, aage chalo)
+      1 -> 2
+          2 -> 4
+              4 -> -1     (aage sirf 3, chhota)
+                  3 -> -1 (aakhri)
 ```
 
 ### DRY-RUN [2,1,2,4,3]
@@ -440,6 +447,13 @@ int largestRectangleArea(vector<int> &heights) {
 0 aur 1 ki 2D matrix di hai. Sirf 1 se bhara hua sabse bada rectangle kitna bada hai, uska area lautao.
   e.g. [[1,0,1,0,0],[1,0,1,1,1],[1,1,1,1,1],[1,0,0,1,0]] -> 6
   kyun: row 1 aur row 2 me col 2,3,4 sab 1 -> 2 row x 3 col = 6
+
+         c0 c1 c2 c3 c4
+   r0  [ 1  0  1  0  0 ]
+   r1  [ 1  0 [1  1  1]]
+   r2  [ 1  1 [1  1  1]]
+   r3  [ 1  0  0  1  0 ]
+  [ ] wala seedha dabba = 6. Saare 1 jude hue hain (13), par wo dabba nahi, tedha tukda hai -> nahi ginte
 ```
 
 > [!WARNING]
@@ -524,6 +538,12 @@ vector<int> dailyTemperatures(vector<int> &temps) {
 Ek gol (circular) array diya hai, matlab aakhri number ke baad phir pehla number aata hai. Har number ka agla bada number lautao, na mile to -1.
   e.g. [1,2,3,4,3] -> [2,3,4,-1,4]
   kyun: aakhri 3 ke aage kuch nahi, ghoom ke shuru me 1,2,3,4 -> pehla bada 4 · 4 se bada kahin nahi -> -1
+
+  1 -> 2 -> 3 -> 4 -> 3 --+
+  ^                       |
+  +-----------------------+   (aakhri ke baad phir pehla)
+  aakhri 3: aage kuch nahi -> ghoom ke 1, 2, 3 (bade nahi), 4 -> jawab 4
+  4: poora gola ghoom liya, isse bada koi nahi -> -1
 ```
 
 > [!IMPORTANT]
@@ -820,6 +840,12 @@ int evalRPN(vector<string> &tokens) {
 Ek-lane sadak, manzil target pe. Gaadi i position[i] pe, speed[i] se chalti. Overtake nahi: tez gaadi aage wali dheemi ko pakde to uske peeche usi speed se = ek FLEET (manzil pe saath pahunche to bhi ek). Kitne fleet pahunchenge?
   e.g. target=12, position=[10,8,0,5,3], speed=[2,4,1,1,3] -> 3 · target=10, [7,4], [2,5] -> 1
   kyun: 10 aur 8 dono 1 ghante -> ek · 0 akela 12 ghante · 5 aur 3 dono 7 ghante -> ek  ·  7 wali 1.5, 4 wali 1.2 -> peeche wali pakad leti -> ek
+
+  sadak:  0 -------- 3 ----- 5 -------- 8 ----- 10 ---- 12 (manzil)
+  speed:  1          3       1          4       2
+  waqt:   12         3       7          1       1      (akele chalein to: (12 - pos) / speed)
+  fleet:  {0}        {3, 5} = 7 ghante  {8, 10} = 1 ghanta   -> 3 fleet
+  3 wali akeli 3 ghante me pahunchti, par aage 5 wali (7 ghante) ko raste me pakad ke uske peeche atak gayi
 ```
 
 > [!WARNING]

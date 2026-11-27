@@ -76,6 +76,11 @@ Node *middleNode(Node *head) {              // fast end pe -> slow MIDDLE pe
 Linked list ka head diya hai. Agar list me cycle hai (koi node wapas kisi pichhle node pe point karta hai) to true, warna false.
   e.g. 3->2->0->-4, aur -4 ka next = 2 wala node -> true
   kyun: -4 ke baad phir 2 pe aa gaye -> 2,0,-4,2,... chakkar kabhi NULL nahi aata
+
+  3 -> 2 -> 0 -> -4
+       ^          |
+       +----------+
+  aage chalte raho, NULL kabhi nahi aata -> cycle hai -> true
 ```
 
 > [!IMPORTANT]
@@ -153,6 +158,11 @@ int findDuplicate(vector<int> &nums) {
 Linked list ka head diya hai. Agar cycle hai to wo node lautao jahan se cycle shuru hoti hai, warna NULL.
   e.g. 3->2->0->-4, aur -4 ka next = 2 wala node -> node 2
   kyun: chakkar 2,0,-4,2,... hai, bahar se andar pehla kadam 2 pe padta -> entry 2
+
+  3 -> [2] -> 0 -> -4
+        ^           |
+        +-----------+
+  3 chakkar ke bahar; head se chalo to chakkar me pehla node 2 -> wahi lautao (true / false nahi)
 ```
 
 > [!IMPORTANT]
@@ -363,6 +373,13 @@ Node *mergeTwoLists(Node *a, Node *b) {
 Do linked list di hain, har node me ek digit hai aur number ulta rakha hai (ikai wala digit pehle). Dono numbers jodo aur jawab bhi isi ulte tareeke se list me lautao.
   e.g. 2->4->3 + 5->6->4 -> 7->0->8
   kyun: 342 + 465 = 807 · 2+5=7, 4+6=10 (0, carry 1), 3+4+1=8
+
+     2 -> 4 -> 3      (padho ulta = 342)
+   + 5 -> 6 -> 4      (padho ulta = 465)
+   ---------------
+     7 -> 0 -> 8      (padho ulta = 807)
+         carry 1 agle node me
+  ikai pehle hai, isliye left se hi jodte chalo, carry daayi taraf jaata
 ```
 
 > [!IMPORTANT]

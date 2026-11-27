@@ -265,6 +265,16 @@ int longestKDistinct(string s, int k) {
 
 kyun: cost = [1,1,1,2]; pehle 3 ka 1+1+1 = 3 <= 3; chaaron ka 5 > 3 · e.g. s="abcd", t="cdef", maxCost=3 -> 1
 
+```
+  s      a  b  c  d
+  t      b  c  d  f
+  cost   1  1  1  2        (har jagah |s[i] - t[i]|)
+
+        [1  1  1] 2        jod 3 <= 3  -> lambai 3   <- answer
+        [1  1  1  2]       jod 5 >  3  -> nahi
+  t="cdef": cost 2 2 2 2 -> do saath = 4 > 3, akela 2 hi chalta -> 1
+```
+
 > [!IMPORTANT]
 > ONES III jaisa, ek int (cost) track, koi map nahi. cost hamesha 0 ya zyada, isliye negative wala dar nahi.
 
@@ -828,6 +838,16 @@ bool checkInclusion(string s1, string s2) {
 
 ### ▸ LC-239 SLIDING WINDOW MAXIMUM  = monotonic DEQUE of INDICES (monotonic stack + front-expiry)
 **SAWAAL**  `[1,3,-1,-3,5,3,6,7], k=3 -> [3,3,5,5,6,7]`. Har k size ki window ka sabse bada number lautao.
+
+```
+  [1   3  -1] -3   5   3   6   7      max 3
+   1  [3  -1  -3]  5   3   6   7      max 3
+   1   3  [-1 -3   5]  3   6   7      max 5
+   1   3  -1  [-3  5   3]  6   7      max 5
+   1   3  -1  -3  [5   3   6]  7      max 6
+   1   3  -1  -3   5  [3   6   7]     max 7
+  window ek-ek khisakti, har window ka ek max -> n - k + 1 = 6 number
+```
 
 > [!IMPORTANT]
 > **CORE :** nums[i] aaya -> usse CHHOTE back-wale BEKAAR (jab tak nums[i] zinda, wo max ban hi nahi sakte) -> pop_back.

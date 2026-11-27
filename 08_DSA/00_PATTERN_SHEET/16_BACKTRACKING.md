@@ -133,6 +133,15 @@ void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &
 Ek array diya hai (sab number alag). In numbers ko jitne alag-alag kram me laga sakte ho, wo saare kram (permutations) lautao.
   e.g. [1,2,3] -> [1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]
   kyun: pehli jagah 3 choice, doosri 2, teesri 1 -> 3x2x1 = 6
+
+  jagah1    jagah2    jagah3
+    1   ->    2   ->    3       [1,2,3]
+        ->    3   ->    2       [1,3,2]
+    2   ->    1   ->    3       [2,1,3]
+        ->    3   ->    1       [2,3,1]
+    3   ->    1   ->    2       [3,1,2]
+        ->    2   ->    1       [3,2,1]
+  Har jagah pe wahi jo abhi tak nahi liya (peeche wala 1 bhi chalega). Kram badla = naya jawab.
 ```
 
 > [!IMPORTANT]
@@ -172,6 +181,12 @@ void solve(vector<int> &nums, vector<int> &temp, vector<bool> &used, vector<vect
 Do number n aur k diye hain. 1 se n tak ke numbers me se k number chunne ke saare tareeke lautao. Kram matter nahi karta, [1,2] aur [2,1] ek hi hain.
   e.g. n=4, k=2 -> [1,2],[1,3],[1,4],[2,3],[2,4],[3,4]
   kyun: [2,1] = [1,2] same -> sirf aage wale chuno -> C(4,2) = 6
+
+  1 -> 2, 3, 4      [1,2] [1,3] [1,4]
+  2 -> 3, 4         [2,3] [2,4]
+  3 -> 4            [3,4]
+  4 -> aage koi nahi
+  Sirf aage wala chuna, isliye [2,1] kabhi nahi banta -> 3 + 2 + 1 = 6
 ```
 
 > [!IMPORTANT]
@@ -206,6 +221,12 @@ void solve(int n, int k, vector<vector<int>> &ans, int index, vector<int> &temp)
 candidates[] (sab alag, sab positive) aur ek target diya hai. Wo saare alag combination lautao jinka jod target ke barabar ho. Ek number kitni bhi baar le sakte ho.
   e.g. [2,3,6,7], target=7 -> [[2,2,3],[7]]
   kyun: 2+2+3 = 7 (2 dobara liya) · 7 akela = 7
+
+  7 = 2 + 2 + 3        lo
+  7 = 7                lo
+  2 + 2 + 2 = 6, +2 = 8 -> 7 se bada, ruko
+  6 + ? = 7 ke liye 1 chahiye, hai hi nahi
+  [2,3,2], [3,2,2] = wahi [2,2,3] -> ek hi baar. Jawab = 2 combination.
 ```
 
 > [!IMPORTANT]
@@ -260,6 +281,11 @@ void solve2(vector<int> &candidates, int target, vector<vector<int>> &ans, int i
 Aksharon ki ek grid aur ek word diya hai. Kya grid me paas-paas wale cells (upar, neeche, daayein, baayein) se chalte hue ye word ban sakta hai? Ek cell ek hi baar use hoga. true ya false lautao.
   e.g. board ABCE/SFCS/ADEE: "ABCCED" -> true, "ABCB" -> false
   kyun: A,B,C (row 0) -> C neeche -> E neeche -> D left · ABCB me wahi B dobara lagta
+
+  [A][B][C] E           ABCCED: A -> B -> C -> C (neeche) -> E (neeche) -> D (left) = true
+   S  F [C] S
+   A [D][E] E           ABCB: C ke baad B chahiye, paas wala B wahi pehle wala -> dobara nahi -> false
+  [ ] = ABCCED ka raasta. Teda-meda chal sakte, bas paas wala cell aur ek cell ek baar.
 ```
 
 > [!WARNING]
