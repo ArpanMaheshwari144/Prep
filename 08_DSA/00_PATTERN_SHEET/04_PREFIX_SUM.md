@@ -252,10 +252,11 @@ idx   0     1  2   3    4   5   6      7
      WALL   .  .   K  WALL WALL .    WALL
      |<-- kamra -->|
 
-i = 3 pe:  lastWall = 0 (8),  lastK = 3   ->   count += 3 - 0 = 3
-           shuru 1, 2, 3 se, khatam 3 pe:  [2,1,3]  [1,3]  [3]
-i = 1, 2: K abhi aaya hi nahi · i = 4 se aage: deewar K ke BAAD aa gayi (lastK < lastWall) -> kuch nahi juda
-answer = 3
+8 kyun:    8 > K = DEEWAR. jis tukde me 8 aaya, uska max 3 nahi rahega -> 8 ke paar nahi jaana.   lastWall = 0
+3 kyun:    3 == K. tukde me 3 hona zaroori, warna max 3 se chhota.                         lastK = 3
+8 se 3:    tukda 8 ke BAAD shuru ho aur 3 tak jaaye  ->  shuru index 1, 2 ya 3
+count:     3 - 0 = 3   ->   [2,1,3]  [1,3]  [3]
+aage 4, 5, 10 bhi deewar, unke baad koi 3 nahi -> kuch nahi juda.   answer = 3
 ```
 
 ### purani galti (7-Nov REDO_2)
