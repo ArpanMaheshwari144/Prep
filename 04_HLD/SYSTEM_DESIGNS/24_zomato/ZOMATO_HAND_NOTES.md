@@ -66,6 +66,17 @@ NFR     1  door se aaya khana thoda thanda ho sakta, garam ka jhootha vaada nahi
 
 *Technical me:* "fan-out vs Redis" = push model vs pull + cache · "TTL + chhotu dobara le" = cache-aside with TTL · "DB se event, Redis update" = write pe cache invalidation.
 
+**API (Arpan):** "Koi khaas API nahi. WebSocket ki zaroorat nahi, kuch khula nahi rehta. Lat / long jaata hai, aas-paas ke restaurant aate hain."
+
+```
+API     POST search            -> user ka lat / long (+ jo dhoondha)      -> aas-paas ke restaurant
+        GET  restaurants       -> list, sort (rating / doori) user chune
+        GET  menu/{restaurant} -> restaurant khola to uska poora menu
+        POST pay               -> PSP se paisa (andar ka PSP design me nahi)
+
+        (DB -> Redis wala event andar ka hai, API nahi)
+```
+
 &nbsp;
 
 ---
