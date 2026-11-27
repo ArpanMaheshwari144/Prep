@@ -28,6 +28,7 @@ Arpan (Whitefield) --> Zomato app --> server --> Redis (menu + area ki restauran
  5   (khud accept wala restaurant) chup rahe      ->  2-3 min window, phir order fail, paisa nahi kata / wapas (accept timeout)
  6   Diwali, 300 burger, 2 min me 800 log         ->  har order pe ginti atomic ghatao, stock tha to order placed (auto-accept), 0 pe out of stock; Kafka nahi (capacity gate)
  7   299 pe Arpan + Rahul ek pal me               ->  ek hi counter, check + ghatao ek saath, pehle wale ko (atomic decrement)
+ 8   aakhri burger bika, Redis menu purana      ->  ginti sirf DB me, out of stock pe event, Redis ki parchi phaad + peeche milaan job (cache invalidation)
 ```
 
 **Arpan ka nichod:** "Yahan do system design hain: ek user ke order ka (Arpan wala), ek restaurant aur driver ka (Zomato andar wala). User ko driver kaun hai ye sab nahi dikhta, restaurant ko dekhna padta. Zomato andar kya karta mujhe nahi pata, docs padh ke jawab nahi dunga; main hota to ye karta."

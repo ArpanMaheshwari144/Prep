@@ -21,6 +21,7 @@ Ravi  -->  server  -->  Elasticsearch (search ki copy: aas-paas + text + sort)  
  2   Burger Singh band, search me abhi bhi       ->  Postgres aur ES sync, band dukaan "Closed" dikhe, Zomato jaisa (DB -> search sync)
  3   dopahar ka naya burger, ES ko raat 2 baje   ->  badlaav aate hi event, raat ki job bhi chale (change event, reconciliation)
  4   300 m wali 4.6 star 15ve number pe          ->  sort user chune, server saare pe sort kare, phone ko pehle 10 (server-side sort + pagination)
+ 5   10 user "11 baje", 1 user "9 baje"        ->  pehle maalik ka likha time, nahi to saare review ka itihaas (owner-verified > crowdsourced)
 ```
 
 **Arpan ka nichod:** "Yelp = Uber aur search ka mixture. Aas-paas ka salon / restaurant dhoondho, rating padho, wahan chale jao ya contact karo. Uber me driver chalta, yahan dukaan khadi rehti; isliye bas aas-paas + search."
