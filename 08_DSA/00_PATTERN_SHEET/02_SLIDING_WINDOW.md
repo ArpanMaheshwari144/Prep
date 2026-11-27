@@ -461,7 +461,10 @@ L - k KYUN:  3 card kinaron se lene ke saare tarike
 
   har tarike me BACHE = 7 - 3 = 4 card, hamesha BEECH me, LAGAATAR   ->  window size = L - k = 4
 
-MINIMUM KYUN:  liye = Total - bache   ->  liye SABSE BADA tab, jab bache SABSE CHHOTA
+MINIMUM KYUN:  saare card ka jod (Total = 22) fix hai, badalta nahi.
+               liye + bache = 22   ->   liye = 22 - bache
+               bache jitna KAM, liye utna ZYADA   (bache 10 -> liye 12 · bache 18 -> liye 4)
+               isliye bache ka MINIMUM dhoondho, liye apne aap MAXIMUM.
 
   minSumK(nums, 4) = upar wala MAX SUM OF K (FIXED) hi hai, bas max ki jagah MIN.
   yahan isliye aaya: tujhe size 4 ki window ka MINIMUM chahiye = 10
