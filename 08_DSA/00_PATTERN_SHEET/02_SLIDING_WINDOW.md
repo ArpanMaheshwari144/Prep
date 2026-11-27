@@ -450,36 +450,32 @@ Q: sirf DONO ENDS (front/back) se TOTAL k cards lo -> unka sum MAXIMIZE.
 
 **DRY RUN (tere code se): [1,2,3,4,5,6,1], k=3 -> 12**
 ```
-L = 7 card, k = 3 kinaron se lene hain.
-3 card kinaron se kisi bhi tarah lo, jo 7 - 3 = 4 card BACHTE wo hamesha BEECH me LAGAATAR hote.
-To bache hue 4 ki window jitni CHHOTI, liye hue 3 utne BADE:  liye = Total - bache.
+cards:   1  2  3  4  5  6  1          7 card, 3 lene hain, sirf kinaron se      [ ] = liye
 
-Total = 1+2+3+4+5+6+1 = 22  ->  minSumK(nums, 7 - 3 = 4)
+TASVEER: 3 card kinaron se lene ke saare tarike
+
+  tarika 1:  [1  2  3] 4  5  6  1       liye: aage 3              bache: 4 5 6 1
+  tarika 2:  [1  2] 3  4  5  6 [1]      liye: aage 2 + peeche 1   bache: 3 4 5 6
+  tarika 3:  [1] 2  3  4  5 [6  1]      liye: aage 1 + peeche 2   bache: 2 3 4 5
+  tarika 4:   1  2  3  4 [5  6  1]      liye: peeche 3            bache: 1 2 3 4
+
+  har tarike me BACHE = 7 - 3 = 4 card, aur wo hamesha BEECH me, LAGAATAR   ->  isliye L - k
+  liye ka jod = Total - bache ka jod   ->  liye SABSE BADA chahiye = bache SABSE CHHOTA chahiye
+
+  Total = 1+2+3+4+5+6+1 = 22   ->   minSumK(nums, 4)
 
 minSumK(nums, 4):   sum = 0, minSum = INT_MAX, i = 0
 
-j=0:  sum += 1 -> 1     j-i+1 = 1, 4 nahi
-j=1:  sum += 2 -> 3     j-i+1 = 2, 4 nahi
-j=2:  sum += 3 -> 6     j-i+1 = 3, 4 nahi
-j=3:  sum += 4 -> 10    j-i+1 = 4  -> window bani
-        bache [1,2,3,4] = 10   ->  liye: peeche 5,6,1        = 22 - 10 = 12
-        minSum = min(INT_MAX, 10) = 10
-        sum -= nums[0] (1) -> 9,  i = 1
-j=4:  sum += 5 -> 14    window
-        bache [2,3,4,5] = 14   ->  liye: aage 1 + peeche 6,1  = 22 - 14 = 8
-        minSum = min(10, 14) = 10
-        sum -= nums[1] (2) -> 12, i = 2
-j=5:  sum += 6 -> 18    window
-        bache [3,4,5,6] = 18   ->  liye: aage 1,2 + peeche 1  = 22 - 18 = 4
-        minSum = min(10, 18) = 10
-        sum -= nums[2] (3) -> 15, i = 3
-j=6:  sum += 1 -> 16    window
-        bache [4,5,6,1] = 16   ->  liye: aage 1,2,3           = 22 - 16 = 6
-        minSum = min(10, 16) = 10
-        sum -= nums[3] (4) -> 12, i = 4
-loop khatam -> minSum = 10
+  j  nums[j]  sum += nums[j]  j-i+1   window (bache)    minSum    sum -= nums[i]   i
+  0    1          1             1      -                INT_MAX    -                0
+  1    2          3             2      -                INT_MAX    -                0
+  2    3          6             3      -                INT_MAX    -                0
+  3    4         10             4      [1,2,3,4] = 10     10       - 1  -> 9        1     (tarika 4)
+  4    5         14             4      [2,3,4,5] = 14     10       - 2  -> 12       2     (tarika 3)
+  5    6         18             4      [3,4,5,6] = 18     10       - 3  -> 15       3     (tarika 2)
+  6    1         16             4      [4,5,6,1] = 16     10       - 4  -> 12       4     (tarika 1)
 
-answer = Total - minSum = 22 - 10 = 12   (peeche ke 5 + 6 + 1)
+answer = Total - minSum = 22 - 10 = 12   ->  tarika 4: peeche ke 5 + 6 + 1
 ```
 
 > [!IMPORTANT]
