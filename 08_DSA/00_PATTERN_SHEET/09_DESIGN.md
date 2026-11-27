@@ -23,10 +23,6 @@
 - **e.g.** `put("a",1) put("b",2) put("a",5) get("a") -> 5 · size() -> 2 · remove("b") get("b") -> -1`
 - **kyun:** "a" dobara aaya to naya node nahi, value 5 ho gayi -> keys sirf a,b = 2 · b hata to -1
 
-> [!WARNING]
-> **PUT TRAP (7-redo se pakka):** key MILI -> value update + TURANT return. return NA kiya to loop aage
-> DUPLICATE node laga deta + sz galat. ("test-pass != code-sahi" -- chain-ke-ANDAR update pe phat-ta.)
-
 ### VISUAL
 
 ```
@@ -57,7 +53,11 @@ REMOVE head (prev==null):            REMOVE beech (prev exist):
 > **CHAABI:** ARRAY of buckets, har slot ek CHAIN. `index = hash<string>{}(key) % cap`. put: chain me key MILI -> update, na mili -> END pe jodo + `count++`. remove: `prev == NULL` -> `buckets[index] = curr->next`, warna `prev->next = curr->next`.
 
 > [!WARNING]
-> remove me advance `prev = curr`, `prev = prev->next` NAHI (prev NULL se `NULL->next` crash).
+> **Galti:** put me key MILI, value update ki par return nahi  ->  **Sahi:** update + TURANT `return`
+> **Kyun:** loop aage chalta, chain ke end pe DUPLICATE node lag jaata aur size galat (test pass ho ke bhi code galat).
+>
+> **Galti:** remove me advance `prev = prev->next`  ->  **Sahi:** `prev = curr; curr = curr->next`
+> **Kyun:** shuru me prev NULL hai, `NULL->next` crash.
 
 **CODE**
 ```cpp
@@ -153,12 +153,13 @@ public:
 - **e.g.** `add("apple") add("banana") add("apple") · contains("apple") -> true · size() -> 2 · remove("apple") -> contains false`
 - **kyun:** doosra "apple" pehle se tha, kuch nahi juda -> 2 key · remove ke baad apple gayab
 
-> [!WARNING]
-> **BUG-CATCH (remove, khud pakda):** advance = "prev = curr; curr = curr->next"
-> (NA prev = prev->next -- prev NULL se non-head remove pe NULL->next = CRASH). (file 08_DSA/09_DESIGN/02_hashset.cpp)
-
 > [!IMPORTANT]
 > **CHAABI:** HASHMAP ka hi code, Entry me sirf `| key | next |`. add: key mili -> kuch nahi, na mili -> chain END. contains = get ka true/false. remove HUBAHU same.
+
+> [!WARNING]
+> **Galti:** remove me advance `prev = prev->next`  ->  **Sahi:** `prev = curr; curr = curr->next`
+> **Kyun:** prev NULL se non-head remove pe `NULL->next` crash.
+
 **CODE**
 ```cpp
 struct Entry {                              // HashMap ka EXACT code, bas VALUE nahi: | key | next |
@@ -260,21 +261,25 @@ VISUAL:                     Node = | key | val | prev | next |
     (dummy)  MRU   LRU   (dummy)
 ```
 
-> [!WARNING]
-> **TRAP:** (1) mp[key] missing pe CHUP-CHAAP entry INSERT -> check ke liye mp.count()/find(). (C++ jaal)
->
-> (2) DLL rewire: overwrite se PEHLE temp me pakdo (nxt).  (3) ctor me type-dobara = shadowing (naya local).
->
-> (4) ★ (24-Sep, base + REDO_1 dono me tha) put() me key pehle se ho to sirf addFront kiya, removeNode NAHI
-> -> node purani jagah pe BHI juda reh gaya, tail->prev use hi dekhta -> jo abhi update hua wahi evict.
-> cap=2: put1, put2, put(1,10), put3 -> get(1) = -1 aaya (sahi 10), get(2) = 2 (sahi -1).
->
-> (5) mp.erase(lru->val) likha -> map me val naam ki key hi nahi, kuch nahi hata -> gaya hua key
-> get() pe wapas milta (100 aata, sahi -1), mp.size() badhta rehta -> aage evict hi band.
-> test me key == val ho (1,1 · 2,2) to ye chhup jaata -> test me key != val rakho (1,100).
-
 > [!IMPORTANT]
 > **CHAABI:** hashmap = KAHAN (`key -> Node*`), DLL dummy `head`/`tail` = ORDER (head-side MRU, tail-side LRU). get aur put dono me `removeNode` + `addFront`. Full pe `tail->prev` hatao + map se USI node ki key se (`mp.erase(toBeRemoved->key)`).
+
+> [!WARNING]
+> **Galti:** key check ke liye `mp[key]`  ->  **Sahi:** `mp.count(key)` / `mp.find(key)`
+> **Kyun:** `mp[key]` missing key pe chup-chaap nayi entry daal deta.
+>
+> **Galti:** DLL rewire me seedha overwrite  ->  **Sahi:** overwrite se PEHLE `nxt` temp me pakdo
+> **Kyun:** link badalte hi aage wala node haath se chala jaata.
+>
+> **Galti:** constructor me member ka type dobara likha (`int cap = capacity;`)  ->  **Sahi:** sirf `cap = capacity;`
+> **Kyun:** type likha to naya local ban jaata (shadowing), member khaali reh jaata.
+>
+> **Galti:** put me key pehle se ho to sirf `addFront`  ->  **Sahi:** pehle `removeNode`, phir `addFront`
+> **Kyun:** node purani jagah pe bhi juda rehta, `tail->prev` use hi dekhta, abhi update hua wahi evict (cap=2: put1, put2, put(1,10), put3 -> get(1) = -1, sahi 10).
+>
+> **Galti:** `mp.erase(lru->val)`  ->  **Sahi:** `mp.erase(toBeRemoved->key)`
+> **Kyun:** map me val naam ki key hi nahi, kuch nahi hatta; gaya hua key wapas milta, size badhta rehta. Test me key != val rakho (1,100), warna ye chhup jaata.
+
 **CODE**
 ```cpp
 struct Node {                               // Node = | key | val | prev | next |

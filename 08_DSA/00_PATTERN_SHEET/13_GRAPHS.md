@@ -129,7 +129,11 @@ src 0 ka group {0,1,2}, dst 5 ka group {3,4,5}; beech me koi edge nahi -> false
 ```
 
 > [!WARNING]
-> `vis` PUSH ke saath hi mark karo, aur `vis[source] = true` bhi: warna cycle se ghoom ke ek node (source bhi) queue me do baar. `node == destination` check POP pe (src == dst wala case bhi pakda jaata).
+> **Galti:** `vis` pop pe mark, source mark nahi  ->  **Sahi:** `vis` PUSH ke saath hi mark, aur `vis[source] = true` bhi
+> **Kyun:** warna cycle se ghoom ke ek node (source bhi) queue me do baar.
+>
+> **Galti:** `== destination` check padosi push karte waqt  ->  **Sahi:** `node == destination` check POP pe
+> **Kyun:** src == dst wala case bhi pakda jaata.
 
 **CODE**
 ```cpp
@@ -185,7 +189,11 @@ A aur B do alag tukde (4 disha se jude nahi) -> 2
 > **CHAABI:** har naya `'1'` = naya island: DFS se poora island `'0'` me dubo do (SINK = visited), phir `count++`.
 
 > [!WARNING]
-> base ek hi `if` sab `||` se: bounds PEHLE, `grid[i][j] == '0'` BAAD (bahar index pe grid padhne se pehle ruk jaata). `'0'` base me na ho to poora grid kha jaata.
+> **Galti:** `grid[i][j] == '0'` bounds se pehle  ->  **Sahi:** ek hi `if` me `||`: bounds PEHLE, `grid[i][j] == '0'` BAAD
+> **Kyun:** bahar index pe grid padhne se pehle hi ruk jaata.
+>
+> **Galti:** base me `'0'` check nahi  ->  **Sahi:** base me `grid[i][j] == '0'` pe return
+> **Kyun:** warna DFS poora grid kha jaata.
 
 **CODE**
 ```cpp
@@ -236,7 +244,11 @@ do tukde, beech me koi edge nahi -> 2
 > **CHAABI:** islands ka skeleton, grid ki jagah adj-list: outer loop har node, `!vis[i]` mila to `count++` + BFS (poora group mark). padosi = `adj[node]`.
 
 > [!WARNING]
-> `count++` aur BFS dono `if (!vis[i])` ke ANDAR, warna har node gina jaata (= n). start bhi push ke saath mark.
+> **Galti:** `count++` / BFS `if (!vis[i])` ke bahar  ->  **Sahi:** dono `if (!vis[i])` ke ANDAR
+> **Kyun:** warna har node gina jaata (= n).
+>
+> **Galti:** start node mark nahi  ->  **Sahi:** start bhi push ke saath mark
+> **Kyun:** warna padosi se ghoom ke start dobara queue me aata.
 
 **CODE**
 ```cpp
@@ -293,7 +305,8 @@ int countComponents(int n, vector<vector<int>> &edges) {
 > **CHAABI:** islands hi, 2 delta: DFS `void` nahi, area lautaye `1 + neeche + upar + right + left`; outer me `count++` nahi, `ans = max(ans, DFS(...))`.
 
 > [!WARNING]
-> base pe bounds PEHLE, `grid[i][j] == 0` baad, dono pe `return 0`; `1` sirf asli cell pe. `ans` 0 se (koi island nahi -> 0).
+> **Galti:** `grid[i][j] == 0` bounds se pehle  ->  **Sahi:** bounds PEHLE, `grid[i][j] == 0` baad, dono pe `return 0`
+> **Kyun:** bahar index pe grid padha to crash; aur `1` sirf asli cell pe judna chahiye.
 
 **CODE**
 ```cpp
@@ -347,9 +360,14 @@ sabse der se sadne wala (2,2) minute 4 pe -> 4
 > **CHAABI:** saare `2` PEHLE queue me (multi-source = level 0); `sz = q.size()` snapshot = ek minute; end me `1` bacha to -1.
 
 > [!WARNING]
-> `mins++` `while (sz--)` ke BAHAR (ek level = ek minute). aakhri level ke baad bhi `mins++` hota -> `mins - 1`; par koi santra hi nahi to `mins = 0` -> seedha 0 lautao (`mins - 1` = -1 galat). `grid = 2` push ke saath hi, warna doosra rotten bhi push karta.
+> **Galti:** `mins++` `while (sz--)` ke andar  ->  **Sahi:** `mins++` `while (sz--)` ke BAHAR
+> **Kyun:** ek level = ek minute.
 >
-> ★ PURANI GALTI (Aug sheet): END me sirf return mins-1 tha -> grid me koi santra hi nahi to -1 aata, sahi 0. Isliye ab mins == 0 ? 0 : mins-1.
+> **Galti:** end me sirf `return mins - 1`  ->  **Sahi:** `return mins == 0 ? 0 : mins - 1`
+> **Kyun:** aakhri level ke baad bhi `mins++` hota isliye `- 1`; par koi santra hi nahi to `mins = 0`, -1 aata, sahi 0.
+>
+> **Galti:** `grid = 2` pop pe  ->  **Sahi:** `grid = 2` push ke saath hi
+> **Kyun:** warna doosra rotten bhi wahi santra push karta.
 
 **CODE**
 ```cpp
@@ -417,7 +435,8 @@ Dono ka indegree 1 hai, kisi ka 0 nahi, isliye koi shuru hi nahi ho sakta -> fal
 > **CHAABI:** prereq se `adj` + `indegree` banao. indegree 0 wale queue me; nikaalte waqt `adj` ke har node ka indegree ghatao, 0 hua to push. `ans.size() == numCourses` = cycle nahi.
 
 > [!WARNING]
-> disha ulti mat karo: `u = it[1]` (pre), `v = it[0]` (course), edge pre -> course. cycle wale ka indegree KABHI 0 nahi -> queue me aate hi nahi -> size < n -> false.
+> **Galti:** `u = it[0]`, `v = it[1]` (ulti disha)  ->  **Sahi:** `u = it[1]` (pre), `v = it[0]` (course), edge pre -> course
+> **Kyun:** `[course, pre]` me pre pehle padhna hai; ulta joda to indegree galat course pe badhta.
 
 **CODE**
 ```cpp
@@ -491,7 +510,14 @@ ans = 0 1 2 3
 > **CHAABI:** Course Schedule hi, bas `queue` -> min-heap: ready me se sabse chhota pehle. indegree / adj / ghatana / end-check SAME.
 
 > [!WARNING]
-> `ans` KHAALI banao: `ans(n, 0)` + `push_back` = size 2n -> end check galat, hamesha `{}`. self-loop `[0->0]` pe indegree kabhi 0 nahi -> khaali. min-heap = `priority_queue<int, vector<int>, greater<int>>`, aur `front()` -> `top()`.
+> **Galti:** `vector<int> ans(n, 0)` + `push_back`  ->  **Sahi:** `vector<int> ans;` KHAALI
+> **Kyun:** size 2n ho jaata, end check galat, hamesha `{}`.
+>
+> **Galti:** `priority_queue<int>`  ->  **Sahi:** `priority_queue<int, vector<int>, greater<int>>`
+> **Kyun:** ready me se sabse CHHOTA pehle chahiye; default max-heap hai.
+>
+> **Galti:** `front()`  ->  **Sahi:** `top()`
+> **Kyun:** queue se heap pe aaye, heap me `front()` hota hi nahi.
 
 **CODE**
 ```cpp
@@ -559,7 +585,11 @@ VISUAL (A-B graph):
 > **CHAABI:** `map<purana, naya>`: (a) clone BANANA + `q.push` sirf naye pe, `if (mp.find(it) == mp.end())` ke ANDAR; (b) JODNA `mp[curr]->neighbors.push_back(mp[it])` `if` ke BAHAR, har edge pe.
 
 > [!WARNING]
-> seed `mp[node] = clone` BFS se pehle, warna cycle pe isi node ka doosra clone. check `mp.find` se karo, `mp[it]` likha to khaali entry ban jaati.
+> **Galti:** start node ka seed `mp[node] = clone` nahi  ->  **Sahi:** `mp[node] = clone` BFS se PEHLE
+> **Kyun:** warna cycle pe isi node ka doosra clone ban jaata.
+>
+> **Galti:** check `mp[it]` se  ->  **Sahi:** `mp.find(it) == mp.end()`
+> **Kyun:** `mp[it]` likhte hi khaali entry ban jaati.
 
 **CODE**
 ```cpp
@@ -620,7 +650,11 @@ DRY-RUN (triangle 0-1-2):
 > **CHAABI:** har node rang 0/1, padosi ko `1 - color[node]`; padosi pehle se ranga + SAME rang = false. outer loop har node (CC jaisa), `color[i] == -1` pe hi BFS.
 
 > [!WARNING]
-> BFS shuru me `color[node] = 0` ZAROORI, warna `1 - (-1)` flip galat. outer me `-1` check PEHLE, rang wale pe dobara BFS nahi.
+> **Galti:** BFS shuru me `color[node] = 0` nahi  ->  **Sahi:** `color[node] = 0` ZAROORI
+> **Kyun:** warna `1 - (-1)` = 2, flip galat.
+>
+> **Galti:** outer loop me har node pe BFS  ->  **Sahi:** `if (color[i] == -1)` check PEHLE, tabhi BFS
+> **Kyun:** rang wale pe dobara BFS `color[node] = 0` se purana rang badal deta.
 
 **CODE**
 ```cpp
@@ -712,11 +746,6 @@ ans = dist [0,3,1,4]
 > **PEHCHAAN / SAAR:** visited kyun nahi: dist[] + STALE-skip = visited ka kaam; strict relax -> undirected me bhi loop nahi
 > negative weight -> Dijkstra FAIL (dist ghatta rehta) -> Bellman-Ford.
 
-> [!WARNING]
-> **★ EDGE:**
-> {node, dist} ULTA likha to bhi test PASS ho jaate (relax baar-baar theek karta), par Dijkstra NAHI raha
-> kyun {dist, node}: chhoti DIST wala node nikla = uski dist PAKKI (weight >= 0, aage sasta raasta aa hi nahi sakta)
-
 ### {node, dist} ULTA likha to (trace)
 
 ```
@@ -732,7 +761,14 @@ ans = dist [0,3,1,4]
 > **CHAABI:** BFS + 2 swap: `queue` -> min-heap `{dist, node}`, `visited` -> `dist[]` + RELAX `wt + it.second < dist[it.first]` -> update, phir push.
 
 > [!WARNING]
-> stale skip `wt > dist[node]` strictly `>` (`>=` se src `{0, src}` khud skip -> sab INF). `dist[]` INF se, `dist[src] = 0`.
+> **Galti:** heap me `{node, dist}`  ->  **Sahi:** `{dist, node}`
+> **Kyun:** chhoti DIST wala pehle nikle tabhi uski dist PAKKI; ulta likha to test pass ho jaate par node baar-baar khulta, Dijkstra nahi raha.
+>
+> **Galti:** stale skip `wt >= dist[node]`  ->  **Sahi:** strictly `wt > dist[node]`
+> **Kyun:** `>=` se src `{0, src}` khud skip, sab INF.
+>
+> **Galti:** `dist[]` 0 se  ->  **Sahi:** `dist[]` INF se, `dist[src] = 0`
+> **Kyun:** 0 se shuru kiya to relax `<` kabhi sach nahi hota.
 
 **CODE**
 ```cpp
@@ -791,7 +827,11 @@ parent[i] == i sirf 0 aur 3 ka -> 2 group
 > **CHAABI:** `parent[i] = i` se shuru; `find` = root tak jao + path compression (`parent[x] = find(parent[x])`); `unite` = dono ROOT jodo (rank se); group ginti = `find(i) == i`.
 
 > [!WARNING]
-> `unite` me `x`-`y` khud mat jodo, ROOT jodo (`find(x)`, `find(y)`), warna group toot jaata. same group? bhi `find(x) == find(y)`, `parent` compare nahi.
+> **Galti:** `unite` me `x`-`y` khud joda  ->  **Sahi:** ROOT jodo `find(x)`, `find(y)`
+> **Kyun:** warna group toot jaata.
+>
+> **Galti:** same group? `parent[x] == parent[y]`  ->  **Sahi:** `find(x) == find(y)`
+> **Kyun:** `parent` seedha root nahi bhi ho sakta.
 
 **CODE**
 ```cpp
@@ -888,7 +928,14 @@ TEMPLATE:
 > **★ VISITED trick (Arpan):** dict-set se word ERASE karo jaise hi use karo -> alag visited-set NAHI chahiye
 
 > [!WARNING]
-> `word[i] = original` RESTORE har position ke baad, warna word bigad jaata. `st.erase(beginWord)` bhi, begin dobara na aaye. begin = 1 se shuru (begin khud ek word gina jaata).
+> **Galti:** `word[i]` restore nahi  ->  **Sahi:** har position ke baad `word[i] = original`
+> **Kyun:** warna word bigad jaata, agli position galat word pe badalti.
+>
+> **Galti:** `st.erase(beginWord)` nahi  ->  **Sahi:** shuru me `st.erase(beginWord)`
+> **Kyun:** begin dobara queue me na aaye.
+>
+> **Galti:** `q.push({beginWord, 0})`  ->  **Sahi:** `q.push({beginWord, 1})`
+> **Kyun:** begin khud ek word gina jaata.
 
 **CODE**
 ```cpp

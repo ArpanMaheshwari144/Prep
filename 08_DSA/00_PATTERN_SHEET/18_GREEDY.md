@@ -36,7 +36,11 @@ cookie 1 -> bhookh 1 khush · doosri cookie 1 < 2 aur 1 < 3 -> kisi kaam ki nahi
 > **CHAABI:** dono SORT, 2 pointer: `s[j] >= g[i]` to khush (`i++ j++ count++`), warna sirf `j++` (badi cookie dhoondho). koi ek khatam -> ruk.
 
 > [!WARNING]
-> cookie chhoti pade to sirf `j++`, `i` wahi (bachcha wait kare). `>=` lo, barabar size bhi khush karti.
+> **Galti:** cookie chhoti pade to `i++` bhi  ->  **Sahi:** sirf `j++`, `i` wahi
+> **Kyun:** bachcha wait kare, uske liye agli badi cookie dhoondhni hai.
+>
+> **Galti:** `s[j] > g[i]`  ->  **Sahi:** `s[j] >= g[i]`
+> **Kyun:** barabar size bhi bachche ko khush karti.
 
 **CODE**
 ```cpp
@@ -83,7 +87,11 @@ int findContentChildren(vector<int> &g, vector<int> &s) {
 > **CHAABI:** ek scan, `maxReach = max(maxReach, i + nums[i])`; `i > maxReach` hua to yahan pahunch hi nahi -> false; end `maxReach >= n - 1`.
 
 > [!WARNING]
-> `nums[i]` akela nahi, `i + nums[i]` (kadam relative, index absolute). `i > maxReach` check update se PEHLE.
+> **Galti:** `max(maxReach, nums[i])`  ->  **Sahi:** `max(maxReach, i + nums[i])`
+> **Kyun:** `nums[i]` = kitne kadam (relative), maxReach = index (absolute), isliye `i` jodo.
+>
+> **Galti:** `i > maxReach` check update ke baad  ->  **Sahi:** update se PEHLE
+> **Kyun:** jis index tak pahunche hi nahi, uska jump bhi gin liya jaata.
 
 **CODE**
 ```cpp
@@ -124,13 +132,14 @@ time:    1   2   3   4
 > **CHAABI:** start pe sort; overlap pe `count++` aur chhote-END wala rakho.
 
 > [!WARNING]
-> **LINE SWEEP se farak (Arpan, 16-Nov grill):** LINE SWEEP (MEETING ROOMS II, 15_INTERVALS/04) me start aur end alag-alag
-> (do array / map me +1, -1) aur poochha "EK SAATH kitne chal rahe" = running count ka MAX. Yahan ek hi array [s,e] aur poochha
-> "kitne HATAO" = greedy: sort, overlap nahi to aage, overlap to `count++`. Sweep ka MAX se ye nahi nikalta:
-> `[[1,2],[2,3],[3,4],[1,3]]` -> ek saath max 2, hatao 1 · `[[1,3],[2,4],[5,7],[6,8]]` -> ek saath max 2, hatao 2 (chala ke dekha).
-
-> [!WARNING]
-> no-overlap `<=` (`<` se `[[1,2],[2,3]]` pe 1, sahi 0: chhoona overlap nahi). overlap pe blindly `start` mat rakho, end compare (`[[1,100],[2,3],[3,4]]` pe 2, sahi 1).
+> **Galti:** LINE SWEEP (MEETING ROOMS II) ka "ek saath MAX" = jawab  ->  **Sahi:** greedy: sort, overlap pe `count++`
+> **Kyun:** sawaal "kitne HATAO" hai, "ek saath kitne" nahi: `[[1,2],[2,3],[3,4],[1,3]]` pe ek saath max 2, par hatana sirf 1.
+>
+> **Galti:** no-overlap check `<`  ->  **Sahi:** `intervals[start][1] <= intervals[end][0]`
+> **Kyun:** sirf chhoona overlap nahi; `<` se `[[1,2],[2,3]]` pe 1 aata, sahi 0.
+>
+> **Galti:** overlap pe blindly `start` wala rakha  ->  **Sahi:** end compare, chhote END wala rakho
+> **Kyun:** `[[1,100],[2,3],[3,4]]` pe 2 aata, sahi 1.
 
 **CODE**
 ```cpp
@@ -185,7 +194,11 @@ DRY-RUN  gas=[1,2,3,4,5]  cost=[3,4,5,1,2]
 > **CHAABI:** 2 accumulator: `tank` (abhi wale start se; minus hua to `0` + `index = i + 1`) aur `total` (poore circle ka, kabhi reset nahi). `total < 0` -> -1, warna `index`.
 
 > [!WARNING]
-> reset pe `index = i + 1` (i nahi): s..i ke beech se shuru karke bhi i paar nahi hota. `total` reset mat karo, wahi "possible hai?" bataata.
+> **Galti:** reset pe `index = i`  ->  **Sahi:** `index = i + 1`
+> **Kyun:** s..i ke beech kahin se bhi shuru karo, i paar nahi hota.
+>
+> **Galti:** `total` bhi reset  ->  **Sahi:** `total` kabhi reset nahi
+> **Kyun:** wahi bataata poora chakkar possible hai ya nahi.
 
 **CODE**
 ```cpp
@@ -230,20 +243,6 @@ DRY-RUN: tasks=[A,A,A,B,B,B], n=2
    picture:  A B idle A B idle A B    // 2 idle bache = wahi idleSlots
 ```
 
-> [!WARNING]
-> **★ length-WINS edge:** [A3,B3,C3,D2,E2] n=3 -> idleSlots -2 (<=0) -> ans = 13 (saare gap bhar gaye, idle 0).
-
-> [!WARNING]
-> **★★ GOTCHA — gadde = maxFreq-1 KYUN (maxFreq nahi)?   [ye confusion 12-Sep REDO pe hui]**
->
-> KYUN: cooldown = "AGLA same-task chalane se pehle gap" -> wo AGLE ko rokta hai.
-> Aakhri A ke baad koi agla A nahi -> cooldown kisi ko rok nahi raha -> koi idle nahi.
-> (dawa: aakhri goli kha li -> bottle khali -> 2 ghante wait nahi, kaam khatam.)
->
-> + problem "FINISH tak minimum time" poochta -> aakhri task pe clock STOP.
->
-> => gaps = (count-1) = maxFreq-1 = gadde.  n*maxFreq lena = zyada idle = GALAT.
-
 ### TERMS: slot vs gadda (SAHI / GALAT tasveer)
 
 ```
@@ -258,6 +257,13 @@ DRY-RUN: tasks=[A,A,A,B,B,B], n=2
 
 > [!IMPORTANT]
 > **CHAABI:** sabse zyada wala task dhaancha: `gadde = maxFreq - 1`, `idle = n * gadde`, baaki har task se `min(mp[i], gadde)` ghatao; `idle > 0` -> `size + idle`, warna `size`.
+
+> [!WARNING]
+> **Galti:** `gadde = maxFreq` (`n * maxFreq`)  ->  **Sahi:** `gadde = maxFreq - 1`
+> **Kyun:** gap sirf BEECH me (A _ _ A _ _ A); aakhri A ke baad koi agla A nahi, cooldown kisi ko nahi rokta, to idle bhi nahi.
+>
+> **Galti:** idle negative pe bhi `size + idle`  ->  **Sahi:** `idle > 0` tabhi `size + idle`, warna sirf `size`
+> **Kyun:** `[A3,B3,C3,D2,E2]` n=3 pe idle -2 aata = saare gap bhar gaye, jawab 13 (length).
 
 **CODE**
 ```cpp

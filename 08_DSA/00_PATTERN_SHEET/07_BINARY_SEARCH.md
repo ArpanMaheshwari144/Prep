@@ -50,7 +50,11 @@
 - **kyun:** 9 index 4 pe baitha hai (-1,0,3,5 ke baad)
 
 > [!WARNING]
-> `<=` (`<` nahi): `[5], 5` pe `<` se loop chalta hi nahi -> -1, sahi 0. `(low + high) / 2` nahi: bade low+high pe overflow.
+> **Galti:** `while (low < high)`  ->  **Sahi:** `while (low <= high)`
+> **Kyun:** `[5], 5` pe `<` se loop chalta hi nahi -> -1, sahi 0.
+>
+> **Galti:** `mid = (low + high) / 2`  ->  **Sahi:** `mid = low + (high - low) / 2`
+> **Kyun:** bade low + high pe overflow.
 
 **CODE**
 ```cpp
@@ -85,7 +89,8 @@ int search(vector<int> &nums, int target) {
 > **CHAABI:** BASIC BS hubahu; na mile to `return low` (low = pehla `nums >= target` = daalne ki jagah).
 
 > [!WARNING]
-> Na mile to -1 nahi, `low` lautao: `[1,3,5,6], 2` -> loop ke baad low = 1.
+> **Galti:** na mile to `return -1`  ->  **Sahi:** `return low`
+> **Kyun:** loop ke baad low = daalne ki jagah (`[1,3,5,6], 2` -> 1).
 
 **CODE**
 ```cpp
@@ -134,7 +139,14 @@ DRY-RUN ([5,7,7,8,8,10], target 8):
 > **CHAABI:** Do BS. Mila to RUKO MAT: PASS 1 (FIRST) `ans[0] = mid, high = mid - 1` · PASS 2 (LAST) `ans[1] = mid, low = mid + 1`. Baaki basic BS.
 
 > [!WARNING]
-> Dono pass ke beech `low = 0, high = n-1` RESET (warna PASS 2 galat jagah se shuru). Mila to sirf EK pointer hilao. `ans(2,-1)` + index set, `push_back` nahi.
+> **Galti:** PASS 2 se pehle `low`, `high` reset nahi  ->  **Sahi:** `low = 0, high = n - 1` dobara
+> **Kyun:** warna PASS 2 PASS 1 ki bachi jagah se shuru hota.
+>
+> **Galti:** mila to dono pointer hilaaye  ->  **Sahi:** sirf EK (FIRST: `high = mid - 1`, LAST: `low = mid + 1`)
+> **Kyun:** us taraf aur chalna hai jahan pehla / aakhri ho sakta.
+>
+> **Galti:** `ans.push_back(mid)`  ->  **Sahi:** `ans(2, -1)` aur `ans[0]` / `ans[1]` set
+> **Kyun:** mila to ruke nahi, push_back har mile pe naya jod deta.
 
 **CODE**
 ```cpp
@@ -192,10 +204,11 @@ do sorted tukde; 0 doosre tukde ke shuru me, index 4
 > **CHAABI:** `nums[mid] == target` -> return. `nums[low] <= nums[mid]` -> LEFT sorted: target `nums[low]` se `nums[mid]` ke beech to `high = mid - 1`, warna `low = mid + 1`. Nahi to RIGHT sorted, wahi ulta (target `nums[mid]` se `nums[high]` ke beech to `low = mid + 1`).
 
 > [!WARNING]
-> `nums[low] <= nums[mid]` me `<=` (`<` nahi): `[3,1], 1` pe `<` se -1, sahi 1. Range me `>= nums[low]` ZAROORI (target low pe khud ho sakta): `[5,1,3], 5` miss.
+> **Galti:** `nums[low] < nums[mid]`  ->  **Sahi:** `nums[low] <= nums[mid]`
+> **Kyun:** `low == mid` pe left aadha ek hi element, wo bhi sorted; `<` se `[3,1], 1` pe -1, sahi 1.
 >
-> BOUNDARY RULE (dry-run se pakda): jahaan boundary KHUD valid answer ho sakti (nums[low]/nums[high]) -> >= / <= ZARURI (equality include).
-> jahaan mid hai (already returned) -> < ya <= farak NAHI.
+> **Galti:** range me `target > nums[low]`  ->  **Sahi:** `target >= nums[low]` (aur right me `<= nums[high]`)
+> **Kyun:** boundary khud answer ho sakti (`[5,1,3], 5` miss); mid pe `<` / `<=` farak nahi, wo pehle hi return.
 
 **CODE**
 ```cpp
@@ -240,7 +253,11 @@ int search(vector<int> &nums, int target) { // [4,5,6,7,0,1,2] me target ka inde
 > **CHAABI:** Target nahi, khud MIN -> mid ko HIGH se compare: `nums[mid] > nums[high]` to `low = mid + 1`, warna `high = mid`.
 
 > [!WARNING]
-> `high = mid` (mid-1 NAHI: mid khud min ho sakta, `[3,1,2]` pe mid-1 se galat 3). `high = mid` ke saath `low < high` hi; `<=` = infinite loop. Return `nums[low]`.
+> **Galti:** `high = mid - 1`  ->  **Sahi:** `high = mid`
+> **Kyun:** mid khud min ho sakta, `[3,1,2]` pe mid-1 se galat 3.
+>
+> **Galti:** `while (low <= high)`  ->  **Sahi:** `while (low < high)`
+> **Kyun:** `high = mid` ke saath `<=` = infinite loop.
 
 **CODE**
 ```cpp
@@ -315,7 +332,14 @@ ISI FAMILY KE AUR (kahani alag, shell wahi):
 > **CHAABI:** Answer-range pe BS: `low = 1`, `high = max(piles)`. `solve(mid)`: `sum ceil(piles[i] / mid) <= h`? haan -> `ans = mid, high = mid - 1` (chhota try), nahi -> `low = mid + 1`.
 
 > [!WARNING]
-> `low = 1` (0 pe `piles[i] / mid` divide by zero). `(double)` cast PEHLE, int/int pehle hi floor (`7/3 = 2`); ya integer `(piles[i] + mid - 1) / mid`. hours `long long`.
+> **Galti:** `low = 0`  ->  **Sahi:** `low = 1`
+> **Kyun:** 0 pe `piles[i] / mid` divide by zero.
+>
+> **Galti:** `ceil(piles[i] / mid)`  ->  **Sahi:** `ceil((double)piles[i] / mid)` ya `(piles[i] + mid - 1) / mid`
+> **Kyun:** int / int pehle hi floor (`7/3 = 2`), ceil ko kuch milta hi nahi.
+>
+> **Galti:** hours `int`  ->  **Sahi:** `long long`
+> **Kyun:** bade piles pe ghante ka jod int se bahar.
 
 **CODE**
 ```cpp
@@ -359,7 +383,11 @@ int minEatingSpeed(vector<int> &piles, int h) {
 > **CHAABI:** KOKO ka shell, sirf range + solve alag: `low = max(weights)`, `high = sum(weights)`. `solve`: `sum + w > mid` to `days++, sum = 0`; `days <= D`?
 
 > [!WARNING]
-> `days = 1` se shuru (aakhri din ka load bhi gine). `low = max` (sabse bhaari packet akela chadhe): `[3,10], D=2` me lo=0 rakha -> 5 aata, sahi 10.
+> **Galti:** `days = 0`  ->  **Sahi:** `days = 1`
+> **Kyun:** aakhri din ka load bhi gina jaana chahiye.
+>
+> **Galti:** `low = 0`  ->  **Sahi:** `low = max(weights)`
+> **Kyun:** sabse bhaari packet akela chadhna chahiye; `[3,10], D=2` me 0 se 5 aata, sahi 10.
 
 **CODE**
 ```cpp
@@ -417,7 +445,11 @@ cost 25, 23, 18, 24 -> sabse chhoti 18 -> jawab 18. 14 aur 18 do alag jawab nahi
 > **CHAABI:** SHIP WITHIN D DAYS hi: k hisse = D din. `solve`: `sum > mid` to naya tukda (`count++`); `count <= k`? Range `low = max`, `high = sum`.
 
 > [!WARNING]
-> `count = 1` se START (warna aakhri tukda chhoot jaata). Limit tootne pe `sum = nums[i]` (0 nahi): wahi element naye tukde ka pehla.
+> **Galti:** `count = 0`  ->  **Sahi:** `count = 1`
+> **Kyun:** aakhri tukda bhi ginti me chahiye.
+>
+> **Galti:** limit tootne pe `sum = 0`  ->  **Sahi:** `sum = nums[i]`
+> **Kyun:** wahi element naye tukde ka pehla hai.
 
 **CODE**
 ```cpp
@@ -475,14 +507,18 @@ sabse bada nahi maanga, koi bhi ek peak ka index chalega (1 ya 5)
 > [!IMPORTANT]
 > **PEHCHAAN:** array SORTED NAHI, phir bhi O(log n) maanga = binary search. Mid pe dekh ke ek aadha phenk sako (chadhaai -> choti right me pakka) to BS lagta hai, sorted hona zaroori nahi.
 
-> [!WARNING]
-> TRAP (26-Nov grill): O(log n) dekh ke "pehle sort kar dun" socha; sort kiya to index hi badal jaate, khel khatam. Sort nahi, seedha mid.
-
 > [!IMPORTANT]
 > **CHAABI:** mid ko `mid + 1` se compare: CHADHAAI (`nums[mid] < nums[mid+1]`) -> `low = mid + 1`; DHALAAN -> `high = mid`.
 
 > [!WARNING]
-> `high = mid` (mid-1 NAHI: mid khud peak ho sakta) ke saath `low < high` hi (atke nahi, `mid + 1` hamesha andar). Return `low` (low == high pe converge = peak).
+> **Galti:** O(log n) dekh ke pehle sort  ->  **Sahi:** sort nahi, seedha mid vs `mid + 1`
+> **Kyun:** sort kiya to index hi badal jaate, aur index hi lautana hai.
+>
+> **Galti:** `high = mid - 1`  ->  **Sahi:** `high = mid`
+> **Kyun:** mid khud peak ho sakta.
+>
+> **Galti:** `while (low <= high)`  ->  **Sahi:** `while (low < high)`, `return low`
+> **Kyun:** `high = mid` ke saath `<=` atak jaata; `<` me `mid + 1` hamesha andar, low == high = peak.
 
 **CODE**
 ```cpp
@@ -529,7 +565,14 @@ int findPeakElement(vector<int> &nums) {    // peak = dono padosi se bada; edges
 > **CHAABI:** Single se PEHLE pair (even, odd) index pe. mid ko `mid - 1` se milao: EVEN mid ka saathi peeche mila = shift ho chuki -> `high = mid - 1`; ODD mid ka saathi peeche mila = theek -> `low = mid + 1`.
 
 > [!WARNING]
-> `return nums[high]` (low nahi): dono branch mid REJECT karte, high khud single pe rukta. `mid == 0` pe seedha `nums[mid]` (`mid - 1` bahar). size 1 pe seedha `nums[0]`.
+> **Galti:** `return nums[low]`  ->  **Sahi:** `return nums[high]`
+> **Kyun:** dono branch mid REJECT karte, high khud single pe rukta.
+>
+> **Galti:** `mid == 0` pe bhi `nums[mid - 1]`  ->  **Sahi:** `mid == 0` pe seedha `nums[mid]`
+> **Kyun:** `mid - 1` array ke bahar.
+>
+> **Galti:** size 1 ka check nahi  ->  **Sahi:** size 1 pe seedha `nums[0]`
+> **Kyun:** akela element hi single hai.
 
 **CODE**
 ```cpp
@@ -584,7 +627,8 @@ int singleNonDuplicate(vector<int> &nums) {
 > **CHAABI:** Poori matrix ek 1D sorted line: `high = row * col - 1`, cell = `matrix[mid / col][mid % col]`. Baaki basic BS.
 
 > [!WARNING]
-> Dono jagah COL (`/ col`, `% col`), row nahi: 3x4, mid=5 -> `[1][1]`; `/3` likha to `[1][2]` galat. `col = matrix[0].size()`.
+> **Galti:** `matrix[mid / row][mid % row]`  ->  **Sahi:** `matrix[mid / col][mid % col]`, `col = matrix[0].size()`
+> **Kyun:** ek row me `col` cell hain; 3x4, mid=5 -> `[1][1]`, `/3` likha to `[1][2]` galat.
 
 **CODE**
 ```cpp
@@ -653,7 +697,17 @@ B:   7  11 | 18  19  21  25        B pe cut 2 pe
 > **CHAABI:** CHHOTE array A pe CUT `Px` pe BS, `Py = (m + n + 1) / 2 - Px`. 4 kinaare: `x1 = A[Px-1]`, `x2 = B[Py-1]` (left) · `x3 = A[Px]`, `x4 = B[Py]` (right). `x1 <= x4 && x2 <= x3` = sahi cut: odd -> `max(x1, x2)`, even -> `max(x1,x2)` aur `min(x3,x4)` ka average. `x1 > x4` -> `high = Px - 1`, warna `low = Px + 1`.
 
 > [!WARNING]
-> `m > n` to swap (chhote pe BS, Py kabhi -ve nahi). Edge: `Px == 0` / `Py == 0` -> `INT_MIN`, `Px == m` / `Py == n` -> `INT_MAX` (warna `A[-1]` / `A[m]` bahar). Even me `/ 2.0` (int division se .5 kat jaata). `(m + n + 1) / 2` me `+1`.
+> **Galti:** bade array pe BS  ->  **Sahi:** `m > n` to swap, chhote pe BS
+> **Kyun:** bade pe `Py` minus me chala jaata.
+>
+> **Galti:** kinaare pe seedha `A[Px-1]` / `A[Px]`  ->  **Sahi:** `Px == 0` / `Py == 0` -> `INT_MIN`, `Px == m` / `Py == n` -> `INT_MAX`
+> **Kyun:** warna `A[-1]` / `A[m]` bahar.
+>
+> **Galti:** even me `/ 2`  ->  **Sahi:** `/ 2.0`
+> **Kyun:** int division se .5 kat jaata.
+>
+> **Galti:** `Py = (m + n) / 2 - Px`  ->  **Sahi:** `(m + n + 1) / 2 - Px`
+> **Kyun:** `+1` se odd me beech wala LEFT me aata, jawab `max(x1, x2)` sahi.
 
 **CODE**
 ```cpp

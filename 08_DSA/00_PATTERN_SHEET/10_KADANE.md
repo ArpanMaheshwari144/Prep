@@ -37,7 +37,14 @@ daam:  7   1   5   3   6   4
 > **CHAABI:** running MIN cache: har din `minSoFar = min(minSoFar, prices[i])`, phir `ans = max(ans, prices[i] - minSoFar)`.
 
 > [!WARNING]
-> min update PEHLE, diff BAAD (sell buy ke BAAD; ulta kiya to diff minus / aaj ka daam khud se). `minSoFar = INT_MAX` se shuru, pehla din hi sasta ban jaaye. End me `ans < 0 ? 0 : ans` (munafa na ho to 0).
+> **Galti:** diff pehle, `minSoFar` update baad  ->  **Sahi:** min update PEHLE, diff BAAD
+> **Kyun:** becho kharidne ke BAAD hi; ulta kiya to diff minus / aaj ka daam khud se.
+>
+> **Galti:** `minSoFar = 0`  ->  **Sahi:** `minSoFar = INT_MAX`
+> **Kyun:** pehla din hi sasta ban jaaye; 0 se min kabhi update nahi hota.
+>
+> **Galti:** seedha `return ans`  ->  **Sahi:** `return ans < 0 ? 0 : ans`
+> **Kyun:** munafa na ho to 0 chahiye.
 
 **CODE**
 ```cpp
@@ -69,7 +76,11 @@ int maxProfit(vector<int> &prices) {        // aaj becho = aaj ka daam MINUS ab 
 > **CHAABI:** running `sum += it`, `maxSum = max(maxSum, sum)`, `sum < 0` = bojh -> `sum = 0`.
 
 > [!WARNING]
-> max PEHLE, reset BAAD; `maxSum = INT_MIN` (0 nahi). Warna all-negative `[-1]` pe 0 aata, sahi -1.
+> **Galti:** `sum < 0` reset pehle, max baad  ->  **Sahi:** `maxSum = max(maxSum, sum)` PEHLE, reset BAAD
+> **Kyun:** reset pehle kiya to all-negative me 0 max me chala jaata.
+>
+> **Galti:** `maxSum = 0`  ->  **Sahi:** `maxSum = INT_MIN`
+> **Kyun:** all-negative `[-1]` pe 0 aata, sahi -1.
 
 **CODE**
 ```cpp
@@ -111,7 +122,11 @@ pehle max=min=nums[0], ans=0, loop 1 se tha -> nums[0] AKELA kabhi ans me nahi g
 > **CHAABI:** 3 candidate `{nums[i], mini * nums[i], maxi * nums[i]}`: max aur MIN dono rakho (neg x neg = bada). `ans = max(ans, maxi)`.
 
 > [!WARNING]
-> `temp` me max FREEZE karo, `mini` purane `maxi` se nikaalo, phir `maxi = temp` (max min ke BAAD).
+> **Galti:** `maxi` pehle update, phir `mini` naye `maxi` se  ->  **Sahi:** naya max `temp` me FREEZE, `mini` purane `maxi` se, phir `maxi = temp`
+> **Kyun:** `mini` ko PURANA `maxi` chahiye; `maxi` pehle badla to wo candidate kho jaata.
+>
+> **Galti:** `maxi = mini = nums[0]`, `ans = 0`, loop 1 se  ->  **Sahi:** `maxi = mini = 1`, `ans = INT_MIN`, loop 0 se
+> **Kyun:** `nums[0]` akela kabhi ans me nahi gaya, `[4,-3]` pe 0 aata (sahi 4); `ans = 0` se `[-2]` pe 0, sahi -2.
 
 **CODE**
 ```cpp
@@ -152,7 +167,14 @@ aur n==1 pe abs nahi tha ([-7] pe -7, sahi 7).
 > **CHAABI:** MAX PRODUCT ka skeleton, `*` -> `+`. `ans = max(ans, max(abs(mini), abs(maxi)))`: jawab min-sum se bhi aa sakta.
 
 > [!WARNING]
-> abs DONO pe, sirf maxi nahi.
+> **Galti:** sirf `abs(maxi)`  ->  **Sahi:** `max(abs(mini), abs(maxi))`
+> **Kyun:** jawab min-sum (bada negative) se bhi aa sakta.
+>
+> **Galti:** `maxi = mini = nums[0]`, `ans = 0`, loop 1 se  ->  **Sahi:** `maxi = mini = ans = 0`, loop 0 se
+> **Kyun:** `nums[0]` akela chhoot jaata (`[9,-6]` pe 6, sahi 9).
+>
+> **Galti:** `n == 1` pe seedha `nums[0]`  ->  **Sahi:** `return abs(nums[0])`
+> **Kyun:** `[-7]` pe -7 aata, sahi 7.
 
 **CODE**
 ```cpp
@@ -198,13 +220,14 @@ bina ghoome sabse bada 5 + (-3) + 5 = 7 hi tha, isliye ghoom ke 10
 > **CHAABI:** 2 case, bada lo: NO-wrap = normal Kadane `maxSum` · WRAP = `totalSum - minSum` (beech ka sabse bura chunk hatao). `max(circularSum, maxSum)`.
 
 > [!WARNING]
-> **★ EDGE (all-negative):** min-subarray = poora array -> total−minK = 0 (EMPTY) -> galat.
-> -> agar maxK < 0 (sab negative) -> sirf maxK return. (empty subarray allowed nahi.)
+> **Galti:** all-negative pe bhi `max(maxK, total - minK)`  ->  **Sahi:** `maxK < 0` to sirf `maxK` return
+> **Kyun:** min-subarray = poora array, `total - minK = 0` (EMPTY), aur empty subarray allowed nahi.
 >
-> **CONCRETE [5,-3,5]:** maxK=7 (5,-3,5 contiguous -- -3 skip nahi hota) · minK=-3 · total=7
-> -> wrap = 7−(−3)=10 -> ans=max(7,10)=10.  (10 sirf WRAP se, seedhe Kadane se nahi.)
+> **Galti:** `[5,-3,5]` pe maxK = 10 socha (-3 skip)  ->  **Sahi:** maxK = 7, minK = -3, total = 7, wrap = 7 - (-3) = 10
+> **Kyun:** seedhe Kadane me -3 skip nahi hota (5,-3,5 contiguous); 10 sirf WRAP se aata.
 >
-> **★ minK Kadane-MIN se:** cur = min(nums[i], cur+nums[i]); minK = min(minK, cur). (prefix-sum se NAHI -- Arpan-10-Sep pakda.)
+> **Galti:** minK prefix-sum se  ->  **Sahi:** Kadane-MIN: `cur = min(nums[i], cur + nums[i]); minK = min(minK, cur)`
+> **Kyun:** min subarray bhi Kadane hi hai, bas max ki jagah min.
 
 **CODE**
 ```cpp
@@ -252,15 +275,6 @@ int maxSubarraySumCircular(vector<int> &nums) {
 
 - **e.g.** `[1,2,-7,8,6,-4] -> 17`
 - **kyun:** [1,2] = 3 aur [8,6] = 14, beech ka -7 chhoda; 3 + 14 = 17
-
-> [!WARNING]
-> **★ COPY-PEN WALA SAWAAL: pehle copy pe array chala (5 step), phir code. Sheet dekh ke seedha likha to detail fisalti.**
->
-> **★ REDO_2 me yahin atka: AAKHRI loop kahan tak?**
->
-> andar `bestRight[i + 1]` padhna hai, isliye `i < n - 1` (i sirf n-2 tak).
->
-> Copy pe trace kiya to khul gaya.
 
 **SAAR**
 ```
@@ -389,7 +403,17 @@ rule : ans = max( ans , bestLeft[i] + bestRight[i+1] )
 > **CHAABI:** 5 STEP: kadane-per-index aage -> running max = `bestLeft[i]` (0..i ka best) · mirror peeche -> `bestRight[i]` (i..n-1 ka best) · WALL: `ans = max(ans, bestLeft[i] + bestRight[i + 1])`.
 
 > [!WARNING]
-> `i + 1` = NON-OVERLAP: `bestRight[i]` liya to index i dono me, do baar gina (22 jhootha). Loop `i < n - 1` (i+1 bahar na jaaye, par aakhri split `[-5,10,10] -> 20` bhi aaye). `ans = INT_MIN`, sab minus pe 0 galat.
+> **Galti:** sheet dekh ke seedha code  ->  **Sahi:** pehle copy pe array chala (5 step), phir code
+> **Kyun:** seedha likha to detail fisalti.
+>
+> **Galti:** aakhri loop ki had pe atka  ->  **Sahi:** `i < n - 1` (i sirf n-2 tak)
+> **Kyun:** andar `bestRight[i + 1]` padhna hai, `i + 1` bahar na jaaye; aakhri split `[-5,10,10] -> 20` bhi aaye.
+>
+> **Galti:** `bestLeft[i] + bestRight[i]`  ->  **Sahi:** `bestLeft[i] + bestRight[i + 1]`
+> **Kyun:** `bestRight[i]` me index i dono taraf, do baar gina (22 jhootha).
+>
+> **Galti:** `ans = 0`  ->  **Sahi:** `ans = INT_MIN`
+> **Kyun:** sab minus pe 0 galat.
 
 **CODE**
 ```cpp

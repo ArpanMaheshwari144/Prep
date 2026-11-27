@@ -51,7 +51,8 @@ node/list dikhta hai, par asli kaam MIN-HEAP of current heads ka hai
 > **CHAABI:** dono `head` se, `slow` 1 kadam, `fast` 2 kadam. `fast` end pe pahuncha to `slow` MIDDLE pe (even me doosra middle).
 
 > [!WARNING]
-> while me `fast != NULL` PEHLE, phir `fast->next != NULL`. Koi ek check hataya to `fast->next->next` NULL pe crash.
+> **Galti:** while me sirf ek check (ya `fast->next` pehle)  ->  **Sahi:** `fast != NULL && fast->next != NULL`, isi kram me
+> **Kyun:** koi ek check hataya to `fast->next->next` NULL pe crash.
 
 **CODE**
 ```cpp
@@ -88,7 +89,8 @@ aage chalte raho, NULL kabhi nahi aata -> cycle hai -> true
 > **CHAABI:** MIDDLE wala hi slow/fast. Cycle ho to fast ghoom ke slow ko pakadta -> `slow == fast` = true; fast NULL tak pahuncha = cycle nahi.
 
 > [!WARNING]
-> `slow == fast` check MOVE ke BAAD. Pehle check kiya to dono head pe hain = turant true.
+> **Galti:** `slow == fast` check move se PEHLE  ->  **Sahi:** move ke BAAD check
+> **Kyun:** shuru me dono head pe hain, pehle check kiya to turant true.
 
 **CODE**
 ```cpp
@@ -127,7 +129,11 @@ bool hasCycle(Node *head) {                 // Floyd: cycle ho to tez-dheema MIL
 > **CHAABI:** value = POINTER (`i -> nums[i]`), cycle ki ENTRY = duplicate. PHASE-1 slow/fast milao, PHASE-2 `slow = 0`, dono 1-1 kadam, jahan mile wahi jawab.
 
 > [!WARNING]
-> loop se PEHLE ek kadam (`slow = nums[slow], fast = nums[nums[fast]]`), warna dono 0 pe = `while (slow != fast)` chalta hi nahi. PHASE-2 me sirf slow 0 pe, fast meet point pe hi rahe.
+> **Galti:** seedha `while (slow != fast)`  ->  **Sahi:** loop se PEHLE ek kadam (`slow = nums[slow], fast = nums[nums[fast]]`)
+> **Kyun:** dono 0 pe hain, while chalta hi nahi.
+>
+> **Galti:** PHASE-2 me dono 0 pe  ->  **Sahi:** sirf `slow = 0`, fast meet point pe hi rahe
+> **Kyun:** entry tabhi milti jab ek shuru se aur ek meet point se chale.
 
 **CODE**
 ```cpp
@@ -169,9 +175,8 @@ int findDuplicate(vector<int> &nums) {
 > **CHAABI:** DETECT CYCLE + PHASE-2: mile to `break` (fast meet point pe), `slow = head`, dono 1-1 kadam, jahan mile = cycle ka START. FIND DUPLICATE ka `->next` version.
 
 > [!WARNING]
-> GOTCHA (24-Sep theek kiya): pehle `if(slow!=fast) return NULL` likha tha -- GALAT.
-> 1 node, bina cycle: loop chalta hi nahi -> slow==fast==head reh jaate -> head return ho jaata (sahi NULL).
-> -> alag `cycle` flag rakho, sirf slow==fast MILNE pe true.
+> **Galti:** loop ke baad `if (slow != fast) return NULL`  ->  **Sahi:** alag `cycle` flag, sirf loop ke andar `slow == fast` milne pe true
+> **Kyun:** 1 node bina cycle pe loop chalta hi nahi, slow == fast == head reh jaate, head return ho jaata (sahi NULL).
 
 **CODE**
 ```cpp
@@ -215,7 +220,11 @@ ListNode *detectCycle(ListNode *head) {
 > **CHAABI:** `middleNode` -> `reverseList(mid)` (2nd half ulta) -> `head` aage se aur `rev` peeche se saath-saath compare.
 
 > [!WARNING]
-> while me `head != NULL && rev != NULL` (`&&`): jo pehle NULL ho wahin ruko. List badalti hai (2nd half ulta), na todni ho to copy pe chalao.
+> **Galti:** while me `||`  ->  **Sahi:** `head != NULL && rev != NULL`
+> **Kyun:** jo pehle NULL ho wahin rukna hai, warna NULL ka `->val` crash.
+>
+> **Galti:** asli list pe reverse, list wapas nahi  ->  **Sahi:** list na todni ho to copy pe chalao
+> **Kyun:** 2nd half ulta ho jaata, list badal jaati.
 
 **CODE**
 ```cpp
@@ -252,7 +261,8 @@ bool isPalindrome(Node *head) {
 > **CHAABI:** fast pehle n kadam aage (gap n), phir dono saath jab tak `fast->next != NULL` -> slow hatane wale ke PEHLE rukta -> `slow->next = slow->next->next`.
 
 > [!WARNING]
-> n kadam ke baad `fast == NULL` = head hi hatana hai -> `return head->next` (ye check while se PEHLE, warna `fast->next` NULL pe crash).
+> **Galti:** `fast == NULL` ka check nahi (ya while ke baad)  ->  **Sahi:** n kadam ke baad, while se PEHLE `if (fast == NULL) return head->next`
+> **Kyun:** `fast == NULL` = head hi hatana hai, aur `fast->next` NULL pe crash.
 
 **CODE**
 ```cpp
@@ -287,7 +297,8 @@ Node *removeNthFromEnd(Node *head, int n) { // FAST/SLOW GAP: pehle fast n kadam
 > **CHAABI:** prev/curr: match + `prev == NULL` -> head aage · match + prev hai -> `prev->next = curr->next` · no-match -> `prev = curr`. `curr` har case me aage.
 
 > [!WARNING]
-> `prev = curr` SIRF no-match pe. Match pe prev wahi rahe (curr to hata hua node hai), warna `[1,6,6,2]`, val=6 fail.
+> **Galti:** har case me `prev = curr`  ->  **Sahi:** `prev = curr` SIRF no-match pe
+> **Kyun:** match pe curr hata hua node hai, prev wahi rahe; warna `[1,6,6,2]`, val=6 fail.
 
 **CODE**
 ```cpp
@@ -326,7 +337,11 @@ Node *removeElements(Node *head, int val) { // val wale SAARE node hatao
 > **CHAABI:** dummy + tail: dono ke aage wale me se chhota `tail->next` pe jodo; ek list khatam to baaki poori list jod do.
 
 > [!WARNING]
-> `while` me `&&`: ek list khatam hote hi ruko, baaki neeche jodo. `return dummy->next` (dummy skip -> asli head).
+> **Galti:** `while` me `||`  ->  **Sahi:** `&&`, baaki bachi list loop ke baad seedha jodo
+> **Kyun:** ek list khatam hote hi NULL ka `->val` crash.
+>
+> **Galti:** `return dummy`  ->  **Sahi:** `return dummy->next`
+> **Kyun:** dummy nakli node hai, asli head uske aage.
 
 **CODE**
 ```cpp
@@ -383,7 +398,8 @@ ikai pehle hai, isliye left se hi jodte chalo, carry daayi taraf jaata
 > **CHAABI:** MERGE jaisa dummy + tail, bas ek `carry`: `sum` = a + b + carry, node = `sum % 10`, `carry = sum / 10`.
 
 > [!WARNING]
-> while me `|| carry > 0` zaroori: 999 + 1 me dono list khatam, carry 1 bacha -> ek aur node (leading 1).
+> **Galti:** while me sirf `l1 || l2`  ->  **Sahi:** `|| carry > 0` bhi
+> **Kyun:** 999 + 1 me dono list khatam, carry 1 bacha, ek aur node (leading 1) chahiye.
 
 **CODE**
 ```cpp
@@ -425,7 +441,11 @@ Node *addTwoNumbers(Node *a, Node *b) {
 > **CHAABI:** dummy + `prev`. Har jodi: `second = first->next`, `temp = second->next` bachao, phir `second->next = first`, `first->next = temp`, `prev->next = second`. ADVANCE `prev = first`, `first = temp`.
 
 > [!WARNING]
-> `temp = second->next` PEHLE bachao, warna `first->next = temp` pe aage ki list gum. Advance me `prev = first` (purana first = is jodi ka tail).
+> **Galti:** `second->next = first` pehle, `temp` baad me  ->  **Sahi:** `temp = second->next` PEHLE bachao
+> **Kyun:** link badalte hi aage ki list gum.
+>
+> **Galti:** advance me `prev = second`  ->  **Sahi:** `prev = first`
+> **Kyun:** swap ke baad purana first is jodi ka tail hai.
 
 **CODE**
 ```cpp
@@ -466,7 +486,11 @@ Node *swapPairs(Node *head) {               // har do adjacent NODE ki jodi swap
 > **CHAABI:** 3 pointer: `nextt = curr->next` bachao -> `curr->next = prev` (link ulta) -> `prev = curr`, `curr = nextt`.
 
 > [!WARNING]
-> `nextt` link ulatne se PEHLE bachao, warna aage ka raasta gum. Return `prev` (curr NULL pe ruka, prev = aakhri node = naya head), `curr` nahi.
+> **Galti:** `curr->next = prev` pehle, `nextt` baad me  ->  **Sahi:** `nextt = curr->next` PEHLE bachao
+> **Kyun:** link ulatte hi aage ka raasta gum.
+>
+> **Galti:** `return curr`  ->  **Sahi:** `return prev`
+> **Kyun:** curr NULL pe ruka, prev = aakhri node = naya head.
 
 **CODE**
 ```cpp
@@ -513,7 +537,11 @@ VISUAL ( 1 -> 2 -> 3 -> 4 -> 5 ,  k=2 ):
 > **CHAABI:** (1) pehle k node GINO, kam bache -> `return head` (2) 3-pointer se sirf k node ulte (3) `head` ab group ka TAIL -> `head->next = reverseKGroup(nextt, k)`, `return prev`.
 
 > [!WARNING]
-> count-FIRST: bina gine ulta kiya to leftover (k se kam) bhi ulta ho jaata. Recurse `nextt` (agle group ka head) pe, stitch `head->next` pe.
+> **Galti:** bina gine ulta shuru  ->  **Sahi:** pehle k node GINO, kam ho to `return head`
+> **Kyun:** warna leftover (k se kam) bhi ulta ho jaata.
+>
+> **Galti:** recurse / stitch galat jagah  ->  **Sahi:** `head->next = reverseKGroup(nextt, k)`
+> **Kyun:** `nextt` = agle group ka head, aur `head` ab is group ka TAIL hai.
 
 **CODE**
 ```cpp
@@ -581,7 +609,11 @@ VISUAL ( [x]=node · -> next · ~> random ):
 > **CHAABI:** PASS 1: har node ka clone + `mp[curr] = temp` (old -> new) + next jodo. PASS 2: `currRand->random = mp[curr->random]` = original ke random ka NAYA copy.
 
 > [!WARNING]
-> random ORIGINAL (`curr->random`) se padho, copy (`currRand`) se nahi: copy ka random abhi NULL hota. 2 PASS isliye: random aage ke node pe bhi ho sakta, 1 pass me target bana hi na ho.
+> **Galti:** `mp[currRand->random]`  ->  **Sahi:** `mp[curr->random]` (ORIGINAL se padho)
+> **Kyun:** copy ka random abhi NULL hota.
+>
+> **Galti:** 1 pass me next aur random dono  ->  **Sahi:** 2 PASS (pehle saare clone, phir random)
+> **Kyun:** random aage ke node pe bhi ho sakta, 1 pass me wo clone bana hi na ho.
 
 **CODE**
 ```cpp

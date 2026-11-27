@@ -75,7 +75,11 @@ kyun: "abc" me teeno alag = 3; agla a aate hi repeat, isse lamba koi substring n
 > **CHAABI:** jo abhi add hua (`s[j]`) wahi repeat ho sakta hai, to INVALID = `mp[s[j]] > 1`.
 
 > [!WARNING]
-> **"abba":** `while` ki jagah `if` likha to 3 aata, sahi 2. Ek se zyada char nikaalne pad sakte hain (a aur purana b dono). Shrink ke **baad** `ans = max(ans, j - i + 1)`.
+> **Galti:** shrink me `if (mp[s[j]] > 1)`  ->  **Sahi:** `while (mp[s[j]] > 1)`
+> **Kyun:** ek se zyada char nikaalne pad sakte (a aur purana b dono); `"abba"` pe `if` se 3 aata, sahi 2.
+>
+> **Galti:** `ans` shrink se pehle  ->  **Sahi:** shrink ke baad `ans = max(ans, j - i + 1)`
+> **Kyun:** shrink se pehle window me repeat hai, galat lambai gin jaati.
 
 **CODE**
 ```cpp
@@ -152,11 +156,12 @@ kyun: index 4..9 = 0,0,1,1,1,1: do zero flip -> 6 lagaatar 1
 >
 > kyun: upar while(zeroCount>k) shrink ke BAAD window HAMESHA valid (<=k) -> yahan pahunchte hi valid -> condition faltu.
 
-> [!WARNING]
-> shrink pe nums[i]==0 hi zeroCount-- (1 nikalne pe count na badle).
-
 > [!IMPORTANT]
 > **CHAABI:** map ki jagah ek `zeroCount`. `zeroCount > k` hua to shrink.
+
+> [!WARNING]
+> **Galti:** shrink pe har baar `zeroCount--`  ->  **Sahi:** sirf `nums[i] == 0` pe `zeroCount--`
+> **Kyun:** 1 nikla to zero ki ginti nahi badalti.
 
 **CODE**
 ```cpp
@@ -188,11 +193,12 @@ int longestOnes(vector<int> &nums, int k) {
 
 kyun: [2,3,2,2] me sirf 2 type (2,3) = 4; aage 1 jodo to 3 type ho jaate
 
-> [!WARNING]
-> **GALTI = erase-on-0:** count 0 hone pe key map me PADI reh jaati -> mp.size() galat distinct dega -> condition toot. isliye ERASE.
-
 > [!IMPORTANT]
 > **CHAABI:** alag type kitne = `mp.size()`. `> 2` hua to shrink.
+
+> [!WARNING]
+> **Galti:** count 0 hone pe key map me chhod di  ->  **Sahi:** `if (mp[x] == 0) mp.erase(x)`
+> **Kyun:** 0 wali key bhi `mp.size()` me gini jaati, distinct galat; size 3 hi rehta, loop nahi rukta, `i` bahar -> crash.
 
 **CODE**
 ```cpp
@@ -227,7 +233,8 @@ int totalFruit(vector<int> &fruits) {
 kyun: "ece" me sirf e,c (2 alag) = 3; "eceb" me 3 alag ho jaate
 
 > [!WARNING]
-> wahi erase-on-0: count 0 hua to key hatao, warna `mp.size()` jhooth bolega.
+> **Galti:** count 0 hone pe key map me chhod di  ->  **Sahi:** `mp.erase(s[i])`
+> **Kyun:** 0 wali key bhi `mp.size()` me gini jaati, distinct galat.
 
 **CODE**
 ```cpp
@@ -321,7 +328,8 @@ kyun: [4,3] = 7 >= 7, length 2; akela koi number 7 tak nahi pahunchta
 > **CHAABI:** SHORTEST: valid hote hi record + shrink, ans `while` ke ANDAR. (LONGEST me ans `while` ke BAAD.)
 
 > [!WARNING]
-> koi window na bane to `INT_MAX` hi bachta -> 0 lautao (`target=11, [1,1,1] -> 0`).
+> **Galti:** seedha `return size`  ->  **Sahi:** `size == INT_MAX ? 0 : size`
+> **Kyun:** koi window na bani to `INT_MAX` bachta (`target=11, [1,1,1] -> 0`).
 
 **CODE**
 ```cpp
@@ -358,7 +366,8 @@ int minSubArrayLen(int target, vector<int> &nums) {
 kyun: window sums 8, 7, 9, 6 -> max 9 (5+1+3)
 
 > [!WARNING]
-> `maxSum` 0 se shuru kiya to `[-1,-2,-3], k=2` pe 0, sahi -3. `INT_MIN` lo.
+> **Galti:** `maxSum = 0`  ->  **Sahi:** `maxSum = INT_MIN`
+> **Kyun:** sab negative ho to 0 aata: `[-1,-2,-3], k=2` pe sahi -3.
 
 **CODE**
 ```cpp
@@ -401,19 +410,6 @@ Q: sirf DONO ENDS (front/back) se TOTAL k cards lo -> unka sum MAXIMIZE.
 >
 > flip ke baad "ye problem THA HI NAHI" -> plain MAX-SUM-K ki MIN-version + (Total - min). bas.
 
-> [!WARNING]
-> **DERIVE (kaise pahuncha -- yahin GADBAD ki thi, dobara padho to soch-ki-raah + galtiyan):**
->
-> (0) "sirf back se k" -> galat: [100,1,1,1,1] k=2 -> front-2=101 best.
->
-> (1) "front se k + back se k" -> galat: wo 2k cards; problem = k TOTAL (dono end milake). [yahin atka: L-2k nikaal raha tha]
->
-> (2) taken cards DONO end pe -> contiguous NAHI -> seedha SW fail.
->
-> (3) FLIP (aha): untaken = beech ka CONTIGUOUS window, size L-k.
->
-> (4) taken MAX = untaken MIN -> answer = Total - min.  ("hard" flip ke baad TRIVIAL.)
-
 **DRY RUN: [1,2,3,4,5,6,1], k=3 -> 12**
 ```
 cards:   1  2  3  4  5  6  1          7 card, 3 lene hain, sirf kinaron se      [ ] = liye
@@ -448,7 +444,14 @@ answer = Total - minSum = 22 - 10 = 12   (tarika 4: peeche ke 5 + 6 + 1)
 > **CHAABI:** ulta socho: jo NAHI liye wo beech ki lagaatar window (size n - k). Answer = Total - min.
 
 > [!WARNING]
-> k card dono kinaron se MILA ke, har kinare se k nahi. Yahin L - 2k pe atka tha.
+> **Galti:** sirf peeche se k card  ->  **Sahi:** aage + peeche mila ke k, saare tarike
+> **Kyun:** `[100,1,1,1,1], k=2` pe aage ke 2 = 101 best.
+>
+> **Galti:** har kinare se k (window `L - 2k`)  ->  **Sahi:** dono kinaron se mila ke kul k, window `L - k`
+> **Kyun:** liye card kul k hain, bache `L - k` beech me lagaatar.
+>
+> **Galti:** liye hue card pe seedha SW  ->  **Sahi:** bache hue beech wale pe SW (min), answer = Total - min
+> **Kyun:** liye card dono kinaron pe hain, lagaatar nahi.
 
 **CODE**
 ```cpp
@@ -490,15 +493,15 @@ int maxScore(vector<int> &nums, int k) {
 kyun: index 0 aur 3 dono pe 1, farak 3 <= 3
   k=0: |i-j|<=0 matlab same index, jodi ban hi nahi sakti
 
-> [!WARNING]
-> **★ k=0 kyun alag:** check (st.count) window CHHOTI hone se PEHLE hota hai -> k=0 pe pichhla element
-> abhi set me hota, [4,4] k=0 pe true aa jaata (sahi false).
-
 > [!IMPORTANT]
 > **CHAABI:** set me sirf pichhle k element rakho. Duplicate mila to index ka farak apne aap <= k.
 
 > [!WARNING]
-> check PEHLE, insert BAAD (warna khud se match). `k = 0` pe seedha false: `[4,4], k=0 -> false`.
+> **Galti:** `k = 0` ko alag nahi sambhala  ->  **Sahi:** shuru me `if (k <= 0) return false`
+> **Kyun:** check window chhoti hone se pehle hota, pichhla element abhi set me; `[4,4], k=0` pe true aa jaata (sahi false).
+>
+> **Galti:** pehle `insert`, phir `count` check  ->  **Sahi:** check PEHLE, insert BAAD
+> **Kyun:** warna number khud se hi match.
 
 **CODE**
 ```cpp
@@ -550,15 +553,15 @@ DRY-RUN [10,5,2,6], k=100:
     j=3  prod 60               window [5,2,6]       +3   count 8
 ```
 
-> [!WARNING]
-> **★ EDGE:** shrink ki shart me `&& i <= j` zaroori.
-> k = 1 pe window poori khaali hone ke baad bhi prod = 1 rehta (khaali ka product 1),
-> aur 1 >= 1 sach -> bina i <= j ke loop array ke BAHAR chala jaata.  ([1], k=1 -> 0)
->
-> k = 0 alag, upar hi return 0.
-
 > [!IMPORTANT]
 > **CHAABI:** `count += j - i + 1`: j pe khatam hone wale saare subarray.
+
+> [!WARNING]
+> **Galti:** shrink ki shart sirf `prod >= k`  ->  **Sahi:** `prod >= k && i <= j`
+> **Kyun:** k = 1 pe khaali window ka prod 1 rehta, 1 >= 1 sach, loop array ke bahar (`[1], k=1 -> 0`).
+>
+> **Galti:** `k = 0` ka check nahi  ->  **Sahi:** shuru me `if (k == 0) return 0`
+> **Kyun:** koi bhi guna 0 se kam nahi, koi subarray nahi banta.
 
 **CODE**
 ```cpp
@@ -614,15 +617,17 @@ DRY  : [1,2,1,2,3], k=2   -- atMost(2) = konse subarray?
            12 - 5 = 7 ✓            (distinct=1 dono me tha -> cancel, sirf exactly-2 bache)
 ```
 
-> [!WARNING]
-> ★ k=1 pe special-case NAHI: atMost(0) naturally 0 -> subtraction rehne do.
->
-> **★ TRAP:** atMost me ans = 0 (max-template se copy karo to INT_MIN reh jaata -> k=1 pe garbage).
-
 **FAMILY:** fruit-into-baskets · longest-k-distinct · (koi bhi "exactly K" -> atMost(k)-atMost(k-1))
 
 > [!IMPORTANT]
 > **CHAABI:** exactly(k) = atMost(k) - atMost(k - 1).
+
+> [!WARNING]
+> **Galti:** `atMostK` me `count = INT_MIN` (max wale template se copy)  ->  **Sahi:** `count = 0`
+> **Kyun:** ye ginti hai; INT_MIN se k=1 pe garbage.
+>
+> **Galti:** k=1 ke liye alag special-case  ->  **Sahi:** koi special-case nahi, seedha subtraction
+> **Kyun:** `atMost(0)` apne aap 0 aata.
 
 **CODE**
 ```cpp
@@ -671,7 +676,8 @@ LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-A
 > **CHAABI:** `count = t.size()`. Aaya `--`, gaya `++` (mirror). `count == 0` = valid, record `while` ke ANDAR.
 
 > [!WARNING]
-> `mp[s[j]]--` IF ke BAHAR. Andar rakha to t me na hone wale char (D) pe shrink me count++ galat (D wala bug).
+> **Galti:** `mp[s[j]]--` `if` ke andar  ->  **Sahi:** `mp[s[j]]--` `if` ke bahar, har char pe
+> **Kyun:** t me na hone wala char (D) minus me nahi gaya, shrink me `++` pe `> 0` ban ke count++ galat.
 
 **CODE**
 ```cpp
@@ -720,7 +726,8 @@ e.g. "aaacb" -> 3 · kyun: "aaacb", "aacb", "acb" me teeno; "cb" ya usse chhote 
 > **CHAABI:** LC-76 ka same code, bas answer `ans += i`, `while` ke BAAD.
 
 > [!WARNING]
-> Product < k wala `j - i + 1` yahan galat hai, yahan `i`.
+> **Galti:** `ans += j - i + 1` (product < k wala)  ->  **Sahi:** `ans += i`
+> **Kyun:** shrink window ko invalid tak le jaata, ab start 0..i-1 saare valid = i.
 
 **CODE**
 ```cpp
@@ -774,14 +781,15 @@ LC-76 se farak: wahan EK map me t ki ginti, aana-jaana pe usi map ko ghatao-badh
 > **★ FIXED window = WHILE nahi, ek IF kaafi:** window poori (p.size()) hote hi usi if me i++, neeche j++ ->
 > window hamesha p.size() ki rehti, isse badi kabhi nahi. isliye map banaya: dono barabar size, seedha mp1 == mp2.
 
-> [!WARNING]
-> **★ GALTI:** pehle har window ka substr bana ke isAnagram -> LeetCode pe TLE (34/66). ginti har baar dobara mat banao.
-
 > [!IMPORTANT]
 > **CHAABI:** do map (p ki ginti, window ki ginti). Aana +1, jaana -1. Window fixed p.size() -> `if`, phir `mp1 == mp2`.
 
 > [!WARNING]
-> 0 hua to ERASE, warna 0 wali key padi rehti aur `mp1 == mp2` kabhi nahi. Har window ka substr banaya to TLE (34/66).
+> **Galti:** har window ka `substr` bana ke `isAnagram`  ->  **Sahi:** do map, aana +1, jaana -1
+> **Kyun:** har baar ginti dobara banti, LeetCode pe TLE.
+>
+> **Galti:** 0 hone pe key map me chhod di  ->  **Sahi:** `if (mp2[x] == 0) mp2.erase(x)`
+> **Kyun:** 0 wali key padi rehti, `mp1 == mp2` kabhi sach nahi.
 
 **CODE**
 ```cpp
@@ -818,7 +826,8 @@ vector<int> findAnagrams(string s, string p) {
 kyun: s2[3..4]="ba" = "ab" ka permutation
 
 > [!WARNING]
-> **★ ULTA kram:** s1 ko s2 ke ANDAR dhoondhna (window s2 pe chalti).
+> **Galti:** window s1 pe chalayi  ->  **Sahi:** window s2 pe, size `s1.size()`
+> **Kyun:** s1 ka permutation s2 ke andar dhoondhna hai.
 
 **CODE**
 ```cpp
@@ -896,9 +905,14 @@ ans = [3, 3, 5, 5, 6, 7]
 > **CORE :** nums[i] aaya -> usse CHHOTE back-wale BEKAAR (jab tak nums[i] zinda, wo max ban hi nahi sakte) -> pop_back.
 
 > [!WARNING]
-> **★ ORDER MATTERS (warna galat ans):** (1) front-expiry -> (2) monotonic-clean + push -> (3) record. record hamesha LAST.
+> **Galti:** record pehle, ya kram ulta  ->  **Sahi:** (1) front-expiry -> (2) peeche ke chhote pop + push -> (3) record, record hamesha LAST
+> **Kyun:** kram ulta to purana bahar wala ya naya aane se pehle ka max record ho jaata.
 >
-> **TRAP:** deque me INDICES (values nahi -- expiry ke liye index chahiye) · front-expiry ==i-k kaafi (har step check) · record sirf i>=k-1.
+> **Galti:** deque me value  ->  **Sahi:** deque me INDEX
+> **Kyun:** kaun window se bahar gaya ye index se hi pata chalta.
+>
+> **Galti:** har `i` pe record  ->  **Sahi:** sirf `i >= k - 1` pe record
+> **Kyun:** pehli poori window index k-1 pe banti.
 
 **FAMILY:** MIN chahiye -> pop_back condition ULTA (nums[back] >= nums[i]).
 

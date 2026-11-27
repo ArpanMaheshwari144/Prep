@@ -91,7 +91,20 @@ DRY-RUN [2,1,2,4,3]:
 > **CHAABI:** INDEX ka stack. Jo top curr se CHHOTA (`nums[st.top()] < nums[i]`) uska jawab = `nums[i]` -> pop.
 
 > [!WARNING]
-> `<` strict (`<=` nahi): `[2,2]` pe `ans[0]=2` aata, sahi -1. `!st.empty()` pehle, warna `top()` crash. top pehle bachao (`topp`), pop ke baad `top()` badal jaata. DISHA: NEXT = loop `0` se `n-1` (aage ka). `while` ke BAAD `push(i)`.
+> **Galti:** `nums[st.top()] <= nums[i]`  ->  **Sahi:** `<` strict
+> **Kyun:** barabar bada nahi hota, `<=` pe `[2,2]` me `ans[0]=2` aata, sahi -1.
+>
+> **Galti:** seedha `st.top()`  ->  **Sahi:** `!st.empty() &&` pehle
+> **Kyun:** khaali stack pe `top()` crash.
+>
+> **Galti:** pop ke baad `st.top()` padha  ->  **Sahi:** pehle `topp = st.top()`, phir pop
+> **Kyun:** pop ke baad `top()` badal jaata.
+>
+> **Galti:** loop `n-1` se `0`  ->  **Sahi:** NEXT = loop `0` se `n-1`
+> **Kyun:** daaye wala aage aata hai; ulta chalaya to PREV ban jaata.
+>
+> **Galti:** `push(i)` while se pehle  ->  **Sahi:** `while` ke BAAD `push(i)`
+> **Kyun:** pehle push kiya to top khud curr ban jaata, while chalta hi nahi.
 
 **CODE**
 ```cpp
@@ -138,7 +151,11 @@ bache (2:2, 4:8) -> -1  ·  ans = [2, 2, -1, 8, -1]
 > **CHAABI:** NEXT GREATER ka code hubahu, sirf `while` ki shart ULTI: `nums[st.top()] > nums[i]` (naya CHHOTA aaya to top ka jawab mila).
 
 > [!WARNING]
-> `>` strict (`>=` nahi): `[2,2,2] -> saare -1`. DISHA: NEXT = loop `0` se `n-1`; ulta chalaya to ye PREV smaller ban jaata.
+> **Galti:** `nums[st.top()] >= nums[i]`  ->  **Sahi:** `>` strict
+> **Kyun:** barabar chhota nahi hota, `[2,2,2]` pe saare -1 chahiye.
+>
+> **Galti:** loop `n-1` se `0`  ->  **Sahi:** NEXT = loop `0` se `n-1`
+> **Kyun:** ulta chalaya to ye PREV smaller ban jaata.
 
 **CODE**
 ```cpp
@@ -185,7 +202,8 @@ bache (2:2, 0:4) -> -1  ·  ans = [-1, 4, -1, 2, 2]
 > **CHAABI:** NEXT SMALLER ka code hubahu, sirf LOOP ULTA: `for (i = n-1; i >= 0; i--)` (PREVIOUS = peeche se chalna). Shart wahi `>`.
 
 > [!WARNING]
-> PREV = loop `n-1` se `0`. `0` se `n-1` chalaya to ye NEXT smaller ban jaata aur dry run bhi ulta ghoomta (9-Nov histogram REDO_2, 38 min yahin).
+> **Galti:** loop `0` se `n-1`  ->  **Sahi:** PREV = loop `n-1` se `0`
+> **Kyun:** `0` se chalaya to ye NEXT smaller ban jaata aur dry run bhi ulta ghoomta.
 
 **CODE**
 ```cpp
@@ -256,7 +274,11 @@ ans = [-1, -1, 5, -1, 10]
 > SMALLER: naya `nums[i]` top se CHHOTA -> `nums[i] < nums[st.top()]`. GREATER: naya top se BADA -> `nums[i] > nums[st.top()]`. Pop karo, `ans[tp] = nums[i]`.
 
 > [!WARNING]
-> Disha ulti chali to NEXT ki jagah PREV ban jaata (aur dry run bhi ulta ghoomta, histogram wala 38 min). Shart strict: barabar na chhota na bada, `[2,2,2] -> [-1,-1,-1]` dono me.
+> **Galti:** disha ulti (NEXT `n-1 -> 0` ya PREV `0 -> n-1`)  ->  **Sahi:** NEXT `0 -> n-1`, PREV `n-1 -> 0`
+> **Kyun:** ulti disha pe NEXT ki jagah PREV ban jaata, dry run bhi ulta ghoomta.
+>
+> **Galti:** `<=` / `>=`  ->  **Sahi:** strict `<` / `>`
+> **Kyun:** barabar na chhota na bada, `[2,2,2] -> [-1,-1,-1]` dono me.
 
 **CODE**
 ```cpp
@@ -337,19 +359,9 @@ bache (1, 0) -> -1  ·  PS = [-1, -1, 1, 2, 1, 4]
 max area = bar 2:5 -> 5 * (4 - 1 - 1) = 10
 ```
 
-> [!WARNING]
-> **3 JAGAH DHYAAN:**
->
-> 1. INDEX store, value nahi (width index se banti).
->
-> 2. nS ka default = n   (n = array ka SIZE = kitne bar)   NA -1
->
-> 3. `>` strictly, `>=` NAHI.   [3,3,3,3]: `>=` -> barabar wala bhi stopper -> har width 1 -> 3 (galat)
-> `>`  -> koi stopper nahi -> width 4 -> 12.
-
 > [!IMPORTANT]
 > width = NS-PS-1 KYUN: stopper khud andar NAHI -> bars PS+1 se NS-1 tak
-> count = (NS-1)-(PS+1)+1 = NS-PS-1   (-1 SIRF EK baar, do nahi -- building6: 4-2-1=1 sahi, 4-2-1-1=0 galat)
+> count = (NS-1)-(PS+1)+1 = NS-PS-1
 
 ### nS default `n` kyun (misaal [2,4])
 
@@ -429,38 +441,7 @@ DRY-RUN (h=[2,1,5,6,2,3]):
 **FAMILY:** next-GREATER se NAHI (rectangle bade bar ko andar leta, CHHOTE pe rukta).
         2D bhai = MAXIMAL RECTANGLE (har row = histogram, isi ko call).
 
-> [!WARNING]
-> ★ GALTI (REDO_2, 38 min yahin atka): "2 ka jawab abhi kahan se laaun, stack to khaali hai?"
->
-> DISHA: NS = loop `0 -> n-1`, PS = loop `n-1 -> 0`; ulti chali to dry run bhi ulta ghoomta (9-Nov REDO_2, 38 min yahin). nS default `n` (-1 NAHI: `[2,4]` pe width -1). Dono me shart `heights[top] > heights[i]`, `>` strict (`>=` pe `[3,3,3,3] -> 3`, sahi 12). `-1` sirf EK baar (`4-2-1=1` sahi, `4-2-1-1=0` galat).
-> STACK = jawab ka INTEZAAR karne walon ki LINE. Jawab abhi nahi chahiye, BAAD me aayega.
-> stack khaali = koi baat nahi: 2 line me khada ho jaata, default pehle se bhara (NS = n, PS = -1).
-> CHHOTA aaya  = line walon ka jawab mil gaya -> pop karo, unka ans bharo, phir naya bhi line me.
-
-> [!WARNING]
-> **DISHA (Arpan, 9-Nov):**
->
-> NS (aage ka chhota)   : loop 0 -> n-1
-> PS (peeche ka chhota) : loop n-1 -> 0      wahi chaal, bas disha ulti
-> shart (dono me same)  : heights[top] > heights[i]   -> naya CHHOTA aaya tab pop
-> ulta sign (heights[i] > heights[top]) = next GREATER ban jaata (yahi likha tha)
->
-> CHAAR KE CHAAR pe yahi niyam (sirf "pop karke bharo" wale tareeke me):
-> next smaller / next greater  -> 0 -> n-1
-> prev smaller / prev greater  -> n-1 -> 0
-> smaller ya greater           -> sirf while ka sign badalta
-> dhyaan: "pehle bekaar nikaalo, phir top hi jawab" wala doosra tareeka ULTI disha chalta. dono mat milao.
-
 ### PS ko 0 se chalaya to? (Arpan ne 9-Nov raat khud chala ke dekha)
-
-> [!WARNING]
-> **PREV ko 0 se chalaya, shart ulti ki (`heights[i] > heights[top]`), to jawab galat:** stack me `[0, 1]` pade the, 5 aaya to
-> while ne pehle 1 kaata (`ans[1] = 2`), phir dobara chala aur 0 bhi kaat diya (`ans[0] = 2`).
->
-> Dono ka sahi jawab -1 tha (peeche koi chhota nahi), par dono ko 5 wala bar mil gaya. Ye "aage ka bada" (next greater) ban gaya.
->
-> Arpan: "isliye previous ko PEECHE se chalate. NEXT 0 se, kyunki wo aage dekh raha, dikkat nahi. PREV me abhi array bhara hi nahi,
-> isliye 0, 1 ke liye 5 ka jawab galat bata diya."
 
 ```
 PS ko 0 se, shart ulti (heights[i] > heights[top]),  h = [2,1,5,6,2,3]:
@@ -485,6 +466,31 @@ PS ko 0 se, shart ulti (heights[i] > heights[top]),  h = [2,1,5,6,2,3]:
 
 > [!IMPORTANT]
 > **CHAABI:** Har bar pe KHADE ho: PS (peeche ka chhota) + NS (aage ka chhota), INDEX store. `width = ns[i] - ps[i] - 1`, area = `heights[i] * width`, sabka max.
+
+> [!WARNING]
+> **Galti:** stack me VALUE store  ->  **Sahi:** INDEX store
+> **Kyun:** width index se banti hai.
+>
+> **Galti:** nS ka default `-1`  ->  **Sahi:** nS default `n` (array ka size), PS ka `-1`
+> **Kyun:** right ki deewar aakhri bar ke BAAD hai; `-1` pe `[2,4]` me width minus aati.
+>
+> **Galti:** `heights[st.top()] >= heights[i]`  ->  **Sahi:** `>` strict
+> **Kyun:** `>=` pe barabar wala bhi stopper, `[3,3,3,3]` pe har width 1 -> 3, sahi 12.
+>
+> **Galti:** width `ns - ps - 1 - 1`  ->  **Sahi:** `ns - ps - 1`
+> **Kyun:** bars `ps+1` se `ns-1` tak, `-1` sirf EK baar (`4-2-1=1` sahi, `4-2-1-1=0` galat).
+>
+> **Galti:** PS ka loop `0 -> n-1`  ->  **Sahi:** NS `0 -> n-1`, PS `n-1 -> 0` (next / prev, smaller / greater chaaron me yahi; sirf while ka sign badalta)
+> **Kyun:** ulti disha pe dry run bhi ulta ghoomta aur PREV ki jagah NEXT ban jaata.
+>
+> **Galti:** shart ulti `heights[i] > heights[top]`  ->  **Sahi:** `heights[top] > heights[i]` (NS, PS dono me)
+> **Kyun:** ulta sign = next GREATER; PS ko 0 se isi shart pe chalaya to `[2,1,5,...]` me 5 ne 1 aur 0 dono kaat diye (`ans[0] = ans[1] = 2`, sahi -1).
+>
+> **Galti:** "2 ka jawab abhi kahan se laaun, stack to khaali hai?"  ->  **Sahi:** stack khaali to bas push, default pehle se bhara (NS = n, PS = -1)
+> **Kyun:** stack = jawab ka INTEZAAR karne walon ki line; CHHOTA aaya tab unka jawab milta -> pop karke ans bharo.
+>
+> **Galti:** "pop karke bharo" aur "pehle bekaar nikaalo, phir top hi jawab" dono tareeke mila diye  ->  **Sahi:** ek hi tareeka (yahan pop karke bharo)
+> **Kyun:** doosra tareeka ULTI disha chalta, mila ke disha galat ho jaati.
 
 **CODE**
 ```cpp
@@ -552,23 +558,24 @@ int largestRectangleArea(vector<int> &heights) {
 [ ] wala seedha dabba = 6. Saare 1 jude hue hain (13), par wo dabba nahi, tedha tukda hai -> nahi ginte
 ```
 
-> [!WARNING]
-> ★ GALTI (grill me hui): grid + 1 / 0 dekh ke DFS socha -> GALAT. DFS jude hue SAARE 1 gin leta, shape kaisi bhi ho
-> (L, T, tedhi-medhi), kyunki wo kone pe mud jaata. Upar wale e.g. me saare 1 ek hi tukda -> DFS = 13, jawab 6.
-> Yahan RECTANGLE maanga = SEEDHI DEEWAR, isliye DFS nahi.
-> Pehchaan: "rectangle / square / sirf 1 se bhara plot" -> har row pe NEECHE khade hoke UPAR dekho (har column me
-> lagaatar kitne 1) = histogram ki heights -> stack wala largestRectangleArea.
-> "jude hue 1, kitne tukde / sabse bada tukda, shape kuch bhi" -> tab DFS (islands, max area of island).
-
-> [!WARNING]
-> ★ LeetCode pe matrix `vector<vector<char>>` aati: wahan signature char karo aur check matrix[i][j] == '1'
-> (neeche code teri file 06_STACK/10_maximal_rectangle.cpp jaisa: int matrix + == 1)
-
 > [!IMPORTANT]
 > **CHAABI:** Har row = histogram: `matrix[i][j] == 1` to `heights[j] += 1`, warna `heights[j] = 0`; har row ke BAAD `largestRectangleArea(heights)` call, sabka max.
 
 > [!WARNING]
-> 0 aaya to column RESET (`heights[j] = 0`, build-up tootta). Call j-loop ke BAHAR (har row ke baad). `heights` ka size COL (row nahi).
+> **Galti:** grid + 1 / 0 dekh ke DFS  ->  **Sahi:** har row = histogram (har column me lagaatar kitne 1), stack wala `largestRectangleArea`
+> **Kyun:** DFS jude hue SAARE 1 gin leta, shape kaisi bhi ho (upar e.g. me 13, jawab 6); RECTANGLE = seedhi deewar. DFS tab jab "jude hue 1, shape kuch bhi" (islands).
+>
+> **Galti:** LeetCode pe `int` matrix aur `== 1`  ->  **Sahi:** `vector<vector<char>>` aur `matrix[i][j] == '1'`
+> **Kyun:** LeetCode pe matrix char ki aati (neeche code teri file jaisa int + `== 1`).
+>
+> **Galti:** 0 aane pe `heights[j]` reset nahi  ->  **Sahi:** `heights[j] = 0`
+> **Kyun:** column toot gaya, upar wale 1 ab rectangle me nahi jud sakte.
+>
+> **Galti:** `largestRectangleArea` j-loop ke andar  ->  **Sahi:** j-loop ke BAHAR, har row ke baad
+> **Kyun:** andar call kiya to adhoori row ki heights pe chalta.
+>
+> **Galti:** `heights(row, 0)`  ->  **Sahi:** `heights(col, 0)`
+> **Kyun:** har COLUMN ki running height chahiye.
 
 **CODE**
 ```cpp
@@ -625,7 +632,11 @@ bache (6:76, 7:73) -> 0  ·  ans = [1, 1, 4, 2, 1, 1, 0, 0]
 > **CHAABI:** NEXT GREATER ka code, ans me VALUE nahi DISTANCE: `ans[tp] = i - tp`.
 
 > [!WARNING]
-> init `0` (-1 nahi): garam din na mile to 0. `<` strict: barabar taapmaan = garam nahi.
+> **Galti:** `ans(n, -1)`  ->  **Sahi:** `ans(n, 0)`
+> **Kyun:** garam din na mile to 0 maanga hai.
+>
+> **Galti:** `temps[st.top()] <= temps[i]`  ->  **Sahi:** `<` strict
+> **Kyun:** barabar taapmaan garam nahi.
 
 **CODE**
 ```cpp
@@ -690,7 +701,17 @@ ans = [2, 3, 4, -1, 4]  (4 ka jawab kabhi nahi mila -> -1)
 > **CHAABI:** NEXT GREATER + CIRCULAR: loop `2 * n` tak, har jagah `i % n` (compare, ans, push).
 
 > [!WARNING]
-> `st.push(i % n)` (`i` nahi: `i >= n` pe index bahar). `ans` size `n` (2n nahi). Jawab TOP ka -> `ans[tp]` (`ans[i]` nahi). `[1,2,1]`: aakhri 1 ka jawab doosre chakkar me milta, isliye 2n.
+> **Galti:** `st.push(i)`  ->  **Sahi:** `st.push(i % n)`
+> **Kyun:** `i >= n` pe index bahar.
+>
+> **Galti:** `ans` size `2n`  ->  **Sahi:** size `n`
+> **Kyun:** jawab sirf `n` asli index ka chahiye.
+>
+> **Galti:** `ans[i] = ...`  ->  **Sahi:** `ans[tp] = nums[i % n]`
+> **Kyun:** jawab TOP wale ka mila hai, curr ka nahi.
+>
+> **Galti:** loop `n` tak  ->  **Sahi:** loop `2 * n` tak
+> **Kyun:** `[1,2,1]` me aakhri 1 ka jawab doosre chakkar me milta.
 
 **CODE**
 ```cpp
@@ -753,7 +774,14 @@ lautaya = [1, 1, 1, 2, 1, 4, 6]
 > **CHAABI:** Stack me INDEX nahi, PAIR `{price, span}`. Peeche ke sasta din pop karo aur pop wale ka span JODO; phir `{price, span}` push.
 
 > [!WARNING]
-> `top.price <= price` tak pop: `<=` (barabar daam wala din bhi span me). `span = 1` se shuru (aaj ka din khud bhi span me). Pop karte waqt `span += st.top().second` bhoola to galat: wo din apne peeche ke din nigal chuka hai.
+> **Galti:** `st.top().first < price`  ->  **Sahi:** `<=`
+> **Kyun:** barabar daam wala din bhi span me.
+>
+> **Galti:** `span = 0`  ->  **Sahi:** `span = 1`
+> **Kyun:** aaj ka din khud bhi span me.
+>
+> **Galti:** pop pe `span += st.top().second` bhool gaya  ->  **Sahi:** pop se pehle `span += st.top().second`
+> **Kyun:** wo din apne peeche ke din pehle hi nigal chuka hai.
 
 **CODE**
 ```cpp
@@ -814,7 +842,11 @@ aaya :   (       [        )
 > **CHAABI:** Opening -> push. Closing -> stack khaali to `false`, warna top pop karke type milao. End me `return st.empty()`.
 
 > [!WARNING]
-> Closing aaya aur stack khaali -> turant `false`. End me `return st.empty()` (sirf `true` nahi): `"" -> true`, khula bracket bacha to false.
+> **Galti:** closing pe seedha `st.top()`  ->  **Sahi:** pehle `if (st.empty()) return false`
+> **Kyun:** closing aaya aur koi khula nahi = invalid, aur khaali pe `top()` crash.
+>
+> **Galti:** end me `return true`  ->  **Sahi:** `return st.empty()`
+> **Kyun:** khula bracket bacha to false chahiye (`"" -> true` bhi isi se).
 
 **CODE**
 ```cpp
@@ -872,7 +904,11 @@ getMin -> -3 · top -> 0 · getMin -> -2
 > **CHAABI:** Pair `{val, yahan tak ka MIN}` push -> `getMin() = st.top().second`, koi scan nahi. Pop pe purana min apne aap wapas.
 
 > [!WARNING]
-> `push` me `st.empty()` pehle check (pehle push pe `top()` nahi hota). Single min var NAHI: pop pe purana min WAPAS chahiye (`push 5,3,7 -> pop 7 -> 3 -> pop 3 -> 5`).
+> **Galti:** `push` me seedha `min(st.top().second, val)`  ->  **Sahi:** `st.empty() ? val : min(st.top().second, val)`
+> **Kyun:** pehle push pe `top()` hota hi nahi.
+>
+> **Galti:** ek single `min` variable  ->  **Sahi:** pair `{val, yahan tak ka MIN}`
+> **Kyun:** pop pe purana min WAPAS chahiye (`push 5,3,7 -> pop 7 -> 3 -> pop 3 -> 5`).
 
 **CODE**
 ```cpp
@@ -908,7 +944,11 @@ public:
 > **CHAABI:** Do counter: `(` -> `close_needed++`; `)` -> pending open ho to `close_needed--`, warna `open_needed++`. Answer = dono ka JOD.
 
 > [!WARNING]
-> `)` aaya aur koi open pending nahi (`close_needed == 0`) -> wo extra, `open_needed++`; minus me mat jao. Answer `open_needed + close_needed`, akela nahi.
+> **Galti:** `)` pe hamesha `close_needed--`  ->  **Sahi:** `close_needed > 0` ho tabhi `--`, warna `open_needed++`
+> **Kyun:** koi open pending nahi to wo `)` extra hai; seedha `--` minus me le jaata.
+>
+> **Galti:** answer akela ek counter  ->  **Sahi:** `open_needed + close_needed`
+> **Kyun:** dono taraf ke bache bracket insert karne padenge.
 
 **CODE**
 ```cpp
@@ -946,7 +986,11 @@ int minAddToMakeValid(string s) {           // COUNTER, stack nahi (sirf '(' ')'
 > **CHAABI:** Do stack: `push` -> `input`; `pop` / `peek` -> `output` se. `output` KHAALI ho tabhi poora `input` palto (har element ek hi baar palta = amortized O(1)).
 
 > [!WARNING]
-> `output` me kuch bacha ho tab palta -> kram toot jaata; sirf `output.empty()` pe palto (pop aur peek dono me). `pop` me `x = output.top()` bachao, phir pop, phir return.
+> **Galti:** `output` me kuch bacha ho tab bhi `input` palta  ->  **Sahi:** sirf `output.empty()` pe palto (pop aur peek dono me)
+> **Kyun:** naye element purane ke upar aa jaate, kram toot jaata.
+>
+> **Galti:** `pop` me pehle `output.pop()`, phir top  ->  **Sahi:** `x = output.top()` bachao, phir pop, phir `return x`
+> **Kyun:** pop ke baad wo element gaya, top ab agla hai.
 
 **CODE**
 ```cpp
@@ -1099,7 +1143,8 @@ st.size() = 3 fleet
 > **CHAABI:** har gaadi ka waqt = `(target - position) / speed`, aur gaadiyan position ke hisaab se BADE se CHHOTE (manzil ke paas wali pehle). Peeche wali ka waqt aage wale fleet se zyada = naya fleet, warna usi me mil gayi.
 
 > [!WARNING]
-> `stack<double>` (waqt double hai). `stack<int>` me 1.5 -> 1 ban jaata, phir 1.2 > 1 = galat naya fleet. Stub ke 10 test pass the, `[7,4],[2,5]` pe pakda.
+> **Galti:** `stack<int>`  ->  **Sahi:** `stack<double>`
+> **Kyun:** waqt double hai; int me 1.5 -> 1 ban jaata, phir 1.2 > 1 = galat naya fleet (`[7,4],[2,5]`).
 
 **CODE**
 ```cpp

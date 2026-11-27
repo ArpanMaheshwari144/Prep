@@ -69,7 +69,11 @@
 > **CHAABI:** har element pe 2 call: INCLUDE (`push`, `index + 1`) aur EXCLUDE (`index + 1`); base `index >= n` pe record.
 
 > [!WARNING]
-> `pop_back` EXCLUDE call se PEHLE, warna exclude path me bhi element chipka rehta. `temp` caller me EK baar banao, by-ref pass (helper me banaya to har call naya).
+> **Galti:** `temp.pop_back()` EXCLUDE call ke baad (ya bhool gaya)  ->  **Sahi:** `pop_back()` EXCLUDE call se PEHLE
+> **Kyun:** warna exclude wale raaste me bhi wo element chipka rehta.
+>
+> **Galti:** `temp` helper ke andar banaya  ->  **Sahi:** caller me EK baar banao, by-ref pass
+> **Kyun:** helper me banaya to har call ka naya `temp`, shared path pe push / pop hota hi nahi.
 
 **CODE**
 ```cpp
@@ -150,7 +154,8 @@ Har jagah pe wahi jo abhi tak nahi liya (peeche wala 1 bhi chalega). Kram badla 
 > **CHAABI:** loop HAMESHA `0` se + `used[]` (start nahi: order matter, peeche wala bhi kisi position pe); base `temp.size() == nums.size()` pe record.
 
 > [!WARNING]
-> un-choose me DONO undo: `temp.pop_back()` + `used[i] = false`. sirf pop kiya to aage ke arrangement me wo element band.
+> **Galti:** un-choose me sirf `temp.pop_back()`  ->  **Sahi:** `temp.pop_back()` + `used[i] = false` dono
+> **Kyun:** `used` true hi reh gaya to aage ke arrangements me wo element band.
 
 **CODE**
 ```cpp
@@ -197,7 +202,11 @@ Sirf aage wala chuna, isliye [2,1] kabhi nahi banta -> 3 + 2 + 1 = 6
 > **CHAABI:** subsets ka start-loop, bas base `temp.size() == k` pe record (har node pe nahi); recurse `i + 1` (aage hi, kram nahi).
 
 > [!WARNING]
-> loop `i <= n` (`n` khud bhi number) aur caller `index = 1` se (numbers 1..n, 0 nahi).
+> **Galti:** `i < n`  ->  **Sahi:** `i <= n`
+> **Kyun:** `n` khud bhi ek number hai, chhoot jaata.
+>
+> **Galti:** caller `solve(n, k, ans, 0, temp)`  ->  **Sahi:** `solve(n, k, ans, 1, temp)`
+> **Kyun:** numbers 1..n hain, 0 nahi.
 
 **CODE**
 ```cpp
@@ -239,7 +248,11 @@ void solve(int n, int k, vector<vector<int>> &ans, int index, vector<int> &temp)
 > **CHAABI:** combinations hi, 2 farak: recurse `i` (`i + 1` NAHI) = REUSE; base = target (`0` -> record, `< 0` -> prune), size nahi. include/exclude form me `index` SAME pass.
 
 > [!WARNING]
-> `i + 1` likh diya to 2 dobara nahi le sakte, `[2,2,3]` chhoot jaata. `target < 0` prune sabse upar, warna bekaar gehra jaata.
+> **Galti:** recurse me `i + 1`  ->  **Sahi:** `i` (include / exclude form me `index` same)
+> **Kyun:** `i + 1` se 2 dobara nahi le sakte, `[2,2,3]` chhoot jaata.
+>
+> **Galti:** `target < 0` prune neeche  ->  **Sahi:** `if (target < 0) return;` sabse upar
+> **Kyun:** warna target minus hone ke baad bhi recursion bekaar gehra jaata.
 
 **CODE**
 ```cpp
@@ -298,8 +311,14 @@ void solve2(vector<int> &candidates, int target, vector<vector<int>> &ans, int i
 ```
 
 > [!WARNING]
-> **★ BUG-TRAP:** loop me `if(solve(...)==false) return false;` -> PEHLA start fail hote hi poora false,
-> baaki start dekhe hi nahi.  DRY-RUN "AAB":
+> **Galti:** loop me `if (solve(...) == false) return false;`  ->  **Sahi:** loop me sirf true pe `return true`, loop ke BAAD `return false`
+> **Kyun:** pehla start fail hote hi poora false, baaki start dekhe hi nahi (neeche DRY-RUN "AAB").
+>
+> **Galti:** `exist()` ke end me `return true`  ->  **Sahi:** end me `return false`
+> **Kyun:** `word[0]` kahin na mila to loop kuch nahi karta, aur `return true` = jhootha "mila".
+>
+> **Galti:** `vis[i][j] = false` (un-mark) nahi  ->  **Sahi:** 4 call ke baad `vis[i][j] = false`
+> **Kyun:** warna wo cell doosre raaste ke liye band reh jaata.
 
 ### DRY-RUN "AAB"
 
@@ -309,17 +328,11 @@ void solve2(vector<int> &candidates, int target, vector<vector<int>> &ans, int i
          B C D
 ```
 
-> [!WARNING]
-> + ulta bug: word[0] kahin na mila -> loop kuch nahi karta -> end me `return true` = jhootha "mila".
-
 ### purani atak (Aug sheet)
 
 ```
 ★ PURANI ATAK (Aug sheet): GALTI yahi atkaata tha: 4 DFS ko || me jodna (ek direction true -> baaki call hi nahi) + visited check bounds / mismatch ke saath EK hi if me.
 ```
-
-> [!WARNING]
-> ANY wala loop: andar sirf true pe `return true`, loop ke BAAD `return false` (andar `== false` pe return = pehla start fail -> poora false). `vis[i][j] = false` un-mark zaroori, warna doosra raasta band.
 
 **CODE**
 ```cpp
@@ -373,20 +386,15 @@ bool exist(vector<vector<char>> &board, string word) {
 - **e.g.** `n=2 -> ["(())", "()()"]`
 - **kyun:** 2 '(' + 2 ')' ke sirf yahi 2 jahan ')' kabhi '(' se aage nahi nikalta ("())(" galat)
 
-> [!WARNING]
-> **★ BUG-TRAP #2 (Arpan-22-Sep, khud pakda):** dono ALAG `if` hain, `else if` NAHI --
-> open<n aur close<open dono ek saath sach ho sakti hain, aur tab DONO chalni chahiye.
-> `else if` = "ek mil gaya bas" = dhoondhne wali soch. Yahan BANANA hai, saare banane hain.
->
-> **★ BUG-TRAP (Arpan-9-Sep, yaad rakh):** dono branch pe `return solve(...)` mat likho!
-> first branch ke `return` se function KHATAM -> 2nd branch (')') kabhi chalti hi nahi -> sirf 1 string banti.
-> backtracking = DONO choice ek-ke-baad-ek chalao (koi return nahi). = classic "early-return kills 2nd branch" trap.
-
 > [!IMPORTANT]
 > **CHAABI:** 2 rule hi branch: `open < n` -> `'('`, `close < open` -> `')'`; base `open == n && close == n`.
 
 > [!WARNING]
-> dono ALAG `if` (`else if` nahi: dono sach ho sakti) aur `return solve(...)` NAHI (pehla return doosri branch maar deta -> sirf 1 string). n=3 pe 5 se kam = branch kat rahi. path BY VALUE (`path + '('`) -> pop nahi chahiye.
+> **Galti:** `else if` likha  ->  **Sahi:** dono alag `if`
+> **Kyun:** `open < n` aur `close < open` dono ek saath sach ho sakte hain, aur dono raaste banane hain.
+>
+> **Galti:** dono branch pe `return solve(...)`  ->  **Sahi:** sirf `solve(...)`, return nahi
+> **Kyun:** pehle `return` pe function khatam, doosra branch chalta hi nahi, isliye sirf 1 string banti.
 
 **CODE**
 ```cpp
@@ -415,12 +423,11 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
 - **kyun:** 2 = abc, 3 = def -> har akshar ke saath har akshar = 3 x 3 = 9
 
 > [!WARNING]
-> **★ BUG-TRAP (24-Sep):** `ans` ko GLOBAL mat rakho -- ek hi program me function do baar bula to
-> pichhle jawab bhi jud jaate ("2" pe 3 ki jagah 12). LeetCode pe chal jaata (har test pe naya object),
-> local test me pakda gaya. -> ans function ke andar, solve() me REFERENCE se.
-
-> [!WARNING]
-> `digits == ""` pe `{}` (khaali LIST, `[""]` nahi). `ans` function ke andar banao, global pe do baar call = pichhle jawab jud jaate ("2" pe 12).
+> **Galti:** `ans` GLOBAL rakha  ->  **Sahi:** `ans` function ke andar, `solve()` me reference se
+> **Kyun:** ek hi program me function do baar bula to pichhle jawab bhi jud jaate ("2" pe 3 ki jagah 12).
+>
+> **Galti:** `digits == ""` pe `[""]`  ->  **Sahi:** `return {};` (khaali LIST)
+> **Kyun:** check na ho to base turant `""` push kar deta, jabki koi ank nahi to koi shabd nahi.
 
 **CODE**
 ```cpp

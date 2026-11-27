@@ -28,7 +28,8 @@
 > **CHAABI:** sab XOR kar do: `a^a = 0` (pair kat jaata), `a^0 = a` -> akela bacha. Koi map nahi, O(1).
 
 > [!WARNING]
-> `XORR = nums[0]` se shuru, isliye loop `i = 1` se, 0 se nahi.
+> **Galti:** `XORR = nums[0]` aur loop `i = 0` se  ->  **Sahi:** loop `i = 1` se
+> **Kyun:** `nums[0]` do baar XOR ho ke khud kat jaata.
 
 **CODE**
 ```cpp

@@ -94,7 +94,8 @@ ans = 2 (ek hi bacha)
 ```
 
 > [!WARNING]
-> `pq.empty() ? 0 : pq.top()` me empty PEHLE: sab khatam ho gaye to `top()` crash.
+> **Galti:** seedha `pq.top()`  ->  **Sahi:** `pq.empty() ? 0 : pq.top()` (empty PEHLE)
+> **Kyun:** sab khatam ho gaye to `top()` crash.
 
 **CODE**
 ```cpp
@@ -188,7 +189,11 @@ ans = [[-2,2]]
 > **CHAABI:** kth-largest ka MIRROR: MAX-heap `pair<dist, point>`, `size > k` pe pop (sabse DOOR evict), bache k paas wale; `.second` = point.
 
 > [!WARNING]
-> `{dist, point}` me dist PEHLE (pair `first` pe compare hota). dist = `x*x + y*y`, sqrt nahi.
+> **Galti:** `{point, dist}`  ->  **Sahi:** `{dist, point}` (dist PEHLE)
+> **Kyun:** pair `first` pe compare hota.
+>
+> **Galti:** `sqrt(x*x + y*y)`  ->  **Sahi:** `x*x + y*y`
+> **Kyun:** sirf compare karna hai, kram wahi rehta; sqrt faltu (aur double).
 
 **CODE**
 ```cpp
@@ -241,7 +246,8 @@ ans = 2 1 (kram kuch bhi chalega)
 > **CHAABI:** pehle map se freq, phir MIN-heap me `{freq, num}` size k (`size > k` pe pop). Bache k = jawab, `.second` nikaalo.
 
 > [!WARNING]
-> `{freq, num}`: freq PEHLE, warna heap number pe sort hoga, freq pe nahi.
+> **Galti:** `{num, freq}`  ->  **Sahi:** `{freq, num}`
+> **Kyun:** freq pehle nahi to heap number pe sort hoga, freq pe nahi.
 
 **CODE**
 ```cpp
@@ -315,7 +321,11 @@ ans = 1 1 2 3 4 4 5 6
 > **CHAABI:** saare heads MIN-heap me (`Compare: a->val > b->val`), har baar top nikaalo, `tail` se jodo, uska `next` push. `dummy->next` lautao.
 
 > [!WARNING]
-> NULL push mat karo: heads pe `if (l)`, aur `curr->next` tabhi jab non-null. Warna `top()->val` pe SEGFAULT. `struct Compare` khud likhna: ListNode* ko khud compare karna nahi aata.
+> **Galti:** NULL push  ->  **Sahi:** heads pe `if (l)`, aur `curr->next` tabhi push jab non-null
+> **Kyun:** warna `top()->val` pe SEGFAULT.
+>
+> **Galti:** `priority_queue<ListNode*>` bina comparator  ->  **Sahi:** `struct Compare` khud likho (`a->val > b->val`)
+> **Kyun:** ListNode* ko `val` se compare karna khud nahi aata.
 
 **CODE**
 ```cpp
@@ -386,7 +396,11 @@ ans = 2 3 5 6 8 9 10
 > har element sahi jagah se max k door. index-0 ka MIN max index k tak -> "pehle k+1 me MIN kaun?"
 
 > [!WARNING]
-> `k + 1` (`k` nahi): tab tak sahi MIN buffer me aa chuka hota. Pehle push, phir size check.
+> **Galti:** buffer size `k`  ->  **Sahi:** `pq.size() > k + 1`
+> **Kyun:** `k + 1` tak sahi MIN buffer me aa chuka hota.
+>
+> **Galti:** size check pehle, push baad  ->  **Sahi:** pehle push, phir size check
+> **Kyun:** naya element bhi MIN ki daud me shaamil ho, tab nikaalo.
 
 **CODE**
 ```cpp
@@ -441,12 +455,6 @@ med   : 5             10            5                           4
 ans = findMedian = (3 + 5) / 2 = 4
 ```
 
-> [!WARNING]
-> **★ EDGE:**
->
-> heap ka NAAM top batata, number kaun rakhta wo NAHI. "bada -> maxHeap" GALAT:
-> bada -> BADI team -> minHeap. naam bhool, team soch.
-
 ### CHAAL (do team)
 
 ```
@@ -480,7 +488,14 @@ DRY: add 5,15,1,3
 > **CHAABI:** do team: `maxHeap` = CHHOTI team, `minHeap` = BADI team. Placement `maxHeap.top() >= num` -> maxHeap, warna minHeap; phir 2 balance-if (farak <= 1, extra maxHeap me). Size barabar -> dono top ka average, warna `maxHeap.top()`.
 
 > [!WARNING]
-> `maxHeap.empty() ||` PEHLE likho, khaali pe `top()` crash. Dono balance-`if` zaroori (num kisi bhi heap me ja sakta), doosra `maxHeap.size() > minHeap.size() + 1`.
+> **Galti:** bada num -> `maxHeap`  ->  **Sahi:** bada num -> BADI team -> `minHeap`
+> **Kyun:** heap ka NAAM top batata, number kaun rakhta wo NAHI. Naam bhool, team soch.
+>
+> **Galti:** `maxHeap.top() >= num` akela  ->  **Sahi:** `maxHeap.empty() || maxHeap.top() >= num` (empty PEHLE)
+> **Kyun:** khaali pe `top()` crash.
+>
+> **Galti:** ek hi balance-`if`  ->  **Sahi:** dono balance-`if`, doosra `maxHeap.size() > minHeap.size() + 1`
+> **Kyun:** num kisi bhi heap me ja sakta, dono taraf farak ban sakta.
 
 **CODE**
 ```cpp
@@ -574,7 +589,11 @@ VISUAL ( "aaabbb" ):        heap (3,a)(3,b)
 > **CHAABI:** MAX-heap `{count, char}`, har round: do pop -> `ans` me, count `-= 1`, `>= 1` to wapas push. Aakhir akela bacha: `count > 1` -> `""`, warna jodo.
 
 > [!WARNING]
-> `> 1` (`!empty` nahi): ek nikaal ke wapas daala to `"aa"` ban jaata. Aakhri bacha `count > 1` = do same paas aayenge, isliye `""`.
+> **Galti:** `while (!maxHeap.empty())`  ->  **Sahi:** `while (maxHeap.size() > 1)`
+> **Kyun:** ek hi bacha ho to wahi nikaal ke wapas daala, `"aa"` ban jaata.
+>
+> **Galti:** aakhri bacha seedha jod diya  ->  **Sahi:** `maxHeap.top().first > 1` to `""`
+> **Kyun:** count > 1 = do same paas aayenge.
 
 **CODE**
 ```cpp
@@ -670,7 +689,11 @@ ans = 1 + 2 + 3 = 6
 > **CHAABI:** MIN-heap `{val, idx}` (tie pe chhota idx apne aap pehle). Pop pe `vis[index] == false` tabhi lo, phir khud + `index-1` + `index+1` ko `vis` true.
 
 > [!WARNING]
-> LAZY delete: hata hua index heap me pada rehta, pop pe `vis` check kar ke chhodo. Padosi pe bounds `index - 1 >= 0` / `index + 1 < n`.
+> **Galti:** pop pe `vis` check nahi  ->  **Sahi:** `if (vis[index] == false)` tabhi lo (LAZY delete)
+> **Kyun:** hata hua index heap me pada rehta, heap se beech ka nikaal nahi sakte.
+>
+> **Galti:** padosi bina bounds mark  ->  **Sahi:** `index - 1 >= 0` / `index + 1 < n` check
+> **Kyun:** kinare pe bahar ka index.
 
 **CODE**
 ```cpp

@@ -180,7 +180,8 @@ int maxDepth(TreeNode *root) {
 > **CHAABI:** dono taraf recurse (order free), phir `swap(root->left, root->right)`, aur `root` lautao.
 
 > [!WARNING]
-> POINTERS swap karo, values nahi. Value-swap me sirf 2 number badalte hain (poori branch nahi) aur leaf pe `null->val` crash.
+> **Galti:** values swap  ->  **Sahi:** POINTERS swap `swap(root->left, root->right)`
+> **Kyun:** value-swap me sirf 2 number badalte (poori branch nahi), aur leaf pe `null->val` crash.
 
 **CODE**
 ```cpp
@@ -216,7 +217,8 @@ values same, par 2 ek me LEFT, doosre me RIGHT -> false
 > **CHAABI:** dono tree saath chalo: dono null -> `true`, ek null -> `false`, `val` alag -> `false`, warna `isSameTree(left,left) && isSameTree(right,right)`.
 
 > [!WARNING]
-> null checks PEHLE, `p->val` se pehle. Warna ek null pe `null->val` crash.
+> **Galti:** `p->val` pehle compare  ->  **Sahi:** null checks PEHLE, phir `p->val`
+> **Kyun:** ek tree null ho to `null->val` crash.
 
 **CODE**
 ```cpp
@@ -307,7 +309,11 @@ bool isSymmetric(TreeNode *root) {
 > **CHAABI:** max-depth ka height() hi, recurse ke BAAD ek EXTRA line `maxDia = max(maxDia, left + right)`. Return HEIGHT (`1 + max`), diameter by-reference me.
 
 > [!WARNING]
-> `max` lo, overwrite nahi: `maxDia = left + right` likha to test pass ho sakta par galat. Aur function HEIGHT return karta hai, diameter nahi.
+> **Galti:** `maxDia = left + right`  ->  **Sahi:** `maxDia = max(maxDia, left + right)`
+> **Kyun:** overwrite se pichhla bada diameter mit jaata; test pass ho sakta par galat.
+>
+> **Galti:** diameter return  ->  **Sahi:** HEIGHT return `1 + max(left, right)`, diameter by-reference me
+> **Kyun:** parent ko arm ki lambai (height) chahiye, diameter nahi.
 
 **CODE**
 ```cpp
@@ -377,7 +383,11 @@ return 1 + max(left,right)           return node->val + max(left,right)         
 > **CHAABI:** diameter ka skeleton, 3 badlaav: arm `max(0, child)` (minus arm = 0), record `root->val + left + right`, return `root->val + max(left, right)`.
 
 > [!WARNING]
-> `maxSum = INT_MIN` se shuru, `0` nahi: akela `-3` bhi valid path hai. Aur `max(0, ..)` bhoola to minus arm lene se sum ghat jaata.
+> **Galti:** `maxSum = 0`  ->  **Sahi:** `maxSum = INT_MIN`
+> **Kyun:** akela `-3` bhi valid path hai; saare minus ho to `0` galat jawab.
+>
+> **Galti:** arm seedha `left` / `right`  ->  **Sahi:** `max(0, left)`, `max(0, right)`
+> **Kyun:** minus arm lene se sum ghat jaata; `0` = wo arm li hi nahi.
 
 **CODE**
 ```cpp
@@ -444,7 +454,11 @@ buildTree: rootIndex=0; solve(0,n-1);       buildTree: + mp{inorder-val->idx} ek
 > **CHAABI:** `preorder[rootIndex]` = root, map se inorder me pivot, `rootIndex++`, phir LEFT pehle (`l..pivot-1`) aur RIGHT (`pivot+1..r`) recurse.
 
 > [!WARNING]
-> `rootIndex` by-REFERENCE (`int &`): value-pass me copy jaati, RIGHT ko galat root milta. Base `l > r` (`>=` nahi: `l == r` pe ek node banana hai).
+> **Galti:** `int rootIndex` (value-pass)  ->  **Sahi:** `int &rootIndex` (by-reference)
+> **Kyun:** copy jaati, LEFT ka `rootIndex++` RIGHT tak nahi pahunchta, RIGHT ko galat root milta.
+>
+> **Galti:** base `l >= r`  ->  **Sahi:** base `l > r`
+> **Kyun:** `l == r` pe ek node banana hai.
 
 **CODE**
 ```cpp
@@ -497,7 +511,11 @@ root pe: left height 3, right height 1 -> farak 2 > 1 -> false
 > **CHAABI:** maxDepth hi, par return = HEIGHT ya `-1` (sentinel). `abs(left - right) > 1` hua to `-1`, warna `1 + max(left, right)`.
 
 > [!WARNING]
-> left se `-1` aaya to TURANT `-1` upar bhejo, right mat dekho. Check HAR node pe (sirf root nahi: root balanced par andar imbalanced ho sakta).
+> **Galti:** left se `-1` aaya phir bhi aage hisaab  ->  **Sahi:** `if (left == -1) return -1;` turant upar bhejo
+> **Kyun:** `-1` sentinel hai, height nahi; aage `abs` / `max` me height jaisa gin jaata.
+>
+> **Galti:** sirf root pe `abs(left - right) > 1` check  ->  **Sahi:** HAR node pe check
+> **Kyun:** root balanced ho sakta par andar koi node imbalanced.
 
 **CODE**
 ```cpp
@@ -552,7 +570,8 @@ p=5, q=4: 4 to 5 ke neeche hi hai -> sabse neeche wala common = 5 khud
 > **CHAABI:** `root == p || root == q` -> root UPAR bhejo; dono taraf recurse; ek side `NULL` -> doosri return; dono non-null -> yahi root = LCA.
 
 > [!WARNING]
-> `if (left == NULL) return right;` me `&& right != NULL` mat jodo. Dono khali pe root return hota = GALAT; `right` return se dono-khali pe `NULL` apne aap sahi.
+> **Galti:** `if (left == NULL && right != NULL) return right;`  ->  **Sahi:** `if (left == NULL) return right;`
+> **Kyun:** dono khali pe neeche root return ho jaata = GALAT; `return right` dono-khali pe `NULL` apne aap deta.
 
 **CODE**
 ```cpp
@@ -602,7 +621,8 @@ root se LEAF tak poora rasta: 5+4+11 = 20 -> true
 > **CHAABI:** target NEECHE carry: `targetSum - root->val` bhejo. LEAF pe `root->val == targetSum`, combine `||`.
 
 > [!WARNING]
-> LEAF = ACTUAL bachche (`!root->left && !root->right`), recursion-result nahi. Beech ke node pe match = path adhoora, wahan check mat karo.
+> **Galti:** beech ke node pe / recursion-result se leaf maan ke check  ->  **Sahi:** LEAF = asli bachche `!root->left && !root->right`, wahin check
+> **Kyun:** beech ke node pe match = path adhoora.
 
 **CODE**
 ```cpp
@@ -641,7 +661,11 @@ bool hasPathSum(TreeNode *root, int targetSum) {   // root se LEAF tak sum == ta
 > **CHAABI:** queue me root, `while (!q.empty())`: `sz = q.size()` snapshot, `sz` baar pop + `temp` me daalo + bachche push, for ke BAAD `ans.push_back(temp)`.
 
 > [!WARNING]
-> `sz` for se PEHLE pakdo: loop me push se size badalta, agle level ke node is level me ghus jaate. Aur `if (!root) return ans`, warna `NULL` push -> `->val` crash.
+> **Galti:** loop me `i < q.size()`  ->  **Sahi:** `sz = q.size()` for se PEHLE pakdo
+> **Kyun:** loop me push se size badhta, agle level ke node is level me ghus jaate.
+>
+> **Galti:** `if (!root) return ans;` nahi likha  ->  **Sahi:** shuru me `if (!root) return ans;`
+> **Kyun:** warna `NULL` push hota, `->val` pe crash.
 
 **CODE**
 ```cpp
@@ -693,7 +717,8 @@ vector<vector<int>> levelOrder(TreeNode *root) {   // har level ki alag list. FI
 > **CHAABI:** level order hi, bas ek line: `if (i == sz - 1) ans.push_back(curr->val)` (level ka aakhri = sabse RIGHT).
 
 > [!WARNING]
-> `i == sz - 1` (0-based), `sz` nahi. Left side view hota to `i == 0`.
+> **Galti:** `i == sz`  ->  **Sahi:** `i == sz - 1`
+> **Kyun:** `i` 0-based hai, `sz` tak pahunchta hi nahi.
 
 **CODE**
 ```cpp
@@ -744,7 +769,8 @@ vector<int> rightSideView(TreeNode *root) { // daaye se har level ka SIRF right-
 > **CHAABI:** level HAMESHA normal L->R banao, for ke BAAD ODD level pe `reverse(temp)`.
 
 > [!WARNING]
-> reverse check ke BAAD `levelCounter++`, pehle kiya to root level ulta ho jaata. `levelCounter = 0` se shuru.
+> **Galti:** `levelCounter++` reverse check se PEHLE  ->  **Sahi:** reverse check ke BAAD `levelCounter++` (`levelCounter = 0` se shuru)
+> **Kyun:** pehle badhaya to root level hi ulta ho jaata.
 
 **CODE**
 ```cpp
@@ -800,7 +826,11 @@ sabse PAAS wala leaf maanga: 3 -> 9 = 2 node
 > **CHAABI:** level order + EARLY-STOP: pehla leaf (`!curr->left && !curr->right`) mile to `return depth + 1`.
 
 > [!WARNING]
-> DFS `1 + min(leftD, rightD)` GALAT: NULL child ko depth 0 maan leta, skew tree (2->3->4) pe galat. Isliye BFS. `depth++` for ke BAHAR (level POORA hone pe).
+> **Galti:** DFS `1 + min(leftD, rightD)`  ->  **Sahi:** BFS, pehla leaf mile to `return depth + 1`
+> **Kyun:** NULL child ko depth 0 maan leta, skew tree (2->3->4) pe galat jawab.
+>
+> **Galti:** `depth++` for ke andar  ->  **Sahi:** `depth++` for ke BAHAR
+> **Kyun:** level POORA hone pe hi ek depth badhti.
 
 **CODE**
 ```cpp
@@ -858,7 +888,8 @@ chhote se bade: 1 2 3 4 5 6 -> teesra = 3
 > **CHAABI:** BST ka inorder = SORTED vector, jawab k-va element.
 
 > [!WARNING]
-> `k - 1`: k 1-based hai, vector 0-based.
+> **Galti:** `ans[k]`  ->  **Sahi:** `ans[k - 1]`
+> **Kyun:** k 1-based hai, vector 0-based.
 
 **CODE**
 ```cpp
@@ -897,18 +928,18 @@ int kthSmallest(TreeNode *root, int k) {
 3 < 6 theek, par 3 bhi 5 ke RIGHT hisse me hai -> 5 se bada chahiye tha -> false
 ```
 
-> [!WARNING]
-> **★ EDGE:**
->
-> sirf turant child check KAAFI NAHI ([5,4,6,null,null,3,7]: 3 < 6 theek, par 3 < 5 -> galat)
-
 > [!IMPORTANT]
 > **CHAABI:** har node ki window `(mini, maxi)` neeche carry: LEFT jao -> `maxi = root->val`, RIGHT jao -> `mini = root->val`. Window ke bahar pe false, combine `&&`.
 
 > [!WARNING]
-> Check `<= mini || >= maxi` (barabar bhi galat, BST me duplicate nahi).
+> **Galti:** sirf turant child se compare  ->  **Sahi:** `(mini, maxi)` window neeche carry
+> **Kyun:** [5,4,6,null,null,3,7]: 3 < 6 theek, par 3 node 5 ke right me hai aur 3 < 5 -> galat.
 >
-> ★ PURANI GALTI (Aug sheet): CALL solve(root, INT_MIN, INT_MAX) tha -> [2147483647] pe false aata, sahi true. Isliye ab long long (LLONG_MIN, LLONG_MAX).
+> **Galti:** `< mini || > maxi`  ->  **Sahi:** `<= mini || >= maxi`
+> **Kyun:** barabar bhi galat, BST me duplicate nahi.
+>
+> **Galti:** `solve(root, INT_MIN, INT_MAX)`  ->  **Sahi:** `solve(root, LLONG_MIN, LLONG_MAX)` (long long)
+> **Kyun:** `[2147483647]` me node khud `INT_MAX`, strict `>=` se false aata, sahi true.
 
 **CODE**
 ```cpp

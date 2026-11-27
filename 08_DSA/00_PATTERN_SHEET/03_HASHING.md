@@ -48,7 +48,14 @@
 > **CHAABI:** DO map, dono taraf (`mp1` s->t, `mp2` t->s). Kisi bhi EK taraf clash -> false.
 
 > [!WARNING]
-> `mp2` (t->s) hatao mat: "ab"->"aa" ka clash sirf ULTI taraf pakda jaata. Aur `mp1.count()` pehle check karo, seedha `mp1[x]` khaali key bana ke galat clash deta. Save check ke BAAD, dono map me.
+> **Galti:** sirf ek map `mp1` (s->t)  ->  **Sahi:** `mp2` (t->s) bhi
+> **Kyun:** `"ab" -> "aa"` ka clash sirf ulti taraf pakda jaata.
+>
+> **Galti:** seedha `mp1[s[i]] != t[i]`  ->  **Sahi:** pehle `mp1.count(s[i]) == 1 &&`
+> **Kyun:** seedha `mp1[x]` khaali key bana ke galat clash deta.
+>
+> **Galti:** check se pehle save  ->  **Sahi:** check ke BAAD save, dono map me
+> **Kyun:** pehle save kiya to clash kabhi pakda hi nahi jaata.
 
 **CODE**
 ```cpp
@@ -83,7 +90,14 @@ bool isIsomorphic(string s, string t) {
 > **CHAABI:** ISOMORPHIC ka hi code, bas key `pattern[i] <-> word` (`stringstream ss >> word`). Clash line EXACT wahi.
 
 > [!WARNING]
-> Aakhir me words ki ginti milao: `pattern.size() == j`, warna "a", "dog cat" galat true. `j++` if ke BAHAR (extra word bhi gino), `i < pattern.size()` guard ke andar hi pattern padho.
+> **Galti:** ant me seedha `return true`  ->  **Sahi:** `return pattern.size() == j`
+> **Kyun:** words ki ginti na milao to `"a", "dog cat"` galat true.
+>
+> **Galti:** `j++` `if` ke andar  ->  **Sahi:** `j++` `if` ke bahar
+> **Kyun:** extra word bhi ginna hai.
+>
+> **Galti:** bina guard `pattern[i]` padha  ->  **Sahi:** `if (i < pattern.size())` ke andar hi
+> **Kyun:** words zyada hon to `pattern[i]` bahar padhta.
 
 **CODE**
 ```cpp
@@ -130,7 +144,8 @@ bool wordPattern(string pattern, string s) {   // = ISOMORPHIC, bas char <-> WOR
 > **CHAABI:** map `{value -> index}`. Har number pe dekho `target - nums[i]` map me hai? Mila to dono index.
 
 > [!WARNING]
-> `mp[nums[i]] = i` check ke BAAD hi. Pehle daala to number khud se match kar leta.
+> **Galti:** `mp[nums[i]] = i` check se pehle  ->  **Sahi:** check ke BAAD daalo
+> **Kyun:** pehle daala to number khud se match kar leta.
 
 **CODE**
 ```cpp
@@ -160,7 +175,8 @@ vector<int> twoSum(vector<int> &nums, int target) {
 > **CHAABI:** ek map: s se `++`, t se `--`, end me har key 0 honi chahiye.
 
 > [!WARNING]
-> Check `!= 0` karo, sirf `> 0` nahi: t me zyada aaya char minus me jaata, wo bhi pakadna hai. Length alag -> turant false.
+> **Galti:** `if (it.second > 0)`  ->  **Sahi:** `if (it.second != 0)`
+> **Kyun:** t me zyada aaya char minus me jaata, wo bhi pakadna hai.
 
 **CODE**
 ```cpp
@@ -197,7 +213,8 @@ bool isAnagram(string s, string t) {        // har char ka count barabar? (count
 > brute = har jodi "anagram hai?" O(n² · k) -> har word ki KEY bana ke map me CACHE -> O(n · k log k)
 
 > [!WARNING]
-> `string key = it` copy pe sort karo. Asli word sort kiya to group me "aet" chala jaata, "tea" nahi.
+> **Galti:** asli word sort kiya  ->  **Sahi:** `string key = it` copy pe sort
+> **Kyun:** group me "aet" chala jaata, "tea" nahi.
 
 **CODE**
 ```cpp
@@ -251,7 +268,11 @@ Tukda = abhi ka sum - peeche ka sum. To peeche ka sum = sum - k. Wahi map me dho
 ```
 
 > [!WARNING]
-> `mp[0] = 1` se shuru (sum khud == k wala case). Aur `sum - k` hi, two-sum ka `k - sum` ulta yahan mat lagao.
+> **Galti:** `mp[0] = 1` nahi daala  ->  **Sahi:** shuru me `mp[0] = 1`
+> **Kyun:** sum khud == k wala (shuru se) tukda gina hi nahi jaata.
+>
+> **Galti:** `mp[k - sum]` (two sum jaisa)  ->  **Sahi:** `mp[sum - k]`
+> **Kyun:** peeche ka sum = abhi ka sum - tukda k.
 
 **CODE**
 ```cpp
@@ -310,7 +331,11 @@ i=5: sum 7, 7 - 4 = 3 -> 3 index 0 pe pada -> index 0 ke baad se yahan tak jod 4
 ```
 
 > [!WARNING]
-> `if (!mp.count(sum)) mp[sum] = i`: PEHLA index hi rakho, baad wala likh diya to tukda chhota. Lambai me `+1` nahi, wo index tukde me nahi.
+> **Galti:** har baar `mp[sum] = i`  ->  **Sahi:** `if (!mp.count(sum)) mp[sum] = i`
+> **Kyun:** baad wala index likh diya to tukda chhota.
+>
+> **Galti:** lambai `i - mp[sum - k] + 1`  ->  **Sahi:** `i - mp[sum - k]`
+> **Kyun:** wo index tukde me nahi.
 
 **CODE**
 ```cpp
@@ -350,7 +375,14 @@ int longestSubarraySumK(vector<int> &nums, int k) { // prefix-sum + hashmap {pre
 > A[i] KYUN, prefix NAHI: pair = 2 ALAG element (contiguous range nahi) -> har element ka apna rem
 
 > [!WARNING]
-> `((it % k) + k) % k`: C++ me negative ka `%` negative aata, key galat. `rem = 0` pe partner `(k - 0) % k = 0`, isliye `% k`. count `long long` (jode n²/2 tak).
+> **Galti:** `rem = it % k`  ->  **Sahi:** `((it % k) + k) % k`
+> **Kyun:** C++ me negative ka `%` negative aata, key galat.
+>
+> **Galti:** partner `k - rem`  ->  **Sahi:** `(k - rem) % k`
+> **Kyun:** `rem = 0` pe partner k ban jaata, 0 chahiye.
+>
+> **Galti:** `int count`  ->  **Sahi:** `long long count`
+> **Kyun:** jode n²/2 tak, INT_MAX paar.
 
 **SAAR**
 
@@ -407,7 +439,11 @@ long long countDivisiblePairs(vector<int> &nums, int k) {
 > **CHAABI:** sab SET me. START = jiska `num - 1` set me NAHI; wahi se `currNum + 1` tak chain gino, `max` lo.
 
 > [!WARNING]
-> SET pe ghoomo, `nums` pe nahi (duplicate START baar-baar na gine). `num - 1` HAI to skip, warna har num se ginti = O(n²).
+> **Galti:** `for (int num : nums)`  ->  **Sahi:** `for (int num : st)` (set pe)
+> **Kyun:** duplicate START baar-baar gina jaata.
+>
+> **Galti:** har num se chain gini  ->  **Sahi:** `num - 1` set me hai to skip, sirf START se gino
+> **Kyun:** warna O(n²).
 
 ### DRY-RUN
 
@@ -460,7 +496,8 @@ int longestConsecutive(vector<int> &nums) {
 > map se: mp[x]++, count > n/2 wala return -> O(n) time, O(n) space (seedha)
 
 > [!WARNING]
-> `count == 0` pe RESET (`candidate = nums[i]`, `count = 1`). Chhoda to count -1 me jaata, candidate kabhi nahi badalta.
+> **Galti:** `count == 0` pe reset nahi  ->  **Sahi:** `candidate = nums[i]`, `count = 1`
+> **Kyun:** count -1 me jaata, candidate kabhi nahi badalta.
 
 **CODE**
 ```cpp
@@ -497,7 +534,11 @@ int majorityElement(vector<int> &nums) {    // BOYER-MOORE VOTING, O(1) space
 > **CHAABI:** value v ka ghar = index `v - 1`; dikha to us index ko NEGATIVE karo. End me jo `+ve` bacha, uska `i + 1` missing.
 
 > [!WARNING]
-> `abs(nums[i])` lo (value pehle hi -ve ho sakti) aur `nums[index] > 0` guard. Bina guard duplicate pe `-(-x)` wapas +ve: `[2,2]` pe `[1,2]`, sahi `[1]`.
+> **Galti:** `index = nums[i] - 1`  ->  **Sahi:** `index = abs(nums[i]) - 1`
+> **Kyun:** value pehle hi -ve ho chuki ho sakti.
+>
+> **Galti:** bina guard `nums[index] = -nums[index]`  ->  **Sahi:** `if (nums[index] > 0)` ke andar
+> **Kyun:** duplicate pe `-(-x)` wapas +ve: `[2,2]` pe `[1,2]`, sahi `[1]`.
 
 **DRY RUN: [4,3,2,7,8,2,3,1] -> [5,6]**
 ```
@@ -576,7 +617,11 @@ kul alert = 1
 > pench: beech me DOOSRE server ki lines aati -> ek window nahi, "KISKA lagaataar" = key = server   (00_SHURU me NAAM-SE-CONFUSE E)
 
 > [!WARNING]
-> success pe `mp[server] = 0`, `--` NAHI (lagaataar TOOTA, ghata nahi). Alert ke baad bhi 0 karo, warna 4th, 5th error bhi alert ginta.
+> **Galti:** success pe `mp[server]--`  ->  **Sahi:** `mp[server] = 0`
+> **Kyun:** lagaataar toota, ghata nahi.
+>
+> **Galti:** alert ke baad ginti chhodi  ->  **Sahi:** alert ke baad `mp[server] = 0`
+> **Kyun:** warna 4th, 5th error bhi alert ginta.
 
 **CODE**
 ```cpp
@@ -617,7 +662,8 @@ int countAlerts(vector<string> &logs) {
 > **CHAABI:** `getline(ss, name, ',')` teen baar (comma tak), `stoi(marks)`, `mp[name] += t`. `map` (sorted) = alphabet kram apne aap.
 
 > [!WARNING]
-> Tukde COMMA se hain, `>>` space pe todta, yahan nahi chalega; `getline` with `','`.
+> **Galti:** `ss >> name`  ->  **Sahi:** `getline(ss, name, ',')`
+> **Kyun:** `>>` space pe todta, yahan tukde comma se hain.
 
 **CODE**
 ```cpp
@@ -664,7 +710,11 @@ KYUN 1440: din me 24 * 60 = 1440 minute.
 > **CHAABI:** dono ko MINUTE banao (`HH * 60 + MM`), phir `(mins2 - mins1 + 1440) % 1440`.
 
 > [!WARNING]
-> Raat 12 paar end chhota -> minus aata, isliye `+1440`; par `% 1440` bhi zaroori warna seedhe case me ek extra din (1950) jud jaata.
+> **Galti:** seedha `mins2 - mins1`  ->  **Sahi:** `mins2 - mins1 + 1440`
+> **Kyun:** raat 12 paar end chhota, minus aata.
+>
+> **Galti:** sirf `+1440`  ->  **Sahi:** `(mins2 - mins1 + 1440) % 1440`
+> **Kyun:** seedhe case me ek extra din jud jaata (1950).
 
 **CODE**
 ```cpp

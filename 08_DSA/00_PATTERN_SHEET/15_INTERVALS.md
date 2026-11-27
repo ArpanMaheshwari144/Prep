@@ -58,7 +58,11 @@ ans = [1,3]
 > **CHAABI:** sort by START; `ans.back()[1] >= intervals[i][0]` -> overlap -> `ans.back()[1] = max(ans.back()[1], intervals[i][1])`; warna push.
 
 > [!WARNING]
-> `max` zaroori: `[1,10],[2,3] -> 10`. `>=` : `[1,3],[3,5]` chhoote bhi merge.
+> **Galti:** `ans.back()[1] = intervals[i][1]` (bina `max`)  ->  **Sahi:** `max(ans.back()[1], intervals[i][1])`
+> **Kyun:** `[1,10],[2,3]` me end 3 ho jaata, jabki 10 rehna chahiye.
+>
+> **Galti:** `>`  ->  **Sahi:** `ans.back()[1] >= intervals[i][0]`
+> **Kyun:** `[1,3],[3,5]` sirf chhoote hain, phir bhi merge hone chahiye.
 
 **CODE**
 ```cpp
@@ -99,7 +103,11 @@ ans = [0,30]
 ```
 
 > [!WARNING]
-> `<` (`<=` NAHI): ek khatam usi pal doosri shuru = chalta. `intervals.empty()` pe pehle true, warna `intervals[0]` pe crash.
+> **Galti:** `<=`  ->  **Sahi:** `intervals[i][0] < ans.back()[1]`
+> **Kyun:** ek meeting khatam hote hi usi pal doosri shuru ho to takraav nahi, dono attend ho jaati.
+>
+> **Galti:** `intervals.empty()` check nahi  ->  **Sahi:** sabse pehle `if (intervals.empty()) return true;`
+> **Kyun:** khaali input pe `intervals[0]` padhte hi crash.
 
 **CODE**
 ```cpp
@@ -146,7 +154,14 @@ ans = [1,5] [6,9]
 > **CHAABI:** pehle se sorted -> SORT nahi, 3 phase: new se PEHLE khatam (`[1] < new[0]`) -> push · new ke AAGE (`[0] > new[1]`) -> break · warna overlap -> new ko GROW (min start, max end). Phir new push, phir baaki.
 
 > [!WARNING]
-> dono strictly (`<` aur `>`): chhoota hua (touching) bhi merge, `[[1,2]] + [2,5] -> [[1,5]]`; `<=`/`>=` likha to `[[1,2],[2,5]]`. End bhi `max`. Baaki wala doosra loop `count` se: break wala `count++` tak nahi pahunchta.
+> **Galti:** `<=` / `>=`  ->  **Sahi:** dono strictly, `intervals[i][1] < newInterval[0]` aur `intervals[i][0] > newInterval[1]`
+> **Kyun:** chhoota hua (touching) bhi merge hona chahiye: `[[1,2]] + [2,5] -> [[1,5]]`, `<=` / `>=` se `[[1,2],[2,5]]` banta.
+>
+> **Galti:** overlap pe end me `max` nahi  ->  **Sahi:** `newInterval[1] = max(newInterval[1], intervals[i][1])`
+> **Kyun:** start `min` se aur end `max` se, tabhi poora jude hua hissa new me aata.
+>
+> **Galti:** doosra loop `count` se nahi  ->  **Sahi:** `for (int i = count; i < intervals.size(); i++)`
+> **Kyun:** break wala interval `count++` tak nahi pahunchta, isliye `count` = pehla bacha hua interval.
 
 **CODE**
 ```cpp
@@ -213,7 +228,14 @@ SWEEP VISUAL (vertical line jhaadu t=9 pe = 2 bars overlap = PEAK):
 > **CHAABI:** har start `+1`, har end `-1` ordered `map` me; time ke kram me running `overlap`, uska MAX = rooms.
 
 > [!WARNING]
-> rooms object mat gino -> +1 / -1 GINTI. ORDERED `map` (keys khud sorted, time ke order me chalna). End ka `-1` usi key pe: same time pe +1 -1 kat -> room REUSE.
+> **Galti:** rooms ko object bana ke ginna  ->  **Sahi:** sirf `+1` / `-1` ki GINTI
+> **Kyun:** chahiye bas peak (ek saath kitni meeting), kaunsa room kaunsi meeting nahi.
+>
+> **Galti:** `unordered_map`  ->  **Sahi:** ordered `map`
+> **Kyun:** time ke kram me chalna hai, `map` ki keys khud sorted rehti hain.
+>
+> **Galti:** end ka `-1` `end + 1` pe  ->  **Sahi:** `mp[end[i]]--` (usi key pe)
+> **Kyun:** same time pe ek khatam aur ek shuru ho to `+1 -1` kat jaate, wahi room REUSE hota.
 
 **CODE**
 ```cpp

@@ -34,7 +34,8 @@
 > **CHAABI:** do marker array `zeroRow` / `zeroCol`. Pass-1 sirf MARK, pass-2 `zeroRow[i] == 0 || zeroCol[j] == 0` to cell 0.
 
 > [!WARNING]
-> Ek hi pass me 0 karte gaye to naye bane 0 bhi mark ho jaate, matrix faltu 0 se bhar jaati. Isliye pehle sirf mark, phir alag pass me 0.
+> **Galti:** ek hi pass me mark bhi aur 0 bhi  ->  **Sahi:** pass-1 sirf mark, pass-2 me 0
+> **Kyun:** naye bane 0 bhi mark ho jaate, matrix faltu 0 se bhar jaati.
 
 **CODE**
 ```cpp
@@ -103,7 +104,8 @@ PATTERN — har chakkar ke 4 kadam:
 > **CHAABI:** 4 boundary andar simat-te: top row L->R `top++`, right col T->B `right--`, bottom row R->L `bottom--`, left col B->T `left++`. `while (top <= bottom && left <= right)`.
 
 > [!WARNING]
-> 3rd / 4th loop pe GUARD: `if (top <= bottom)` bottom row, `if (left <= right)` left col. Ek hi row / col bachi ho to ulti disha wala loop wahi dobara chhaap deta (`[[1,2,3]]` pe 2 1 dobara).
+> **Galti:** 3rd / 4th loop bina guard  ->  **Sahi:** bottom row se pehle `if (top <= bottom)`, left col se pehle `if (left <= right)`
+> **Kyun:** ek hi row / col bachi ho to ulti disha wala loop wahi dobara chhaap deta (`[[1,2,3]]` pe 2 1 dobara).
 
 **CODE**
 ```cpp
@@ -145,7 +147,8 @@ vector<int> spiralOrder(vector<vector<int>> &matrix) {
 - **kyun:** pehli row 1,2,3 ban gayi pehla col; 2x3 se 3x2
 
 > [!WARNING]
-> `ans` ka size `col x row` banao (`ans(col, vector<int>(row, -1))`), `row x col` nahi: non-square pe index bahar. Outer `i < col`, inner `j < row`.
+> **Galti:** `ans` ka size `row x col`  ->  **Sahi:** `ans(col, vector<int>(row, -1))`, outer `i < col`, inner `j < row`
+> **Kyun:** naya matrix ulta size ka hai, non-square pe index bahar chala jaata.
 
 **CODE**
 ```cpp
@@ -185,7 +188,11 @@ jis server ki row aur col dono me koi doosra nahi, sirf wahi ginti se bahar (yah
 > [[1,0],[1,1]] -> 3  ·  [[1,0],[0,1]] -> 0
 
 > [!WARNING]
-> `> 1` hi, `>= 1` nahi: khud bhi ginti me hai, saathi ke liye 1 se zyada chahiye. Pass-1 poori ginti pehle, tabhi pass-2 me pata akela hai ya nahi.
+> **Galti:** `rowCount[i] >= 1`  ->  **Sahi:** `rowCount[i] > 1 || colCount[j] > 1`
+> **Kyun:** server khud bhi ginti me hai, saathi ke liye 1 se zyada chahiye.
+>
+> **Galti:** ginti aur check ek hi pass me  ->  **Sahi:** pass-1 poori ginti, pass-2 check
+> **Kyun:** aadhi ginti pe pata nahi chalta ki server akela hai ya nahi.
 
 **SAAR**
 ```

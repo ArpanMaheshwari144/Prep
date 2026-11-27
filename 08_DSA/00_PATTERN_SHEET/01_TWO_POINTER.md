@@ -28,7 +28,11 @@
 > **CHAABI:** `slow` = agli jagah jahan non-zero rakhna, `fast` scan. Non-zero mila -> `swap(nums[slow], nums[fast])` + `slow++`.
 
 > [!WARNING]
-> `fast++` har baar, `if` ke BAHAR. `slow++` sirf swap ke BAAD (non-zero apni jagah lag gaya tabhi aage).
+> **Galti:** `fast++` `if` ke andar  ->  **Sahi:** `fast++` `if` ke bahar, har baar
+> **Kyun:** 0 mila to `fast` aage hi nahi badhta, loop atak jaata.
+>
+> **Galti:** `slow++` swap se pehle  ->  **Sahi:** pehle `swap`, phir `slow++`
+> **Kyun:** non-zero apni jagah lag gaya tabhi `slow` aage.
 
 **CODE**
 ```cpp
@@ -60,7 +64,11 @@ void moveZeroes(vector<int> &nums) {
 > **CHAABI:** `slow` = last UNIQUE ka index. `nums[slow] != nums[fast]` -> naya unique: `slow++` + `nums[slow] = nums[fast]`.
 
 > [!WARNING]
-> MOVE ZEROES se ULTA kram: yahan `slow++` PEHLE, overwrite BAAD. Return `slow + 1` (slow index hai, ginti nahi).
+> **Galti:** pehle `nums[slow] = nums[fast]`, phir `slow++` (move zeroes wala kram)  ->  **Sahi:** pehle `slow++`, phir `nums[slow] = nums[fast]`
+> **Kyun:** `slow` last unique pe khada hai, pehle likha to wahi unique mit jaata.
+>
+> **Galti:** `return slow`  ->  **Sahi:** `return slow + 1`
+> **Kyun:** `slow` index hai, ginti nahi.
 
 **CODE**
 ```cpp
@@ -93,7 +101,11 @@ int removeDuplicates(vector<int> &nums) {
 > **CHAABI:** `nums[fast] != val` -> `nums[slow] = nums[fast]` + `slow++` (move zeroes jaisa). `val` mila to sirf `fast++`.
 
 > [!WARNING]
-> write PEHLE, `slow++` BAAD. Return `slow` hi k hai (REMOVE DUP me `slow + 1` tha, yahan nahi).
+> **Galti:** pehle `slow++`, phir `nums[slow] = nums[fast]`  ->  **Sahi:** pehle write, phir `slow++`
+> **Kyun:** `slow` = agli khaali keep-jagah, pehle wahan likho.
+>
+> **Galti:** `return slow + 1` (remove dup jaisa)  ->  **Sahi:** `return slow`
+> **Kyun:** yahan `slow` khud hi ginti k hai.
 
 **CODE**
 ```cpp
@@ -124,7 +136,8 @@ int removeElement(vector<int> &nums, int val) {
 - **kyun:** abca: pehla 'a' = aakhri 'a', par 'b' != 'c'
 
 > [!WARNING]
-> `right = s.size() - 1` (aakhri index), `s.size()` nahi. Loop `left <= right` tak.
+> **Galti:** `right = s.size()`  ->  **Sahi:** `right = s.size() - 1`
+> **Kyun:** aakhri index `size - 1` hai, `size` pe string ke bahar padhta.
 
 **CODE**
 ```cpp
@@ -153,7 +166,11 @@ bool isPalindrome(string s) {               // sirf lowercase letters wala aasan
 - **kyun:** filter + lower = "amanaplanacanalpanama" (palindrome) · "raceacar" (nahi)
 
 > [!WARNING]
-> false sirf AAKHRI `else` me (dono alnum aur alag). Pehle match, phir non-alnum skip; compare `tolower` ke saath (`<cctype>`).
+> **Galti:** mismatch pe turant `return false`  ->  **Sahi:** false sirf aakhri `else` me (dono alnum aur alag)
+> **Kyun:** mismatch wala ek char space / comma ho sakta, use pehle skip karna hai.
+>
+> **Galti:** seedha `s[left] == s[right]`  ->  **Sahi:** `tolower(s[left]) == tolower(s[right])`
+> **Kyun:** bade-chhote akshar ek jaise maanne hain.
 
 **CODE**
 ```cpp
@@ -227,7 +244,11 @@ bool validPalindrome(string s) {            // palindrome YA ek char delete kark
 - **kyun:** vowels e, o -> ulte o, e. h l l jahan the wahin
 
 > [!WARNING]
-> `while (left < right)`: milte hi ruko, beech ka akela char swap nahi. Bade vowel (A E I O U) bhi `isVowel` me.
+> **Galti:** `while (left <= right)`  ->  **Sahi:** `while (left < right)`
+> **Kyun:** milte hi ruko, beech ka akela char khud se swap nahi.
+>
+> **Galti:** `isVowel` me sirf a e i o u  ->  **Sahi:** bade A E I O U bhi
+> **Kyun:** string me bade vowel bhi ulte hone chahiye.
 
 **CODE**
 ```cpp
@@ -289,7 +310,8 @@ paani chhoti line (7) tak hi rukta, upar se bah jaata -> 7 x 7 = 49
 > **CHAABI:** area = `min(height[low], height[high]) * (high - low)`. CHHOTI height wala pointer andar (wahi bottleneck).
 
 > [!WARNING]
-> faisla height pe: chhoti wali andar, badi nahi. Barabar ho to `else` se `high--`. `low < high` (same index pe width 0).
+> **Galti:** badi height wala pointer andar  ->  **Sahi:** chhoti height wala andar
+> **Kyun:** paani chhoti line tak hi rukta, wahi bottleneck; badi hatane se area badh hi nahi sakta.
 
 **CODE**
 ```cpp
@@ -325,7 +347,11 @@ int maxArea(vector<int> &height) {
 > **CHAABI:** SORTED -> `left`/`right`: jod chhota -> `left++`, bada -> `right--`.
 
 > [!WARNING]
-> 1-based lautao: `{left + 1, right + 1}`. `left < right` (ek hi index do baar nahi).
+> **Galti:** `return {left, right}`  ->  **Sahi:** `return {left + 1, right + 1}`
+> **Kyun:** index 1 se gine jaate hain.
+>
+> **Galti:** `left <= right`  ->  **Sahi:** `left < right`
+> **Kyun:** `<=` pe ek hi index do baar jud jaata.
 
 **CODE**
 ```cpp
@@ -358,7 +384,11 @@ vector<int> twoSum(vector<int> &nums, int target) {   // UNSORTED two sum = hash
 > **CHAABI:** 2 number ki jodi = two pointer: `low = 0, high = sqrt(c)`; `low*low + high*high` chhota -> `low++`, bada -> `high--`.
 
 > [!WARNING]
-> `low <= high` (`<=`: c=0 me 0+0 jaisa ek hi point bhi check ho). Guna se PEHLE `(long long)` cast, warna overflow.
+> **Galti:** `low < high`  ->  **Sahi:** `low <= high`
+> **Kyun:** a aur b same ho sakte, c=0 me 0+0 jaisa ek hi point bhi check ho.
+>
+> **Galti:** `low * low + high * high` int me  ->  **Sahi:** guna se PEHLE `(long long)` cast
+> **Kyun:** int me guna overflow ho jaata.
 
 **CODE**
 ```cpp
@@ -394,7 +424,8 @@ bool judgeSquareSum(long long c) {          // a² + b² == c ? (LC 633) 2 numbe
 > **CHAABI:** sabse BADA square dono chhor pe (negative) -> peeche se bharo: `k = n - 1`, jo square bada wo `ans[k]`, `k--`.
 
 > [!WARNING]
-> `left <= right` (`<` nahi): left==right wala aakhri element bhi `ans[0]` me jaana, `<` se `ans[0]` khaali (`[-1,2] -> [0,4]`).
+> **Galti:** `left < right`  ->  **Sahi:** `left <= right`
+> **Kyun:** left==right wala aakhri element bhi `ans[0]` me jaana, `<` se `ans[0]` khaali (`[-1,2] -> [0,4]`).
 
 **CODE**
 ```cpp
@@ -440,7 +471,14 @@ nums1:  1  2  2  3  5  6      naya array nahi bana, nums1 hi bhar gaya
 > **CHAABI:** peeche se bharo: jo bada wahi `nums1[k]` (aakhri khaali slot). Ant me bache `nums2[j]` copy.
 
 > [!WARNING]
-> `i = m - 1`, `j = n - 1`, `k = m + n - 1` (`m*n-1` NAHI). `while (i >= 0 && j >= 0)`: `&&` (`||` se -1 index crash). Aakhri loop `nums2[j]` (`nums1[j]` NAHI), ye abhi copy nahi hue.
+> **Galti:** `k = m*n - 1`  ->  **Sahi:** `k = m + n - 1`
+> **Kyun:** nums1 ka aakhri index `m + n - 1` hai.
+>
+> **Galti:** `while (i >= 0 || j >= 0)`  ->  **Sahi:** `while (i >= 0 && j >= 0)`
+> **Kyun:** `||` se koi ek -1 pe pahunch ke bhi padha jaata, -1 index crash.
+>
+> **Galti:** aakhri loop me `nums1[k] = nums1[j]`  ->  **Sahi:** `nums1[k] = nums2[j]`
+> **Kyun:** nums2 ke bache abhi copy nahi hue.
 
 **CODE**
 ```cpp
@@ -489,7 +527,11 @@ void merge(vector<int> &nums1, int m, vector<int> &nums2, int n) {   // nums1 ke
 > **CHAABI:** 3 pointer: 0 -> `swap(low, mid)`, `low++ mid++` · 1 -> `mid++` · 2 -> `swap(mid, high)`, `high--` (mid wahin).
 
 > [!WARNING]
-> `mid <= high` (`<` se `[2,0,1]` pe `[1,0,2]` reh jaata). 2 pe `mid++` NAHI: high se aaya element unknown, dobara check.
+> **Galti:** `while (mid < high)`  ->  **Sahi:** `while (mid <= high)`
+> **Kyun:** high wala cell abhi unknown, use bhi check; `<` se `[2,0,1]` pe `[1,0,2]` reh jaata.
+>
+> **Galti:** 2 pe swap ke baad `mid++`  ->  **Sahi:** sirf `high--`, `mid` wahin
+> **Kyun:** high se aaya element unknown, dobara check.
 
 **CODE**
 ```cpp
@@ -525,7 +567,8 @@ void sortColors(vector<int> &nums) {        // Dutch flag, 3 pointer
 - **e.g.** `[3,1,2,4] -> [2,4,3,1] (ya [4,2,1,3], koi bhi jisme even pehle)`
 
 > [!WARNING]
-> left even + right odd = dono sahi jagah, swap MAT (TRAP).
+> **Galti:** left even + right odd pe bhi swap  ->  **Sahi:** swap sirf jab left odd aur right even
+> **Kyun:** left even + right odd dono sahi jagah hain, swap se ulta ho jaata.
 
 **CODE**
 ```cpp
@@ -565,7 +608,14 @@ vector<int> sortArrayByParity(vector<int> nums) {   // even pehle, odd baad (aap
 > **CHAABI:** sort + har `i` FIX, `sum = -nums[i]`, baaki `low/high` = 2SUM-II. Duplicate skip 3 jagah: fixed `i`, match ke baad `low`, match ke baad `high`.
 
 > [!WARNING]
-> skip loop AAKHRI copy pe rukta -> uske baad `low++`, `high--` zaroori, warna wahi triplet dobara. Skip me `low < high &&` PEHLE (`low+1` bahar). `i > 0` pehle (`nums[-1]`).
+> **Galti:** match pe sirf skip loop, uske baad `low++` / `high--` nahi  ->  **Sahi:** skip ke baad bhi `low++`, `high--`
+> **Kyun:** skip loop aakhri copy pe rukta, naye number pe nahi; warna wahi triplet dobara.
+>
+> **Galti:** `nums[low] == nums[low + 1] && low < high`  ->  **Sahi:** `low < high && nums[low] == nums[low + 1]`
+> **Kyun:** pehle range dekho, warna `low + 1` bahar padhta.
+>
+> **Galti:** `nums[i] == nums[i - 1]` bina `i > 0`  ->  **Sahi:** `i > 0 && nums[i] == nums[i - 1]`
+> **Kyun:** i = 0 pe `nums[-1]` padhta.
 
 **CODE**
 ```cpp
@@ -614,7 +664,11 @@ vector<vector<int>> threeSum(vector<int> &nums) {   // saare UNIQUE triplet jink
 > **CHAABI:** `i` -> s, `j` -> t. Char mila -> dono aage; nahi mila -> sirf `j++`. Ant me `i >= s.size()` -> true.
 
 > [!WARNING]
-> mismatch pe sirf `j++` (t aage), `i` wahin. Loop `&&` pe rukta: koi ek khatam -> ruko.
+> **Galti:** mismatch pe `i++` bhi  ->  **Sahi:** sirf `j++`, `i` wahin
+> **Kyun:** s ka char abhi mila nahi, t me aage dhoondhna hai.
+>
+> **Galti:** `while (i < s.size() || j < t.size())`  ->  **Sahi:** `&&`
+> **Kyun:** koi ek khatam to ruko, warna khatam wali string ke bahar padhta.
 
 **CODE**
 ```cpp
@@ -654,10 +708,6 @@ bool isSubsequence(string s, string t) {    // s, t me order se hai? beech ke ch
 > **★ MILNE KI JAGAH:** dono pointer jahan milte, wo cell kabhi process nahi hota. Deewar dekh ke chalne se
 > badi deewar apni jagah rukti -> dono SABSE UNCHI deewar pe milte, jahan paani hota hi nahi.
 
-> [!WARNING]
-> **★ TRAP:** faisla height[left] <= height[right] (DEEWAR) pe lo, leftMax <= rightMax pe NAHI.
-> max pe liya to ek khamba chhoot jaata: [4,1,4,1] -> 0 aata (sahi 3).
-
 ### purana galat code (24-Sep theek kiya)
 
 ```
@@ -675,7 +725,8 @@ max abhi current deewar ko shaamil kiye bina -> milne ki jagah galat -> ek khamb
 > O(n) space wala: leftMax[] aage se, rightMax[] peeche se, ans += min(..) - height[i]
 
 > [!WARNING]
-> faisla `height[left] <= height[right]` (DEEWAR) pe lo, `leftMax <= rightMax` pe NAHI: max pe liya to ek khamba chhoot jaata, `[4,1,4,1] -> 0` (sahi 3). Andar: `leftMax > height[left]` -> paani, warna `leftMax = height[left]` (nayi deewar).
+> **Galti:** faisla `leftMax <= rightMax` pe  ->  **Sahi:** faisla `height[left] <= height[right]` (DEEWAR) pe
+> **Kyun:** max pe liya to ek khamba chhoot jaata, `[4,1,4,1] -> 0` (sahi 3).
 
 **CODE**
 ```cpp
@@ -762,7 +813,14 @@ rightMax 0 hi raha: right wali deewar 5 hamesha badi thi, else wala hissa ek baa
 > **CHAABI:** har CENTER se phailo: odd `solve(i, i)`, even `solve(i, i + 1)`; HAR match pe `count++`.
 
 > [!WARNING]
-> `int &count` reference, warna bahar count badhta hi nahi. `count++` HAR match pe (ant me ek baar nahi). `while` me range check PEHLE, phir `s[i] == s[j]`.
+> **Galti:** `int count` (bina `&`)  ->  **Sahi:** `int &count`
+> **Kyun:** copy badhti hai, bahar count badhta hi nahi.
+>
+> **Galti:** `count++` loop ke baad ek baar  ->  **Sahi:** `count++` har match pe, loop ke andar
+> **Kyun:** har phailav ek naya palindrome hai.
+>
+> **Galti:** `s[i] == s[j] && i >= 0 && j < s.size()`  ->  **Sahi:** range check PEHLE, phir `s[i] == s[j]`
+> **Kyun:** warna `s[-1]` / `s[n]` padhta.
 
 **CODE**
 ```cpp

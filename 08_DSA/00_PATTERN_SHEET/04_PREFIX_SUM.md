@@ -33,7 +33,8 @@
 > **CHAABI:** pehle `totalSum`; har i pe `rightSum = totalSum - leftSum - nums[i]`, `leftSum == rightSum` to i lautao.
 
 > [!WARNING]
-> `leftSum += nums[i]` check ke BAAD hi. Pehle joda to khud ka number left me gin jaata, right me se bhi kat gaya.
+> **Galti:** `leftSum += nums[i]` check se pehle  ->  **Sahi:** check ke BAAD
+> **Kyun:** khud ka number left me gin jaata, right me se bhi kat gaya.
 
 **CODE**
 ```cpp
@@ -69,7 +70,11 @@ int pivotIndex(vector<int> &nums) {         // index jahan left sum == right sum
 > O(1) extra (follow-up): left ko seedha ans me likho, right-pass me ans[i] *= prod (alag right[] nahi)
 
 > [!WARNING]
-> UPDATE pehle kiya to khud ka element bhi product me aa jaata. Right pass se pehle `prod = 1` reset, warna left-pass ka bacha product saath aata.
+> **Galti:** pehle `prod *= nums[i]`, phir `left[i] = prod`  ->  **Sahi:** pehle assign, phir update
+> **Kyun:** khud ka element bhi product me aa jaata.
+>
+> **Galti:** right pass se pehle `prod = 1` nahi kiya  ->  **Sahi:** `prod = 1` reset
+> **Kyun:** left-pass ka bacha product saath aata.
 
 **CODE**
 ```cpp
@@ -110,7 +115,8 @@ vector<int> productExceptSelf(vector<int> &nums) {
 - **kyun:** altitude 0, -5, -4, 1, 1, -6 -> max 1
 
 > [!WARNING]
-> `maxi = 0` se shuru (`INT_MIN` nahi): shuru ki altitude 0 bhi ginti, sab -ve ho to jawab 0.
+> **Galti:** `maxi = INT_MIN`  ->  **Sahi:** `maxi = 0`
+> **Kyun:** shuru ki altitude 0 bhi ginti, sab -ve ho to jawab 0.
 
 **CODE**
 ```cpp
@@ -142,7 +148,11 @@ int largestAltitude(vector<int> &gain) {    // running sum chalao, max track (si
 > PREFIX kyun, single A[i] nahi: subarray CONTIGUOUS range -> do prefix ka farak = wahi subarray
 
 > [!WARNING]
-> `mp[0] = 1` seed (shuru se hi divisible wala), aur `((sum % k) + k) % k` (negative sum ka `%` negative aata).
+> **Galti:** `mp[0] = 1` nahi daala  ->  **Sahi:** shuru me `mp[0] = 1`
+> **Kyun:** shuru se hi divisible wala tukda chhoot jaata.
+>
+> **Galti:** `rem = sum % k`  ->  **Sahi:** `((sum % k) + k) % k`
+> **Kyun:** negative sum ka `%` negative aata, key galat.
 
 **CODE**
 ```cpp
@@ -211,10 +221,6 @@ int subarrayXorK(vector<int> &nums, int k) {
 - pehle kamre se [3], [3,1]; doosre se [3], [3,2]  (= 4). [1] aur [2] me 3 hai hi nahi, max kam.
 - koi tukda deewar ke paar nahi jaata -> window chhoti-badi karne ka sawaal hi nahi, har kamra alag gino.
 
-> [!WARNING]
-> **★ EDGE:**
-> "subarray"->SW, "max"->STACK, "count"->PQ sab galat: max FIXED K se compare -> simple scan
-
 ### tasveer (K se bada = DEEWAR)
 
 ```
@@ -245,14 +251,24 @@ aage 4, 5, 10 bhi deewar, unke baad koi 3 nahi -> kuch nahi juda.   answer = 3
 ★ 7-Nov REDO_2 ki galti: lastWall = arr[i] likha (8, 4...)  ->  INDEX chahiye (0, 4...), ginti index se banti
 ```
 
-> [!WARNING]
-> **★ teesri if (lastK > lastWall) chhooti:** i = 6 pe 3 - 5 = -2 jud jaata
-
 > [!IMPORTANT]
 > **CHAABI:** K se bada = DEEWAR. Har i pe `lastWall` (aakhri deewar) aur `lastK` (aakhri K); `lastK > lastWall` to `count += lastK - lastWall`.
 
 > [!WARNING]
-> `if (lastK > lastWall)` guard zaroori, warna `lastK - lastWall` NEGATIVE jud jaata (`[5,3,5]` pe dikhta). count `long long` (~n²/2). `lastWall` / `lastK` INDEX hain, value nahi; har i pe pehle dono update, PHIR count.
+> **Galti:** "subarray" dekh ke SW, "max" dekh ke stack, "count" dekh ke PQ  ->  **Sahi:** simple scan: aakhri deewar + aakhri K ka index
+> **Kyun:** max ek FIXED K se compare hota, window chhoti-badi karne ka sawaal hi nahi.
+>
+> **Galti:** `lastWall = arr[i]` (value)  ->  **Sahi:** `lastWall = i` (index)
+> **Kyun:** ginti index ke farak se banti.
+>
+> **Galti:** teesri `if (lastK > lastWall)` chhodi  ->  **Sahi:** `if (lastK > lastWall) count += lastK - lastWall`
+> **Kyun:** deewar K ke baad aayi to farak NEGATIVE jud jaata (i = 6 pe 3 - 5 = -2, `[5,3,5]` pe bhi).
+>
+> **Galti:** `int count`  ->  **Sahi:** `long long count`
+> **Kyun:** count ~n²/2 tak, int overflow.
+>
+> **Galti:** pehle count, phir `lastWall` / `lastK` update  ->  **Sahi:** har i pe pehle dono update, PHIR count
+> **Kyun:** abhi wala index deewar / K ho to usi i pe ginti badalni chahiye.
 
 **CODE**
 ```cpp
@@ -289,7 +305,11 @@ long long countSubarraysMaxK(vector<int> &arr, int K) {
 > KAB: har RANGE pe kuch ADD karo, 20,000 range. seedha = O(range x length), chahiye O(n + ranges)
 
 > [!WARNING]
-> `diff` size `n + 2` (end+1 = n+1 tak jaata, `n + 1` rakha to crash). Inclusive range me `end + 1` pe ghatao; `end` pe ghataya to aakhri flight chhoot gayi.
+> **Galti:** `vector<int> diff(n + 1)`  ->  **Sahi:** `diff(n + 2)`
+> **Kyun:** `end + 1` = n+1 tak jaata, `n + 1` size pe crash.
+>
+> **Galti:** `diff[end] -= count`  ->  **Sahi:** `diff[end + 1] -= count`
+> **Kyun:** range inclusive hai, `end` pe ghataya to aakhri flight chhoot gayi.
 
 ### DRY-RUN
 
