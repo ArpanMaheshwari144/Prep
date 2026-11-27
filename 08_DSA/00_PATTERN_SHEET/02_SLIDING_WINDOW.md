@@ -450,6 +450,19 @@ Q: sirf DONO ENDS (front/back) se TOTAL k cards lo -> unka sum MAXIMIZE.
 
 **DRY RUN (tere code se): [1,2,3,4,5,6,1], k=3 -> 12**
 ```
+PEHLE: L - k KYUN?  (L = 7 card, k = 3 lene hain, kinaron se hi)
+  3 card kinaron se kisi bhi tarah lo, jo 7 - 3 = 4 card BACHTE wo hamesha BEECH me LAGAATAR hote:
+
+    liye (kinaron se)        bache (beech, lagaatar)      liye ka jod
+    aage 1,2,3               [4,5,6,1] = 16               22 - 16 = 6
+    aage 1,2 + peeche 1      [3,4,5,6] = 18               22 - 18 = 4
+    aage 1   + peeche 6,1    [2,3,4,5] = 14               22 - 14 = 8
+    peeche 5,6,1             [1,2,3,4] = 10               22 - 10 = 12   <- sabse bada
+
+  to: liye ka jod SABSE BADA  =  Total - (bache 4 ka jod SABSE CHHOTA)
+  isliye window size = L - k = 4, aur us size ki window ka MIN sum chahiye -> minSumK(nums, 4)
+
+PHIR CODE:
 maxScore(nums, 3):
   Total = 1+2+3+4+5+6+1 = 22
   nums.size() - k = 7 - 3 = 4, 0 nahi
