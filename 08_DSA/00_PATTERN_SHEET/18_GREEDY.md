@@ -290,6 +290,9 @@ String s (a-z). Jitne zyada tukde ho sakein utne kaato, shart: har akshar sirf E
   kyun: "ababcbaca" | "defegde" | "hijhklij" (a, b, c sirf pehle me) · e shuru me bhi aakhir me bhi -> poori ek
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** pehle se har akshar ka AAKHRI index map me rakh lo, phir chalte-chalte `end = max(end, mp[akshar])`; `j` end pe pahunche to tukda khatam. Ye library me honi chahiye: on the spot ye trick 5-6 hint ke bina nahi banti (Arpan).
+
 **CODE**
 ```cpp
 vector<int> partitionLabels(string s) {
