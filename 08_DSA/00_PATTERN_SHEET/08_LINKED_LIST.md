@@ -203,9 +203,6 @@ Linked list ka head diya hai. Agar list aage se aur peeche se ek jaisi padhi jaa
 ```
 
 > [!IMPORTANT]
-> middleNode = upar wala MIDDLE OF LIST · reverseList = neeche wala REVERSE LINKED LIST
-
-> [!IMPORTANT]
 > **CHAABI:** `middleNode` -> `reverseList(mid)` (2nd half ulta) -> `head` aage se aur `rev` peeche se saath-saath compare.
 
 > [!WARNING]
@@ -213,6 +210,9 @@ Linked list ka head diya hai. Agar list aage se aur peeche se ek jaisi padhi jaa
 
 **CODE**
 ```cpp
+Node *middleNode(Node *head);               // isi sheet me upar: MIDDLE OF LIST (LC-876), slow 1 / fast 2
+Node *reverseList(Node *head);              // isi sheet me neeche: REVERSE LINKED LIST (LC-206), prev / curr / next
+
 bool isPalindrome(Node *head) {
     Node *mid = middleNode(head);           // slow / fast
     Node *rev = reverseList(mid);           // ★ 2nd half ulta (rev = naya head)
