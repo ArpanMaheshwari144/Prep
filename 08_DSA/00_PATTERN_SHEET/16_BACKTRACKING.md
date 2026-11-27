@@ -284,15 +284,6 @@ Aksharon ki ek grid aur ek word diya hai. Kya grid me paas-paas wale cells (upar
 ```
 
 > [!IMPORTANT]
-> **ANY vs ALL (har jagah yahi):**
->
-> "KOI EK bhi?" (any)  -> loop me: mila to return true   · loop ke BAAD: return false
->
-> "SAB ke SAB?" (all)  -> loop me: fail to return false  · loop ke BAAD: return true
->
-> (= stream ka anyMatch / allMatch, andar yahi loop)
-
-> [!IMPORTANT]
 > **CHAABI:** har cell pe bounds + `vis` + char mismatch -> false; mark -> 4 disha `||` -> un-mark. pehla char mile wahin se start, KOI EK true = kaafi.
 
 > [!WARNING]
@@ -349,9 +340,6 @@ Ek number n diya hai (n jode bracket). n jodon se banne wale saare sahi (balance
   kyun: 2 '(' + 2 ')' ke sirf yahi 2 jahan ')' kabhi '(' se aage nahi nikalta ("())(" galat)
 ```
 
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** n jode ke saare VALID strings. brute (2^2n + filter) NAHI -> 2 RULE se hi banao
-
 > [!WARNING]
 > **★ BUG-TRAP #2 (Arpan-22-Sep, khud pakda):** dono ALAG `if` hain, `else if` NAHI --
 > open<n aur close<open dono ek saath sach ho sakti hain, aur tab DONO chalni chahiye.
@@ -392,9 +380,6 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
   e.g. "23" -> [ad,ae,af,bd,be,bf,cd,ce,cf]
   kyun: 2 = abc, 3 = def -> har akshar ke saath har akshar = 3 x 3 = 9
 ```
-
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** "23" -> har ank ke akshar me se EK-EK. har LEVEL (index) = ek ank, us ke SAARE akshar try (for loop)
 
 > [!WARNING]
 > **★ BUG-TRAP (24-Sep):** `ans` ko GLOBAL mat rakho -- ek hi program me function do baar bula to

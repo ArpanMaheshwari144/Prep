@@ -146,8 +146,6 @@ points[] me [x, y] points diye hain aur ek number k. Origin (0, 0) ke sabse paas
 
 > [!IMPORTANT]
 > **CHAABI:** kth-largest ka MIRROR: MAX-heap `pair<dist, point>`, `size > k` pe pop (sabse DOOR evict), bache k paas wale; `.second` = point.
->
-> KTH-LARGEST ka MIRROR: wahan k BADE (min-heap) · yahan k CHHOTE dist (MAX-heap, sabse BADI evict)
 
 > [!WARNING]
 > `{dist, point}` me dist PEHLE (pair `first` pe compare hota). dist = `x*x + y*y`, sqrt nahi.
@@ -319,11 +317,6 @@ Odd ginti pe beech wala, even pe beech ke do ka average.
   kyun: sorted 1,3,5,15 -> beech ke do 3,5 -> (3+5)/2 = 4
 ```
 
-**SAAR**
-```
-stream me kabhi bhi median turant. add 5,15,1,3 -> 4.0 ((3+5)/2)
-```
-
 > [!WARNING]
 > **★ EDGE:**
 >
@@ -411,19 +404,13 @@ Ek string s di hai. Uske akshar aise lagao ki koi bhi do paas-paas wale akshar s
   kyun: aab: b dono a ke beech · aaab: 3 a alag karne 2 diwaar chahiye, b sirf 1
 ```
 
-**SAAR**
-```
-koi 2 ADJACENT same na ho, na bane -> "". top-k-frequent ka cousin: har round 2 nikaalo
-possible tabhi: (maxCount-1) gap <= (n-maxCount) baaki. aab OK · aaab -> ""
-  (alag check na bhi rakho: aakhri bacha count>1 khud pakad leta)
-```
-
 > [!IMPORTANT]
 > **PEHCHAN:** "rearrange so adjacent not same" / "sabse-zyada wala spread karo"
 > -> MAX-HEAP {count,char}. (top-k-frequent ka cousin: wahan k nikaale,
 > yahan har round 2 nikaalo taaki adjacent-safe.)
 >
-> **FEASIBILITY** (dry-run se khud nikli): maxCount-1 gaps, (n-maxCount) se bharo
+> **FEASIBILITY** (dry-run se khud nikli): possible tabhi: (maxCount-1) gap <= (n-maxCount) baaki. aab OK · aaab -> ""
+> (alag check na bhi rakho: aakhri bacha count>1 khud pakad leta)
 
 ### VISUAL ("aaabbb")
 
@@ -488,11 +475,6 @@ responseTimes[] diya hai. Har kadam pe bache hue numbers me se sabse chhota utha
 aur use aur uske dono padosi (i-1, i+1, jo bache hon) hata do. Ant me kul jod lautao.
   e.g. [4,2,9,1,7,3] -> 6
   kyun: 1 uthaya (9,7 hate) · 2 uthaya (4 hata) · 3 uthaya -> 1+2+3 = 6
-```
-
-**SAAR**
-```
-[4,2,9,1,7,3] -> 1 (9,7 gaye) -> 2 (4 gaya) -> 3 = 6
 ```
 
 > [!IMPORTANT]
