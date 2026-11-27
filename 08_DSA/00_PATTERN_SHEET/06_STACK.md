@@ -871,3 +871,19 @@ int carFleet(int target, vector<int> &position, vector<int> &speed) {
     return st.size();
 }
 ```
+
+**DRY RUN: target=12, position=[10,8,0,5,3], speed=[2,4,1,1,3]**
+```
+pair banao {pos, speed}:  (10,2) (8,4) (0,1) (5,1) (3,3)
+sort DESC (manzil ke paas wali pehle):  (10,2) (8,4) (5,1) (3,3) (0,1)
+
+formula: time = (target - pos) / speed
+
+(10,2): (12-10)/2 = 1    stack khaali        -> push 1        stack: [1]
+(8,4):  (12-8)/4  = 1    1 > 1 ? nahi        -> push nahi     stack: [1]      (aage wale ko manzil pe pakda = ek fleet)
+(5,1):  (12-5)/1  = 7    7 > 1 ? haan        -> push 7        stack: [1, 7]   (aage wali 1 ghante me nikal gayi, ye pakad nahi paayi)
+(3,3):  (12-3)/3  = 3    3 > 7 ? nahi        -> push nahi     stack: [1, 7]   (tez hai, 7 wali ko raste me pakda, uske peeche 7 me pahunchegi)
+(0,1):  (12-0)/1  = 12   12 > 7 ? haan       -> push 12       stack: [1, 7, 12]
+
+st.size() = 3 fleet
+```
