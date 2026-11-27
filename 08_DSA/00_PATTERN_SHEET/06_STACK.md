@@ -234,9 +234,6 @@ vector<int> prevGreater(vector<int> &nums)
 - **e.g.** `[2,1,5,6,2,3] -> 10`
 - **kyun:** bars 5 aur 6 -> height min(5,6)=5 x width 2 = 10, baaki koi bada nahi banta
 
-> [!IMPORTANT]
-> TRAPPING RAIN WATER se farak: wahan har bar ka paani PLUS karte (sabka SUM); yahan sirf EK sabse bada rectangle (5, 6 wale = 10), MAX.
-
 > [!WARNING]
 > **3 JAGAH DHYAAN:**
 >
@@ -337,7 +334,7 @@ DRY-RUN (h=[2,1,5,6,2,3]):
 > stack khaali = koi baat nahi: 2 line me khada ho jaata, default pehle se bhara (NS = n, PS = -1).
 > CHHOTA aaya  = line walon ka jawab mil gaya -> pop karo, unka ans bharo, phir naya bhi line me.
 
-> [!IMPORTANT]
+> [!WARNING]
 > **DISHA (Arpan, 9-Nov):**
 >
 > NS (aage ka chhota)   : loop 0 -> n-1
@@ -827,6 +824,9 @@ waqt:   12         3       7          1       1      (akele chalein to: (12 - po
 fleet:  {0}        {3, 5} = 7 ghante  {8, 10} = 1 ghanta   -> 3 fleet
 3 wali akeli 3 ghante me pahunchti, par aage 5 wali (7 ghante) ko raste me pakad ke uske peeche atak gayi
 ```
+
+> [!IMPORTANT]
+> **CHAABI:** har gaadi ka waqt = `(target - position) / speed`, aur gaadiyan position ke hisaab se BADE se CHHOTE (manzil ke paas wali pehle). Peeche wali ka waqt aage wale fleet se zyada = naya fleet, warna usi me mil gayi.
 
 > [!WARNING]
 > `stack<double>` (waqt double hai). `stack<int>` me 1.5 -> 1 ban jaata, phir 1.2 > 1 = galat naya fleet. Stub ke 10 test pass the, `[7,4],[2,5]` pe pakda.

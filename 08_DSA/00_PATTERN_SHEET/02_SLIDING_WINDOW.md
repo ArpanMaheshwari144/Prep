@@ -184,11 +184,6 @@ int longestOnes(vector<int> &nums, int k) {
 
 kyun: [2,3,2,2] me sirf 2 type (2,3) = 4; aage 1 jodo to 3 type ho jaate
 
-> [!IMPORTANT]
-> **while (mp.size() > 2) KYUN while:** ek type poora khatam hone tak kai element hatane padte.
->
-> IF bhi chalta (sirf LONGEST): ek aaya ek gaya, size best se bada nahi -> len sahi. COUNT / SHORTEST me sirf while.
-
 > [!WARNING]
 > **GALTI = erase-on-0:** count 0 hone pe key map me PADI reh jaati -> mp.size() galat distinct dega -> condition toot. isliye ERASE.
 
@@ -225,9 +220,6 @@ int totalFruit(vector<int> &fruits) {
 **SAWAAL**  `"eceba", k=2 -> 3`. Sabse lambi substring jisme zyada se zyada k alag char.
 
 kyun: "ece" me sirf e,c (2 alag) = 3; "eceb" me 3 alag ho jaate
-
-> [!IMPORTANT]
-> **CHAABI:** fruit ka hi code, bas `2` ki jagah `k` (`mp.size() > k`).
 
 > [!WARNING]
 > wahi erase-on-0: count 0 hua to key hatao, warna `mp.size()` jhooth bolega.
@@ -274,9 +266,6 @@ kyun: cost = [1,1,1,2]; pehle 3 ka 1+1+1 = 3 <= 3; chaaron ka 5 > 3 · e.g. s="a
         [1  1  1  2]       jod 5 >  3  -> nahi
   t="cdef": cost 2 2 2 2 -> do saath = 4 > 3, akela 2 hi chalta -> 1
 ```
-
-> [!IMPORTANT]
-> ONES III jaisa, ek int (cost) track, koi map nahi. cost hamesha 0 ya zyada, isliye negative wala dar nahi.
 
 > [!IMPORTANT]
 > **CHAABI:** har char ki cost `|s[i] - t[i]|`. Bas "longest subarray, sum <= maxCost", string ke bhes me.
@@ -353,9 +342,6 @@ int minSubArrayLen(int target, vector<int> &nums) {
 **SAWAAL**  `[2,1,5,1,3,2], k=3 -> 9`. Har size-k window ka sum, sabse bada.
 
 kyun: window sums 8, 7, 9, 6 -> max 9 (5+1+3)
-
-> [!IMPORTANT]
-> **CHAABI:** size fix `k` -> `if` (ek aaya, ek gaya), `while` nahi.
 
 > [!WARNING]
 > `maxSum` 0 se shuru kiya to `[-1,-2,-3], k=2` pe 0, sahi -3. `INT_MIN` lo.
@@ -803,9 +789,6 @@ kyun: s2[3..4]="ba" = "ab" ka permutation
 
 > [!WARNING]
 > **★ ULTA kram:** s1 ko s2 ke ANDAR dhoondhna (window s2 pe chalti).
-
-> [!IMPORTANT]
-> **CHAABI:** LC-438 ka same code, bas `push_back(i)` ki jagah `return true`.
 
 **CODE**
 ```cpp

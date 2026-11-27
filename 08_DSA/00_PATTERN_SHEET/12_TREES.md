@@ -253,9 +253,6 @@ bahar-bahar 3 = 3, andar-andar 4 = 4 -> true
 > [!IMPORTANT]
 > **CHAABI:** same tree ka hi code, bas CROSS: `isSameTree(p->left, q->right) && isSameTree(p->right, q->left)`. Root pe call `isSameTree(root->left, root->right)`, root khud nahi.
 
-> [!WARNING]
-> null checks yahan bhi PEHLE (dono null / ek null), warna `null->val` crash.
-
 **CODE**
 ```cpp
 bool isSameTree(TreeNode *p, TreeNode *q) { // same tree ka hi base (dono null / ek null / val alag)
@@ -489,8 +486,6 @@ root pe: left height 3, right height 1 -> farak 2 > 1 -> false
 
 > [!IMPORTANT]
 > **CHAABI:** maxDepth hi, par return = HEIGHT ya `-1` (sentinel). `abs(left - right) > 1` hua to `-1`, warna `1 + max(left, right)`.
->
-> HAR node pe abs(leftH - rightH) <= 1? alag "balanced?" pass nahi -> height nikaalte-nikaalte HI check
 
 > [!WARNING]
 > left se `-1` aaya to TURANT `-1` upar bhejo, right mat dekho. Check HAR node pe (sirf root nahi: root balanced par andar imbalanced ho sakta).

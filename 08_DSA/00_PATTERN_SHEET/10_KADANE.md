@@ -244,7 +244,7 @@ int maxSubarraySumCircular(vector<int> &nums) {
 - **e.g.** `[1,2,-7,8,6,-4] -> 17`
 - **kyun:** [1,2] = 3 aur [8,6] = 14, beech ka -7 chhoda; 3 + 14 = 17
 
-> [!IMPORTANT]
+> [!WARNING]
 > **★ COPY-PEN WALA SAWAAL: pehle copy pe array chala (5 step), phir code. Sheet dekh ke seedha likha to detail fisalti.**
 >
 > **★ REDO_2 me yahin atka: AAKHRI loop kahan tak?**

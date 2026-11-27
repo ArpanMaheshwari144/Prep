@@ -137,9 +137,6 @@ vector<int> spiralOrder(vector<vector<int>> &matrix) {
 - **e.g.** `[[1,2,3],[4,5,6]] -> [[1,4],[2,5],[3,6]]`
 - **kyun:** pehli row 1,2,3 ban gayi pehla col; 2x3 se 3x2
 
-> [!IMPORTANT]
-> **CHAABI:** `ans[i][j] = matrix[j][i]`.
-
 > [!WARNING]
 > `ans` ka size `col x row` banao (`ans(col, vector<int>(row, -1))`), `row x col` nahi: non-square pe index bahar. Outer `i < col`, inner `j < row`.
 

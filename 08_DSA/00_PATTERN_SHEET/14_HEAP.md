@@ -73,9 +73,6 @@ Dono raaste ek hi jagah pahunchte hain.)
 - **e.g.** `[3,7,2] -> 2`
 - **kyun:** 7,3 -> 4 bacha · 4,2 -> 2 bacha · ek hi bacha = 2
 
-> [!IMPORTANT]
-> **CHAABI:** `priority_queue<int>` (MAX), `while (pq.size() > 1)`: do top nikaalo, `diff > 0` to wapas push.
-
 > [!WARNING]
 > `pq.empty() ? 0 : pq.top()` me empty PEHLE: sab khatam ho gaye to `top()` crash.
 
@@ -116,9 +113,6 @@ heap (MIN, size 2) me ant tak bache = {5, 6} -> top (sabse chhota) = 5 = jawab
 
 > [!IMPORTANT]
 > **CHAABI:** MIN-heap (`greater<int>`), har push ke baad `pq.size() > k` to pop (sabse chhota evict). End me `pq.top()` = k-th largest.
-
-> [!WARNING]
-> k sabse BADE chahiye to MIN-heap, MAX nahi. Max-heap me sab daal ke k pop = O(n log n), heap ka faayda gaya.
 
 **CODE**
 ```cpp
@@ -181,8 +175,6 @@ vector<vector<int>> kClosest(vector<vector<int>> &points, int k) {
 
 > [!IMPORTANT]
 > **CHAABI:** pehle map se freq, phir MIN-heap me `{freq, num}` size k (`size > k` pe pop). Bache k = jawab, `.second` nikaalo.
->
-> KTH-LARGEST ka COUSIN, farak 2: (1) pehle hashmap se freq (2) heap me {freq, num}
 
 > [!WARNING]
 > `{freq, num}`: freq PEHLE, warna heap number pe sort hoga, freq pe nahi.

@@ -116,9 +116,6 @@ int removeElement(vector<int> &nums, int val) {
 - **e.g.** `"racecar" -> true   "abca" -> false`
 - **kyun:** abca: pehla 'a' = aakhri 'a', par 'b' != 'c'
 
-> [!IMPORTANT]
-> **CHAABI:** `left`/`right` dono chhor se andar, `s[left] != s[right]` pe turant false.
-
 > [!WARNING]
 > `right = s.size() - 1` (aakhri index), `s.size()` nahi. Loop `left <= right` tak.
 
@@ -146,9 +143,6 @@ bool isPalindrome(string s) {               // sirf lowercase letters wala aasan
 
 - **e.g.** `"A man, a plan, a canal: Panama" -> true     "race a car" -> false`
 - **kyun:** filter + lower = "amanaplanacanalpanama" (palindrome) · "raceacar" (nahi)
-
-> [!IMPORTANT]
-> **CHAABI:** 4 branch: `tolower` match -> dono andar · left alnum nahi -> `left++` · right alnum nahi -> `right--` · dono alnum PAR alag -> false.
 
 > [!WARNING]
 > false sirf AAKHRI `else` me (dono alnum aur alag). Pehle match, phir non-alnum skip; compare `tolower` ke saath (`<cctype>`).
@@ -221,9 +215,6 @@ bool validPalindrome(string s) {            // palindrome YA ek char delete kark
 
 - **e.g.** `"hello" -> "holle"`
 - **kyun:** vowels e, o -> ulte o, e. h l l jahan the wahin
-
-> [!IMPORTANT]
-> **CHAABI:** dono vowel -> swap + dono andar; left vowel nahi -> `left++`; warna `right--`.
 
 > [!WARNING]
 > `while (left < right)`: milte hi ruko, beech ka akela char swap nahi. Bade vowel (A E I O U) bhi `isVowel` me.
@@ -509,9 +500,6 @@ void sortColors(vector<int> &nums) {        // Dutch flag, 3 pointer
 **SAWAAL** Ek array diya hai. Saare even number pehle aur saare odd number baad me rakhne hain. Even aapas me ya odd aapas me kis kram me hain, isse farak nahi padta.
 
 - **e.g.** `[3,1,2,4] -> [2,4,3,1] (ya [4,2,1,3], koi bhi jisme even pehle)`
-
-> [!IMPORTANT]
-> **CHAABI:** left odd + right even (dono galat jagah) -> swap + dono andar; left even -> `left++`; warna `right--`.
 
 > [!WARNING]
 > left even + right odd = dono sahi jagah, swap MAT (TRAP).

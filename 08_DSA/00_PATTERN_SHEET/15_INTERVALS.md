@@ -87,9 +87,6 @@ time:     0    5   10   15   20        30
 0-30 ke andar hi baaki dono -> ek insaan ek saath do jagah nahi -> false
 ```
 
-> [!IMPORTANT]
-> **CHAABI:** Merge ka SAME template, bas action: `intervals[i][0] < ans.back()[1]` -> return false; loop khatam -> true.
-
 > [!WARNING]
 > `<` (`<=` NAHI): ek khatam usi pal doosri shuru = chalta. `intervals.empty()` pe pehle true, warna `intervals[0]` pe crash.
 

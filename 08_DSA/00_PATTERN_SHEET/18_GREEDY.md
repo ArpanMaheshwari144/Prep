@@ -31,9 +31,6 @@ cookie 1 -> bhookh 1 khush · doosri cookie 1 < 2 aur 1 < 3 -> kisi kaam ki nahi
 ```
 
 > [!IMPORTANT]
-> **PEHCHAAN / SAAR:** chhoti greed wale ko jitni ZAROORAT utni (chhoti se chhoti jo kaam kare) -> badi cookies bade greed ko
-
-> [!IMPORTANT]
 > **CHAABI:** dono SORT, 2 pointer: `s[j] >= g[i]` to khush (`i++ j++ count++`), warna sirf `j++` (badi cookie dhoondho). koi ek khatam -> ruk.
 
 > [!WARNING]
@@ -210,10 +207,6 @@ int canCompleteCircuit(vector<int> &gas, vector<int> &cost) {
 
 - **e.g.** `[A,A,A,B,B,B], n=2 -> 8`
 - **kyun:** A B idle A B idle A B = 8 unit
-
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** sabse ZYADA wala task (maxFreq) DHANCHA banata,
-> beech ke gaps doosre tasks se bharo, khaali bache = IDLE
 
 ### DRY-RUN
 

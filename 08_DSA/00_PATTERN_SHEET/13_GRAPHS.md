@@ -126,9 +126,6 @@ PEHCHAAN EK LINE: shape kuch bhi chalegi -> DFS · seedhi deewar chahiye -> DFS 
 src 0 ka group {0,1,2}, dst 5 ka group {3,4,5}; beech me koi edge nahi -> false
 ```
 
-> [!IMPORTANT]
-> **CHAABI:** edges se `adj` banao (undirected = dono taraf), source se EK BFS; `node == destination` mila to true, queue khaali to false. Outer loop nahi, level-loop nahi.
-
 > [!WARNING]
 > `vis` PUSH ke saath hi mark karo, aur `vis[source] = true` bhi: warna cycle se ghoom ke ek node (source bhi) queue me do baar. `node == destination` check POP pe (src == dst wala case bhi pakda jaata).
 

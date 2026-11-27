@@ -47,9 +47,6 @@
 - **e.g.** `[-1,0,3,5,9,12], target=9 -> 4`
 - **kyun:** 9 index 4 pe baitha hai (-1,0,3,5 ke baad)
 
-> [!IMPORTANT]
-> **CHAABI:** `mid` nikaalo: `nums[mid] == target` -> return mid; chhota -> `low = mid + 1`; bada -> `high = mid - 1`. Bahar -> -1.
-
 > [!WARNING]
 > `<=` (`<` nahi): `[5], 5` pe `<` se loop chalta hi nahi -> -1, sahi 0. `(low + high) / 2` nahi: bade low+high pe overflow.
 
@@ -462,6 +459,8 @@ sabse bada nahi maanga, koi bhi ek peak ka index chalega (1 ya 5)
 
 > [!IMPORTANT]
 > **PEHCHAAN:** array SORTED NAHI, phir bhi O(log n) maanga = binary search. Mid pe dekh ke ek aadha phenk sako (chadhaai -> choti right me pakka) to BS lagta hai, sorted hona zaroori nahi.
+
+> [!WARNING]
 > TRAP (26-Nov grill): O(log n) dekh ke "pehle sort kar dun" socha; sort kiya to index hi badal jaate, khel khatam. Sort nahi, seedha mid.
 
 > [!IMPORTANT]

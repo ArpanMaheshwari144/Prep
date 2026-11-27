@@ -307,9 +307,6 @@ void solve2(vector<int> &candidates, int target, vector<vector<int>> &ans, int i
 ★ PURANI ATAK (Aug sheet): GALTI yahi atkaata tha: 4 DFS ko || me jodna (ek direction true -> baaki call hi nahi) + visited check bounds / mismatch ke saath EK hi if me.
 ```
 
-> [!IMPORTANT]
-> **CHAABI:** har cell pe bounds + `vis` + char mismatch -> false; mark -> 4 disha `||` -> un-mark. pehla char mile wahin se start, KOI EK true = kaafi.
-
 > [!WARNING]
 > ANY wala loop: andar sirf true pe `return true`, loop ke BAAD `return false` (andar `== false` pe return = pehla start fail -> poora false). `vis[i][j] = false` un-mark zaroori, warna doosra raasta band.
 
@@ -405,9 +402,6 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
 > **★ BUG-TRAP (24-Sep):** `ans` ko GLOBAL mat rakho -- ek hi program me function do baar bula to
 > pichhle jawab bhi jud jaate ("2" pe 3 ki jagah 12). LeetCode pe chal jaata (har test pe naya object),
 > local test me pakda gaya. -> ans function ke andar, solve() me REFERENCE se.
-
-> [!IMPORTANT]
-> **CHAABI:** har level = ek ank, uske saare akshar for-loop me: `push` -> `solve(index + 1)` -> `pop`; `index >= digits.size()` pe record.
 
 > [!WARNING]
 > `digits == ""` pe `{}` (khaali LIST, `[""]` nahi). `ans` function ke andar banao, global pe do baar call = pichhle jawab jud jaate ("2" pe 12).

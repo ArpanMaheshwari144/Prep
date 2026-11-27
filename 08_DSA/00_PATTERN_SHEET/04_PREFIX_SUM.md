@@ -103,9 +103,6 @@ vector<int> productExceptSelf(vector<int> &nums) {
 - **e.g.** `[-5,1,5,0,-7] -> 1`
 - **kyun:** altitude 0, -5, -4, 1, 1, -6 -> max 1
 
-> [!IMPORTANT]
-> **CHAABI:** running sum chalao, har kadam `maxi = max(maxi, sum)`.
-
 > [!WARNING]
 > `maxi = 0` se shuru (`INT_MIN` nahi): shuru ki altitude 0 bhi ginti, sab -ve ho to jawab 0.
 
