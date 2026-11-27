@@ -277,3 +277,41 @@ int leastInterval(vector<char> &tasks, int n) {
 // alt: max-heap by freq + cooldown-queue (jab "actual schedule" poochein)
 ```
 
+
+
+---
+
+### ▸ PARTITION LABELS (LC 763)
+
+**SAWAAL**
+```
+String s (a-z). Jitne zyada tukde ho sakein utne kaato, shart: har akshar sirf EK tukde me aaye. Har tukde ki lambai lautao, kram me.
+  e.g. "ababcbacadefegdehijhklij" -> [9,7,8] · "eccbbbbdec" -> [10] · "abac" -> [3,1]
+  kyun: "ababcbaca" | "defegde" | "hijhklij" (a, b, c sirf pehle me) · e shuru me bhi aakhir me bhi -> poori ek
+```
+
+**CODE**
+```cpp
+vector<int> partitionLabels(string s) {
+    int n = s.size();
+    // sabki last occurrence store karlo, bas; har char ka last dekh ke end update karo, size nikal lo
+    vector<int> mp(26, -1);
+    for (int i = 0; i < n; i++) {
+        int index = s[i] - 'a';
+        mp[index] = i;
+    }
+    vector<int> ans;
+    int i = 0;
+    while (i < n) {
+        int end = mp[s[i] - 'a'];
+        int j = i;
+        while (j < end) {
+            end = max(end, mp[s[j] - 'a']);   // beech ka har akshar apna last laata, end aage khisakta
+            j++;
+        }
+        ans.push_back(j - i + 1);
+        i = j + 1;
+    }
+    return ans;
+}
+```
