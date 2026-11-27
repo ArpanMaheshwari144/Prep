@@ -54,15 +54,34 @@ behtar, galat "haan" bolne se. Par product page pe "sirf 3 bache" thoda purana c
 **Round me (dhaancha, copy pe):** inventory ka matlab: jo maal godown me hai, wahi app me dikhe; order pe ek kam, return
 pe (condition dekh ke) ek zyada, out of stock dikhao, thoda late dikhna chalega (kitna, 1-2 second ya turant, discuss).
 NFR me return policy aur ginti hamesha sahi. CAP ka sawaal nahi: ek hi hub, apne paas nahi to main warehouse se poochho,
-wahan bhi nahi to out of stock. User -> app server (kai) -> DB (AWS RDS, Postgres jaisa, atomic transaction, replica).
+wahan bhi nahi to out of stock.
+
+```
+   +---------------+       +---------------------+       +-------------------------------+
+   |  User (app)   | ----> |  App server         | ----> |  DB: AWS RDS (Postgres jaisa) |
+   |  India        |       |  (bahut saare)      |       |  asli ginti                   |
+   +---------------+       +---------------------+       |  dekhna + ghatana ek atomic   |
+                              |                           |  transaction me               |
+                              | sirf daam / ginti         +-------------------------------+
+                              | dekhne wale                   |                    |
+                              v                               v                    v
+                   +------------------------+        +----------------+    +-------------+
+                   | Redis = bahar ka dabba |        |  DB replica    |    |  Delivery   |
+                   | (local cache bhi)      |        +----------------+    +-------------+
+                   +------------------------+
+
+   30-40 lakh DAU = itni baar DB pe · CDN nahi (sirf India, AWS pe hosted)
+```
+
+User -> app server (kai) -> DB (AWS RDS, Postgres jaisa, atomic transaction, replica).
 Sirf India, isliye CDN ka matlab nahi (AWS pe hosted). ~30-40 lakh DAU = itni baar DB pe. Launch pe bheed sirf daam dekhne
 aati, to bahar dabba ya iPhone alag dabbe me = Redis (local cache bhi), DB pe bojh nahi. Dekhna + ghatana ek atomic
 transaction me: ek ne liya, zero, sabko out of stock. Cart me daalne se ginti nahi ghat-ti. Return me toota phone reject, theek ho to +1.
 
 ```
-API     GET  product id se -> kitne bache                (FR kitne, kahan)
-        POST quantity      -> +2 kiya                     (cart, ginti nahi ghat-ti)
-        POST pay           -> kitni quantity, pay        (FR order pe ghatao)
+API     GET  product id se   -> kaunsa product, kitne bache        (app me dikhao, out of stock dikhao)
+        POST quantity        -> +2 kiya                            (cart, ginti nahi ghat-ti)
+        POST pay             -> kitni quantity li, pay kar diya     (order pe ginti ghatao)
 ```
 
 ---

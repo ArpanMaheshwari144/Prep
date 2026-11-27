@@ -40,9 +40,32 @@ dekhne me thoda purana, ghatana sahi = 5 · har badlaav ka hisaab = 3.
 
 **Round me Arpan (FR / NFR + dhaancha, copy pe):** Inventory ka main matlab: jo mere inventory me saamaan ho, wo mere app me dikhe. Kisi ne order kiya to ek kam, return kiya to ek zyada, par condition dekh ke. Saamaan becho, return lao, app me dikhao, out of stock dikhao; kabhi thoda late bhi dikh sakta, kitna late (1-2 second ya turant hatana) wo discuss kar lenge. NFR me return policy (return ka kya hisaab), kitna consistent, kaisi availability; inventory me main cheez consistency: ginti me galti na ho, ginti hamesha sahi. CAP wala kuch nahi lagana: inventory ka ek hi hub hai, apne paas nahi to peeche main warehouse / head office se poochhe, wahan bhi nahi to out of stock, jaise Amazon me hota. Stock hi khatam to availability bol ke koi matlab nahi.
 
-Dhaancha: user app me aaya, app server, DB. iPhone book kiya: dekhenge stock me hai ya nahi, hai to book, phir delivery. Server bahut saare, DB ki replica. Baat India ki; Amazon me bhi USA ki listing India me nahi dikhti, bahar wale chahiye to thoda alag system aur CDN, yahan CDN ka matlab nahi baithta, AWS pe hosted hai. DB = AWS RDS, Postgres jaisa, jo atomic transaction me kaam kare. Numbers: ~30-40 lakh DAU, matlab 30-40 lakh baar DB pe jaayenge. Koi garam cheez, jaise iPhone launch hua: log bas daam dekhne aate (1.5 lakh ka hai) aur chale jaate, ek dukaan pe bheed badh gayi. To bahar ek dabba rakh do, ya iPhone ko alag dabbe me nikaal do, jisse dukaan me bheed na badhe; wo dabba = Redis, beech me kahin rakh lenge (local cache bhi), taaki DB baar-baar ye sab na dekhe. Ravi ne iPhone book kiya to dekhna aur ghatana ek atomic transaction me: ek ne dekha, atomic hua, khatam, zero, sabko (cart me bhi) out of stock dikha; aisa nahi ki ek iPhone do ko chala jaaye. Cart me daalne se ginti kam nahi hoti: 10 iPhone pade, kisi ne cart me daale, wo abhi bhi inventory me hi hain. Return me toota-foota phone aaya to reject, theek hai to 9 se 10.
+**Dhaancha (copy pe):**
 
-API: GET product id se (kaunsa product, kitne bache) · POST quantity (+2 kiya to post) · POST pay (kitni quantity li, pay kar diya).
+```
+   +---------------+       +---------------------+       +-------------------------------+
+   |  User (app)   | ----> |  App server         | ----> |  DB: AWS RDS (Postgres jaisa) |
+   |  India        |       |  (bahut saare)      |       |  asli ginti                   |
+   +---------------+       +---------------------+       |  dekhna + ghatana ek atomic   |
+                              |                           |  transaction me               |
+                              | sirf daam / ginti         +-------------------------------+
+                              | dekhne wale                   |                    |
+                              v                               v                    v
+                   +------------------------+        +----------------+    +-------------+
+                   | Redis = bahar ka dabba |        |  DB replica    |    |  Delivery   |
+                   | (local cache bhi)      |        +----------------+    +-------------+
+                   +------------------------+
+
+   30-40 lakh DAU = itni baar DB pe · CDN nahi (sirf India, AWS pe hosted)
+```
+
+User app me aaya, app server, DB. iPhone book kiya: dekhenge stock me hai ya nahi, hai to book, phir delivery. Server bahut saare, DB ki replica. Baat India ki; Amazon me bhi USA ki listing India me nahi dikhti, bahar wale chahiye to thoda alag system aur CDN, yahan CDN ka matlab nahi baithta, AWS pe hosted hai. DB = AWS RDS, Postgres jaisa, jo atomic transaction me kaam kare. Numbers: ~30-40 lakh DAU, matlab 30-40 lakh baar DB pe jaayenge. Koi garam cheez, jaise iPhone launch hua: log bas daam dekhne aate (1.5 lakh ka hai) aur chale jaate, ek dukaan pe bheed badh gayi. To bahar ek dabba rakh do, ya iPhone ko alag dabbe me nikaal do, jisse dukaan me bheed na badhe; wo dabba = Redis, beech me kahin rakh lenge (local cache bhi), taaki DB baar-baar ye sab na dekhe. Ravi ne iPhone book kiya to dekhna aur ghatana ek atomic transaction me: ek ne dekha, atomic hua, khatam, zero, sabko (cart me bhi) out of stock dikha; aisa nahi ki ek iPhone do ko chala jaaye. Cart me daalne se ginti kam nahi hoti: 10 iPhone pade, kisi ne cart me daale, wo abhi bhi inventory me hi hain. Return me toota-foota phone aaya to reject, theek hai to 9 se 10.
+
+```
+API     GET  product id se   -> kaunsa product, kitne bache        (app me dikhao, out of stock dikhao)
+        POST quantity        -> +2 kiya                            (cart, ginti nahi ghat-ti)
+        POST pay             -> kitni quantity li, pay kar diya     (order pe ginti ghatao)
+```
 
 *Technical me:* app server (kai) + DB (RDS Postgres, replica, atomic transaction) + Redis cache; CDN nahi (sirf India, AWS).
 
