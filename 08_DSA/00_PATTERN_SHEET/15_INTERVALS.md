@@ -38,22 +38,16 @@
 - **kyun:** 2 \<= 3 -> [1,3] aur [2,6] overlap -> [1,6]; baaki alag
 
 ```
-sort ke baad, back = ans.back() (aakhri juda hua), i = naya interval
+          1 2 3     6   8   10        15    18
+[1,3]     |---|
+[2,6]       |-------|
+[8,10]                  |---|
+[15,18]                               |-----|
 
-time    1 2 3     6   8   10        15    18
-back    |===|                                   ans = [1,3]
-i         |=======|
-        start 2 <= back ka end 3 -> overlap, end = max(3,6) = 6
-
-back    |=========|                             ans = [1,6]
-i                     |===|
-        start 8 <= 6? nahi -> naya push
-
-back                  |===|                     ans = [1,6] [8,10]
-i                                   |=====|
-        start 15 <= 10? nahi -> naya push
-
-ans     |=========|   |===|         |=====|     [1,6] [8,10] [15,18]
+ans = [1,3]
+[2,6]   :  2 <= 3  (ans ka end)  ->  jod do, end = max(3,6) = 6  ->  ans = [1,6]
+[8,10]  :  8 <= 6 ?   nahi       ->  naya                        ->  ans = [1,6] [8,10]
+[15,18] :  15 <= 10 ? nahi       ->  naya                        ->  ans = [1,6] [8,10] [15,18]
 ```
 
 > [!IMPORTANT]
@@ -90,13 +84,13 @@ vector<vector<int>> merge(vector<vector<int>> &intervals) {
 - **kyun:** 5-10 shuru hui jab 0-30 abhi chal rahi (5 \< 30) -> overlap
 
 ```
-sort ke baad, back = ans.back(), i = agli meeting
+          0    5   10   15   20        30
+[0,30]    |-----------------------------|
+[5,10]         |----|
+[15,20]                  |----|
 
-time    0    5   10   15   20        30
-back    |=============================|     ans = [0,30]
-i            |====|
-        start 5 < back ka end 30 -> takraayi -> return false
-        ([15,20] tak pahunchte hi nahi)
+ans = [0,30]
+[5,10]  :  5 < 30  (ans ka end)  ->  takraayi  ->  return false
 ```
 
 > [!WARNING]
@@ -131,19 +125,15 @@ bool canAttendMeetings(vector<vector<int>> &intervals) {
 - **kyun:** [2,5] aur [1,3] overlap -> [1,5]; [6,9] 5 ke baad -> alag
 
 ```
-time    1   2   3   4   5   6   7   8   9
-new         |===========|                      new = [2,5]
+          1   2   3   4   5   6   7   8   9
+[1,3]     |-------|
+new           |-----------|
+[6,9]                         |-----------|
 
-i=0     |=======|                              [1,3]
-        end 3 < new start 2? nahi · start 1 > new end 5? nahi -> OVERLAP
-        new = [min(2,1), max(5,3)] = [1,5]
-new     |===============|
-
-i=1                         |===========|      [6,9]
-        start 6 > new end 5 -> BREAK (aage sab door)
-
-ans     |===============|   |===========|      [1,5] [6,9]
-        (pehle wale + bada new + count se baaki)
+new = [2,5]
+[1,3]  :  end 3 < 2 ? nahi · start 1 > 5 ? nahi  ->  overlap  ->  new = [min(2,1), max(5,3)] = [1,5]
+[6,9]  :  start 6 > 5 (new ka end)               ->  BREAK
+ans = [1,5] [6,9]
 ```
 
 > [!IMPORTANT]
