@@ -40,6 +40,28 @@ NFR     1  band dukaan search me "Closed" dikhe (search thodi der peeche chalega
 **Numbers (Arpan):** Zomato jaisa app India ke shehron me, worldwide nahi. Ek area me 10-20 hazaar log ek saath search,
 itna server sambhal leta; 5 lakh faltu number.
 
+**Dhaancha (tasveer):**
+
+```
+   +-----------------+     +------+     +---------------------+
+   |  User (Ravi)    | --> |  LB  | --> |  Yelp server (3-4)  |
+   |  lat / long     |     +------+     +---------------------+
+   +-----------------+                     |               |
+                                           v               v
+                              +-------------------+   +------------------------+
+                              |  Elasticsearch    |<--|  DB: AWS RDS Postgres  |
+                              |  search + aas-paas|   |  dukaan, menu, time,   |
+                              +-------------------+   |  rating (writes kam)   |
+                                       ^  event       +------------------------+
+                                       +-- badlaav aate hi
+
+   CDN nahi: app sirf US me, worldwide nahi
+```
+
+**Round me Arpan:** Yelp aas-paas dhoondhne wala app hai, Zomato jaisa. FR: kuch bhi search karo to aas-paas ka mile, aur user khud sort chune. NFR: dukaan band ho to Closed dikhe, menu badle to update ho. Writes kam hain, trillion writes nahi; isliye NoSQL ki zaroorat nahi, AWS RDS Postgres. Search ka kaam Elasticsearch karega. Ravi lat / long bhejega, aas-paas ke hexagon dekhenge (Uber jaisa), kam mile to ghera bada karte jayenge, phir rating se sort. Yelp Google reviews jaisa hai: users rating aur review se jaankari theek karte rehte. DB me update hua to event Elasticsearch ko.
+
+*Technical me:* "event bhej do ES ko" = change event (DB -> search index sync) · "hexagon bada karte rahenge" = ring badhana (H3 k-ring) · "users ki rating se data theek" = crowdsourced data.
+
 ---
 
 ## 1. "burger" pe 8 second, "burgr" pe zero (aas-paas + Elasticsearch)
@@ -143,13 +165,44 @@ flowchart TB
     style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
+## 5. Burger Singh ka time: 10 users "11 baje", 1 user "9 baje" (pehle maalik, phir review history)
+
+Yelp me dukaan wala apna page claim karke (phone / email se verify) time aur menu khud badal sakta hai. Maalik ne time
+daala hai to wahi sach: DB me likho, change event, Elasticsearch update; users ki baat peeche. Maalik ne nahi daala to
+sirf aakhri ek user ya zyada users pe mat jao: 2023 se 2026 tak ke saare review dekho (sardi me jaldi band jaisa farak
+bhi), jo sabse theek lage wo time dikhao.
+
+**Asli naam:** source ki priority (owner-verified > crowdsourced), review history se time nikalna.
+
+**Yelp me do raaste (net se jaancha):** (1) maalik apna page claim karta hai, phone / email se verify hota hai, uske baad time aur menu khud badal sakta hai, jab chahe dobara. (2) jis page ko maalik ne claim nahi kiya, uspe users "Edit Business" se badlaav bhejte hain.
+
+```mermaid
+flowchart TB
+    X["10 users: 11 baje<br/>1 user: 9 baje"]:::bad
+    subgraph G["KAUN SACH"]
+        O(["Maalik ne daala?<br/>haan -> wahi, DB + event + ES"]):::pill
+        H(["Nahi -> 2023-2026 ke saare review<br/>(mausam ka farak bhi)"]):::pill
+    end
+    T(["Ravi ko sahi time"]):::good
+    X --> O
+    O --> H
+    O --> T
+    H --> T
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ---
 
 ## Wrap
 
 Ravi ki jagah se aas-paas ke restaurant (geo filter) -> Elasticsearch me text, galat spelling pe bhi (fuzzy) -> asli sach
 Postgres, ES uski copy: badlaav aate hi change event, raat ki job chhoota pakde; band dukaan "Closed" -> sort user chune,
-server saare pe kare, phone ko pehle 10.
+server saare pe kare, phone ko pehle 10; time ka jhagda: pehle maalik, phir review history.
 
 ---
 

@@ -36,6 +36,28 @@ NFR     1  band dukaan search me "Closed" dikhe (search thodi der peeche chalega
 ```
 **Numbers (Arpan):** Zomato jaisa app India ke shehron me chalta, worldwide nahi. Ek area me 5 lakh log ek saath "pizza" faltu number hai; 10-20 hazaar maano, itna server sambhal leta, iske liye alag hal nahi chahiye.
 
+**Dhaancha (tasveer):**
+
+```
+   +-----------------+     +------+     +---------------------+
+   |  User (Ravi)    | --> |  LB  | --> |  Yelp server (3-4)  |
+   |  lat / long     |     +------+     +---------------------+
+   +-----------------+                     |               |
+                                           v               v
+                              +-------------------+   +------------------------+
+                              |  Elasticsearch    |<--|  DB: AWS RDS Postgres  |
+                              |  search + aas-paas|   |  dukaan, menu, time,   |
+                              +-------------------+   |  rating (writes kam)   |
+                                       ^  event       +------------------------+
+                                       +-- badlaav aate hi
+
+   CDN nahi: app sirf US me, worldwide nahi
+```
+
+**Round me Arpan:** Yelp aas-paas dhoondhne wala app hai, Zomato jaisa. FR: kuch bhi search karo to aas-paas ka mile, aur user khud sort chune. NFR: dukaan band ho to Closed dikhe, menu badle to update ho. Writes kam hain, trillion writes nahi; isliye NoSQL ki zaroorat nahi, AWS RDS Postgres. Search ka kaam Elasticsearch karega. Ravi lat / long bhejega, aas-paas ke hexagon dekhenge (Uber jaisa), kam mile to ghera bada karte jayenge, phir rating se sort. Yelp Google reviews jaisa hai: users rating aur review se jaankari theek karte rehte. DB me update hua to event Elasticsearch ko.
+
+*Technical me:* "event bhej do ES ko" = change event (DB -> search index sync) · "hexagon bada karte rahenge" = ring badhana (H3 k-ring) · "users ki rating se data theek" = crowdsourced data.
+
 &nbsp;
 
 ---
@@ -71,6 +93,16 @@ NFR     1  band dukaan search me "Closed" dikhe (search thodi der peeche chalega
 **Arpan:** Rating wale upar aayenge, par ye depend karta hai. Frontend pe sort ka option laga sakte: kilometer se sort ya rating se, user jo chune wo upar. Server ke paas saare restaurant rahenge, phone ke paas wahi jaayenge jo sort hue. Burger likha to saare aate hain: Burger King, naam me burger, menu me burger, neeche hi sahi par aate. Ravi ne "rating se sort" kiya to rating wale upar, chahe 4 km ho, 10 km ya 15 km.
 
 *Technical me:* "sort ka option user chune" = sort param (rating / doori), "server ke paas saare, phone ko sorted pehle 10" = server-side sort (Elasticsearch me) + pagination.
+
+---
+
+**5. Burger Singh ka band hone ka time: 10 users (2025) bolte "11 baje band", 1 user (Dec 2026) bolta "9 baje band". Ravi ko kaunsa dikhaoge?**
+
+**Arpan:** Pehle dekho maalik ne khud time daala hai ya nahi; Yelp me dukaan wala apna page claim karke time badal sakta hai. Maalik ne likha to wahi sach: DB me likho, event bhejo, Elasticsearch update. Na 10 users sahi, na 1 user. Maalik ne nahi likha to 2023, 2024, 2025, 2026 ke saare review dekho, kya pata sardi me jaldi band karta ho; jo sabse theek lage wo time dikhao.
+
+*Technical me:* source ki priority (owner-verified > crowdsourced), review history se time nikalna.
+
+**Yelp me do raaste (net se jaancha):** (1) maalik apna page claim karta hai, phone / email se verify hota hai, uske baad time aur menu khud badal sakta hai, jab chahe dobara. (2) jis page ko maalik ne claim nahi kiya, uspe users "Edit Business" se badlaav bhejte hain.
 
 &nbsp;
 
