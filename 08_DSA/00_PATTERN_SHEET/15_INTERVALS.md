@@ -37,13 +37,23 @@
 - **e.g.** `[[1,3],[2,6],[8,10],[15,18]] -> [[1,6],[8,10],[15,18]]`
 - **kyun:** 2 \<= 3 -> [1,3] aur [2,6] overlap -> [1,6]; baaki alag
 
-**SAAR**
 ```
-DRY-RUN  [[1,3],[2,6],[8,10],[15,18]]  (sorted):
-    ans=[[1,3]]
-    [2,6]  : 2 <= 3  overlap -> end=max(3,6)=6 -> ans=[[1,6]]
-    [8,10] : 8 <= 6? NO      -> push          -> ans=[[1,6],[8,10]]
-    [15,18]: 15 <=10? NO     -> push          -> ans=[[1,6],[8,10],[15,18]]
+sort ke baad, back = ans.back() (aakhri juda hua), i = naya interval
+
+time    1 2 3     6   8   10        15    18
+back    |===|                                   ans = [1,3]
+i         |=======|
+        start 2 <= back ka end 3 -> overlap, end = max(3,6) = 6
+
+back    |=========|                             ans = [1,6]
+i                     |===|
+        start 8 <= 6? nahi -> naya push
+
+back                  |===|                     ans = [1,6] [8,10]
+i                                   |=====|
+        start 15 <= 10? nahi -> naya push
+
+ans     |=========|   |===|         |=====|     [1,6] [8,10] [15,18]
 ```
 
 > [!IMPORTANT]
