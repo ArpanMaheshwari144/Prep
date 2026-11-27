@@ -38,6 +38,14 @@ Numbers product lakhon, godown kuch hi · aam din ek product pe second me 1-2 or
 cancel / wapsi pe badhao = 2c, 6 · "kitne, kahan" = 4, 5 · kam ho to alert = 7 · NFR ginti me galti nahi = 1, 1c, 2, 3 ·
 dekhne me thoda purana, ghatana sahi = 5 · har badlaav ka hisaab = 3.
 
+**Round me Arpan (FR / NFR + dhaancha, copy pe):** Inventory ka main matlab: jo mere inventory me saamaan ho, wo mere app me dikhe. Kisi ne order kiya to ek kam, return kiya to ek zyada, par condition dekh ke. Saamaan becho, return lao, app me dikhao, out of stock dikhao; kabhi thoda late bhi dikh sakta, kitna late (1-2 second ya turant hatana) wo discuss kar lenge. NFR me return policy (return ka kya hisaab), kitna consistent, kaisi availability; inventory me main cheez consistency: ginti me galti na ho, ginti hamesha sahi. CAP wala kuch nahi lagana: inventory ka ek hi hub hai, apne paas nahi to peeche main warehouse / head office se poochhe, wahan bhi nahi to out of stock, jaise Amazon me hota. Stock hi khatam to availability bol ke koi matlab nahi.
+
+Dhaancha: user app me aaya, app server, DB. iPhone book kiya: dekhenge stock me hai ya nahi, hai to book, phir delivery. Server bahut saare, DB ki replica. Baat India ki; Amazon me bhi USA ki listing India me nahi dikhti, bahar wale chahiye to thoda alag system aur CDN, yahan CDN ka matlab nahi baithta, AWS pe hosted hai. DB = AWS RDS, Postgres jaisa, jo atomic transaction me kaam kare. Numbers: ~30-40 lakh DAU. iPhone launch hua to log bas daam dekhne aate (1.5 lakh ka hai), dukaan me bheed; to bahar ek dabba rakh do, wo dabba = Redis (local cache bhi). Dekhna aur ghatana ek atomic transaction me. Cart me daalne se ginti kam nahi hoti. Return me toota-foota phone aaya to reject, theek hai to 9 se 10.
+
+API: POST pay (kaunsa product, kitni quantity) · GET product id se (kitne bache).
+
+*Technical me:* app server (kai) + DB (RDS Postgres, replica, atomic transaction) + Redis cache; CDN nahi (sirf India, AWS).
+
 **E-com se aaya:** wahan "cart sirf list hai, ginti pay pe" aur "counter khaali to doosra counter" padha tha. Yahan wahi ginti apne aap me poora system hai, saare godown ke saath.
 
 &nbsp;
@@ -49,6 +57,12 @@ dekhne me thoda purana, ghatana sahi = 5 · har badlaav ka hisaab = 3.
 **Arpan:** Payment hua nahi matlab wo cheez uske cart me hi hai, kharidi nahi gayi. Cart me daalne ka matlab ye nahi ki tumne product kharid liya; jab tak Buy karke pay nahi karoge, maal tumhara nahi. Isi waqt maine app khola, iPhone dabaya aur pay kar diya, to iPhone mera. Ravi wapas aayega to use out of stock dikhega, jo hota bhi hai aur aam baat hai.
 
 *Technical me:* ginti Buy pe nahi, payment pe ghate (koi reserve nahi). Ghatana ek hi kaam: "ek kam karo, sirf tab jab kam se kam 1 ho" (`UPDATE ... SET qty = qty - 1 WHERE ... AND qty >= 1`, atomic conditional update), do log ek saath aayein to ek ko mila, doosre ko "nahi hai".
+
+**Ek aur kahani (pay ho gaya, parcel kal niklega):**
+
+**Arpan:** Inventory me ek iPhone hai. Ravi ne order karke pay kar diya; parcel main kal nikaalunga, par wo abhi bhi inventory me pada hai. To kya wo kisi ke liye available hai? Nahi. Main use pack kar dunga, Ravi ke naam ka thappa laga dunga: ye Ravi ka iPhone hai, khatam. Inventory se ek hata do, ab jo bhi aaye use out of stock dikhe. Dukaan me koi paise de ke bole "kal aake le jaunga", to dukaandaar ke andar lalach aa sakta ki doosre ko bech dun aur baad me kahin se la dun; par na mila to dukaan ki saakh kharab. Inventory se tab niklega jab book ho ke pay ho gaya.
+
+*Technical me:* ginti pay pe ghati (upar wala atomic update), parcel nikalne ka intezaar nahi; "thappa" = order ke naam pe alag rakha maal (allocated).
 
 **Maan lo Ravi aur Arpan dono ne aakhri iPhone cart me daala aur ek hi second me pay kar diya. Dono ke paise kate, ghatane me Arpan jeeta, Ravi ko zero row mili. Ravi ka paisa to kat chuka.**
 
@@ -133,6 +147,16 @@ Ya chhotu ko baar-baar andar bhej raha "bata ye kitne hain", chhotu bina matlab 
 Chhotu aaram se ice cream kha raha, main bhi, DB pe koi nahi ja raha.
 
 *Technical me:* chhotu = har baar DB se ginti poochhna · banner / copy = cache (Redis), page pe thodi purani ginti chalti hai, asli jaanch Pay pe (NFR 2).
+
+**Ek aur kahani (Nattu kaka ki parchi, Bagha):**
+
+**Arpan:** Asli ginti dukaan ke andar hai. Nattu kaka iPhone ki parchi le ke bahar khade: "stock me 3". Andar mere (Jethalal) paas phone aaya, teeno iPhone phone pe hi bik gaye, par Nattu kaka ki parchi pe ab bhi 3; koi aaya to wo bolenge "haan 3 hai, paise de do". To Bagha ko bhejunga: jaldi ja, teeno bik gaye, Nattu kaka parchi phaad ke fenk dein aur andar aa jaayein.
+
+**Maan lo Bagha pahuncha bhi nahi, usi beech Priya ne parchi pe "3" dekh ke paise de diye (Pay dabaya):**
+
+**Arpan:** Faisla hamesha Jethalal hi karega. Nattu kaka ko pehle se bol dunga: dukaan ke andar phone aa ke iPhone bik sakta hai aur tujhe bahar pata na chale; to jab bhi koi iPhone ka hisaab karne aaye, ek baar chupchaap dukaan me phone karke pooch le, ya bahar se chilla de "seth ji, iPhone hai?". Main bolunga nahi bhai, teeno ka order ho gaya. Nattu kaka "sorry behen ji, iPhone khatam" bol ke parchi wahin phaad dega, Priya chali jaayegi, kisi ka galat iPhone book nahi.
+
+*Technical me:* parchi = cache (Redis), Bagha = ginti badalte hi cache ko turant bata do (cache invalidation), "pehle andar pooch lo" = Pay pe asli jaanch DB me (kadam 1 ka atomic update); cache sirf dekhne ke liye.
 
 ---
 

@@ -51,6 +51,18 @@ dekhne me thoda purana, ghatana sahi = 5 · har badlaav ka hisaab = 3.
 **Faisla FR se:** yahan consistency availability se upar. Order ke waqt pakka na ho ki maal hai, to "abhi nahi" bolna
 behtar, galat "haan" bolne se. Par product page pe "sirf 3 bache" thoda purana chalega, asli jaanch Pay pe.
 
+**Round me (dhaancha, copy pe):** inventory ka matlab: jo maal godown me hai, wahi app me dikhe; order pe ek kam, return
+pe (condition dekh ke) ek zyada, out of stock dikhao, thoda late dikhna chalega (kitna, 1-2 second ya turant, discuss).
+NFR me return policy aur ginti hamesha sahi. CAP ka sawaal nahi: ek hi hub, apne paas nahi to main warehouse se poochho,
+wahan bhi nahi to out of stock. User -> app server (kai) -> DB (AWS RDS, Postgres jaisa, atomic transaction, replica).
+Sirf India, isliye CDN ka matlab nahi (AWS pe hosted). ~30-40 lakh DAU. Launch pe bheed sirf daam dekhne aati, to bahar
+dabba = Redis (local cache bhi). Cart me daalne se ginti nahi ghat-ti. Return me toota phone reject, theek ho to +1.
+
+```
+API     POST pay   -> kaunsa product, kitni quantity     (FR order pe ghatao)
+        GET  product id se -> kitne bache                (FR kitne, kahan)
+```
+
 ---
 
 ## 1. Battery khatam, payment hua hi nahi (ginti Pay pe, ek hi kaam me)
@@ -73,6 +85,11 @@ ya to doosri inventory (Haryana, Punjab) se iPhone de do, Ravi ko to iPhone chah
 order cancel aur paise refund (bank ki timeline, 2-7 din). Amazon jaisi badi company seedha refund karti; chhota store
 ya jise naam banana hai, wo kahin se arrange karke deta. Ravi ko nahi pata tha ek hi bacha tha.
 **Asli naam:** doosre godown se sourcing, nahi to order cancel + refund (E-com wala), kaunsa = business rule.
+
+**Ek aur kahani (pay ho gaya, parcel kal niklega):** inventory me ek iPhone, Ravi ne pay kar diya, parcel kal niklega.
+Tab tak bhi wo kisi aur ke liye available nahi: pack karke Ravi ke naam ka thappa, inventory se ek hata do, sabko out
+of stock. Dukaandaar paise le ke "kal le jaana" bole aur lalach me doosre ko bech de, na mila to dukaan ki saakh gayi.
+**Asli naam:** ginti pay pe ghati, parcel ka intezaar nahi; thappa = order ke naam pe alag rakha maal (allocated).
 
 ### DB kaunsa: SQL ya NoSQL?
 
@@ -232,6 +249,14 @@ copy saamne khol ke bata do. Chhotu aaram se ice cream kha raha, DB pe koi nahi 
 **Asli naam:** banner / copy = cache (Redis): "kitne bache" ka jod cache me, har kuch second taaza. Page pe thodi
 purani ginti chalti hai (NFR 2), asli jaanch Pay pe DB me (kadam 1).
 
+**Ek aur kahani (Nattu kaka ki parchi, Bagha):** asli ginti dukaan ke andar. Nattu kaka bahar parchi le ke khade "stock
+me 3"; andar Jethalal ke phone pe teeno bik gaye. Jethalal Bagha ko bhejta: Nattu kaka parchi phaad ke andar aa jaayein.
+Bagha pahunche usse pehle Priya ne parchi dekh ke paise de diye? Faisla hamesha Jethalal ka: Nattu kaka ko pehle se
+bola hai ki bechne se pehle ek baar andar pooch le "seth ji, iPhone hai?". Jawab "nahi" -> "sorry, khatam", parchi phaad
+do, kisi ka galat iPhone book nahi.
+**Asli naam:** parchi = cache (Redis), Bagha = ginti badalte hi cache theek karo (cache invalidation), "andar pooch lo"
+= Pay pe asli jaanch DB me (kadam 1 ka atomic update); cache sirf dekhne ke liye.
+
 ```mermaid
 flowchart TB
     U["1 crore log: sirf dekh rahe"]:::card
@@ -240,7 +265,7 @@ flowchart TB
     DB[("Stock DB: asli jaanch")]:::good
     U --> BN
     PAY --> DB
-    DB -. "kuch second me taaza jod" .-> BN
+    DB -. "kuch second me taaza jod<br/>ginti badli to turant theek (Bagha)" .-> BN
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
