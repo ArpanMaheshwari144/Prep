@@ -607,22 +607,31 @@ Kul number odd hon to beech wala, even hon to beech ke do ka average. O(log) me 
 ### DRY RUN: A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> 11
 
 ```
-kul 11 number  ->  median = 6th number  ->  LEFT me 6 chahiye:  (5 + 6 + 1) / 2 = 6
-A se Px lo, baaki B se Py = 6 - Px.   BS sirf Px pe (A chhota, Px = 0 .. 5).   low = 0, high = 5
+A:   1   3   8   9   15            m = 5 (chhota, BS isi pe)
+B:   7  11  18  19  21  25         n = 6
 
-Px = 2  ->  Py = 6 - 2 = 4
-     A:  1  3 | 8  9  15                LEFT  = 1 3 7 11 18 19
-     B:  7 11 18 19 | 21 25             RIGHT = 8 9 15 21 25
-     19 LEFT me hai, 8 RIGHT me  ->  galat (left ka koi right se bada nahi hona chahiye)
-     B ne zyada de diya, A se KAM liya  ->  A se zyada lo  ->  low = 3      (x2 = 19 > x3 = 8)
+chakkar 1:  low = 0, high = 5  ->  mid = Px = 2  ->  Py = (5 + 6 + 1) / 2 - 2 = 4
 
-Px = 4  ->  Py = 6 - 4 = 2
-     A:  1  3  8  9 | 15                LEFT  = 1 3 8 9 7 11
-     B:  7 11 | 18 19 21 25             RIGHT = 15 18 19 21 25
-     LEFT ka sabse bada 11  <=  RIGHT ka sabse chhota 15  ->  sahi cut       (9 <= 18 && 11 <= 15)
-     kul 11 = odd  ->  median = LEFT ka sabse bada = max(9, 11) = 11
+A:   1   3 |  8   9   15           A pe cut 2 pe
+         x1   x3
+B:   7  11  18  19 | 21  25        B pe cut 4 pe
+                x2   x4
+     left = 2 + 4 = 6 number,  right = 3 + 2 = 5 number
 
-ulta hota (A ka left aakhri RIGHT wale B se bada, x1 > x4) to A ne ZYADA liya  ->  high = Px - 1
+   x1 = 3, x3 = 8, x2 = 19, x4 = 21
+   x1 <= x4 ?   3 <= 21   haan
+   x2 <= x3 ?  19 <= 8    NAHI  ->  A se kam liya  ->  low = Px + 1 = 3
+
+chakkar 2:  low = 3, high = 5  ->  mid = Px = 4  ->  Py = 6 - 4 = 2
+
+A:   1   3   8   9 | 15            A pe cut 4 pe
+                 x1  x3
+B:   7  11 | 18  19  21  25        B pe cut 2 pe
+        x2   x4
+
+   x1 = 9, x3 = 15, x2 = 11, x4 = 18
+    9 <= 18 haan,  11 <= 15 haan  ->  sahi cut
+   kul 11 = odd  ->  median = max(x1, x2) = max(9, 11) = 11
 ```
 
 > [!IMPORTANT]
