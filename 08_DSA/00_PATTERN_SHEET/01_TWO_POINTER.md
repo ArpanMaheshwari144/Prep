@@ -707,6 +707,33 @@ int trap(vector<int> &height) {             // O(1) space, two pointer
 }
 ```
 
+**TASVEER + DRY RUN: [4,2,0,3,2,5] -> 9**
+```
+unchai 5 |                 #
+unchai 4 |  #  ~  ~  ~  ~  #        # = deewar (building)
+unchai 3 |  #  ~  ~  #  ~  #        ~ = ruka paani
+unchai 2 |  #  #  ~  #  #  #
+unchai 1 |  #  #  ~  #  #  #
+         +-------------------
+   index    0  1  2  3  4  5
+   height   4  2  0  3  2  5
+   paani    0  2  4  1  2  0   = 9   (har khambe pe: kitne ~ uske upar)
+
+tere code se (left=0, right=5, leftMax=0, rightMax=0, ans=0):
+
+kadam  left right  h[left] <= h[right]?   andar kya hua                      leftMax  ans
+  1     0    5      4 <= 5  haan          leftMax 0 > 4 ? nahi -> nayi deewar    4      0
+  2     1    5      2 <= 5  haan          4 > 2 ? haan -> paani 4 - 2 = 2        4      2
+  3     2    5      0 <= 5  haan          4 > 0 ? haan -> paani 4 - 0 = 4        4      6
+  4     3    5      3 <= 5  haan          4 > 3 ? haan -> paani 4 - 3 = 1        4      7
+  5     4    5      2 <= 5  haan          4 > 2 ? haan -> paani 4 - 2 = 2        4      9
+        5    5      left < right nahi -> ruko (5 wali sabse unchi deewar pe mile, uspe paani nahi)
+
+paani leftMax se kyun kata: right pe 5 wali badi deewar pakki khadi hai, to paani us taraf nahi bahega;
+  had chhoti taraf (left ki sabse unchi = 4) se tay hoti -> paani = 4 - apni unchai.
+rightMax 0 hi raha: right wali deewar 5 hamesha badi thi, else wala hissa ek baar bhi nahi chala.
+```
+
 
 ---
 
