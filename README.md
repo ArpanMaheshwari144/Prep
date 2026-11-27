@@ -6,8 +6,8 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ```
 SAFAR (March: khaali folder)  ->  aaj (27-Nov)
   Java + Spring poora · LLD 11 · 6 project
-  HLD: 24 design (main file + hand notes) · 7 POORA (FR se ant tak + API) · 19 foundation · 7 hands-on
-  DSA: 18 pattern · 185 problem + 168 REDO = 353 .cpp · pattern sheet (19 file, 180 sawaal)
+  HLD: 24 design (main file + hand notes) · 8 POORA (FR se ant tak + API) · 19 foundation · 7 hands-on
+  DSA: 18 pattern · 186 problem + 169 REDO = 355 .cpp · pattern sheet (19 file, 182 sawaal)
   STAR 12 kahani · PR review framework · DB internals
 ```
 
@@ -24,7 +24,7 @@ SAFAR (March: khaali folder)  ->  aaj (27-Nov)
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
-| 08 | [**08_DSA**](08_DSA) | 18 pattern · 185 problem + 168 REDO + sheet (180 sawaal) | **Gate** — pass karna hai (ab revise-only) |
+| 08 | [**08_DSA**](08_DSA) | 18 pattern · 186 problem + 169 REDO + sheet (182 sawaal) | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | 12 STAR kahani + JP company + why JP | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase · index.lock | PR-review + daily workflow Qs |
@@ -126,7 +126,7 @@ SAFAR (March: khaali folder)  ->  aaj (27-Nov)
   - [18 Netflix (Money Heist ka naya season)](04_HLD/SYSTEM_DESIGNS/18_netflix/18_netflix.md) — **POORA** (FR se ant tak + API)
   - [19 YouTube (reel wala scene)](04_HLD/SYSTEM_DESIGNS/19_youtube/19_youtube.md) — **POORA** (FR se ant tak + API)
   - [20 PUBG (Arpan + Claude ka squad, Pochinki)](04_HLD/SYSTEM_DESIGNS/20_pubg/20_pubg.md) — **POORA** (FR se ant tak + API)
-  - [21 Inventory (Arpan ki online dukaan, teen godown)](04_HLD/SYSTEM_DESIGNS/21_inventory_system/21_inventory_system.md)
+  - [21 Inventory (Arpan ki online dukaan, teen godown)](04_HLD/SYSTEM_DESIGNS/21_inventory_system/21_inventory_system.md) — **POORA** (FR se ant tak + API)
   - [22 Where Is My Train (bina net / GPS ke train kahan)](04_HLD/SYSTEM_DESIGNS/22_where_is_my_train/22_where_is_my_train.md)
   - [23 Yelp search (5 km ke andar burger)](04_HLD/SYSTEM_DESIGNS/23_yelp_search/23_yelp_search.md)
   - [24 Zomato (Whitefield ke PG se Burger Singh)](04_HLD/SYSTEM_DESIGNS/24_zomato/24_zomato.md)
@@ -152,7 +152,7 @@ SAFAR (March: khaali folder)  ->  aaj (27-Nov)
   - [18 Netflix (Money Heist ka naya season)](04_HLD/SYSTEM_DESIGNS/18_netflix/NETFLIX_HAND_NOTES.md) — **POORA** (FR se ant tak + API)
   - [19 YouTube (reel wala scene)](04_HLD/SYSTEM_DESIGNS/19_youtube/YOUTUBE_HAND_NOTES.md) — **POORA** (FR se ant tak + API)
   - [20 PUBG (Pochinki drop)](04_HLD/SYSTEM_DESIGNS/20_pubg/PUBG_HAND_NOTES.md) — **POORA** (FR se ant tak + API)
-  - [21 Inventory (teen godown)](04_HLD/SYSTEM_DESIGNS/21_inventory_system/INVENTORY_HAND_NOTES.md)
+  - [21 Inventory (teen godown)](04_HLD/SYSTEM_DESIGNS/21_inventory_system/INVENTORY_HAND_NOTES.md) — **POORA** (FR se ant tak + API)
   - [22 Where Is My Train (patri, tower)](04_HLD/SYSTEM_DESIGNS/22_where_is_my_train/TRAIN_HAND_NOTES.md)
   - [23 Yelp (5 km ke andar burger)](04_HLD/SYSTEM_DESIGNS/23_yelp_search/YELP_HAND_NOTES.md)
   - [24 Zomato (Whitefield ke PG se Burger Singh)](04_HLD/SYSTEM_DESIGNS/24_zomato/ZOMATO_HAND_NOTES.md)
@@ -226,10 +226,10 @@ SAFAR (March: khaali folder)  ->  aaj (27-Nov)
 
 ---
 
-## [08_DSA](08_DSA) — 18 pattern · 185 problem + 168 REDO = 353 .cpp
+## [08_DSA](08_DSA) — 18 pattern · 186 problem + 169 REDO = 355 .cpp
 **Kya:** pattern-wise solved problems (sirf C++) + pattern sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + redo.
 
-- ★ **[PATTERN_SHEET](08_DSA/00_PATTERN_SHEET)** — "gate ki chaabi", 19 file, 180 sawaal. Har sawaal: SAWAAL (e.g. + kyun) · CHAABI · WARNING (teri purani galti) · CODE (tera code).
+- ★ **[PATTERN_SHEET](08_DSA/00_PATTERN_SHEET)** — "gate ki chaabi", 19 file, 182 sawaal. Har sawaal: SAWAAL (e.g. + kyun) · CHAABI · WARNING (teri purani galti) · CODE (tera code).
   - [00 SHURU](08_DSA/00_PATTERN_SHEET/00_SHURU.md) (PEHLE YE · OA tools · DECISION · EDGE list · NAAM-SE-CONFUSE A-E · MATHS KA KHEL)
   - [01 two pointer](08_DSA/00_PATTERN_SHEET/01_TWO_POINTER.md) · [02 sliding window](08_DSA/00_PATTERN_SHEET/02_SLIDING_WINDOW.md) · [03 hashing](08_DSA/00_PATTERN_SHEET/03_HASHING.md) · [04 prefix sum](08_DSA/00_PATTERN_SHEET/04_PREFIX_SUM.md) · [05 matrix](08_DSA/00_PATTERN_SHEET/05_MATRIX.md) · [06 stack](08_DSA/00_PATTERN_SHEET/06_STACK.md) · [07 binary search](08_DSA/00_PATTERN_SHEET/07_BINARY_SEARCH.md) · [08 linked list](08_DSA/00_PATTERN_SHEET/08_LINKED_LIST.md) · [09 design](08_DSA/00_PATTERN_SHEET/09_DESIGN.md)
   - [10 kadane](08_DSA/00_PATTERN_SHEET/10_KADANE.md) · [11 bit](08_DSA/00_PATTERN_SHEET/11_BIT_MANIPULATION.md) · [12 trees](08_DSA/00_PATTERN_SHEET/12_TREES.md) · [13 graphs](08_DSA/00_PATTERN_SHEET/13_GRAPHS.md) · [14 heap](08_DSA/00_PATTERN_SHEET/14_HEAP.md) · [15 intervals](08_DSA/00_PATTERN_SHEET/15_INTERVALS.md) · [16 backtracking](08_DSA/00_PATTERN_SHEET/16_BACKTRACKING.md) · [17 DP](08_DSA/00_PATTERN_SHEET/17_DP.md) · [18 greedy](08_DSA/00_PATTERN_SHEET/18_GREEDY.md)
@@ -241,7 +241,7 @@ SAFAR (March: khaali folder)  ->  aaj (27-Nov)
 | 03 | [HASHING](08_DSA/03_HASHING) | 16 | 18 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 6 |
 | 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 11 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 12 | 11 |
 | 05 | [MATRIX](08_DSA/05_MATRIX) | 4 | 7 | | 14 | [HEAP](08_DSA/14_HEAP) | 9 | 7 |
-| 06 | [STACK](08_DSA/06_STACK) | 14 | 7 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 5 |
+| 06 | [STACK](08_DSA/06_STACK) | 15 | 8 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 5 |
 | 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 11 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 7 | 9 |
 | 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | 8 | | 17 | [DP](08_DSA/17_DP) | 16 | 18 |
 | 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 6 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 6 | 6 |
