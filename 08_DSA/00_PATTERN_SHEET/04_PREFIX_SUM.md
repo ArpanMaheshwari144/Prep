@@ -254,7 +254,8 @@ idx   0     1  2   3    4   5   6      7
 
 i = 3 pe:  lastWall = 0 (8),  lastK = 3   ->   count += 3 - 0 = 3
            shuru 1, 2, 3 se, khatam 3 pe:  [2,1,3]  [1,3]  [3]
-baaki har i pe aakhri deewar K ke BAAD hai (lastK < lastWall) -> kuch nahi juda   ->  answer = 3
+i = 1, 2: K abhi aaya hi nahi · i = 4 se aage: deewar K ke BAAD aa gayi (lastK < lastWall) -> kuch nahi juda
+answer = 3
 ```
 
 ### purani galti (7-Nov REDO_2)
