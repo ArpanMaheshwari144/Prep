@@ -122,11 +122,6 @@ Na mile to {-1, -1}. O(log n) me karna hai.
   kyun: 8 index 3 aur 4 pe hai -> pehla 3, aakhri 4
 ```
 
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** [5,7,7,8,8,10], 8 -> {3,4}. normal BS, bas MILNE pe RUKO MAT -> ans likho, ek taraf aur chalo. 2 BS
-
-**SAAR**
-
 ### DRY-RUN ([5,7,7,8,8,10], target 8)
 
 ```
@@ -141,15 +136,6 @@ DRY-RUN ([5,7,7,8,8,10], target 8):
           l5 h5 mid5 (10>8) -> h=4             -> ruk -> LAST 4
   -> {3,4}
 ```
-
-> [!WARNING]
-> **DHYAAN:**
->
-> 1. dono pass ke beech low/high RESET.
->
-> 2. mila to sirf EK pointer hilao (FIRST: high=mid-1 · LAST: low=mid+1).
->
-> 3. ans(2,-1) + index set karo, push_back mat milao.
 
 > [!IMPORTANT]
 > **CHAABI:** Do BS. Mila to RUKO MAT: PASS 1 (FIRST) `ans[0] = mid, high = mid - 1` · PASS 2 (LAST) `ans[1] = mid, low = mid + 1`. Baaki basic BS.
@@ -457,7 +443,7 @@ Ek array diya hai. Peak wo number hai jo apne dono padosiyon se bada ho (array k
 > **CHAABI:** mid ko `mid + 1` se compare: CHADHAAI (`nums[mid] < nums[mid+1]`) -> `low = mid + 1`; DHALAAN -> `high = mid`.
 
 > [!WARNING]
-> `high = mid` (mid-1 NAHI: mid khud peak ho sakta) ke saath `low < high` hi (atke nahi, `mid + 1` hamesha andar). SHART: padosi barabar nahi; `[1,1]` pe loop atak jaata. Return `low` (low == high pe converge = peak).
+> `high = mid` (mid-1 NAHI: mid khud peak ho sakta) ke saath `low < high` hi (atke nahi, `mid + 1` hamesha andar). Return `low` (low == high pe converge = peak).
 
 **CODE**
 ```cpp
@@ -487,12 +473,6 @@ Ek SORTED array me har number theek do baar aata hai, sirf ek number akela (ek b
   kyun: 1,1 jodi · 2 ka jodidaar nahi · baaki 3,3 4,4 8,8 jodi -> 2
 ```
 
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** har element 2x, sirf EK akela. O(log n) (XOR = O(n), yahan log n chahiye)
-> single se PEHLE pairs (even,odd) idx pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 se compare
-
-**SAAR**
-
 ### DRY-RUN (single = 2 @ idx 2)
 
 ```
@@ -505,9 +485,6 @@ Ek SORTED array me har number theek do baar aata hai, sirf ek number akela (ek b
    low3 high3 -> mid=3 (ODD)  : nums[3]=3 != nums[2]=2 -> high=3-1=2
    low3 > high2 -> STOP -> return nums[high]=nums[2]= 2  (sahi)
 ```
-
-> [!IMPORTANT]
-> **KYUN HIGH:** return nums[HIGH] (not low): dono branch mid REJECT karte -> high khud single pe aa ke rukta.
 
 > [!IMPORTANT]
 > **CHAABI:** Single se PEHLE pair (even, odd) index pe. mid ko `mid - 1` se milao: EVEN mid ka saathi peeche mila = shift ho chuki -> `high = mid - 1`; ODD mid ka saathi peeche mila = theek -> `low = mid + 1`.
@@ -596,13 +573,6 @@ Kul number odd hon to beech wala, even hon to beech ke do ka average. O(log) me 
   kyun: mila ke 1,3,7,8,9,11,15,18,19,21,25 = 11 number -> beech wala (6th) = 11
 ```
 
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** MERGE mat karo -> CUT: LEFT aadha | RIGHT aadha, left ka HAR <= right ka HAR. 4 kinaare = median
-> A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> Px=4 (1 3 8 9 | 15), Py=2 (7 11 | 18 ..) -> max(9,11) = 11
-> Px=2 try: x2=19 > x3=8 -> A ne KAM liya -> low = Px+1. cousin = BS-on-ANSWER (wahan VALUE pe)
-
-**SAAR**
-
 ### CUT ki tasveer
 
 ```
@@ -618,20 +588,6 @@ CUT idea (chhote array A pe BS -> Px; Py auto):
 ```
 
 > [!IMPORTANT]
-> **4 KINAARE** (baaki se matlab NAHI, sorted isliye apne-aap sahi):
->
-> x1=A[Px-1] Aleft   x3=A[Px] Aright   (edge Px==0->-INF, Px==m->+INF)
->
-> x2=B[Py-1] Bleft   x4=B[Py] Bright   (edge Py==0->-INF, Py==n->+INF)
->
-> **SAHI cut:**  `x1<=x4  &&  x2<=x3`        (left-max <= right-min, dono-taraf cross-check)
->
-> galat -> `x1>x4` (A ne ZYADA liya) -> high=Px-1  |  warna -> low=Px+1
->
-> **MEDIAN:** odd -> max(x1,x2)  |  even -> (max(x1,x2)+min(x3,x4))/2.0
->
-> "= BS PAR array-value pe nahi -> CUT-POSITION (Px) pe. condition monotonic -> BS chalti."
->
 > **KYUN sirf 4 number:** sorted -> Px se pehle sab <=x1, aage sab >=x3. har step O(1), Px pe BS = O(log(min(m,n))).
 
 ### DRY-RUN (A=[1,3,8,9,15], B=[7,11,18,19,21,25])
@@ -648,9 +604,6 @@ CUT idea (chhote array A pe BS -> Px; Py auto):
       x1(9)<=x4(18)  &&  x2(11)<=x3(15)  -> SAHI cut
       odd -> median = max(x1,x2) = max(9,11) = 11   ANS=11
 ```
-
-> [!WARNING]
-> **GOTCHA:** even -> /2.0 + (double) cast (int-div se 3.5 bug) | edge ±INF warna out-of-bounds.
 
 > [!IMPORTANT]
 > **CHAABI:** CHHOTE array A pe CUT `Px` pe BS, `Py = (m + n + 1) / 2 - Px`. 4 kinaare: `x1 = A[Px-1]`, `x2 = B[Py-1]` (left) · `x3 = A[Px]`, `x4 = B[Py]` (right). `x1 <= x4 && x2 <= x3` = sahi cut: odd -> `max(x1, x2)`, even -> `max(x1,x2)` aur `min(x3,x4)` ka average. `x1 > x4` -> `high = Px - 1`, warna `low = Px + 1`.

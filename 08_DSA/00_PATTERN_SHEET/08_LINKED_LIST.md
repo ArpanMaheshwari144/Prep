@@ -113,10 +113,11 @@ Extra jagah O(1) aur array ko badalna mana hai.
 ```
 
 > [!IMPORTANT]
-> **PEHCHAAN / SAAR:** n+1 numbers, values 1..n, ek repeat. O(1) space + array READ-ONLY
-> PEHCHAN: "array + duplicate + O(1) space + no-modify" -> value = POINTER (i -> nums[i])
 > values 1..n + n+1 slot -> koi value 2 baar point -> loop; cycle ki ENTRY = duplicate
 > [3,1,3,4,2]: 0->3->4->2->3->4->2... (loop, entry 3 = dup)
+>
+> PHASE-1: slow 3, 4, 2 · fast 4, 3, 2 -> 2 pe mile
+> PHASE-2: slow 0 -> 3 · fast 2 -> 3 -> 3 pe mile = jawab 3
 
 > [!IMPORTANT]
 > **CHAABI:** value = POINTER (`i -> nums[i]`), cycle ki ENTRY = duplicate. PHASE-1 slow/fast milao, PHASE-2 `slow = 0`, dono 1-1 kadam, jahan mile wahi jawab.
@@ -155,23 +156,12 @@ Linked list ka head diya hai. Agar cycle hai to wo node lautao jahan se cycle sh
 ```
 
 > [!IMPORTANT]
-> **PEHCHAAN / SAAR:** cycle ho to uske START node ka pointer, warna NULL. = find-duplicate ka Node* version (->next)
-
-**SAAR**
-
-### purani galti (24-Sep theek kiya)
-
-```
-GOTCHA (24-Sep theek kiya): pehle `if(slow!=fast) return NULL` likha tha -- GALAT.
-1 node, bina cycle: loop chalta hi nahi -> slow==fast==head reh jaate -> head return ho jaata (sahi NULL).
--> alag `cycle` flag rakho, sirf slow==fast MILNE pe true.
-```
-
-> [!IMPORTANT]
 > **CHAABI:** DETECT CYCLE + PHASE-2: mile to `break` (fast meet point pe), `slow = head`, dono 1-1 kadam, jahan mile = cycle ka START. FIND DUPLICATE ka `->next` version.
 
 > [!WARNING]
-> cycle `flag` se decide, `slow != fast` se NAHI: 1 node bina cycle me loop chalta hi nahi, `slow == fast == head` -> galat head return (sahi NULL).
+> GOTCHA (24-Sep theek kiya): pehle `if(slow!=fast) return NULL` likha tha -- GALAT.
+> 1 node, bina cycle: loop chalta hi nahi -> slow==fast==head reh jaate -> head return ho jaata (sahi NULL).
+> -> alag `cycle` flag rakho, sirf slow==fast MILNE pe true.
 
 **CODE**
 ```cpp
@@ -213,7 +203,6 @@ Linked list ka head diya hai. Agar list aage se aur peeche se ek jaisi padhi jaa
 ```
 
 > [!IMPORTANT]
-> **PEHCHAAN / SAAR:** COMBO: middle -> 2nd half REVERSE -> head (aage se) & rev (peeche se) saath compare
 > middleNode = upar wala MIDDLE OF LIST · reverseList = neeche wala REVERSE LINKED LIST
 
 > [!IMPORTANT]
@@ -377,10 +366,6 @@ Do linked list di hain, har node me ek digit hai aur number ulta rakha hai (ikai
 ```
 
 > [!IMPORTANT]
-> **PEHCHAAN / SAAR:** number list me ULTA (units digit HEAD pe) -> head se head jodo = school wala right-to-left add
-> (2->4->3) + (5->6->4) = 342 + 465 = 807 -> (7->0->8)
-
-> [!IMPORTANT]
 > **CHAABI:** MERGE jaisa dummy + tail, bas ek `carry`: `sum` = a + b + carry, node = `sum % 10`, `carry = sum / 10`.
 
 > [!WARNING]
@@ -500,10 +485,6 @@ Aakhir me k se kam node bachein to unhe waise hi chhod do.
   kyun: pehla group 1,2,3 -> 3,2,1 · bache 4,5 sirf 2 (< 3) -> waise hi
 ```
 
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** har k-node group ulta (NODES), k se KAM bache -> waise hi. 1->2->3->4->5, k=2 -> 2->1->4->3->5
-> PEHCHAN: "reverse in groups of k" -> 3-ptr + count + recurse (copy-random se ALAG: ulatna, naya nahi)
-
 ### VISUAL (k=2)
 
 ```
@@ -569,10 +550,6 @@ Copy ke random pointer copy wale node pe hi hone chahiye, purani list pe nahi.
   kyun: copy ke 13 ka random copy wale 7 pe (original 7 pe nahi) · 7 ka random NULL hi
 ```
 
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** 2 PASS kyun: random aage bhi ho sakta, 1 pass me target abhi bana hi na ho -> pehle sab bana lo (+map)
-> PEHCHAN: "random pointer / deep copy" -> MAP (old -> new). T = O(n), S = O(n)
-
 **SAAR**
 ```
 VISUAL ( [x]=node · -> next · ~> random ):
@@ -591,15 +568,6 @@ VISUAL ( [x]=node · -> next · ~> random ):
      7' ~>  NULL
   => saare copy-random COPY ke andar (original pe nahi) = DEEP
 ```
-
-> [!IMPORTANT]
-> **KEY:** currRand->random = mp[curr->random] = old-random ka NAYA-copy -> DEEP.
->
-> **★ SAMAJH:** "13 ka random 7 pe hai" -> ye ORIGINAL batata (curr->random padho).
-> mp sirf old->new BADALTA (clone-map). Source hamesha curr (original);
-> currRand (copy) padhte to random abhi NULL hota -- isliye curr se lete.
-
-T=O(n) S=O(n).  [O(1)-space alt = interleave A->A'->B->B' clone, optional.]
 
 > [!IMPORTANT]
 > **CHAABI:** PASS 1: har node ka clone + `mp[curr] = temp` (old -> new) + next jodo. PASS 2: `currRand->random = mp[curr->random]` = original ke random ka NAYA copy.

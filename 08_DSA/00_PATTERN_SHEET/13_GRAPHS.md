@@ -122,10 +122,6 @@ n node (0 se n-1), bina disha wale (undirected) edges, ek source aur ek destinat
 ```
 
 > [!IMPORTANT]
-> **PEHCHAAN / SAAR:** = tree LEVEL-ORDER ka skeleton + 3 ADD: (1) neighbours = adj[node] (edges se banao)
-> (2) vis[] (tree me cycle nahi, graph me hai)  (3) level-loop NAHI: sirf reachability
-
-> [!IMPORTANT]
 > **CHAABI:** edges se `adj` banao (undirected = dono taraf), source se EK BFS; `node == destination` mila to true, queue khaali to false. Outer loop nahi, level-loop nahi.
 
 > [!WARNING]
@@ -220,9 +216,6 @@ n node (0 se n-1) aur bina disha wale edges diye hain. Graph me kitne alag-alag 
 ```
 
 > [!IMPORTANT]
-> **PEHCHAAN / SAAR:** ISLANDS ka SAME skeleton (outer-loop + count), 2 farak: graph = ADJ-LIST, aur BFS (islands DFS)
-
-> [!IMPORTANT]
 > **CHAABI:** islands ka skeleton, grid ki jagah adj-list: outer loop har node, `!vis[i]` mila to `count++` + BFS (poora group mark). padosi = `adj[node]`.
 
 > [!WARNING]
@@ -274,9 +267,6 @@ Ek grid di hai jisme 1 = zameen aur 0 = paani (4 disha se jude 1 = ek island). S
 ```
 
 > [!IMPORTANT]
-> **PEHCHAAN / SAAR:** ISLANDS ka SAME skeleton, 2 DELTA: (1) DFS void nahi, AREA return  (2) outer count++ nahi, MAX
-
-> [!IMPORTANT]
 > **CHAABI:** islands hi, 2 delta: DFS `void` nahi, area lautaye `1 + neeche + upar + right + left`; outer me `count++` nahi, `ans = max(ans, DFS(...))`.
 
 > [!WARNING]
@@ -322,17 +312,13 @@ Saare santre sadne me kam se kam kitne minute lagenge, wo lautao. Kabhi na sad p
   kyun: min 1: (0,1),(1,0) · min 2: (0,2),(1,1) · min 3: (2,1) · min 4: (2,2); sab sad gaye
 ```
 
-### purani galti (Aug sheet)
-
-```
-★ PURANI GALTI (Aug sheet): END me sirf return mins-1 tha -> grid me koi santra hi nahi to -1 aata, sahi 0. Isliye ab mins == 0 ? 0 : mins-1.
-```
-
 > [!IMPORTANT]
 > **CHAABI:** saare `2` PEHLE queue me (multi-source = level 0); `sz = q.size()` snapshot = ek minute; end me `1` bacha to -1.
 
 > [!WARNING]
 > `mins++` `while (sz--)` ke BAHAR (ek level = ek minute). aakhri level ke baad bhi `mins++` hota -> `mins - 1`; par koi santra hi nahi to `mins = 0` -> seedha 0 lautao (`mins - 1` = -1 galat). `grid = 2` push ke saath hi, warna doosra rotten bhi push karta.
+>
+> ★ PURANI GALTI (Aug sheet): END me sirf return mins-1 tha -> grid me koi santra hi nahi to -1 aata, sahi 0. Isliye ab mins == 0 ? 0 : mins-1.
 
 **CODE**
 ```cpp
@@ -388,10 +374,6 @@ numCourses courses aur prerequisites diye hain, [a, b] ka matlab: a padhne se pe
 ```
 
 > [!IMPORTANT]
-> **PEHCHAAN / SAAR:** "prereq + can-finish-ALL?" = koi CYCLE to nahi? cycle -> false
-> [[1,0],[2,1],[3,2]]: har [a,b] = a lene se pehle b -> edge b -> a
-
-> [!IMPORTANT]
 > **CHAABI:** prereq se `adj` + `indegree` banao. indegree 0 wale queue me; nikaalte waqt `adj` ke har node ka indegree ghatao, 0 hua to push. `ans.size() == numCourses` = cycle nahi.
 
 > [!WARNING]
@@ -442,11 +424,6 @@ Jo module ready hain (jinki saari dependency ban chuki), unme se sabse chhote nu
 ```
 
 > [!IMPORTANT]
-> **PEHCHAAN / SAAR:** PEHCHAAN: dependency -> TOPO. output line padho: "koi bhi valid order" -> queue · "sabse chhota /
-> lexicographic" -> MIN-HEAP. topo ke KAI sahi order ([5->2,5->0,4->0,4->1,2->3,3->1]: "4 5 0 2 3 1"
-> aur "5 4 2 0 3 1" dono sahi) -> khaas order = heap. queue = jo pehle ready · heap = ready me chhota
-
-> [!IMPORTANT]
 > **CHAABI:** Course Schedule hi, bas `queue` -> min-heap: ready me se sabse chhota pehle. indegree / adj / ghatana / end-check SAME.
 
 > [!WARNING]
@@ -495,11 +472,6 @@ Ek juda hua (connected), bina disha wala graph ka ek node diya hai. Poore graph 
   e.g. adjList [[2,4],[1,3],[2,4],[1,3]] -> [[2,4],[1,3],[2,4],[1,3]] (sab naye node)
   kyun: square 1-2-3-4-1; har node ka naya clone, aur clone ke neighbours bhi clone hi, purane nahi
 ```
-
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** saare node ka clone map me (A->A', B->B'), phir clones ko CONNECT (A'--B'). 2 kaam:
-> (a) clone BANANA (if ke ANDAR, sirf naye pe)  (b) JODNA push_back (if ke BAHAR, har edge pe)
-> bina jodna -> loose clones -> adhoora graph
 
 **SAAR**
 ```
@@ -557,13 +529,6 @@ Adjacency list wala graph diya hai. Kya saare nodes ko do group me aise baant sa
   kyun: 0-1-2 triangle: 0 red, 1 blue, 2 dono ka padosi, koi rang nahi bachta
 ```
 
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** har node ko rang 0/1; koi 2 JUDE node SAME rang na hon. odd cycle (triangle) -> false
-> PEHCHAAN: "DO team me baanto + jo JUDE (dushman / edge) wo ek group me NAHI". output "team A / team B"
-> = 2 rang. DSU ULTA hai: DSU me jude -> SAME group, yahan jude -> ALAG
-> graph[i] = node i ke neighbours (adj-list KHUD di hai). [[1,3],[0,2],[1,3],[0,2]] -> true (square)
-> [[1,2,3],[0,2],[0,1,3],[0,2]] -> false (0-1-2 triangle)
-
 **SAAR**
 ```
 INPUT: graph[i] = node i ke saare neighbours (adj-list KHUD di hai, banani nahi)
@@ -573,7 +538,7 @@ INPUT: graph[i] = node i ke saare neighbours (adj-list KHUD di hai, banani nahi)
         3 --- 2      2 rang ho jaate               3 --- 2
 
 DRY-RUN (triangle 0-1-2):
-    0 ko 0 diya  -> nbr 1 = 1 · nbr 2 = 1
+    0 ko 0 diya  -> nbr 1 = 1 · nbr 2 = 1 · nbr 3 = 1
     curr 1 (rang 1) -> nbr 2 ka rang bhi 1 = SAME -> false        (odd cycle pakda gaya)
 ```
 
@@ -632,10 +597,8 @@ n node, bina disha wale weight wale edges {u, v, w} aur ek source diya hai. Sour
 ```
 
 > [!IMPORTANT]
-> **PEHCHAAN / SAAR:** BFS ka WEIGHTED bhai: queue -> MIN-HEAP (chhoti dist pehle) · visited[] -> dist[] (INF, src=0) + RELAX
-> visited kyun nahi: dist[] + STALE-skip = visited ka kaam; strict relax -> undirected me bhi loop nahi
-> negative weight -> Dijkstra FAIL (dist ghatta rehta) -> Bellman-Ford. REAL: Maps / GPS, routing
-> pq me {dist, node} PAIR: heap FIRST se sort -> HAMESHA {jispe-sort, saath-wala}
+> **PEHCHAAN / SAAR:** visited kyun nahi: dist[] + STALE-skip = visited ka kaam; strict relax -> undirected me bhi loop nahi
+> negative weight -> Dijkstra FAIL (dist ghatta rehta) -> Bellman-Ford.
 
 > [!WARNING]
 > **★ EDGE:**
@@ -657,7 +620,7 @@ n node, bina disha wale weight wale edges {u, v, w} aur ek source diya hai. Sour
 > **CHAABI:** BFS + 2 swap: `queue` -> min-heap `{dist, node}`, `visited` -> `dist[]` + RELAX `wt + it.second < dist[it.first]` -> update, phir push.
 
 > [!WARNING]
-> pair `{dist, node}` hi likho: `{node, dist}` pe test PASS par har node kai baar khulta. stale skip `wt > dist[node]` strictly `>` (`>=` se src `{0, src}` khud skip -> sab INF). `dist[]` INF se, `dist[src] = 0`.
+> stale skip `wt > dist[node]` strictly `>` (`>=` se src `{0, src}` khud skip -> sab INF). `dist[]` INF se, `dist[src] = 0`.
 
 **CODE**
 ```cpp
@@ -704,11 +667,6 @@ n node (0 se n-1) aur bina disha wale edges diye hain. Union-Find (DSU) se batao
   e.g. n=5, edges=[[0,1],[1,2],[3,4]] -> 2
   kyun: unite 0-1, 1-2 -> ek leader; 3-4 -> doosra leader; parent[i]==i wale 2 bache
 ```
-
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** KAB: groups / connected / same-set? · UNDIRECTED cycle-detect · provinces · redundant-conn
-> · MST-Kruskal
-> REAL: dost-circle ("A-B same circle?"), accounts merge
 
 > [!IMPORTANT]
 > **CHAABI:** `parent[i] = i` se shuru; `find` = root tak jao + path compression (`parent[x] = find(parent[x])`); `unite` = dono ROOT jodo (rank se); group ginti = `find(i) == i`.
@@ -774,12 +732,6 @@ beginWord se endWord tak sabse chhote raste me kitne word aate hain (beginWord b
   kyun: hit -> hot -> dot -> dog -> cog = 5 word (begin aur end dono gine)
 ```
 
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** begin -> end, har step EK letter badlo, beech ka har word dict me. "min steps" -> BFS level-by-level
-> word = NODE · edge = ek letter farak + dict me. graph IMPLICIT (words), islands / Kahn's wali family
-> hit -> hot -> dot / lot -> dog / log -> cog = 5 WORDS (begin = 1, steps nahi)
-> level track 2 tareeke: steps PAIR me (ye code) · ya size-loop + level++ (poora layer khatam pe)
-
 ### EXAMPLE (hit -> cog, level-wise)
 
 ```
@@ -813,11 +765,9 @@ TEMPLATE:
 ```
 
 > [!IMPORTANT]
-> **★ VISITED trick (Arpan):** dict-set se word ERASE karo jaise hi use karo -> alag visited-set NAHI chahiye
-> (ek check "dict me hai?" + "visited nahi?" dono serve).
-
-> [!IMPORTANT]
 > **CHAABI:** word = node; har position pe `'a'..'z'` badal ke dict me mila = padosi. BFS `{word, steps}`; dict-set se ERASE karte hi use karo = visited (alag set nahi).
+>
+> **★ VISITED trick (Arpan):** dict-set se word ERASE karo jaise hi use karo -> alag visited-set NAHI chahiye
 
 > [!WARNING]
 > `word[i] = original` RESTORE har position ke baad, warna word bigad jaata. `st.erase(beginWord)` bhi, begin dobara na aaye. begin = 1 se shuru (begin khud ek word gina jaata).

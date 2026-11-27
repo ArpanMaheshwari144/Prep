@@ -763,9 +763,6 @@ Akela akshar bhi palindrome gina jaata hai, aur alag jagah wali same substring a
 > [!IMPORTANT]
 > **★ ARPAN-LINE (jisse ye derive hua):** "beech wala khada ho ke dono taraf poochta --
 > 'tum dono same ho? aa jao mere paas'. same hue -> palindrome bana -> phir agli jodi se poochta."
->
-> (substring = CONTIGUOUS -> skip ka option nahi -> choice nahi -> recursion nahi.
-> recursion ki khushboo SUBSEQUENCE me aati, substring me nahi).
 
 > [!IMPORTANT]
 > **CHAABI:** har CENTER se phailo: odd `solve(i, i)`, even `solve(i, i + 1)`; HAR match pe `count++`.

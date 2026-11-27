@@ -74,22 +74,6 @@ PATTERN — har chakkar ke 4 kadam:
    LEFT col    bottom -> top    phir left++     (if left <= right)
 ```
 
-> [!WARNING]
-> **GUARD — jo loop jis row/col pe chal raha, guard USI ka:**
->
-> 3rd loop  BOTTOM row chhaap raha  ->  if (top <= bottom)
-> matlab bottom abhi bhi top se NEECHE/barabar hai -> bottom row bachi hai -> chhaapo
->
-> 4th loop  LEFT col chhaap raha    ->  if (left <= right)
-> matlab left abhi bhi right se PEHLE/barabar hai -> left col bachi hai -> chhaapo
->
-> 1st/2nd loop (top row, right col) pe guard NAHI -> while(top<=bottom && left<=right) bacha leta
-
-> [!IMPORTANT]
-> **GUARD — kyun?**
-> sawaal: "jo row / col ab chhaapne ja raha, wo ABHI BACHI hai?"
-> ek hi row ya ek hi col bachi ho to ulti disha wala loop WAHI dobara chhaap deta
-
 ### misaal: ek row · ek col
 
 ```
@@ -184,7 +168,6 @@ Kitne server kisi doosre server se baat kar sakte hain, wo ginti lautao.
 > [!IMPORTANT]
 > **CHAABI:** SET-ZEROES ki 2 pass, MARK ki jagah COUNT: pass-1 `rowCount[i]++`, `colCount[j]++`; pass-2 server gino jab `rowCount[i] > 1 || colCount[j] > 1`.
 >
-> 1 = server. communicate = uski ROW ya COL me koi DOOSRA server. row + col dono me akela -> nahi gino
 > [[1,0],[1,1]] -> 3  ·  [[1,0],[0,1]] -> 0
 
 > [!WARNING]

@@ -150,10 +150,7 @@ Kis pump se shuru karke poora chakkar laga sakte ho, wo index lautao. Na laga sa
   kyun: index 3 se tank 3, 6, 4, 2, 0 -> kabhi minus nahi, chakkar poora
 ```
 
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** chalu ki poora ghoom ke wapas aa jau? koi nahi -> -1. har pump ka NET = gas[i] - cost[i]
-
-**SAAR**
+**DRY-RUN**
 ```
 DRY-RUN  gas=[1,2,3,4,5]  cost=[3,4,5,1,2]
    idx:   p0  p1  p2  p3  p4
@@ -205,8 +202,7 @@ Saare kaam khatam karne me kam se kam kitna kul time lagega (khaali time bhi mil
 ```
 
 > [!IMPORTANT]
-> **PEHCHAAN / SAAR:** SAME task dobara se pehle n gap. minimum total TIME (idle bhi)? signal: "cooldown" + "minimum time"
-> -> greedy (most-frequent frame) YA max-heap. sabse ZYADA wala task (maxFreq) DHANCHA banata,
+> **PEHCHAAN / SAAR:** sabse ZYADA wala task (maxFreq) DHANCHA banata,
 > beech ke gaps doosre tasks se bharo, khaali bache = IDLE
 
 ### DRY-RUN
@@ -249,9 +245,6 @@ DRY-RUN: tasks=[A,A,A,B,B,B], n=2
 
 > [!IMPORTANT]
 > **CHAABI:** sabse zyada wala task dhaancha: `gadde = maxFreq - 1`, `idle = n * gadde`, baaki har task se `min(mp[i], gadde)` ghatao; `idle > 0` -> `size + idle`, warna `size`.
-
-> [!WARNING]
-> `gadde = maxFreq - 1` (maxFreq nahi: aakhri A ke baad gadda nahi). ek task har gadde me SIRF EK copy -> `min(mp[i], gadde)`. `idle <= 0` pe LENGTH wins (`[A3,B3,C3,D2,E2] n=3 -> 13`).
 
 **CODE**
 ```cpp

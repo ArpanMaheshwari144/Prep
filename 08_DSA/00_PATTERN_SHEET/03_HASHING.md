@@ -199,7 +199,6 @@ Strings ka ek array diya hai. Jo strings aapas me anagram hain (same akshar, kra
 > [!IMPORTANT]
 > **CHAABI:** KEY = sorted(word). `mp[key].push_back(word)`, map ki har list = ek group.
 >
-> "eat","tea","ate" -> teeno ka SORTED roop "aet" = same. Yahi KEY.
 > brute = har jodi "anagram hai?" O(n² · k) -> har word ki KEY bana ke map me CACHE -> O(n · k log k)
 
 > [!WARNING]
@@ -291,8 +290,6 @@ theek k ho, aur uski lambai lautao. Koi na mile to 0.
   kyun: [-1,4,-2,2,1] ka jod 4 hai aur lambai 5; [4] bhi 4 hai par lambai sirf 1
 ```
 
-**SAAR**
-
 > [!IMPORTANT]
 > **FARAK (subarray sum = k se):**
 > start: mp[0] = 1 ki jagah mp[0] = -1   (index -1: shuru se i tak ka tukda, lambai = i + 1)
@@ -374,29 +371,20 @@ Ek array aur ek number k diya hai. Kitne jode (i < j) hain jinka jod k se poora 
 > ab MAP me dekho: koi element pehle aaya jiska remainder 2 tha?
 > mp[2] jitna -> utne pair bane (har aisa element 1 ke saath jodi banata).
 > yehi hai partner = (k - rem) = 3 - 1 = 2.
->
-> (rem=0 aaya -> partner = 3-0 = 3, par 3%3 = 0 -> partner 0.  isiliye (k-rem)%k.)
 
 ### DRY-RUN
 
 ```
-── DRY-RUN (nums=[1,2,3,4,5], k=3  ->  4 pairs) ──
- rem = ((it)%k+k)%k :   1->1   2->2   3->0   4->1   5->2
+nums=[1,2,3,4,5], k=3  ->  4 pairs
 
  it  rem  partner=(k-rem)%k   mp[partner]   count    mp-after
   1   1        2                  0           0       {1:1}
   2   2        1                  1          +1=1     {1:1, 2:1}      <- pair (1,2)
-  3   0        0                  0           0       {1:1, 2:1, 0:1}
+  3   0        0                  0           1       {1:1, 2:1, 0:1}
   4   1        2                  1          +1=2     {1:2, 2:1, 0:1} <- pair (2,4)
   5   2        1                  2          +2=4     {1:2, 2:2, 0:1} <- pairs (1,5),(4,5)
  ->  count = 4
 ```
-
-> [!IMPORTANT]
-> **KEY:** it=5 pe mp[1]=2 (element 1 aur 4 dono ka rem 1) -> ek saath 2 pair jude.
-
-> [!WARNING]
-> LOOKUP pehle, INSERT baad (khud-se-pair na gine).
 
 **CODE**
 ```cpp
@@ -429,14 +417,9 @@ Sort nahi karna, O(n) me karna hai.
 
 > [!IMPORTANT]
 > **CHAABI:** sab SET me. START = jiska `num - 1` set me NAHI; wahi se `currNum + 1` tak chain gino, `max` lo.
->
-> unsorted -> sabse LAMBI consecutive chain ki LENGTH. [100,4,200,1,3,2] -> 4 (1,2,3,4)
-> sort (n log n) mat karo -> SET me O(1) lookup, har CHAIN sirf uske START se gino -> O(n)
 
 > [!WARNING]
 > SET pe ghoomo, `nums` pe nahi (duplicate START baar-baar na gine). `num - 1` HAI to skip, warna har num se ginti = O(n²).
-
-**SAAR**
 
 ### DRY-RUN
 
@@ -449,11 +432,6 @@ DRY-RUN [100,4,200,1,3,2]  set={1,2,3,4,100,200}:
   3,2 -> (num-1) HAI -> skip
   => ans = 4
 ```
-
-> [!IMPORTANT]
-> -> har element zindagi me 1 hi baar visit -> O(n)  (warna har num se ginti = O(n^2)).
-
-**FAMILY:** hashing/SET (O(1) lookup se sort bachao). trick = "har group sirf START se process".
 
 **CODE**
 ```cpp
@@ -680,9 +658,6 @@ Guard ki shift ka start aur end "HH:MM" (24 ghante ki ghadi) me diya hai. Shift 
 dono time ko MINUTE me badlo, phir ghatao. ghante aur minute alag ghatao to MM ka udhaar lena padta, ulajh jaata.
 ```
 
-> [!WARNING]
-> **pench:** raat 12 ke paar end chhota -> minus aata -> ek poora din (1440) jodo.
-
 ### KYUN 1440
 
 ```
@@ -690,9 +665,6 @@ KYUN 1440: din me 24 * 60 = 1440 minute.
   minus aaya:   75 - 1350 = -1275 -> +1440 = 165                  (raat 12 paar)
   minus nahi:   1050 - 540 = 510 -> +1440 = 1950 -> %1440 = 510   (% se extra din wapas hata)
 ```
-
-> [!IMPORTANT]
-> isliye "+1440 phir %1440" dono case ek line me. Caesar ka "+26 phir %26" bilkul yahi.
 
 > [!IMPORTANT]
 > **CHAABI:** dono ko MINUTE banao (`HH * 60 + MM`), phir `(mins2 - mins1 + 1440) % 1440`.

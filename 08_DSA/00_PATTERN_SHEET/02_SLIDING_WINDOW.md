@@ -70,11 +70,6 @@
 **SAWAAL**  `"abcabcbb" -> 3`. Sabse lambi substring jisme koi char repeat na ho.
 kyun: "abc" me teeno alag = 3; agla a aate hi repeat, isse lamba koi substring nahi
 
-**SAAR**
-```
-longest substring jisme koi char REPEAT na ho. variable window + freq-map(mp).
-```
-
 > [!IMPORTANT]
 > **CHAABI:** jo abhi add hua (`s[j]`) wahi repeat ho sakta hai, to INVALID = `mp[s[j]] > 1`.
 
@@ -111,20 +106,12 @@ int lengthOfLongestSubstring(string s) {
 
 kyun: "AABA" (index 0..3) me ek B ko A banao -> "AAAA" = 4
 
-**SAAR**
-```
-SAAR : longest window jisme <=k char badal ke sabko SAME bana sako. variable window + freq-map.
-```
-
 > [!IMPORTANT]
 > **CORE TRICK (non-obvious):** maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window best-length
 > se chhota hota hi nahi (sirf badhta/slide) -> stale/purana maxFreq bhi answer kharab nahi karta.
 
 > [!IMPORTANT]
 > **CHAABI:** `windowLen - maxFreq` = kitne char badalne padenge. Ye `> k` hua to shrink.
-
-> [!WARNING]
-> `maxFreq` ko shrink pe kabhi ghatao mat, dobara mat nikaalo. Purana `maxFreq` bhi jawab nahi bigaadta.
 
 **CODE**
 ```cpp
@@ -156,11 +143,6 @@ int characterReplacement(string s, int k) {
 **SAWAAL**  `[1,1,1,0,0,0,1,1,1,1,0], k=2 -> 6`. Max k zero ko 1 bana ke sabse lambi 1 ki line.
 
 kyun: index 4..9 = 0,0,1,1,1,1: do zero flip -> 6 lagaatar 1
-
-**SAAR**
-```
-SAAR : at most k zeros ko FLIP -> longest all-1 window. sirf zeroCount track (freq-map nahi).
-```
 
 > [!IMPORTANT]
 > **CORE LEARNING:** ans UNCONDITIONAL update (bina kisi shart ke).
@@ -202,11 +184,6 @@ int longestOnes(vector<int> &nums, int k) {
 
 kyun: [2,3,2,2] me sirf 2 type (2,3) = 4; aage 1 jodo to 3 type ho jaate
 
-**SAAR**
-```
-SAAR : "longest subarray with AT MOST 2 DISTINCT" (fruit/basket sirf kahani). SW skeleton + map<type,count>.
-```
-
 > [!IMPORTANT]
 > **while (mp.size() > 2) KYUN while:** ek type poora khatam hone tak kai element hatane padte.
 >
@@ -217,9 +194,6 @@ SAAR : "longest subarray with AT MOST 2 DISTINCT" (fruit/basket sirf kahani). SW
 
 > [!IMPORTANT]
 > **CHAABI:** alag type kitne = `mp.size()`. `> 2` hua to shrink.
-
-> [!WARNING]
-> count 0 hua to ERASE. Nahi kiya to size 3 hi rehta, loop nahi rukta, i array ke bahar -> crash.
 
 **CODE**
 ```cpp
@@ -291,11 +265,6 @@ int longestKDistinct(string s, int k) {
 
 kyun: cost = [1,1,1,2]; pehle 3 ka 1+1+1 = 3 <= 3; chaaron ka 5 > 3 · e.g. s="abcd", t="cdef", maxCost=3 -> 1
 
-**SAAR**
-```
-SAAR : s ko t banane me har char ka cost = |s[i]-t[i]|. longest window jiska cost-SUM <= maxCost.
-```
-
 > [!IMPORTANT]
 > ONES III jaisa, ek int (cost) track, koi map nahi. cost hamesha 0 ya zyada, isliye negative wala dar nahi.
 
@@ -329,12 +298,6 @@ int equalSubstring(string s, string t, int maxCost) {
 **SAWAAL**  `target=7, [2,3,1,2,4,3] -> 2` ([4,3]). Positive numbers, sum >= target wala sabse chhota subarray.
 
 kyun: [4,3] = 7 >= 7, length 2; akela koi number 7 tak nahi pahunchta
-
-**SAAR**
-```
-SAAR : positive nums, sum >= target wala SABSE CHHOTA subarray ki length (nahi mile -> 0).
-char-matching wala SHORTEST = MIN WINDOW (LC-76) -> neeche "need-map + COUNT" family me (LC-1358 ke saath).
-```
 
 > [!IMPORTANT]
 > **LONGEST vs SHORTEST (yahi confusion ki JAD -- window BADA chahiye ya CHHOTA):**
@@ -380,14 +343,6 @@ int minSubArrayLen(int target, vector<int> &nums) {
 **SAWAAL**  `[2,1,5,1,3,2], k=3 -> 9`. Har size-k window ka sum, sabse bada.
 
 kyun: window sums 8, 7, 9, 6 -> max 9 (5+1+3)
-
-**SAAR**
-```
-SAAR : k-size ke har window ka sum -> unme se MAX. fixed window (size hamesha k).
-```
-
-> [!IMPORTANT]
-> **WHY IF-not-WHILE :** fixed size -> har step 1 add + 1 remove -> slide. variable hota to WHILE (kai remove).
 
 > [!IMPORTANT]
 > **CHAABI:** size fix `k` -> `if` (ek aaya, ek gaya), `while` nahi.
@@ -524,22 +479,9 @@ int maxScore(vector<int> &nums, int k) {
 kyun: index 0 aur 3 dono pe 1, farak 3 <= 3
   k=0: |i-j|<=0 matlab same index, jodi ban hi nahi sakti
 
-**SAAR**
-
-> [!IMPORTANT]
-> **★ RECOGNITION:** "same value + index farak <=k ke ANDAR" -> window me sirf LAST k elements rakho (HashSet).
-
-### DRY-RUN
-
-```
-DRY-RUN [1,2,3,1] k=3: 1,2,3 add -> j=3 nums=1 set me hai -> true. | [1,2,3,1,2,3] k=2: har baar window<=2, kabhi dup nahi -> false.
-```
-
 > [!WARNING]
 > **★ k=0 kyun alag:** check (st.count) window CHHOTI hone se PEHLE hota hai -> k=0 pe pichhla element
 > abhi set me hota, [4,4] k=0 pe true aa jaata (sahi false).
-
-**FAMILY:** fixed-window (size k) + HashSet (seen-check). value-equal -> set; within-k -> window size k.
 
 > [!IMPORTANT]
 > **CHAABI:** set me sirf pichhle k element rakho. Duplicate mila to index ka farak apne aap <= k.
@@ -579,12 +521,6 @@ bool containsNearbyDuplicate(vector<int> &nums, int k) {
 
 kyun: 4 akele + [10,5]=50, [5,2]=10, [2,6]=12, [5,2,6]=60 = 8; [10,5,2]=100 kam nahi
 
-**SAAR**
-```
-SAAR : kitne subarray jinka product < k. variable window, COUNT (length nahi).
-   lamba wala dhaancha, bas max ki jagah count += j - i + 1.
-```
-
 > [!IMPORTANT]
 > **GINTI KYUN (j-i+1):**  window [i..j] valid hai, to j pe KHATAM hone wale ye sab bhi valid:
 > [j], [j-1..j], ... [i..j]  =  j-i+1 subarray  (ye ginti bahut count-Q me lagti)
@@ -608,9 +544,6 @@ DRY-RUN [10,5,2,6], k=100:
 
 > [!IMPORTANT]
 > **CHAABI:** `count += j - i + 1`: j pe khatam hone wale saare subarray.
-
-> [!WARNING]
-> shrink ki shart me `&& i <= j`, warna `[1], k=1` pe i array ke bahar. `k = 0` pe seedha 0.
 
 **CODE**
 ```cpp
@@ -642,7 +575,6 @@ int numSubarrayProductLessThanK(vector<int> &nums, int k) {
 
 **SAAR**
 ```
-SAAR : kitne SUBARRAYS jinme EXACTLY k different numbers.
    atMostK = fruit ka code, bas max ki jagah COUNT (ans += j-i+1).
 ```
 
@@ -675,9 +607,6 @@ DRY  : [1,2,1,2,3], k=2   -- atMost(2) = konse subarray?
 
 > [!IMPORTANT]
 > **CHAABI:** exactly(k) = atMost(k) - atMost(k - 1).
-
-> [!WARNING]
-> atMost me count 0 se shuru. Max wale template se `INT_MIN` copy kiya to k=1 pe garbage.
 
 **CODE**
 ```cpp
@@ -714,12 +643,6 @@ int subarraysWithKDistinct(vector<int> &nums, int k) {
 **SAWAAL**  `s="ADOBECODEBANC", t="ABC" -> "BANC"`. s ki sabse chhoti window jisme t ke saare akshar utni hi baar hon jitni baar t me hain (count ke saath; t="AA" ho to do A chahiye). Na mile to "".
 
 kyun: "ADOBEC" (6) bhi A,B,C rakhta, par "BANC" (4) sabse chhota
-
-**SAAR**
-```
-count = t.size(). count==0 => window me t ke SAARE char (VALID).
-DERIVE: chhote example HAATH-trace (ADOBECODEBANC -> BANC) se map+count nikla.
-```
 
 **FAMILY** need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR):
 LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-ANDAR · LC-1358 loop-BAAD).
@@ -768,19 +691,9 @@ string minWindow(string s, string t) {
 
 e.g. "aaacb" -> 3 · kyun: "aaacb", "aacb", "acb" me teeno; "cb" ya usse chhote me a nahi = 3
 
-**SAAR**
-```
-farak SIRF answer-line:
-      LC-76   : while ke ANDAR -> if(len<minLen){minLen; index}   (MIN track)
-      LC-1358 : while ke BAAD  -> ans += i                        (COUNT)
-```
-
 > [!IMPORTANT]
 > **WHY ans += i:** shrink window INVALID tak le jaata -> ab [0..i-1] SAARE valid left-starts -> ginti = i.
 > "abcabc": har j pe i = 0,0,1,2,3,4 -> jod 10
-
-> [!WARNING]
-> ★ Product < k wala j-i+1 yahan galat hai.
 
 > [!IMPORTANT]
 > **CHAABI:** LC-76 ka same code, bas answer `ans += i`, `while` ke BAAD.
@@ -829,7 +742,6 @@ kyun: s[0..2]="cba" aur s[6..8]="bac" dono "abc" ke anagram
 
 **SAAR**
 ```
-SAAR : s me p ke SAARE anagram ki START-INDEX. fixed window (p ki length) + har window pe anagram-check.
 LC-76 se farak: wahan EK map me t ki ginti, aana-jaana pe usi map ko ghatao-badhao; yahan DO map.
 ```
 
@@ -879,19 +791,11 @@ vector<int> findAnagrams(string s, string p) {
 
 kyun: s2[3..4]="ba" = "ab" ka permutation
 
-**SAAR**
-```
-SAAR : s2 me s1 ka koi permutation (=anagram) substring hai? (bool)
-```
-
 > [!WARNING]
 > **★ ULTA kram:** s1 ko s2 ke ANDAR dhoondhna (window s2 pe chalti).
 
 > [!IMPORTANT]
 > **CHAABI:** LC-438 ka same code, bas `push_back(i)` ki jagah `return true`.
-
-> [!WARNING]
-> s1 ko s2 ke ANDAR dhoondhna hai, window s2 pe chalti (ulta mat karo).
 
 **CODE**
 ```cpp
@@ -925,16 +829,7 @@ bool checkInclusion(string s1, string s2) {
 ### ▸ LC-239 SLIDING WINDOW MAXIMUM  = monotonic DEQUE of INDICES (monotonic stack + front-expiry)
 **SAWAAL**  `[1,3,-1,-3,5,3,6,7], k=3 -> [3,3,5,5,6,7]`. Har k size ki window ka sabse bada number lautao.
 
-**SAAR**
-```
-SAAR : har size-k window ka MAX, O(n). deque me INDICES rakho (values DECREASING) -> front = window ka max.
-```
-
 > [!IMPORTANT]
-> **CONNECT :** back-pop (nums[back]<=nums[i]) = MONOTONIC banana -- ye UNIVERSAL (stack ho ya deque, wahi cheez; isi se monotonic).
-> DEQUE lene ki ASLI (aur AKELI) wajah = WINDOW-EXPIRY: front se purana index hatana (dq.front()==i-k -> pop_front).
-> = monotonic STACK + bas wahi 1 window-front-expiry delta. (front-pop hamesha EXISTING element hota, naya nahi.) order dono me matter.
->
 > **CORE :** nums[i] aaya -> usse CHHOTE back-wale BEKAAR (jab tak nums[i] zinda, wo max ban hi nahi sakte) -> pop_back.
 
 > [!WARNING]
@@ -946,9 +841,6 @@ SAAR : har size-k window ka MAX, O(n). deque me INDICES rakho (values DECREASING
 
 > [!IMPORTANT]
 > **CHAABI:** deque me INDEX, values ghatte kram me, front = max. Front se purana hatao, peeche ke chhote pop + push.
-
-> [!WARNING]
-> value nahi INDEX rakho (bahar kaun gaya, index se pata chalta). Record sirf `i >= k - 1`.
 
 **CODE**
 ```cpp

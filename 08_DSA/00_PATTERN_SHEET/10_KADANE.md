@@ -93,8 +93,6 @@ Ek array diya hai. Lagaatar numbers ka aisa subarray chuno jiska guna sabse bada
   kyun: -2 x 3 = -6 (sabse chhota), phir x -4 = 24; neg x neg = bada, isliye min bhi saath rakhna
 ```
 
-**SAAR**
-
 ### shuruaat + purani galti (24-Sep theek kiya)
 
 ```
@@ -107,7 +105,7 @@ pehle max=min=nums[0], ans=0, loop 1 se tha -> nums[0] AKELA kabhi ans me nahi g
 > **CHAABI:** 3 candidate `{nums[i], mini * nums[i], maxi * nums[i]}`: max aur MIN dono rakho (neg x neg = bada). `ans = max(ans, maxi)`.
 
 > [!WARNING]
-> `temp` me max FREEZE karo, `mini` purane `maxi` se nikaalo, phir `maxi = temp` (max min ke BAAD). Shuruaat `mini = maxi = 1`, `ans = INT_MIN`, loop 0 se: `ans = 0` pe `[-2]` me 0 aata, sahi -2.
+> `temp` me max FREEZE karo, `mini` purane `maxi` se nikaalo, phir `maxi = temp` (max min ke BAAD).
 
 **CODE**
 ```cpp
@@ -137,8 +135,6 @@ Ek array diya hai. Kisi bhi lagaatar subarray ka jod lo aur uska absolute value 
   kyun: [-5,1,-4] = -8, |-8| = 8; sabse bada positive tukda sirf 3, to bada-negative jeeta
 ```
 
-**SAAR**
-
 ### shuruaat + purani galti (24-Sep theek kiya)
 
 ```
@@ -151,7 +147,7 @@ aur n==1 pe abs nahi tha ([-7] pe -7, sahi 7).
 > **CHAABI:** MAX PRODUCT ka skeleton, `*` -> `+`. `ans = max(ans, max(abs(mini), abs(maxi)))`: jawab min-sum se bhi aa sakta.
 
 > [!WARNING]
-> shuruaat `0, 0, 0`, loop 0 se (+ me 0 kuch nahi jodta). `n == 1` pe `return abs(nums[0])` (`[-7]` -> 7). abs DONO pe, sirf maxi nahi.
+> abs DONO pe, sirf maxi nahi.
 
 **CODE**
 ```cpp
@@ -187,21 +183,7 @@ Ek gol (circular) array diya hai, matlab end ke baad shuru wala number aata hai.
 ```
 
 > [!IMPORTANT]
-> **PEHCHAAN / SAAR:** circular (end -> start wrap), max-sum NON-EMPTY subarray. TRICK: PATA hona chahiye
-> A) no-wrap = normal Kadane  B) wrap = poora array MINUS beech ka chunk = TOTAL - min
-
-**SAAR**
-```
-2 CASE (bada lo): A) NO-wrap = normal Kadane (max)  ·  B) WRAP = end+start juda, BEECH ka chunk chhoda.
-  maxK = maxKadane(nums);  minK = minKadane(nums);  total = sum(nums);
-  ans = max( maxK, total − minK );
-```
-
-> [!IMPORTANT]
-> ★ ye TRICK-problem hai -- interview me on-the-spot derive lagbhag impossible; SEEKHNA padta.
->
-> **KEY INSIGHT:** wrap = poora array MINUS beech-ka-chunk. max-wrap ke liye SABSE-BURA (min) chunk hatao ->
-> wrap-max = TOTAL − (minimum-subarray-sum).   [min-subarray = Kadane ka MIN-version]
+> **CHAABI:** 2 case, bada lo: NO-wrap = normal Kadane `maxSum` · WRAP = `totalSum - minSum` (beech ka sabse bura chunk hatao). `max(circularSum, maxSum)`.
 
 > [!WARNING]
 > **★ EDGE (all-negative):** min-subarray = poora array -> total−minK = 0 (EMPTY) -> galat.
@@ -211,14 +193,6 @@ Ek gol (circular) array diya hai, matlab end ke baad shuru wala number aata hai.
 > -> wrap = 7−(−3)=10 -> ans=max(7,10)=10.  (10 sirf WRAP se, seedhe Kadane se nahi.)
 >
 > **★ minK Kadane-MIN se:** cur = min(nums[i], cur+nums[i]); minK = min(minK, cur). (prefix-sum se NAHI -- Arpan-10-Sep pakda.)
-
-**CONNECT:** [[house-robber-II]] jaisa "circular twist" par MECHANISM alag (HR-II = exclude-first/last; ye = total−minKadane).
-
-> [!IMPORTANT]
-> **CHAABI:** 2 case, bada lo: NO-wrap = normal Kadane `maxSum` · WRAP = `totalSum - minSum` (beech ka sabse bura chunk hatao). `max(circularSum, maxSum)`.
-
-> [!WARNING]
-> sab non-positive (`maxSum <= 0`) -> `total - min = 0` = EMPTY subarray = galat -> sirf `maxSum` return. `minSum` Kadane-MIN se (`sum = min(sum + nums[i], nums[i])`), prefix-sum se NAHI.
 
 **CODE**
 ```cpp
@@ -269,9 +243,6 @@ Ek array diya hai. Do subarray chuno jo lagaatar hon, khaali na hon, aur ek-doos
 ```
 
 > [!IMPORTANT]
-> **PEHCHAAN / SAAR:** har WALL i pe: [0..i] ka best + [i+1..n-1] ka best -> sabka MAX
-> [2,1,-99,3,3] = 9: wall index 1 -> left [2,1] = 3 + right [3,3] = 6
->
 > **★ COPY-PEN WALA SAWAAL: pehle copy pe array chala (5 step), phir code. Sheet dekh ke seedha likha to detail fisalti.**
 >
 > **★ REDO_2 me yahin atka: AAKHRI loop kahan tak?**
@@ -392,26 +363,6 @@ rule : ans = max( ans , bestLeft[i] + bestRight[i+1] )
 
   jawab = 17   ([1,2] = 3  +  [8,6] = 14)
 ```
-
-### DRY-RUN
-
-```
-DRY-RUN:
-   VISUAL [1,2,-7,8,6,-4]:
-     val       : [ 1    2   -7    8    6   -4 ]
-     maxEndAt  : [ 1    3   -4    8   14   10 ]   (05)
-     bestLeft  : [ 1    3    3    8   14   14 ]   (06)
-     bestRight : [ 14   14   14   14   6   -4 ]   (06 ka mirror)
-     i=1: bestLeft[1]=3 + bestRight[2]=14 = 17
-```
-
-> [!WARNING]
-> **EDGE:**
->
-> **i+1 KYUN (non-overlap ki JAAN):** right ko i se lo (bestRight[i]) -> shared index DONO subarray me -> DO BAAR count -> OVERLAP.
-> e.g. bestLeft[3]=8 + bestRight[3]=14 = 22, index 3 DONO me = jhootha. i+1 (ya i-1, loop i=1->n-1) se dono ALAG.
->
-> loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
 
 ### overlap dekh (index 3)
 

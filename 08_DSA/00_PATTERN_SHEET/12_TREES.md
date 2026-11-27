@@ -298,20 +298,12 @@ Binary tree diya hai (values minus bhi). Koi bhi juda hua rasta chuno (kam se ka
   kyun: 15 + 20 + 7 = 42; root -10 jodne se sum ghatta, isliye chhoda
 ```
 
-**SAAR**
-```
-skeleton HUBAHU diameter (return EK arm / record DONO arm / post-order / global max). SIRF 3 badle:
-  (1) arm = height -> GAIN (sum): return me 1 ki jagah root->val
-  (2) record me + root->val: junction pe node bhi ginta
-  (3) max(0, ..): minus arm SKIP (diameter me sab positive the)
-```
-
 ### DIAMETER vs MAX PATH SUM (line-by-line)
 
 ```
 DIAMETER (upar)                      MAX PATH SUM
 -------------------------            -------------------------------------
-left  = height(L, maxDia)            left  = max(0, solve(L, maxi))   <- neg arm -> 0 (minus arm lene se sum ghatta) // base: null -> 0
+left  = height(L, maxDia)            left  = max(0, solve(L, maxi))   <- neg arm -> 0
 right = height(R, maxDia)            right = max(0, solve(R, maxi))
 maxDia = max(maxDia, left+right)     maxi  = max(maxi, left + node->val + right)  <- +node
 return 1 + max(left,right)           return node->val + max(left,right)           <- val, 1 nahi
@@ -320,7 +312,6 @@ return 1 + max(left,right)           return node->val + max(left,right)         
 ### VISUAL (junction)
 
 ```
-VISUAL (junction):
          node
         /    \
     Lgain    Rgain      parent ko : node + max(L,R)   [EK sadak hi upar ja sakti]
@@ -330,7 +321,6 @@ VISUAL (junction):
 ### DRY-RUN
 
 ```
-DRY-RUN:
            -10
           /   \
          9     20
@@ -794,27 +784,18 @@ Binary tree diya hai. Kya ye sahi BST hai? Har node pe uske poore left subtree k
   kyun: 3 node 6 ke left me (3 < 6 theek), par 6 to 5 ke right me, to 3 > 5 hona chahiye tha
 ```
 
-**SAAR**
-```
-node ko SAARE ancestors ka rule maanna -> har node ki WINDOW (mini, maxi), neeche jaate tight hoti
-```
-
 > [!WARNING]
 > **★ EDGE:**
 >
 > sirf turant child check KAAFI NAHI ([5,4,6,null,null,3,7]: 3 < 6 theek, par 3 < 5 -> galat)
 
-### purani galti (Aug sheet)
-
-```
-★ PURANI GALTI (Aug sheet): CALL solve(root, INT_MIN, INT_MAX) tha -> [2147483647] pe false aata, sahi true. Isliye ab long long (LLONG_MIN, LLONG_MAX).
-```
-
 > [!IMPORTANT]
 > **CHAABI:** har node ki window `(mini, maxi)` neeche carry: LEFT jao -> `maxi = root->val`, RIGHT jao -> `mini = root->val`. Window ke bahar pe false, combine `&&`.
 
 > [!WARNING]
-> `long long` + `LLONG_MIN, LLONG_MAX` se shuru. `INT_MIN / INT_MAX` liya to node khud `INT_MAX` ho (`[2147483647]`) -> strict check galat false deta. Check `<= mini || >= maxi` (barabar bhi galat, BST me duplicate nahi).
+> Check `<= mini || >= maxi` (barabar bhi galat, BST me duplicate nahi).
+>
+> ★ PURANI GALTI (Aug sheet): CALL solve(root, INT_MIN, INT_MAX) tha -> [2147483647] pe false aata, sahi true. Isliye ab long long (LLONG_MIN, LLONG_MAX).
 
 **CODE**
 ```cpp

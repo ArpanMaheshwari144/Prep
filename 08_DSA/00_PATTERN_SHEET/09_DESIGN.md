@@ -24,13 +24,6 @@ get(key): value lautao, na mile to -1. remove(key): key hatao.
   kyun: "a" dobara aaya to naya node nahi, value 5 ho gayi -> keys sirf a,b = 2 · b hata to -1
 ```
 
-**SAAR**
-```
-MENTAL MODEL: ek ARRAY (buckets); har slot me ek LINKED-LIST (chain). buckets[index] = us chain ka HEAD.
-   index = hash<string>{}(key) % cap.  (exact C++ syntax: hash<string>{}(key) -- string hash.)  same index pe 2 key (collision) -> chain me jode (next se).
-fields: buckets (Entry* ka array) · cap (slots = 16) · sz (kitne pairs).   // ctor: sz=0, cap=16, buckets.resize(cap) -> sab slot nullptr
-```
-
 > [!WARNING]
 > **PUT TRAP (7-redo se pakka):** key MILI -> value update + TURANT return. return NA kiya to loop aage
 > DUPLICATE node laga deta + sz galat. ("test-pass != code-sahi" -- chain-ke-ANDAR update pe phat-ta.)
@@ -65,7 +58,6 @@ REMOVE head (prev==null):            REMOVE beech (prev exist):
 > **CHAABI:** ARRAY of buckets, har slot ek CHAIN. `index = hash<string>{}(key) % cap`. put: chain me key MILI -> update, na mili -> END pe jodo + `count++`. remove: `prev == NULL` -> `buckets[index] = curr->next`, warna `prev->next = curr->next`.
 
 > [!WARNING]
-> put me key MILI -> value update + TURANT `return`. return na kiya to loop END pe DUPLICATE node + `count++` (test pass hoke bhi code galat).
 > remove me advance `prev = curr`, `prev = prev->next` NAHI (prev NULL se `NULL->next` crash).
 
 **CODE**
@@ -163,36 +155,12 @@ Built-in set use kiye bina apna HashSet banao (sirf string key). add(key): dohra
   kyun: doosra "apple" pehle se tha, kuch nahi juda -> 2 key · remove ke baad apple gayab
 ```
 
-**SAAR**
-```
-CONNECTION (HashMap se):
-┌──────────┬──────────────────────────────┬──────────────────────────────┐
-│ ASPECT   │ HashMap                      │ HashSet                      │
-├──────────┼──────────────────────────────┼──────────────────────────────┤
-│ Entry    │ | key | VALUE | next |       │ | key | next |   (value NAHI)│
-├──────────┼──────────────────────────────┼──────────────────────────────┤
-│ insert:  │ put(k,v)                     │ add(k)                       │
-│  mili    │   value UPDATE + return      │   kuch nahi (duplicate skip) │
-│  na-mili │   chain END me append + sz++ │   chain END me append + sz++ │  <- DONO SAME
-│          │   UPDATE-then-RETURN trap  │   (koi trap nahi -- simpler) │
-├──────────┼──────────────────────────────┼──────────────────────────────┤
-│ lookup   │ get(k): value / -1           │ contains(k): true / false    │
-│ delete   │ remove(k)                    │ remove(k): HUBAHU SAME       │
-│ size     │ return sz                    │ SAME                         │
-└──────────┴──────────────────────────────┴──────────────────────────────┘
-SAME (dono me): bucket khaali -> node laga + sz++; index = hash<string>{}(key)%cap; chaining/collision; remove head-vs-beech; VISUAL/COMBO (upar HashMap entry).
-```
-
 > [!WARNING]
 > **BUG-CATCH (remove, khud pakda):** advance = "prev = curr; curr = curr->next"
 > (NA prev = prev->next -- prev NULL se non-head remove pe NULL->next = CRASH). (file 08_DSA/09_DESIGN/02_hashset.cpp)
 
 > [!IMPORTANT]
 > **CHAABI:** HASHMAP ka hi code, Entry me sirf `| key | next |`. add: key mili -> kuch nahi, na mili -> chain END. contains = get ka true/false. remove HUBAHU same.
-
-> [!WARNING]
-> remove me advance `prev = curr; curr = curr->next`. `prev = prev->next` NAHI: prev NULL se non-head remove pe `NULL->next` = CRASH.
-
 **CODE**
 ```cpp
 struct Entry {                              // HashMap ka EXACT code, bas VALUE nahi: | key | next |
@@ -284,15 +252,6 @@ Cache bhar jaaye to wo key hatao jo sabse lambe samay se use nahi hui (least rec
   kyun: get(1) se 1 taaza, put(3) pe 2 sabse purana -> hata · put(4) pe ab 1 purana -> hata, bache 3,4
 ```
 
-**SAAR**
-```
-MENTAL MODEL: get+put DONO O(1). 2 zaroorat -> 2 structure JODO:
-   hashmap: key -> DLL-node ka POINTER  (find O(1))
-   DLL:     dummy [HEAD] <-> MRU .. LRU <-> [TAIL] dummy  (reorder/evict O(1))
-   head-side=recent · tail-side=purana(evict) · dummy head+tail = edge-case clean.
-   => hashmap = KAHAN hai (find), DLL = ORDER (reorder/evict). jodne se dono O(1).
-```
-
 ### VISUAL
 
 ```
@@ -319,13 +278,6 @@ VISUAL:                     Node = | key | val | prev | next |
 
 > [!IMPORTANT]
 > **CHAABI:** hashmap = KAHAN (`key -> Node*`), DLL dummy `head`/`tail` = ORDER (head-side MRU, tail-side LRU). get aur put dono me `removeNode` + `addFront`. Full pe `tail->prev` hatao + map se USI node ki key se (`mp.erase(toBeRemoved->key)`).
-
-> [!WARNING]
-> check `mp.count(key)` se, `mp[key]` chup-chaap entry bana deta.
-> put me key pehle se ho to `removeNode` + `addFront` DONO; sirf addFront = node purani jagah bhi juda -> wahi evict (put1 put2 put(1,10) put3 -> get(1) = -1, sahi 10).
-> evict me `mp.erase(toBeRemoved->key)`, `->val` NAHI (wo key hi nahi, kuch nahi hatta; test me key != val rakho).
-> addFront me `nxt = head->next` overwrite se PEHLE pakdo. ctor me `Node *head =` nahi (shadowing = naya local).
-
 **CODE**
 ```cpp
 struct Node {                               // Node = | key | val | prev | next |

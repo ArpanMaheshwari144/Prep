@@ -18,9 +18,6 @@
 
 #### ── FAMILY: "assign PEHLE, update BAAD" (pehle current index ka result rakho, PHIR running value badlo) ──
 
-> [!WARNING]
-> **★ DHYAAN:** mp[0] = 1 bhoolna nahi ([3], K=3)
-
 ---
 
 ### ▸ PIVOT INDEX
@@ -72,7 +69,6 @@ Bhaag (division) nahi lagana, O(n) me karna hai.
 > [!IMPORTANT]
 > **CHAABI:** `ans[i] = left[i] * right[i]`.
 >
-> ans[i] = (i se PEHLE sabka product) x (i ke BAAD sabka product). division nahi, O(n)
 > O(1) extra (follow-up): left ko seedha ans me likho, right-pass me ans[i] *= prod (alag right[] nahi)
 
 > [!WARNING]
@@ -148,7 +144,6 @@ Ek array (plus aur minus dono) aur ek number k diya hai. Kitne lagaatar subarray
 > [!IMPORTANT]
 > **CHAABI:** SUBARRAY-SUM-K ka code, bas key = `rem` (sum ki jagah): same remainder wale do prefix ka beech `% k == 0`.
 >
-> brute: har subarray sum baar-baar -> PREFIX -> do prefix ka remainder same = beech wala %k==0
 > PREFIX kyun, single A[i] nahi: subarray CONTIGUOUS range -> do prefix ka farak = wahi subarray
 
 > [!WARNING]
@@ -182,20 +177,12 @@ Ek array aur ek number k diya hai. Kitne lagaatar subarray hain jinke saare numb
   kyun: [4,2]=6, [2,2,6]=6, [6]=6, [4,2,2,6,4]=6 (4^4 aur 2^2 kat gaye) = 4
 ```
 
-**SAAR**
-
 > [!IMPORTANT]
 > **x ^ x = 0** (same number khud se XOR = gayab)
 >
 > (shuru se j tak XOR) ^ (shuru se i tak XOR) = beech ka XOR (common hissa kat gaya)
 >
 > beech wala = k chahiye -> pichhla XOR = abhi ka XOR ^ k -> map me dekho kitni baar aaya
-
-```
-= SUBARRAY SUM = K ka hubahu copy, sirf sign badla:
-   sum wale me:  complement = curSum - k      (a+b=c -> c-b=a)
-   XOR wale me:  complement = curXor ^ k      (a^b=c -> c^b=a)   [4^2=6 to 4^6=2]
-```
 
 > [!IMPORTANT]
 > **CHAABI:** SUBARRAY-SUM-K ka copy: `count += mp[xorr ^ k]`, phir `mp[xorr]++`. (`a^b=c -> c^b=a`, isliye `- k` ki jagah `^ k`.)
@@ -312,8 +299,6 @@ Saari bookings ke baad har flight ki kul booked seats ka array lautao.
 
 > [!WARNING]
 > `diff` size `n + 2` (end+1 = n+1 tak jaata, `n + 1` rakha to crash). Inclusive range me `end + 1` pe ghatao; `end` pe ghataya to aakhri flight chhoot gayi.
-
-**SAAR**
 
 ### DRY-RUN
 

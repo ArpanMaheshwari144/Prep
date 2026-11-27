@@ -51,15 +51,6 @@ Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse bada number
   kyun: 2 ke aage pehla bada 4 · 1 ke aage 2 · 2 ke aage 4 · 4 aur 3 ke aage koi bada nahi -> -1
 ```
 
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** har element ke DAAYE pehla BADA, koi nahi -> -1.  [2,1,2,4,3] -> [4,2,4,-1,-1]
-
-**SAAR**
-```
-SAAR: MONOTONIC stack (INDEX ka). left->right. jise abhi tak apna "bada" nahi mila wo stack me pade
-      (decreasing). curr aaya -> jo bhi top usse CHHOTA -> unka answer = curr -> pop.
-```
-
 ### DRY-RUN [2,1,2,4,3]
 
 ```
@@ -243,16 +234,7 @@ heights[] me bars ki unchai di hai, har bar ki chaudai 1 hai. Lagaatar bars pe j
 ```
 
 > [!IMPORTANT]
-> **PEHCHAAN / SAAR:** har bar pe KHADE ho: left me pehla CHHOTA (pS), right me pehla CHHOTA (nS) = dono STOPPER
-> [2,1,5,6,2,3] -> 10 (bars 5,6 -> min 5 * width 2). next GREATER se nahi: rectangle chhote pe rukta
 > TRAPPING RAIN WATER se farak: wahan har bar ka paani PLUS karte (sabka SUM); yahan sirf EK sabse bada rectangle (5, 6 wale = 10), MAX.
-
-**SAAR**
-```
-SAAR: HAR bar pe KHADE ho -> left me pehla CHHOTA (PS), right me pehla CHHOTA (NS)
-      = dono STOPPER -> beech ki width -> area = height*width -> sabka MAX.
-= PREV-SMALLER + NEXT-SMALLER ka WALL, bas DELTA: VALUE nahi INDEX store + combine loop.
-```
 
 > [!WARNING]
 > **3 JAGAH DHYAAN:**
@@ -341,7 +323,6 @@ DRY-RUN (h=[2,1,5,6,2,3]):
     width:  1   6   2   1   4   1
     area :  2   6 [10]  6   8   3   -> MAX 10
     bar5 (idx2): PS=1 (h1), NS=4 (h2) -> beech me c2,c3 -> width 2 -> 5*2 = 10.
-                 first = PS+1 = 2, last = NS-1 = 3 -> 3-2+1 = 2. stoppers khud andar nahi.
 ```
 
 **FAMILY:** next-GREATER se NAHI (rectangle bade bar ko andar leta, CHHOTE pe rukta).
@@ -349,6 +330,8 @@ DRY-RUN (h=[2,1,5,6,2,3]):
 
 > [!WARNING]
 > ★ GALTI (REDO_2, 38 min yahin atka): "2 ka jawab abhi kahan se laaun, stack to khaali hai?"
+>
+> DISHA: NS = loop `0 -> n-1`, PS = loop `n-1 -> 0`; ulti chali to dry run bhi ulta ghoomta (9-Nov REDO_2, 38 min yahin). nS default `n` (-1 NAHI: `[2,4]` pe width -1). Dono me shart `heights[top] > heights[i]`, `>` strict (`>=` pe `[3,3,3,3] -> 3`, sahi 12). `-1` sirf EK baar (`4-2-1=1` sahi, `4-2-1-1=0` galat).
 > STACK = jawab ka INTEZAAR karne walon ki LINE. Jawab abhi nahi chahiye, BAAD me aayega.
 > stack khaali = koi baat nahi: 2 line me khada ho jaata, default pehle se bhara (NS = n, PS = -1).
 > CHHOTA aaya  = line walon ka jawab mil gaya -> pop karo, unka ans bharo, phir naya bhi line me.
@@ -401,9 +384,6 @@ PS ko 0 se, shart ulti (heights[i] > heights[top]),  h = [2,1,5,6,2,3]:
 
 > [!IMPORTANT]
 > **CHAABI:** Har bar pe KHADE ho: PS (peeche ka chhota) + NS (aage ka chhota), INDEX store. `width = ns[i] - ps[i] - 1`, area = `heights[i] * width`, sabka max.
-
-> [!WARNING]
-> DISHA: NS = loop `0 -> n-1`, PS = loop `n-1 -> 0`; ulti chali to dry run bhi ulta ghoomta (9-Nov REDO_2, 38 min yahin). nS default `n` (-1 NAHI: `[2,4]` pe width -1). Dono me shart `heights[top] > heights[i]`, `>` strict (`>=` pe `[3,3,3,3] -> 3`, sahi 12). `-1` sirf EK baar (`4-2-1=1` sahi, `4-2-1-1=0` galat).
 
 **CODE**
 ```cpp
@@ -462,9 +442,6 @@ int largestRectangleArea(vector<int> &heights) {
   kyun: row 1 aur row 2 me col 2,3,4 sab 1 -> 2 row x 3 col = 6
 ```
 
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** = LC-84 ka 2D bhai: HAR ROW = histogram -> upar wala largestRectangleArea REUSE -> sab rows ka MAX
-
 > [!WARNING]
 > ★ GALTI (grill me hui): grid + 1 / 0 dekh ke DFS socha -> GALAT. DFS jude hue SAARE 1 gin leta, shape kaisi bhi ho
 > (L, T, tedhi-medhi), kyunki wo kone pe mud jaata. Upar wale e.g. me saare 1 ek hi tukda -> DFS = 13, jawab 6.
@@ -481,7 +458,7 @@ int largestRectangleArea(vector<int> &heights) {
 > **CHAABI:** Har row = histogram: `matrix[i][j] == 1` to `heights[j] += 1`, warna `heights[j] = 0`; har row ke BAAD `largestRectangleArea(heights)` call, sabka max.
 
 > [!WARNING]
-> 0 aaya to column RESET (`heights[j] = 0`, build-up tootta). Call j-loop ke BAHAR (har row ke baad). `heights` ka size COL (row nahi). LeetCode pe matrix `char` aati -> `== '1'`.
+> 0 aaya to column RESET (`heights[j] = 0`, build-up tootta). Call j-loop ke BAHAR (har row ke baad). `heights` ka size COL (row nahi).
 
 **CODE**
 ```cpp
@@ -664,9 +641,6 @@ Ek stack banao jisme push(val), pop(), top() aur getMin() chaaron O(1) me chalei
   e.g. push(-2) push(0) push(-3) getMin() -> -3 · pop() · top() -> 0 · getMin() -> -2
   kyun: -3 pop hone ke baad stack me [-2,0] bacha -> upar 0, sabse chhota -2
 ```
-
-> [!IMPORTANT]
-> **PEHCHAAN / SAAR:** class MinStack: push / pop / top / getMin sab O(1)
 
 > [!IMPORTANT]
 > **CHAABI:** Pair `{val, yahan tak ka MIN}` push -> `getMin() = st.top().second`, koi scan nahi. Pop pe purana min apne aap wapas.
