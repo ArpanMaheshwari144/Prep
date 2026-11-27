@@ -59,6 +59,24 @@ Dhaancha user aaya -> CDN -> LB -> kai server (ek nahi) -> DB me stock dekha -> 
          -> PSP (Razorpay) ya COD.
 ```
 
+**Dhaancha (tasveer):**
+
+```
+   +-----------+     +-------+     +------+     +------------------+     +--------------------+
+   |  User     | --> |  CDN  | --> |  LB  | --> |  Server          | --> |  DB: stock dekha   |
+   |  (app)    |     +-------+     +------+     |  (kai, ek nahi)  |     +--------------------+
+   +-----------+                                +------------------+
+                                                   |            |
+                                                   v            v
+                                     +---------------+   +-------------------+     +------------------+
+                                     | Cart me add   |   | Alag pay service  | --> | PSP (Razorpay)   |
+                                     | (har user ka  |   +-------------------+     | ya COD           |
+                                     |  apna)        |                             +------------------+
+                                     +---------------+
+
+   Har shehar ka alag system (dark store jaisa): Lucknow wale Lucknow se, Delhi wale Delhi se
+```
+
 *Technical me:* cart user id pe (har user ka alag), dark store = paas ka store, pay = alag service + PSP, COD = payment method.
 
 **Arpan (API):** API app pe hi, shelf pe koi nahi. GET stocks: har cheez ka stock, app me sab dikhe. GET stock id se: ghee ki id do, uska stock aa jaaye (500). POST cart me +1 (cart me daalo). POST pay. Ye 4-5 main API, aage aur bhi hongi.

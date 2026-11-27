@@ -59,6 +59,24 @@ DB       Netflix andar bahut saare DB use kar sakta, Cassandra / NoSQL type shay
          Netflix ka design public nahi, andar kya use karta pata nahi.
 ```
 
+**Dhaancha (tasveer):**
+
+```
+   +--------------+     +------+     +-----------------+     +---------------+     +---------+
+   |  User (app)  | --> |  LB  | --> |  App server     | --> |  Local cache  | --> |  Redis  |
+   +--------------+     +------+     |  (bahut saare)  |     +---------------+     +---------+
+          |                          +-----------------+                                |
+          |                                                                             v
+          |  video                                                          +------------------------+
+          |                                                                 |  DB: Postgres          |
+          v                                                                 |  user, recommendation, |
+   +------------------------------+       +--------------------------+      |  roz kya dekhta        |
+   |  CDN (Netflix ke apne,       | <---- |  S3 jaisa: video yahan   |      |  (ya Neo4j)            |
+   |  Open Connect, paas ke       |       |  (DB me video nahi)      |      +------------------------+
+   |  server pe video)            |       +--------------------------+
+   +------------------------------+
+```
+
 *Technical me:* FR = browse, play / pause, search · NFR = adaptive bitrate (ABR), buffering zero ka vaada nahi · dhaancha = app ka raasta LB -> app servers -> local cache -> Redis; video ka raasta alag: TV seedha CDN (Open Connect dabba) se, uske peeche S3 · Postgres (RDS) = user, list, dekhne ka itihaas (dekhne ki likhai bahut ho to kadam 5c: pehle cache, DB me batch) · Neo4j = graph DB (kaun kis jaisa dekhta).
 
 **API (round me):**

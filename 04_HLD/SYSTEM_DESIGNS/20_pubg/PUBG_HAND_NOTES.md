@@ -89,6 +89,24 @@ DB       likhai bahut (har goli, har kadam ke coordinate, America, India, China,
          Kuch rakhna pada to Redis cache.
 ```
 
+**Dhaancha (tasveer):**
+
+```
+   +--------------------------+   WebSocket     +------+     +------------------------------+
+   |  Client (phone)          | <=============> |  LB  | --> |  PUBG server (kaafi saare)   |
+   |  guddi chala, gaadi      |   dono taraf    +------+     |  decide kare kisne kya kiya  |
+   |  chalayi, goli maari     |   khula taar                 +------------------------------+
+   +--------------------------+                                  |            |            |
+                                                                 v            v            v
+                                                      +-------------+ +-------------+ +----------+
+                                                      |  Cassandra  | |  Postgres   | |  Redis   |
+                                                      |  har goli,  | |  user ki    | |  kuch    |
+                                                      |  har kadam  | |  profile    | |  rakhna  |
+                                                      +-------------+ +-------------+ +----------+
+
+   CDN nahi liya (design me koi aapatti nahi)
+```
+
 *Technical me:* "dono taraf khula taar" = WebSocket, "likhai bahut" = write-heavy DB (Cassandra), "profile" = relational DB (Postgres), "kuch rakhna pade" = cache (Redis).
 
 **API (round me):**

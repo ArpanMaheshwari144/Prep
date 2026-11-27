@@ -60,6 +60,38 @@ Dhaancha User app pe aaya, contest diya, LB, phir bahut saare server.
          Postgres.
 ```
 
+**Dhaancha (tasveer):**
+
+```
+   +-----------------+        +------------------------------+
+   |  User (app)     | -----> |  CDN: HTML / static file     |
+   |  contest diya   |        |  (duniya bhar ka, paas se)   |
+   +-----------------+        +------------------------------+
+            |
+            v
+   +-----------------+
+   |       LB        |
+   +-----------------+
+            |
+            v
+   +-----------------+
+   |  App server     |
+   |  (bahut saare)  |
+   +-----------------+
+            |
+            v
+   +-----------------+        +-----------------+
+   |  Local cache    | -----> |     Redis       |
+   +-----------------+        +-----------------+
+                                       |
+                                       v
+                        +------------------------------+       +--------------+
+                        |  DB: AWS RDS, Postgres (SQL) | ----> |  DB replica  |
+                        |  user id, naam, score,       |       +--------------+
+                        |  kaunsa contest              |
+                        +------------------------------+
+```
+
 *Technical me:* dhaancha = CDN + LB + kai app server + local cache + Redis + RDS Postgres (primary + replica); "consistent, JSON nahi" = row wala data, SQL.
 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**

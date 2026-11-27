@@ -88,6 +88,24 @@ DB       likhai bahut (view, like ek saath) to Cassandra jaisa (ya Google ka apn
          patti = itna aa chuka, net band karo tab bhi utna chalega.
 ```
 
+**Dhaancha (tasveer):**
+
+```
+   +----------------------------+                         +----------------------------+
+   |  User 1: upload bhi,       |                         |  User 2: sirf dekhta       |
+   |  dekhta bhi                |                         |  (jaise main)              |
+   +----------------------------+                         +----------------------------+
+                 | upload                                                         ^  chhote tukde: pehle 4 min,
+                 v                                                                |  phir 5, phir aage
+   +----------------------------+     +-------------------------------+     +-----------------------------+
+   |  Storage box               | --> |  Bahut saare chhotu: tod do   | --> |  CDN (Google ke apne:       |
+   |  (S3 / Google Cloud        |     |  144, 240, 360p -> 480p ->    |     |  Mumbai, Dubai, Europe)     |
+   |   Storage jaisa)           |     |  1080p -> 4K                  |     +-----------------------------+
+   +----------------------------+     +-------------------------------+
+
+   DB: view / like ki likhai = Cassandra jaisa · user + video jaankari = Postgres jaisa (SQL)
+```
+
 **API (round me):** POST upload (main API). GET saari video (home page khola to sab ek saath). Video pe click: POST, phir GET wo ek video. POST view. GET recommendation (bahut video dekh li to suggestion). POST subscribe, phir GET se pata ki subscribe ho gaya. Nayi video aayi to notification: YouTube apni taraf se push karta (fan-out); push ko API me kya kehte, pata nahi tha.
 ```
 API     POST /videos              -> upload (upload ki parchi = presigned URL)
