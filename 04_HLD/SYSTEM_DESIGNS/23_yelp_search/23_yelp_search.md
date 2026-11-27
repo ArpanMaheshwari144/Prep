@@ -38,7 +38,7 @@ FR      1  kuch bhi dhoondho (galat spelling pe bhi), aas-paas ki range me mile 
 NFR     1  band dukaan search me "Closed" dikhe (search thodi der peeche chalega) -> kadam 2
         2  menu / dukaan badle to search me jaldi aaye; event chhoote to raat ki job pakde -> kadam 3
 ```
-**Numbers (Arpan):** Zomato jaisa app India ke shehron me, worldwide nahi. Ek area me 10-20 hazaar log ek saath search,
+**Numbers (Arpan):** Zomato jaisa aas-paas dhoondhne wala app, worldwide nahi (US me). Ek area me 10-20 hazaar log ek saath search,
 itna server sambhal leta; 5 lakh faltu number.
 
 **Dhaancha (tasveer):**
