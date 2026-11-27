@@ -604,36 +604,32 @@ Kul number odd hon to beech wala, even hon to beech ke do ka average. O(log) me 
   kyun: mila ke 1,3,7,8,9,11,15,18,19,21,25 = 11 number -> beech wala (6th) = 11
 ```
 
-### CUT ki tasveer
+### TASVEER + DRY RUN: A=[1,3,8,9,15] (m=5), B=[7,11,18,19,21,25] (n=6) -> 11
 
 ```
-CUT idea (chhote array A pe BS -> Px; Py auto):
-   A:  1  3  8  9 | 15            Px = A-left count (BS ISI pe, chhote array pe)
-   B:  7 11       | 18 19 21 25   Py = (m+n+1)/2 - Px
-   yahan:  Px = 4  (A-left = {1,3,8,9})  = binary-search ka MID jahan cut VALID nikla
-           Py = (11+1)/2 - 4 = 6 - 4 = 2   (B-left = {7,11})
-           [Px = BS variable "mid" hi hai · A[Px-1]=x1 left-kinaara · A[Px]=x3 right-kinaara]
-          x1=9  x3=15
-          x2=11 x4=18
-   |___ LEFT = 6 (half) ___|___ RIGHT = 5 ___|
-```
+1. Px, Py KYUN:  kul 11 number -> LEFT aadhe me (m+n+1)/2 = 6 number chahiye (+1: odd pe left me ek zyada)
+                 A se Px lo, baaki B se:  Py = 6 - Px      ->  BS sirf Px pe (chhote array A pe, 0 .. m)
 
-> [!IMPORTANT]
-> **KYUN sirf 4 number:** sorted -> Px se pehle sab <=x1, aage sab >=x3. har step O(1), Px pe BS = O(log(min(m,n))).
+2. SAHI CUT KAB:  LEFT ke sab <= RIGHT ke sab.
+                 A apne me sorted, B apne me sorted -> sirf CROSS check bacha:
+                    x1 = A ka left aakhri   x3 = A ka right pehla
+                    x2 = B ka left aakhri   x4 = B ka right pehla
+                 x1 <= x4  &&  x2 <= x3   ->  sahi cut
 
-### DRY-RUN (A=[1,3,8,9,15], B=[7,11,18,19,21,25])
+3. LOW AAGE / HIGH PEECHE KYUN:
+                 x2 > x3  ->  B ka left bada, matlab A se KAM liya   ->  A se zyada lo  ->  low  = Px + 1
+                 x1 > x4  ->  A ka left bada, matlab A se ZYADA liya ->  A se kam lo    ->  high = Px - 1
 
-```
-── DRY-RUN (A=[1,3,8,9,15] m=5, B=[7,11,18,19,21,25] n=6, half=6) ──
+DRY RUN (tere code se):  low = 0, high = 5
 
-  TRY Px=2:   A:  1  3 | 8  9  15          x1=3   x3=8
-              B:  7 11 18 19 | 21 25       x2=19  x4=21   (Py=4)
-      x2(19) <= x3(8) ?  NAHI  -> A ne KAM liya -> low = Px+1 = 3
+  Px = 2, Py = 4:   A:  1  3 | 8  9  15            x1 = 3    x3 = 8
+                    B:  7 11 18 19 | 21 25         x2 = 19   x4 = 21
+                    x2 (19) > x3 (8)  ->  A se kam liya  ->  low = 3
 
-  TRY Px=4:   A:  1  3  8  9 | 15          x1=9   x3=15
-              B:  7 11 | 18 19 21 25       x2=11  x4=18   (Py=2)
-      x1(9)<=x4(18)  &&  x2(11)<=x3(15)  -> SAHI cut
-      odd -> median = max(x1,x2) = max(9,11) = 11   ANS=11
+  Px = 4, Py = 2:   A:  1  3  8  9 | 15            x1 = 9    x3 = 15
+                    B:  7 11 | 18 19 21 25         x2 = 11   x4 = 18
+                    9 <= 18  &&  11 <= 15  ->  sahi cut
+                    kul 11 = odd  ->  median = max(x1, x2) = max(9, 11) = 11
 ```
 
 > [!IMPORTANT]
