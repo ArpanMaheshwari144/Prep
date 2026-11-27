@@ -448,34 +448,25 @@ Q: sirf DONO ENDS (front/back) se TOTAL k cards lo -> unka sum MAXIMIZE.
 >
 > (4) taken MAX = untaken MIN -> answer = Total - min.  ("hard" flip ke baad TRIVIAL.)
 
-**DRY RUN (tere code se): [1,2,3,4,5,6,1], k=3 -> 12**
+**DRY RUN: [1,2,3,4,5,6,1], k=3 -> 12**
 ```
 cards:   1  2  3  4  5  6  1          7 card, 3 lene hain, sirf kinaron se      [ ] = liye
 
-TASVEER: 3 card kinaron se lene ke saare tarike
+L - k KYUN:  3 card kinaron se lene ke saare tarike
 
-  tarika 1:  [1  2  3] 4  5  6  1       liye: aage 3              bache: 4 5 6 1
-  tarika 2:  [1  2] 3  4  5  6 [1]      liye: aage 2 + peeche 1   bache: 3 4 5 6
-  tarika 3:  [1] 2  3  4  5 [6  1]      liye: aage 1 + peeche 2   bache: 2 3 4 5
-  tarika 4:   1  2  3  4 [5  6  1]      liye: peeche 3            bache: 1 2 3 4
+  tarika 1:  [1  2  3] 4  5  6  1       bache: 4 5 6 1 = 16    liye = 22 - 16 = 6
+  tarika 2:  [1  2] 3  4  5  6 [1]      bache: 3 4 5 6 = 18    liye = 22 - 18 = 4
+  tarika 3:  [1] 2  3  4  5 [6  1]      bache: 2 3 4 5 = 14    liye = 22 - 14 = 8
+  tarika 4:   1  2  3  4 [5  6  1]      bache: 1 2 3 4 = 10    liye = 22 - 10 = 12   <- sabse bada
 
-  har tarike me BACHE = 7 - 3 = 4 card, aur wo hamesha BEECH me, LAGAATAR   ->  isliye L - k
-  liye ka jod = Total - bache ka jod   ->  liye SABSE BADA chahiye = bache SABSE CHHOTA chahiye
+  har tarike me BACHE = 7 - 3 = 4 card, hamesha BEECH me, LAGAATAR   ->  window size = L - k = 4
 
-  Total = 1+2+3+4+5+6+1 = 22   ->   minSumK(nums, 4)
+MINIMUM KYUN:  liye = Total - bache   ->  liye SABSE BADA tab, jab bache SABSE CHHOTA
 
-minSumK(nums, 4):   sum = 0, minSum = INT_MAX, i = 0
+  minSumK(nums, 4) = upar wala MAX SUM OF K (FIXED) hi hai, bas max ki jagah MIN.
+  yahan isliye aaya: tujhe size 4 ki window ka MINIMUM chahiye = 10
 
-  j  nums[j]  sum += nums[j]  j-i+1   window (bache)    minSum    sum -= nums[i]   i
-  0    1          1             1      -                INT_MAX    -                0
-  1    2          3             2      -                INT_MAX    -                0
-  2    3          6             3      -                INT_MAX    -                0
-  3    4         10             4      [1,2,3,4] = 10     10       - 1  -> 9        1     (tarika 4)
-  4    5         14             4      [2,3,4,5] = 14     10       - 2  -> 12       2     (tarika 3)
-  5    6         18             4      [3,4,5,6] = 18     10       - 3  -> 15       3     (tarika 2)
-  6    1         16             4      [4,5,6,1] = 16     10       - 4  -> 12       4     (tarika 1)
-
-answer = Total - minSum = 22 - 10 = 12   ->  tarika 4: peeche ke 5 + 6 + 1
+answer = Total - minSum = 22 - 10 = 12   (tarika 4: peeche ke 5 + 6 + 1)
 ```
 
 > [!IMPORTANT]
