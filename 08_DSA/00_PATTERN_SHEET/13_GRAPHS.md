@@ -114,16 +114,16 @@ PEHCHAAN EK LINE: shape kuch bhi chalegi -> DFS · seedhi deewar chahiye -> DFS 
 
 ### ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
 
-**SAWAAL**
-```
-n node (0 se n-1), bina disha wale (undirected) edges, ek source aur ek destination diye hain. Kya source se destination tak koi rasta hai? true ya false lautao.
-  e.g. n=6, edges=[[0,1],[0,2],[3,5],[5,4],[4,3]], src=0, dst=5 -> false
-  kyun: 0 ke saath sirf 1,2 jude; 5 alag group {3,4,5} me, beech me koi edge nahi
+**SAWAAL** n node (0 se n-1), bina disha wale (undirected) edges, ek source aur ek destination diye hain. Kya source se destination tak koi rasta hai? true ya false lautao.
 
-  0 --- 1        3 --- 5
-  |               \   /
-  2                 4
-  src 0 ka group {0,1,2}, dst 5 ka group {3,4,5}; beech me koi edge nahi -> false
+- **e.g.** `n=6, edges=[[0,1],[0,2],[3,5],[5,4],[4,3]], src=0, dst=5 -> false`
+- **kyun:** 0 ke saath sirf 1,2 jude; 5 alag group {3,4,5} me, beech me koi edge nahi
+
+```
+0 --- 1        3 --- 5
+|               \   /
+2                 4
+src 0 ka group {0,1,2}, dst 5 ka group {3,4,5}; beech me koi edge nahi -> false
 ```
 
 > [!IMPORTANT]
@@ -167,16 +167,16 @@ bool validPath(int n, vector<vector<int>> &edges, int source, int destination) {
 
 ### ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
 
-**SAWAAL**
-```
-Ek grid di hai jisme '1' = zameen aur '0' = paani. Upar, neeche, daayein, baayein (4 disha) se jude '1' milke ek island bante hain. Kitne island hain, wo ginti lautao.
-  e.g. [[1,1,0],[1,0,0],[0,0,1]] -> 2
-  kyun: (0,0),(0,1),(1,0) ek group; (2,2) akela, uske 4 padosi paani; to 2
+**SAWAAL** Ek grid di hai jisme '1' = zameen aur '0' = paani. Upar, neeche, daayein, baayein (4 disha) se jude '1' milke ek island bante hain. Kitne island hain, wo ginti lautao.
 
-  1 1 0        A A .
-  1 0 0   ->   A . .
-  0 0 1        . . B
-  A aur B do alag tukde (4 disha se jude nahi) -> 2
+- **e.g.** `[[1,1,0],[1,0,0],[0,0,1]] -> 2`
+- **kyun:** (0,0),(0,1),(1,0) ek group; (2,2) akela, uske 4 padosi paani; to 2
+
+```
+1 1 0        A A .
+1 0 0   ->   A . .
+0 0 1        . . B
+A aur B do alag tukde (4 disha se jude nahi) -> 2
 ```
 
 > [!IMPORTANT]
@@ -218,14 +218,14 @@ int numIslands(vector<vector<char>> &grid) {
 
 ### ▸ CONNECTED COMPONENTS (LC-323)  = ISLANDS par ADJ-LIST graph (grid nahi) + BFS
 
-**SAWAAL**
-```
-n node (0 se n-1) aur bina disha wale edges diye hain. Graph me kitne alag-alag group (connected components) hain, wo ginti lautao.
-  e.g. n=5, edges=[[0,1],[1,2],[3,4]] -> 2
-  kyun: {0,1,2} ek group, {3,4} doosra; dono ke beech koi edge nahi
+**SAWAAL** n node (0 se n-1) aur bina disha wale edges diye hain. Graph me kitne alag-alag group (connected components) hain, wo ginti lautao.
 
-  0 --- 1 --- 2        3 --- 4
-  do tukde, beech me koi edge nahi -> 2
+- **e.g.** `n=5, edges=[[0,1],[1,2],[3,4]] -> 2`
+- **kyun:** {0,1,2} ek group, {3,4} doosra; dono ke beech koi edge nahi
+
+```
+0 --- 1 --- 2        3 --- 4
+do tukde, beech me koi edge nahi -> 2
 ```
 
 > [!IMPORTANT]
@@ -272,15 +272,15 @@ int countComponents(int n, vector<vector<int>> &edges) {
 
 ### ▸ MAX AREA OF ISLAND (LC-695)  = Islands, par MAX AREA (count nahi)
 
-**SAWAAL**
-```
-Ek grid di hai jisme 1 = zameen aur 0 = paani (4 disha se jude 1 = ek island). Sabse bade island me kitne cell hain, wo lautao. Koi island na ho to 0.
-  e.g. [[1,1,0],[1,0,0],[0,0,1]] -> 3
-  kyun: island {(0,0),(0,1),(1,0)} = 3 cell, island {(2,2)} = 1 cell; max 3
+**SAWAAL** Ek grid di hai jisme 1 = zameen aur 0 = paani (4 disha se jude 1 = ek island). Sabse bade island me kitne cell hain, wo lautao. Koi island na ho to 0.
 
-  1 1 0        A A .
-  1 0 0   ->   A . .      A = 3 cell, B = 1 cell
-  0 0 1        . . B      kitne island nahi, sabse bade ka SIZE maanga -> 3
+- **e.g.** `[[1,1,0],[1,0,0],[0,0,1]] -> 3`
+- **kyun:** island {(0,0),(0,1),(1,0)} = 3 cell, island {(2,2)} = 1 cell; max 3
+
+```
+1 1 0        A A .
+1 0 0   ->   A . .      A = 3 cell, B = 1 cell
+0 0 1        . . B      kitne island nahi, sabse bade ka SIZE maanga -> 3
 ```
 
 > [!IMPORTANT]
@@ -321,18 +321,17 @@ int maxAreaOfIsland(vector<vector<int>> &grid) {
 
 ### ▸ ROTTING ORANGES (LC-994)  = grid MULTI-SOURCE BFS + levels
 
-**SAWAAL**
-```
-Ek grid me 0 = khaali, 1 = taaza santra, 2 = sada santra. Har minute har sada santra apne 4 taraf ke taaze santron ko sada deta hai.
-Saare santre sadne me kam se kam kitne minute lagenge, wo lautao. Kabhi na sad paayein to -1.
-  e.g. [[2,1,1],[1,1,0],[0,1,1]] -> 4
-  kyun: min 1: (0,1),(1,0) · min 2: (0,2),(1,1) · min 3: (2,1) · min 4: (2,2); sab sad gaye
+**SAWAAL** Ek grid me 0 = khaali, 1 = taaza santra, 2 = sada santra. Har minute har sada santra apne 4 taraf ke taaze santron ko sada deta hai. Saare santre sadne me kam se kam kitne minute lagenge, wo lautao. Kabhi na sad paayein to -1.
 
-  shuru         kis minute me sada
-  2 1 1         0 1 2
-  1 1 0   ->    1 2 .
-  0 1 1         . 3 4
-  sabse der se sadne wala (2,2) minute 4 pe -> 4
+- **e.g.** `[[2,1,1],[1,1,0],[0,1,1]] -> 4`
+- **kyun:** min 1: (0,1),(1,0) · min 2: (0,2),(1,1) · min 3: (2,1) · min 4: (2,2); sab sad gaye
+
+```
+shuru         kis minute me sada
+2 1 1         0 1 2
+1 1 0   ->    1 2 .
+0 1 1         . 3 4
+sabse der se sadne wala (2,2) minute 4 pe -> 4
 ```
 
 > [!IMPORTANT]
@@ -389,17 +388,17 @@ int orangesRotting(vector<vector<int>> &grid) {   // tree LEVEL-ORDER grid pe; h
 
 ### ▸ COURSE SCHEDULE (LC-207)  = TOPO-SORT (Kahn's), cycle-detect
 
-**SAWAAL**
-```
-numCourses courses aur prerequisites diye hain, [a, b] ka matlab: a padhne se pehle b padhna zaroori hai. Kya saare course poore kiye ja sakte hain? true ya false lautao.
-  e.g. numCourses=2, prereq=[[1,0],[0,1]] -> false
-  kyun: 1 ke liye 0 pehle, 0 ke liye 1 pehle = CYCLE; dono ek doosre ka wait karte
+**SAWAAL** numCourses courses aur prerequisites diye hain, [a, b] ka matlab: a padhne se pehle b padhna zaroori hai. Kya saare course poore kiye ja sakte hain? true ya false lautao.
 
-  0 ----> 1
-  ^       |
-  +-------+
-  0 ko 1 chahiye, 1 ko 0 chahiye.
-  Dono ka indegree 1 hai, kisi ka 0 nahi, isliye koi shuru hi nahi ho sakta -> false
+- **e.g.** `numCourses=2, prereq=[[1,0],[0,1]] -> false`
+- **kyun:** 1 ke liye 0 pehle, 0 ke liye 1 pehle = CYCLE; dono ek doosre ka wait karte
+
+```
+0 ----> 1
+^       |
++-------+
+0 ko 1 chahiye, 1 ko 0 chahiye.
+Dono ka indegree 1 hai, kisi ka 0 nahi, isliye koi shuru hi nahi ho sakta -> false
 ```
 
 > [!IMPORTANT]
@@ -443,20 +442,19 @@ bool canFinish(int numCourses, vector<vector<int>> &prerequisites) {
 
 ### ▸ BUILD ORDER — ready me se SABSE CHHOTA pehle  = COURSE SCHEDULE (Kahn's) + queue ki jagah MIN-HEAP
 
-**SAWAAL**
+**SAWAAL** n module hain (0 se n-1). [a -> b] ka matlab: a banne ke baad hi b ban sakta hai. Ek baar me ek hi module banta hai. Jo module ready hain (jinki saari dependency ban chuki), unme se sabse chhote number wala pehle banao. Poora kram lautao. Cycle ho to khaali list.
+
+- **e.g.** `n=4, [0->1]  ->  0 1 2 3`
+- **kyun:** shuru me ready = {0, 2, 3} (1 ko 0 chahiye) -> sabse chhota 0 -> ab 1 bhi ready = {1, 2, 3} -> 1 -> 2 -> 3
+- (queue lagate to 0 2 3 1 aata: 1 baad me ready hua to line me peeche lagta)
+
 ```
-n module hain (0 se n-1). [a -> b] ka matlab: a banne ke baad hi b ban sakta hai. Ek baar me ek hi module banta hai.
-Jo module ready hain (jinki saari dependency ban chuki), unme se sabse chhote number wala pehle banao. Poora kram lautao. Cycle ho to khaali list.
-  e.g. n=4, [0->1]  ->  0 1 2 3
-  kyun: shuru me ready = {0, 2, 3} (1 ko 0 chahiye) -> sabse chhota 0 -> ab 1 bhi ready = {1, 2, 3} -> 1 -> 2 -> 3
-  (queue lagate to 0 2 3 1 aata: 1 baad me ready hua to line me peeche lagta)
+0 ----> 1        2        3
+(1 ko 0 chahiye, 2 aur 3 pe koi shart nahi)
 
-  0 ----> 1        2        3
-  (1 ko 0 chahiye, 2 aur 3 pe koi shart nahi)
-
-  ready   = {0, 2, 3}   -> sabse chhota 0 bano
-  0 bana  -> 1 bhi ready = {1, 2, 3} -> 1 -> 2 -> 3
-  ans     = 0 1 2 3
+ready   = {0, 2, 3}   -> sabse chhota 0 bano
+0 bana  -> 1 bhi ready = {1, 2, 3} -> 1 -> 2 -> 3
+ans     = 0 1 2 3
 ```
 
 > [!IMPORTANT]
@@ -502,16 +500,16 @@ vector<int> buildOrder(int n, vector<vector<int>> &deps) {
 
 ### ▸ CLONE GRAPH (LC-133)  = BFS/DFS + map(old->new)
 
-**SAWAAL**
-```
-Ek juda hua (connected), bina disha wala graph ka ek node diya hai. Poore graph ki nayi copy (deep copy) banao: naye node aur naye neighbours, aur copy ka wahi node lautao.
-  e.g. adjList [[2,4],[1,3],[2,4],[1,3]] -> [[2,4],[1,3],[2,4],[1,3]] (sab naye node)
-  kyun: square 1-2-3-4-1; har node ka naya clone, aur clone ke neighbours bhi clone hi, purane nahi
+**SAWAAL** Ek juda hua (connected), bina disha wala graph ka ek node diya hai. Poore graph ki nayi copy (deep copy) banao: naye node aur naye neighbours, aur copy ka wahi node lautao.
 
-  purana:  1 --- 2        copy:  1' --- 2'
-           |     |               |      |
-           4 --- 3               4' --- 3'
-  copy ke node naye; 1' ke padosi 2', 4' (purane 2, 4 nahi)
+- **e.g.** `adjList [[2,4],[1,3],[2,4],[1,3]] -> [[2,4],[1,3],[2,4],[1,3]] (sab naye node)`
+- **kyun:** square 1-2-3-4-1; har node ka naya clone, aur clone ke neighbours bhi clone hi, purane nahi
+
+```
+purana:  1 --- 2        copy:  1' --- 2'
+         |     |               |      |
+         4 --- 3               4' --- 3'
+copy ke node naye; 1' ke padosi 2', 4' (purane 2, 4 nahi)
 ```
 
 **SAAR**
@@ -563,12 +561,10 @@ Node *cloneGraph(Node *node) {
 
 ### ▸ IS BIPARTITE (LC-785)  = 2-colour BFS + outer-loop (CC jaisa)
 
-**SAWAAL**
-```
-Adjacency list wala graph diya hai. Kya saare nodes ko do group me aise baant sakte hain ki har edge ke dono sire alag group me hon? true ya false lautao.
-  e.g. [[1,2,3],[0,2],[0,1,3],[0,2]] -> false
-  kyun: 0-1-2 triangle: 0 red, 1 blue, 2 dono ka padosi, koi rang nahi bachta
-```
+**SAWAAL** Adjacency list wala graph diya hai. Kya saare nodes ko do group me aise baant sakte hain ki har edge ke dono sire alag group me hon? true ya false lautao.
+
+- **e.g.** `[[1,2,3],[0,2],[0,1,3],[0,2]] -> false`
+- **kyun:** 0-1-2 triangle: 0 red, 1 blue, 2 dono ka padosi, koi rang nahi bachta
 
 **SAAR**
 ```
@@ -630,20 +626,20 @@ bool isBipartite(vector<vector<int>> &graph) {
 
 ### ▸ DIJKSTRA  = BFS template + 2 swap + relaxation
 
-**SAWAAL**
-```
-n node, bina disha wale weight wale edges {u, v, w} aur ek source diya hai. Source se har node tak pahunchne ka sabse kam kul weight lautao.
-  e.g. n=4, edges 0-1(4), 0-2(1), 1-2(2), 1-3(1), 2-3(5), src=0 -> [0,3,1,4]
-  kyun: node 1: seedha 4 se sasta 0->2->1 = 3; node 3: 0->2->1->3 = 4 (0->2->3 = 6)
+**SAWAAL** n node, bina disha wale weight wale edges {u, v, w} aur ek source diya hai. Source se har node tak pahunchne ka sabse kam kul weight lautao.
 
-         4
-    0 ------- 1
-    |       / |
-   1|    2/   |1
-    |   /     |
-    2 ------- 3
-         5
-  kam edge != kam weight: 0->1 seedha 4, ghoom ke 0->2->1 = 3 -> dist = [0,3,1,4]
+- **e.g.** `n=4, edges 0-1(4), 0-2(1), 1-2(2), 1-3(1), 2-3(5), src=0 -> [0,3,1,4]`
+- **kyun:** node 1: seedha 4 se sasta 0->2->1 = 3; node 3: 0->2->1->3 = 4 (0->2->3 = 6)
+
+```
+       4
+  0 ------- 1
+  |       / |
+ 1|    2/   |1
+  |   /     |
+  2 ------- 3
+       5
+kam edge != kam weight: 0->1 seedha 4, ghoom ke 0->2->1 = 3 -> dist = [0,3,1,4]
 ```
 
 > [!IMPORTANT]
@@ -711,15 +707,15 @@ vector<int> dijkstra(int n, vector<vector<int>> &edges, int src) {
 
 ### ▸ DSU (Union-Find)  = parent[] + find + unite
 
-**SAWAAL**
-```
-n node (0 se n-1) aur bina disha wale edges diye hain. Union-Find (DSU) se batao ki kitne alag group hain.
-  e.g. n=5, edges=[[0,1],[1,2],[3,4]] -> 2
-  kyun: unite 0-1, 1-2 -> ek leader; 3-4 -> doosra leader; parent[i]==i wale 2 bache
+**SAWAAL** n node (0 se n-1) aur bina disha wale edges diye hain. Union-Find (DSU) se batao ki kitne alag group hain.
 
-  0 --- 1 --- 2        3 --- 4
-  leader 0              leader 3
-  parent[i] == i sirf 0 aur 3 ka -> 2 group
+- **e.g.** `n=5, edges=[[0,1],[1,2],[3,4]] -> 2`
+- **kyun:** unite 0-1, 1-2 -> ek leader; 3-4 -> doosra leader; parent[i]==i wale 2 bache
+
+```
+0 --- 1 --- 2        3 --- 4
+leader 0              leader 3
+parent[i] == i sirf 0 aur 3 ka -> 2 group
 ```
 
 > [!IMPORTANT]
@@ -778,13 +774,10 @@ int countComponents(int n, vector<vector<int>> &edges) {
 
 ### ▸ WORD LADDER (LC-127)  = BFS shortest-path (unweighted)
 
-**SAWAAL**
-```
-beginWord, endWord aur ek wordList di hai. Har kadam pe sirf ek akshar badal sakte ho, aur beech ka har word wordList me hona chahiye.
-beginWord se endWord tak sabse chhote raste me kitne word aate hain (beginWord bhi gino), wo lautao. Na pahunch sako to 0.
-  e.g. hit -> cog, list=[hot,dot,dog,lot,log,cog] -> 5
-  kyun: hit -> hot -> dot -> dog -> cog = 5 word (begin aur end dono gine)
-```
+**SAWAAL** beginWord, endWord aur ek wordList di hai. Har kadam pe sirf ek akshar badal sakte ho, aur beech ka har word wordList me hona chahiye. beginWord se endWord tak sabse chhote raste me kitne word aate hain (beginWord bhi gino), wo lautao. Na pahunch sako to 0.
+
+- **e.g.** `hit -> cog, list=[hot,dot,dog,lot,log,cog] -> 5`
+- **kyun:** hit -> hot -> dot -> dog -> cog = 5 word (begin aur end dono gine)
 
 ### EXAMPLE (hit -> cog, level-wise)
 

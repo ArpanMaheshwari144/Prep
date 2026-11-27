@@ -22,13 +22,10 @@
 
 ### ▸ PIVOT INDEX
 
-**SAWAAL**
-```
-Ek array diya hai. Wo pehla index lautao jahan uske baayi taraf ke sabhi numbers ka jod, daayi taraf ke sabhi numbers ke jod ke barabar ho.
-Us index ka apna number kisi bhi taraf nahi gina jaata. Aisa index na mile to -1.
-  e.g. [1,7,3,6,5,6] -> 3
-  kyun: index 3 (6): left 1+7+3 = 11, right 5+6 = 11
-```
+**SAWAAL** Ek array diya hai. Wo pehla index lautao jahan uske baayi taraf ke sabhi numbers ka jod, daayi taraf ke sabhi numbers ke jod ke barabar ho. Us index ka apna number kisi bhi taraf nahi gina jaata. Aisa index na mile to -1.
+
+- **e.g.** `[1,7,3,6,5,6] -> 3`
+- **kyun:** index 3 (6): left 1+7+3 = 11, right 5+6 = 11
 
 > [!IMPORTANT]
 > **CHAABI:** pehle `totalSum`; har i pe `rightSum = totalSum - leftSum - nums[i]`, `leftSum == rightSum` to i lautao.
@@ -58,13 +55,10 @@ int pivotIndex(vector<int> &nums) {         // index jahan left sum == right sum
 
 ### ▸ PRODUCT EXCEPT SELF (LC-238)  = PIVOT jaisa "assign PEHLE, update BAAD", 2 pass
 
-**SAWAAL**
-```
-Ek array diya hai. Har index i ke liye ans[i] = baaki sabhi numbers ka guna (nums[i] ko chhod ke).
-Bhaag (division) nahi lagana, O(n) me karna hai.
-  e.g. [1,2,3,4] -> [24,12,8,6]
-  kyun: ans[1] = left 1 x right 3x4=12 -> 12; ans[0] = 2x3x4 = 24
-```
+**SAWAAL** Ek array diya hai. Har index i ke liye ans[i] = baaki sabhi numbers ka guna (nums[i] ko chhod ke). Bhaag (division) nahi lagana, O(n) me karna hai.
+
+- **e.g.** `[1,2,3,4] -> [24,12,8,6]`
+- **kyun:** ans[1] = left 1 x right 3x4=12 -> 12; ans[0] = 2x3x4 = 24
 
 > [!IMPORTANT]
 > **CHAABI:** `ans[i] = left[i] * right[i]`.
@@ -104,12 +98,10 @@ vector<int> productExceptSelf(vector<int> &nums) {
 
 ### ▸ HIGHEST ALTITUDE  = running sum + max (simple prefix)
 
-**SAWAAL**
-```
-Ek cyclist 0 altitude se shuru karta hai. gain[i] batata hai ki agle point tak altitude kitni badhi ya ghati. Raste me sabse unchi altitude kitni thi, wo lautao.
-  e.g. [-5,1,5,0,-7] -> 1
-  kyun: altitude 0, -5, -4, 1, 1, -6 -> max 1
-```
+**SAWAAL** Ek cyclist 0 altitude se shuru karta hai. gain[i] batata hai ki agle point tak altitude kitni badhi ya ghati. Raste me sabse unchi altitude kitni thi, wo lautao.
+
+- **e.g.** `[-5,1,5,0,-7] -> 1`
+- **kyun:** altitude 0, -5, -4, 1, 1, -6 -> max 1
 
 > [!IMPORTANT]
 > **CHAABI:** running sum chalao, har kadam `maxi = max(maxi, sum)`.
@@ -134,12 +126,10 @@ int largestAltitude(vector<int> &gain) {    // running sum chalao, max track (si
 
 ### ▸ SUBARRAY SUMS DIVISIBLE BY K (LC-974)  = SUBARRAY-SUM-K + REMAINDER-key
 
-**SAWAAL**
-```
-Ek array (plus aur minus dono) aur ek number k diya hai. Kitne lagaatar subarray hain jinka jod k se poora kat jaaye (sum % k == 0), wo ginti lautao.
-  e.g. [1,2,3], k=3 -> 3
-  kyun: [3]=3, [1,2]=3, [1,2,3]=6 -> teeno 3 se divide; [1],[2],[2,3]=5 nahi
-```
+**SAWAAL** Ek array (plus aur minus dono) aur ek number k diya hai. Kitne lagaatar subarray hain jinka jod k se poora kat jaaye (sum % k == 0), wo ginti lautao.
+
+- **e.g.** `[1,2,3], k=3 -> 3`
+- **kyun:** [3]=3, [1,2]=3, [1,2,3]=6 -> teeno 3 se divide; [1],[2],[2,3]=5 nahi
 
 > [!IMPORTANT]
 > **CHAABI:** SUBARRAY-SUM-K ka code, bas key = `rem` (sum ki jagah): same remainder wale do prefix ka beech `% k == 0`.
@@ -170,12 +160,10 @@ int subarraysDivByK(vector<int> &nums, int k) {   // count subarrays jinka sum %
 
 ### ▸ COUNT SUBARRAYS WITH XOR = K  = SUBARRAY-SUM-K, bas + ki jagah ^
 
-**SAWAAL**
-```
-Ek array aur ek number k diya hai. Kitne lagaatar subarray hain jinke saare numbers ka XOR theek k ke barabar ho, wo ginti lautao.
-  e.g. [4,2,2,6,4], k=6 -> 4
-  kyun: [4,2]=6, [2,2,6]=6, [6]=6, [4,2,2,6,4]=6 (4^4 aur 2^2 kat gaye) = 4
-```
+**SAWAAL** Ek array aur ek number k diya hai. Kitne lagaatar subarray hain jinke saare numbers ka XOR theek k ke barabar ho, wo ginti lautao.
+
+- **e.g.** `[4,2,2,6,4], k=6 -> 4`
+- **kyun:** [4,2]=6, [2,2,6]=6, [6]=6, [4,2,2,6,4]=6 (4^4 aur 2^2 kat gaye) = 4
 
 > [!IMPORTANT]
 > **x ^ x = 0** (same number khud se XOR = gayab)
@@ -207,16 +195,14 @@ int subarrayXorK(vector<int> &nums, int k) {
 
 ### ▸ COUNT SUBARRAYS WITH MAX == K  = BOUNDARY-index (2 pointer track, NO stack/SW)
 
-**SAWAAL**
-```
-Ek array aur ek number K diya hai. Kitne lagaatar subarray hain jinka sabse bada number theek K ho (na zyada, na kam), wo ginti lautao.
-  e.g. [8,2,1,3,4,5,1,10], K=3 -> 3
-  kyun: [2,1,3], [1,3], [3]; 8 aur 4 K se bade = deewar, unhe chhoo nahi sakte
-  e.g. [3,1,5,3,2], K=3 -> 4
-  kyun: 5 = deewar, array do kamron me toota: [3,1] aur [3,2].
-        pehle kamre se [3], [3,1]; doosre se [3], [3,2]  (= 4). [1] aur [2] me 3 hai hi nahi, max kam.
-        koi tukda deewar ke paar nahi jaata -> window chhoti-badi karne ka sawaal hi nahi, har kamra alag gino.
-```
+**SAWAAL** Ek array aur ek number K diya hai. Kitne lagaatar subarray hain jinka sabse bada number theek K ho (na zyada, na kam), wo ginti lautao.
+
+- **e.g.** `[8,2,1,3,4,5,1,10], K=3 -> 3`
+- **kyun:** [2,1,3], [1,3], [3]; 8 aur 4 K se bade = deewar, unhe chhoo nahi sakte
+- **e.g.** `[3,1,5,3,2], K=3 -> 4`
+- **kyun:** 5 = deewar, array do kamron me toota: [3,1] aur [3,2].
+- pehle kamre se [3], [3,1]; doosre se [3], [3,2]  (= 4). [1] aur [2] me 3 hai hi nahi, max kam.
+- koi tukda deewar ke paar nahi jaata -> window chhoti-badi karne ka sawaal hi nahi, har kamra alag gino.
 
 > [!WARNING]
 > **★ EDGE:**
@@ -284,13 +270,10 @@ long long countSubarraysMaxK(vector<int> &arr, int K) {
 
 ### ▸ DIFFERENCE ARRAY / RANGE UPDATE (LC-1109 Corporate Flight Bookings)  = prefix-sum ka ULTA · SWEEP-LINE (MEETING ROOMS II) ka sagaa bhai
 
-**SAWAAL**
-```
-n flights hain (1 se n). Har booking [first, last, seats] ka matlab: first se last tak har flight me itni seats book hui.
-Saari bookings ke baad har flight ki kul booked seats ka array lautao.
-  e.g. n=5, [[1,2,10],[2,3,20],[2,5,25]] -> [10,55,45,25,25]
-  kyun: flight 2 = 10+20+25 = 55; flight 3 = 20+25 = 45; flight 4, 5 = sirf 25
-```
+**SAWAAL** n flights hain (1 se n). Har booking [first, last, seats] ka matlab: first se last tak har flight me itni seats book hui. Saari bookings ke baad har flight ki kul booked seats ka array lautao.
+
+- **e.g.** `n=5, [[1,2,10],[2,3,20],[2,5,25]] -> [10,55,45,25,25]`
+- **kyun:** flight 2 = 10+20+25 = 55; flight 3 = 20+25 = 45; flight 4, 5 = sirf 25
 
 > [!IMPORTANT]
 > **CHAABI:** sirf DO nishaan: `diff[start] += count`, `diff[end + 1] -= count`. Phir ek baar chalti-sum (`cummSum += diff[i]`) = har flight ka jawab.

@@ -17,13 +17,10 @@
 
 ### ▸ MOVE ZEROES
 
-**SAWAAL**
-```
-Ek array diya hai. Saare 0 ko array ke end me bhejna hai, aur baaki numbers jis kram me the usi kram me rehne chahiye.
-Naya array nahi banana, isi array me badlaav karna hai (in-place).
-  e.g. [0,1,0,3,12] -> [1,3,12,0,0]
-  kyun: non-zero 1,3,12 usi kram me aage aa gaye, dono 0 peeche
-```
+**SAWAAL** Ek array diya hai. Saare 0 ko array ke end me bhejna hai, aur baaki numbers jis kram me the usi kram me rehne chahiye. Naya array nahi banana, isi array me badlaav karna hai (in-place).
+
+- **e.g.** `[0,1,0,3,12] -> [1,3,12,0,0]`
+- **kyun:** non-zero 1,3,12 usi kram me aage aa gaye, dono 0 peeche
 
 > [!IMPORTANT]
 > **CHAABI:** `slow` = agli jagah jahan non-zero rakhna, `fast` scan. Non-zero mila -> `swap(nums[slow], nums[fast])` + `slow++`.
@@ -51,13 +48,10 @@ void moveZeroes(vector<int> &nums) {
 
 ### ▸ REMOVE DUP (SORTED)  = MOVE ZEROES ka bhai (yahan slow++ PEHLE, overwrite BAAD)
 
-**SAWAAL**
-```
-Ek SORTED array diya hai jisme kuch number dohraye gaye hain. Har number sirf ek baar rakhna hai, isi array me (in-place).
-Kitne unique number bache (k), wo lautao. Array ke pehle k khaane me wahi unique number hone chahiye.
-  e.g. [0,0,1,1,1,2,2,3,3,4] -> k=5, [0,1,2,3,4,...]
-  kyun: alag numbers sirf 0,1,2,3,4 = 5. sorted hai to dohra hamesha bagal me hota
-```
+**SAWAAL** Ek SORTED array diya hai jisme kuch number dohraye gaye hain. Har number sirf ek baar rakhna hai, isi array me (in-place). Kitne unique number bache (k), wo lautao. Array ke pehle k khaane me wahi unique number hone chahiye.
+
+- **e.g.** `[0,0,1,1,1,2,2,3,3,4] -> k=5, [0,1,2,3,4,...]`
+- **kyun:** alag numbers sirf 0,1,2,3,4 = 5. sorted hai to dohra hamesha bagal me hota
 
 > [!IMPORTANT]
 > **CHAABI:** `slow` = last UNIQUE ka index. `nums[slow] != nums[fast]` -> naya unique: `slow++` + `nums[slow] = nums[fast]`.
@@ -86,13 +80,10 @@ int removeDuplicates(vector<int> &nums) {
 
 ### ▸ REMOVE ELEMENT  = MOVE ZEROES ka bhai (write PEHLE, slow++ BAAD)
 
-**SAWAAL**
-```
-Ek array aur ek number val diya hai. Array me se val ke saare number hatane hain, isi array me (in-place).
-Kitne number bache (k), wo lautao. Pehle k khaane me val nahi hona chahiye, unka kram kuch bhi chalega.
-  e.g. [0,1,2,2,3,0,4,2], val=2 -> k=5, {0,1,3,0,4}
-  kyun: teen 2 hate, baaki 5 bache
-```
+**SAWAAL** Ek array aur ek number val diya hai. Array me se val ke saare number hatane hain, isi array me (in-place). Kitne number bache (k), wo lautao. Pehle k khaane me val nahi hona chahiye, unka kram kuch bhi chalega.
+
+- **e.g.** `[0,1,2,2,3,0,4,2], val=2 -> k=5, {0,1,3,0,4}`
+- **kyun:** teen 2 hate, baaki 5 bache
 
 > [!IMPORTANT]
 > **CHAABI:** `nums[fast] != val` -> `nums[slow] = nums[fast]` + `slow++` (move zeroes jaisa). `val` mila to sirf `fast++`.
@@ -120,12 +111,10 @@ int removeElement(vector<int> &nums, int val) {
 
 ### ▸ VALID PALINDROME (SIMPLE)
 
-**SAWAAL**
-```
-Ek string di hai jisme sirf chhote akshar (lowercase) hain. Batao ki ye aage se aur peeche se ek jaisi padhi jaati hai ya nahi (palindrome). true ya false lautao.
-  e.g. "racecar" -> true   "abca" -> false
-  kyun: abca: pehla 'a' = aakhri 'a', par 'b' != 'c'
-```
+**SAWAAL** Ek string di hai jisme sirf chhote akshar (lowercase) hain. Batao ki ye aage se aur peeche se ek jaisi padhi jaati hai ya nahi (palindrome). true ya false lautao.
+
+- **e.g.** `"racecar" -> true   "abca" -> false`
+- **kyun:** abca: pehla 'a' = aakhri 'a', par 'b' != 'c'
 
 > [!IMPORTANT]
 > **CHAABI:** `left`/`right` dono chhor se andar, `s[left] != s[right]` pe turant false.
@@ -153,13 +142,10 @@ bool isPalindrome(string s) {               // sirf lowercase letters wala aasan
 
 ### ▸ VALID PALINDROME (FULL, LC-125)  = SIMPLE wala + sirf alnum, case ignore
 
-**SAWAAL**
-```
-Ek string di hai jisme kuch bhi ho sakta hai: space, comma, bade akshar, digit. Sirf letter aur digit gino, aur bade-chhote akshar ko ek jaisa maano.
-Inhe gin ke string palindrome banti hai ya nahi, true ya false lautao.
-  e.g. "A man, a plan, a canal: Panama" -> true     "race a car" -> false
-  kyun: filter + lower = "amanaplanacanalpanama" (palindrome) · "raceacar" (nahi)
-```
+**SAWAAL** Ek string di hai jisme kuch bhi ho sakta hai: space, comma, bade akshar, digit. Sirf letter aur digit gino, aur bade-chhote akshar ko ek jaisa maano. Inhe gin ke string palindrome banti hai ya nahi, true ya false lautao.
+
+- **e.g.** `"A man, a plan, a canal: Panama" -> true     "race a car" -> false`
+- **kyun:** filter + lower = "amanaplanacanalpanama" (palindrome) · "raceacar" (nahi)
 
 > [!IMPORTANT]
 > **CHAABI:** 4 branch: `tolower` match -> dono andar · left alnum nahi -> `left++` · right alnum nahi -> `right--` · dono alnum PAR alag -> false.
@@ -193,12 +179,10 @@ bool isPalindrome(string s) {               // mixed char: sirf alnum ginna, cas
 
 ### ▸ VALID PALINDROME II  = SIMPLE wala + mismatch pe EK delete (left YA right)
 
-**SAWAAL**
-```
-Ek string di hai. Batao ki ye palindrome hai, ya zyada se zyada EK akshar hata ke palindrome ban sakti hai. true ya false lautao.
-  e.g. "abca" -> true    "abc" -> false
-  kyun: abca se 'c' hatao -> "aba". abc se koi bhi ek hatao, palindrome nahi banta
-```
+**SAWAAL** Ek string di hai. Batao ki ye palindrome hai, ya zyada se zyada EK akshar hata ke palindrome ban sakti hai. true ya false lautao.
+
+- **e.g.** `"abca" -> true    "abc" -> false`
+- **kyun:** abca se 'c' hatao -> "aba". abc se koi bhi ek hatao, palindrome nahi banta
 
 > [!IMPORTANT]
 > **CHAABI:** pehle mismatch pe do raaste: `isPalindrome(s, left + 1, right) || isPalindrome(s, left, right - 1)`. Koi mismatch nahi -> true.
@@ -233,12 +217,10 @@ bool validPalindrome(string s) {            // palindrome YA ek char delete kark
 
 ### ▸ REVERSE VOWELS
 
-**SAWAAL**
-```
-Ek string di hai. Usme sirf vowels (a e i o u, bade bhi) ka kram ulta karna hai. Baaki saare akshar apni jagah pe hi rehne chahiye. Nayi string lautao.
-  e.g. "hello" -> "holle"
-  kyun: vowels e, o -> ulte o, e. h l l jahan the wahin
-```
+**SAWAAL** Ek string di hai. Usme sirf vowels (a e i o u, bade bhi) ka kram ulta karna hai. Baaki saare akshar apni jagah pe hi rehne chahiye. Nayi string lautao.
+
+- **e.g.** `"hello" -> "holle"`
+- **kyun:** vowels e, o -> ulte o, e. h l l jahan the wahin
 
 > [!IMPORTANT]
 > **CHAABI:** dono vowel -> swap + dono andar; left vowel nahi -> `left++`; warna `right--`.
@@ -278,26 +260,25 @@ string reverseVowels(string s) {            // sirf vowels aapas me ulte, baaki 
 
 ### ▸ CONTAINER MOST WATER
 
-**SAWAAL**
-```
-height[] me khadi lines ki unchai di hai. Koi bhi do line chuno. Unke beech jitna paani rukega wo = chhoti line ki unchai x dono ke beech ki doori.
-Sabse zyada kitna paani rok sakte ho, wo lautao.
-  e.g. [1,8,6,2,5,4,8,3,7] -> 49
-  kyun: index 1 (8) aur index 8 (7): min 7 x doori 7 = 49
+**SAWAAL** height[] me khadi lines ki unchai di hai. Koi bhi do line chuno. Unke beech jitna paani rukega wo = chhoti line ki unchai x dono ke beech ki doori. Sabse zyada kitna paani rok sakte ho, wo lautao.
 
-  unchai
-    8 |     #              #
-    7 |     #  ~  ~  ~  ~  #  ~  #        # = line   ~ = ruka paani
-    6 |     #  #  ~  ~  ~  #  ~  #
-    5 |     #  #  ~  #  ~  #  ~  #
-    4 |     #  #  ~  #  #  #  ~  #
-    3 |     #  #  ~  #  #  #  #  #
-    2 |     #  #  #  #  #  #  #  #
-    1 |  #  #  #  #  #  #  #  #  #
-       +---------------------------
-  index  0  1  2  3  4  5  6  7  8
-  sirf do line (1 aur 8) chuni, beech wali lines paani nahi rokti (wo bas khadi hain).
-  paani chhoti line (7) tak hi rukta, upar se bah jaata -> 7 x 7 = 49
+- **e.g.** `[1,8,6,2,5,4,8,3,7] -> 49`
+- **kyun:** index 1 (8) aur index 8 (7): min 7 x doori 7 = 49
+
+```
+unchai
+  8 |     #              #
+  7 |     #  ~  ~  ~  ~  #  ~  #        # = line   ~ = ruka paani
+  6 |     #  #  ~  ~  ~  #  ~  #
+  5 |     #  #  ~  #  ~  #  ~  #
+  4 |     #  #  ~  #  #  #  ~  #
+  3 |     #  #  ~  #  #  #  #  #
+  2 |     #  #  #  #  #  #  #  #
+  1 |  #  #  #  #  #  #  #  #  #
+     +---------------------------
+index  0  1  2  3  4  5  6  7  8
+sirf do line (1 aur 8) chuni, beech wali lines paani nahi rokti (wo bas khadi hain).
+paani chhoti line (7) tak hi rukta, upar se bah jaata -> 7 x 7 = 49
 ```
 
 > [!IMPORTANT]
@@ -330,13 +311,10 @@ int maxArea(vector<int> &height) {
 
 ### ▸ TWO SUM II (SORTED)  = left/right by-VALUE (unsorted two sum = hashmap)
 
-**SAWAAL**
-```
-Ek SORTED array aur ek target diya hai. Wo do number dhoondho jinka jod target ke barabar ho, aur unke index lautao.
-Index 1 se gine jaate hain (1-based), 0 se nahi.
-  e.g. [2,7,11,15], target=9 -> [1,2]
-  kyun: 2 + 7 = 9, wo 1st aur 2nd number hain
-```
+**SAWAAL** Ek SORTED array aur ek target diya hai. Wo do number dhoondho jinka jod target ke barabar ho, aur unke index lautao. Index 1 se gine jaate hain (1-based), 0 se nahi.
+
+- **e.g.** `[2,7,11,15], target=9 -> [1,2]`
+- **kyun:** 2 + 7 = 9, wo 1st aur 2nd number hain
 
 > [!IMPORTANT]
 > **CHAABI:** SORTED -> `left`/`right`: jod chhota -> `left++`, bada -> `right--`.
@@ -365,12 +343,10 @@ vector<int> twoSum(vector<int> &nums, int target) {   // UNSORTED two sum = hash
 
 ### ▸ SUM OF SQUARE NUMBERS  = TWO SUM II jaisa (2 number ki jodi), low=0 high=sqrt(c)
 
-**SAWAAL**
-```
-Ek number c diya hai. Batao ki kya aise do poore number a aur b hain jinke liye a*a + b*b = c ho. true ya false lautao.
-  e.g. 5 -> true    3 -> false
-  kyun: 5 = 1*1 + 2*2. 3 kisi bhi do square ka jod nahi
-```
+**SAWAAL** Ek number c diya hai. Batao ki kya aise do poore number a aur b hain jinke liye a\*a + b\*b = c ho. true ya false lautao.
+
+- **e.g.** `5 -> true    3 -> false`
+- **kyun:** 5 = 1\*1 + 2\*2. 3 kisi bhi do square ka jod nahi
 
 > [!IMPORTANT]
 > **CHAABI:** 2 number ki jodi = two pointer: `low = 0, high = sqrt(c)`; `low*low + high*high` chhota -> `low++`, bada -> `high--`.
@@ -400,13 +376,10 @@ bool judgeSquareSum(long long c) {          // a² + b² == c ? (LC 633) 2 numbe
 
 ### ▸ SQUARES OF SORTED ARR
 
-**SAWAAL**
-```
-Ek SORTED array diya hai jisme minus number bhi ho sakte hain. Har number ka square nikaalo, aur jawab wala array bhi sorted hona chahiye.
-Dobara sort() nahi lagana, ek hi baar me (O(n)) karna hai.
-  e.g. [-4,-1,0,3,10] -> [0,1,9,16,100]
-  kyun: -4 ka square 16 hai, isliye sabse bade square dono SIRE pe hote, beech me nahi
-```
+**SAWAAL** Ek SORTED array diya hai jisme minus number bhi ho sakte hain. Har number ka square nikaalo, aur jawab wala array bhi sorted hona chahiye. Dobara sort() nahi lagana, ek hi baar me (O(n)) karna hai.
+
+- **e.g.** `[-4,-1,0,3,10] -> [0,1,9,16,100]`
+- **kyun:** -4 ka square 16 hai, isliye sabse bade square dono SIRE pe hote, beech me nahi
 
 > [!IMPORTANT]
 > **CHAABI:** sabse BADA square dono chhor pe (negative) -> peeche se bharo: `k = n - 1`, jo square bada wo `ans[k]`, `k--`.
@@ -441,17 +414,16 @@ vector<int> sortedSquares(vector<int> &nums) {   // sabse BADA square dono chhor
 
 ### ▸ MERGE SORTED ARRAY  = SQUARES jaisa fill-from-END
 
-**SAWAAL**
-```
-Do sorted array hain. nums1 me pehle m asli number hain aur peeche n khaali jagah (0). nums2 me n number hain.
-nums2 ko nums1 me hi milana hai (in-place), taaki poora nums1 sorted ho jaaye.
-  e.g. nums1=[1,2,3,0,0,0] m=3, nums2=[2,5,6] -> nums1=[1,2,2,3,5,6]
-  kyun: peeche se bharo (khaali jagah peeche hai), sabse bada pehle rakh do
+**SAWAAL** Do sorted array hain. nums1 me pehle m asli number hain aur peeche n khaali jagah (0). nums2 me n number hain. nums2 ko nums1 me hi milana hai (in-place), taaki poora nums1 sorted ho jaaye.
 
-  nums1:  1  2  3  _  _  _      _ = khaali jagah (abhi 0 likha, m=3 ke baad n=3)
-  nums2:  2  5  6
-  peeche se rakhte gaye: 6, 5, 3, 2, 2, 1
-  nums1:  1  2  2  3  5  6      naya array nahi bana, nums1 hi bhar gaya
+- **e.g.** `nums1=[1,2,3,0,0,0] m=3, nums2=[2,5,6] -> nums1=[1,2,2,3,5,6]`
+- **kyun:** peeche se bharo (khaali jagah peeche hai), sabse bada pehle rakh do
+
+```
+nums1:  1  2  3  _  _  _      _ = khaali jagah (abhi 0 likha, m=3 ke baad n=3)
+nums2:  2  5  6
+peeche se rakhte gaye: 6, 5, 3, 2, 2, 1
+nums1:  1  2  2  3  5  6      naya array nahi bana, nums1 hi bhar gaya
 ```
 
 > [!IMPORTANT]
@@ -496,12 +468,9 @@ void merge(vector<int> &nums1, int m, vector<int> &nums2, int n) {   // nums1 ke
 
 ### ▸ SORT COLORS (0,1,2)
 
-**SAWAAL**
-```
-Ek array me sirf 0, 1 aur 2 hain. Inhe isi array me sort karna hai (pehle saare 0, phir 1, phir 2).
-sort() nahi lagana, ek hi pass me karna hai.
-  e.g. [2,0,2,1,1,0] -> [0,0,1,1,2,2]
-```
+**SAWAAL** Ek array me sirf 0, 1 aur 2 hain. Inhe isi array me sort karna hai (pehle saare 0, phir 1, phir 2). sort() nahi lagana, ek hi pass me karna hai.
+
+- **e.g.** `[2,0,2,1,1,0] -> [0,0,1,1,2,2]`
 
 > [!IMPORTANT]
 > **CHAABI:** 3 pointer: 0 -> `swap(low, mid)`, `low++ mid++` · 1 -> `mid++` · 2 -> `swap(mid, high)`, `high--` (mid wahin).
@@ -537,11 +506,9 @@ void sortColors(vector<int> &nums) {        // Dutch flag, 3 pointer
 
 ### ▸ SORT ARRAY BY PARITY  = SORT COLORS ka 2-category wala (left/right swap)
 
-**SAWAAL**
-```
-Ek array diya hai. Saare even number pehle aur saare odd number baad me rakhne hain. Even aapas me ya odd aapas me kis kram me hain, isse farak nahi padta.
-  e.g. [3,1,2,4] -> [2,4,3,1] (ya [4,2,1,3], koi bhi jisme even pehle)
-```
+**SAWAAL** Ek array diya hai. Saare even number pehle aur saare odd number baad me rakhne hain. Even aapas me ya odd aapas me kis kram me hain, isse farak nahi padta.
+
+- **e.g.** `[3,1,2,4] -> [2,4,3,1] (ya [4,2,1,3], koi bhi jisme even pehle)`
 
 > [!IMPORTANT]
 > **CHAABI:** left odd + right even (dono galat jagah) -> swap + dono andar; left even -> `left++`; warna `right--`.
@@ -574,13 +541,10 @@ vector<int> sortArrayByParity(vector<int> nums) {   // even pehle, odd baad (aap
 
 ### ▸ 3SUM (LC-15)  = SORT + ek fix + baaki 2-pointer (+ duplicate skip)
 
-**SAWAAL**
-```
-Ek array diya hai. Aise saare teen numbers ke group [a, b, c] lautao jinka jod 0 ho.
-Ek hi group do baar nahi aana chahiye, chahe array me number dohraye gaye hon.
-  e.g. [-1,0,1,2,-1,-4] -> [-1,-1,2], [-1,0,1]
-  kyun: -1 do baar hai, par [-1,0,1] sirf ek baar likhna hai
-```
+**SAWAAL** Ek array diya hai. Aise saare teen numbers ke group [a, b, c] lautao jinka jod 0 ho. Ek hi group do baar nahi aana chahiye, chahe array me number dohraye gaye hon.
+
+- **e.g.** `[-1,0,1,2,-1,-4] -> [-1,-1,2], [-1,0,1]`
+- **kyun:** -1 do baar hai, par [-1,0,1] sirf ek baar likhna hai
 
 > [!IMPORTANT]
 > **CHAABI:** sort + har `i` FIX, `sum = -nums[i]`, baaki `low/high` = 2SUM-II. Duplicate skip 3 jagah: fixed `i`, match ke baad `low`, match ke baad `high`.
@@ -625,12 +589,10 @@ vector<vector<int>> threeSum(vector<int> &nums) {   // saare UNIQUE triplet jink
 
 ### ▸ IS SUBSEQUENCE
 
-**SAWAAL**
-```
-Do string s aur t di hain. Batao ki kya t me se kuch akshar hata ke (baaki ka kram badle bina) s ban sakti hai. true ya false lautao.
-  e.g. s="abc", t="ahbgdc" -> true     s="axc" -> false
-  kyun: a..b..c t me usi kram me mil gaye. 'x' t me hai hi nahi
-```
+**SAWAAL** Do string s aur t di hain. Batao ki kya t me se kuch akshar hata ke (baaki ka kram badle bina) s ban sakti hai. true ya false lautao.
+
+- **e.g.** `s="abc", t="ahbgdc" -> true     s="axc" -> false`
+- **kyun:** a..b..c t me usi kram me mil gaye. 'x' t me hai hi nahi
 
 > [!IMPORTANT]
 > **CHAABI:** `i` -> s, `j` -> t. Char mila -> dono aage; nahi mila -> sirf `j++`. Ant me `i >= s.size()` -> true.
@@ -661,12 +623,10 @@ bool isSubsequence(string s, string t) {    // s, t me order se hai? beech ke ch
 
 ### ▸ TRAPPING RAIN WATER (LC-42)
 
-**SAWAAL**
-```
-height[] me buildings ki unchai di hai, har building ki chaudai 1 hai. Baarish ke baad buildings ke beech ke gaddhon me kul kitna paani rukega, wo lautao.
-  e.g. [4,2,0,3,2,5] -> 9
-  kyun: beech wale bars ke upar paani = min(left ka max, right ka max) - apni height. 2+4+1+2 = 9
-```
+**SAWAAL** height[] me buildings ki unchai di hai, har building ki chaudai 1 hai. Baarish ke baad buildings ke beech ke gaddhon me kul kitna paani rukega, wo lautao.
+
+- **e.g.** `[4,2,0,3,2,5] -> 9`
+- **kyun:** beech wale bars ke upar paani = min(left ka max, right ka max) - apni height. 2+4+1+2 = 9
 
 **SAAR**
 
@@ -758,13 +718,10 @@ rightMax 0 hi raha: right wali deewar 5 hamesha badi thi, else wala hissa ek baa
 
 ### ▸ PALINDROMIC SUBSTRINGS (LC-647)  = EXPAND AROUND CENTER
 
-**SAWAAL**
-```
-Ek string di hai. Usme kitni substrings (lagaatar akshar) palindrome hain, wo gino.
-Akela akshar bhi palindrome gina jaata hai, aur alag jagah wali same substring alag gini jaati hai.
-  e.g. "aaa" -> 6
-  kyun: a, a, a (3) + aa, aa (2) + aaa (1) = 6
-```
+**SAWAAL** Ek string di hai. Usme kitni substrings (lagaatar akshar) palindrome hain, wo gino. Akela akshar bhi palindrome gina jaata hai, aur alag jagah wali same substring alag gini jaati hai.
+
+- **e.g.** `"aaa" -> 6`
+- **kyun:** a, a, a (3) + aa, aa (2) + aaa (1) = 6
 
 **SAAR**
 

@@ -76,18 +76,18 @@
 
 ### ▸ 3 DFS TRAVERSALS (LC-144 / 94 / 145)
 
-**SAWAAL**
-```
-Binary tree ka root diya hai. Tree ke nodes ki values teen kram me lautao: preorder (node, left, right), inorder (left, node, right) aur postorder (left, right, node).
-  e.g. [1,2,3,4,5] -> pre 1 2 4 5 3 · in 4 2 5 1 3 · post 4 5 2 3 1
-  kyun: pre = root pehle (1, phir 2 ka subtree 2 4 5, phir 3); in = left-root-right; post = root sabse baad
+**SAWAAL** Binary tree ka root diya hai. Tree ke nodes ki values teen kram me lautao: preorder (node, left, right), inorder (left, node, right) aur postorder (left, right, node).
 
-        1
-       / \
-      2   3
+- **e.g.** `[1,2,3,4,5] -> pre 1 2 4 5 3 · in 4 2 5 1 3 · post 4 5 2 3 1`
+- **kyun:** pre = root pehle (1, phir 2 ka subtree 2 4 5, phir 3); in = left-root-right; post = root sabse baad
+
+```
+      1
      / \
-    4   5
-  sirf 1 (node) kab likha, wahi badalta: pehle (pre) · 2 ke subtree ke baad (in) · sabse aakhir (post)
+    2   3
+   / \
+  4   5
+sirf 1 (node) kab likha, wahi badalta: pehle (pre) · 2 ke subtree ke baad (in) · sabse aakhir (post)
 ```
 
 > [!IMPORTANT]
@@ -127,18 +127,18 @@ void postorder(TreeNode *root, vector<int> &res) {   // POST = left -> right -> 
 
 ### ▸ MAX DEPTH (LC-104)  = recurse + COMBINE ka BASE (1 + max)
 
-**SAWAAL**
-```
-Binary tree ka root diya hai. Root se sabse door wale leaf tak raste me kitne node aate hain, wo lautao. Khaali tree pe 0.
-  e.g. [3,9,20,null,null,15,7] -> 3
-  kyun: sabse lamba rasta 3 -> 20 -> 15 (ya 7) = 3 node
+**SAWAAL** Binary tree ka root diya hai. Root se sabse door wale leaf tak raste me kitne node aate hain, wo lautao. Khaali tree pe 0.
 
-      3
-     / \
-    9   20
-       /  \
-     15    7
-  sabse lamba: 3 -> 20 -> 15 = 3 NODE (edge nahi gine)
+- **e.g.** `[3,9,20,null,null,15,7] -> 3`
+- **kyun:** sabse lamba rasta 3 -> 20 -> 15 (ya 7) = 3 node
+
+```
+    3
+   / \
+  9   20
+     /  \
+   15    7
+sabse lamba: 3 -> 20 -> 15 = 3 NODE (edge nahi gine)
 ```
 
 > [!IMPORTANT]
@@ -160,17 +160,17 @@ int maxDepth(TreeNode *root) {
 
 ### ▸ INVERT TREE (LC-226)  = recurse + swap(left, right)
 
-**SAWAAL**
-```
-Binary tree ka root diya hai. Har node ke left aur right bachche aapas me badal do (tree ka aaina), aur root lautao.
-  e.g. [4,2,7,1,3,6,9] -> [4,7,2,9,6,3,1]
-  kyun: 4 ke bachche 2,7 -> 7,2; 2 ke 1,3 -> 3,1; 7 ke 6,9 -> 9,6
+**SAWAAL** Binary tree ka root diya hai. Har node ke left aur right bachche aapas me badal do (tree ka aaina), aur root lautao.
 
-        4                  4
-      /   \              /   \
-     2     7     ->     7     2
-    / \   / \          / \   / \
-   1   3 6   9        9   6 3   1
+- **e.g.** `[4,2,7,1,3,6,9] -> [4,7,2,9,6,3,1]`
+- **kyun:** 4 ke bachche 2,7 -> 7,2; 2 ke 1,3 -> 3,1; 7 ke 6,9 -> 9,6
+
+```
+     4                  4
+   /   \              /   \
+  2     7     ->     7     2
+ / \   / \          / \   / \
+1   3 6   9        9   6 3   1
 ```
 
 > [!IMPORTANT]
@@ -196,16 +196,16 @@ TreeNode *invertTree(TreeNode *root) {
 
 ### ▸ SAME TREE (LC-100)  = dono tree saath recurse, COMBINE = &&
 
-**SAWAAL**
-```
-Do binary tree p aur q diye hain. Kya dono ka dhaancha aur har node ki value bilkul ek jaisi hai? true ya false lautao.
-  e.g. p=[1,2], q=[1,null,2] -> false
-  kyun: values same (1,2) par p me 2 LEFT child, q me RIGHT child; structure alag
+**SAWAAL** Do binary tree p aur q diye hain. Kya dono ka dhaancha aur har node ki value bilkul ek jaisi hai? true ya false lautao.
 
-  p:   1          q:   1
-      /                 \
-     2                   2
-  values same, par 2 ek me LEFT, doosre me RIGHT -> false
+- **e.g.** `p=[1,2], q=[1,null,2] -> false`
+- **kyun:** values same (1,2) par p me 2 LEFT child, q me RIGHT child; structure alag
+
+```
+p:   1          q:   1
+    /                 \
+   2                   2
+values same, par 2 ek me LEFT, doosre me RIGHT -> false
 ```
 
 > [!IMPORTANT]
@@ -236,18 +236,18 @@ bool isSameTree(TreeNode *p, TreeNode *q) {
 
 ### ▸ SYMMETRIC TREE (LC-101)  = SAME-TREE + CROSS
 
-**SAWAAL**
-```
-Binary tree ka root diya hai. Kya tree beech se aaine jaisa hai, matlab left hissa right hisse ka ulta roop hai? true ya false lautao.
-  e.g. [1,2,2,3,4,4,3] -> true
-  kyun: left 2 ke bachche 3,4 aur right 2 ke 4,3; bahar-bahar 3=3, andar-andar 4=4
+**SAWAAL** Binary tree ka root diya hai. Kya tree beech se aaine jaisa hai, matlab left hissa right hisse ka ulta roop hai? true ya false lautao.
 
-         1
-       /   \
-      2     2
-     / \   / \
-    3   4 4   3
-  bahar-bahar 3 = 3, andar-andar 4 = 4 -> true
+- **e.g.** `[1,2,2,3,4,4,3] -> true`
+- **kyun:** left 2 ke bachche 3,4 aur right 2 ke 4,3; bahar-bahar 3=3, andar-andar 4=4
+
+```
+       1
+     /   \
+    2     2
+   / \   / \
+  3   4 4   3
+bahar-bahar 3 = 3, andar-andar 4 = 4 -> true
 ```
 
 > [!IMPORTANT]
@@ -286,18 +286,18 @@ bool isSymmetric(TreeNode *root) {
 
 ### ▸ DIAMETER (LC-543)  = MAX-DEPTH + 1 line
 
-**SAWAAL**
-```
-Binary tree diya hai. Kinhi bhi do node ke beech sabse lamba rasta kitna hai, wo edges ki ginti me lautao. Rasta root se guzre, ye zaroori nahi.
-  e.g. [1,2,3,4,5] -> 3
-  kyun: path 4 -> 2 -> 1 -> 3 = 3 edge; isse lamba koi rasta nahi
+**SAWAAL** Binary tree diya hai. Kinhi bhi do node ke beech sabse lamba rasta kitna hai, wo edges ki ginti me lautao. Rasta root se guzre, ye zaroori nahi.
 
-        1
-       / \
-      2   3
+- **e.g.** `[1,2,3,4,5] -> 3`
+- **kyun:** path 4 -> 2 -> 1 -> 3 = 3 edge; isse lamba koi rasta nahi
+
+```
+      1
      / \
-    4   5
-  4 - 2 - 1 - 3 = 3 EDGE (node nahi gine)
+    2   3
+   / \
+  4   5
+4 - 2 - 1 - 3 = 3 EDGE (node nahi gine)
 ```
 
 > [!IMPORTANT]
@@ -330,12 +330,10 @@ int diameterOfBinaryTree(TreeNode *root) {
 
 ### ▸ MAX PATH SUM (LC-124, Hard)  = DIAMETER ka SUM-version
 
-**SAWAAL**
-```
-Binary tree diya hai (values minus bhi). Koi bhi juda hua rasta chuno (kam se kam ek node, root se guzarna zaroori nahi). Raste ke nodes ka sabse bada jod lautao.
-  e.g. [-10,9,20,null,null,15,7] -> 42
-  kyun: 15 + 20 + 7 = 42; root -10 jodne se sum ghatta, isliye chhoda
-```
+**SAWAAL** Binary tree diya hai (values minus bhi). Koi bhi juda hua rasta chuno (kam se kam ek node, root se guzarna zaroori nahi). Raste ke nodes ka sabse bada jod lautao.
+
+- **e.g.** `[-10,9,20,null,null,15,7] -> 42`
+- **kyun:** 15 + 20 + 7 = 42; root -10 jodne se sum ghatta, isliye chhoda
 
 ### DIAMETER vs MAX PATH SUM (line-by-line)
 
@@ -400,12 +398,10 @@ int maxPathSum(TreeNode *root) {
 
 ### ▸ BUILD TREE from PREORDER + INORDER (LC-105)  = preorder se ROOT, inorder me todo (map), recurse
 
-**SAWAAL**
-```
-Ek binary tree ka preorder aur inorder kram diya hai (saari values alag). Inse wapas wahi tree banao aur root lautao.
-  e.g. pre=[3,9,20,15,7], in=[9,3,15,20,7] -> [3,9,20,null,null,15,7]
-  kyun: pre[0]=3 root; inorder me 3 ke baaye [9] = left, daaye [15,20,7] = right; right ka root 20 (agla pre)
-```
+**SAWAAL** Ek binary tree ka preorder aur inorder kram diya hai (saari values alag). Inse wapas wahi tree banao aur root lautao.
+
+- **e.g.** `pre=[3,9,20,15,7], in=[9,3,15,20,7] -> [3,9,20,null,null,15,7]`
+- **kyun:** pre[0]=3 root; inorder me 3 ke baaye [9] = left, daaye [15,20,7] = right; right ka root 20 (agla pre)
 
 **SAAR**
 ```
@@ -475,20 +471,20 @@ TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder) {
 
 ### ▸ BALANCED TREE (LC-110)  = MAX-DEPTH + (-1 SENTINEL)
 
-**SAWAAL**
-```
-Binary tree diya hai. Kya har node pe uske left aur right subtree ki unchai ka farak 1 ya usse kam hai? true ya false lautao.
-  e.g. [1,2,2,3,3,null,null,4,4] -> false
-  kyun: root pe left height 3 (2 -> 3 -> 4), right height 1; farak 2 > 1
+**SAWAAL** Binary tree diya hai. Kya har node pe uske left aur right subtree ki unchai ka farak 1 ya usse kam hai? true ya false lautao.
 
-          1
-         / \
-        2   2
+- **e.g.** `[1,2,2,3,3,null,null,4,4] -> false`
+- **kyun:** root pe left height 3 (2 -> 3 -> 4), right height 1; farak 2 > 1
+
+```
+        1
        / \
-      3   3
+      2   2
      / \
-    4   4
-  root pe: left height 3, right height 1 -> farak 2 > 1 -> false
+    3   3
+   / \
+  4   4
+root pe: left height 3, right height 1 -> farak 2 > 1 -> false
 ```
 
 > [!IMPORTANT]
@@ -531,20 +527,20 @@ bool isBalanced(TreeNode *root) {
 
 ### ▸ LCA -- Lowest Common Ancestor (LC-236)  = search + BUBBLE-UP (dono taraf mila = answer)
 
-**SAWAAL**
-```
-Binary tree ka root aur do node p, q diye hain. Wo sabse neeche wala node lautao jiske neeche p aur q dono aate hain. Node khud bhi p ya q ho sakta hai.
-  e.g. [3,5,1,6,2,0,8,null,null,7,4], p=5, q=4 -> 5
-  kyun: 4 to 5 ke subtree me hai (5 -> 2 -> 4); 5 khud p hai, to 5 hi sabse gehra common
+**SAWAAL** Binary tree ka root aur do node p, q diye hain. Wo sabse neeche wala node lautao jiske neeche p aur q dono aate hain. Node khud bhi p ya q ho sakta hai.
 
-          3
-        /   \
-       5     1
-      / \   / \
-     6   2 0   8
-        / \
-       7   4
-  p=5, q=4: 4 to 5 ke neeche hi hai -> sabse neeche wala common = 5 khud
+- **e.g.** `[3,5,1,6,2,0,8,null,null,7,4], p=5, q=4 -> 5`
+- **kyun:** 4 to 5 ke subtree me hai (5 -> 2 -> 4); 5 khud p hai, to 5 hi sabse gehra common
+
+```
+        3
+      /   \
+     5     1
+    / \   / \
+   6   2 0   8
+      / \
+     7   4
+p=5, q=4: 4 to 5 ke neeche hi hai -> sabse neeche wala common = 5 khud
 ```
 
 > [!IMPORTANT]
@@ -582,18 +578,18 @@ TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {   // 
 
 ### ▸ PATH SUM (LC-112)  = target NEECHE carry, LEAF pe check, COMBINE = ||
 
-**SAWAAL**
-```
-Binary tree ka root aur ek targetSum diya hai. Kya root se kisi leaf tak aisa rasta hai jiske nodes ka jod targetSum ke barabar ho? true ya false lautao.
-  e.g. [5,4,8,11,null,13,4], target=20 -> true
-  kyun: 5 + 4 + 11 = 20 aur 11 leaf hai; baaki paths 26 (5,8,13) aur 17 (5,8,4)
+**SAWAAL** Binary tree ka root aur ek targetSum diya hai. Kya root se kisi leaf tak aisa rasta hai jiske nodes ka jod targetSum ke barabar ho? true ya false lautao.
 
-        5
-       / \
-      4   8
-     /   / \
-    11  13  4
-  root se LEAF tak poora rasta: 5+4+11 = 20 -> true
+- **e.g.** `[5,4,8,11,null,13,4], target=20 -> true`
+- **kyun:** 5 + 4 + 11 = 20 aur 11 leaf hai; baaki paths 26 (5,8,13) aur 17 (5,8,4)
+
+```
+      5
+     / \
+    4   8
+   /   / \
+  11  13  4
+root se LEAF tak poora rasta: 5+4+11 = 20 -> true
 ```
 
 > [!IMPORTANT]
@@ -621,17 +617,17 @@ bool hasPathSum(TreeNode *root, int targetSum) {   // root se LEAF tak sum == ta
 
 ### ▸ LEVEL ORDER (LC-102)  = BFS ka BASE (queue, ek chakkar = ek level)
 
-**SAWAAL**
-```
-Binary tree ka root diya hai. Har level ke nodes ko left se right, alag-alag list me lautao (list of lists).
-  e.g. [3,9,20,null,null,15,7] -> [[3],[9,20],[15,7]]
-  kyun: level 0 = 3, level 1 = 9,20, level 2 = 15,7
+**SAWAAL** Binary tree ka root diya hai. Har level ke nodes ko left se right, alag-alag list me lautao (list of lists).
 
-      3          level 0: [3]
-     / \
-    9   20       level 1: [9,20]
-       /  \
-     15    7     level 2: [15,7]
+- **e.g.** `[3,9,20,null,null,15,7] -> [[3],[9,20],[15,7]]`
+- **kyun:** level 0 = 3, level 1 = 9,20, level 2 = 15,7
+
+```
+  3          level 0: [3]
+ / \
+9   20       level 1: [9,20]
+   /  \
+ 15    7     level 2: [15,7]
 ```
 
 > [!IMPORTANT]
@@ -672,17 +668,17 @@ vector<vector<int>> levelOrder(TreeNode *root) {   // har level ki alag list. FI
 
 ### ▸ RIGHT SIDE VIEW (LC-199)  = LEVEL-ORDER + 1 line
 
-**SAWAAL**
-```
-Binary tree ke daayi taraf khade ho ke upar se neeche dekho. Jo nodes dikhte hain wo lautao, matlab har level ka sabse daayi wala node.
-  e.g. [1,2,3,null,5,null,4] -> [1,3,4]
-  kyun: level 0 = 1; level 1 = 2,3 me right 3; level 2 = 5,4 me right 4
+**SAWAAL** Binary tree ke daayi taraf khade ho ke upar se neeche dekho. Jo nodes dikhte hain wo lautao, matlab har level ka sabse daayi wala node.
 
-      1       <- dikhta 1
-     / \
-    2   3     <- dikhta 3
-     \   \
-      5   4   <- dikhta 4 (5 uske peeche chhup gaya)
+- **e.g.** `[1,2,3,null,5,null,4] -> [1,3,4]`
+- **kyun:** level 0 = 1; level 1 = 2,3 me right 3; level 2 = 5,4 me right 4
+
+```
+  1       <- dikhta 1
+ / \
+2   3     <- dikhta 3
+ \   \
+  5   4   <- dikhta 4 (5 uske peeche chhup gaya)
 ```
 
 > [!IMPORTANT]
@@ -722,17 +718,17 @@ vector<int> rightSideView(TreeNode *root) { // daaye se har level ka SIRF right-
 
 ### ▸ ZIGZAG LEVEL ORDER (LC-103)  = LEVEL-ORDER + reverse
 
-**SAWAAL**
-```
-Level order jaisa hi, par disha har level pe badalti hai: level 0 left se right, level 1 right se left, level 2 phir left se right, aise hi.
-  e.g. [3,9,20,null,null,15,7] -> [[3],[20,9],[15,7]]
-  kyun: level 1 ka [9,20] ulta = [20,9]; level 2 seedha [15,7]
+**SAWAAL** Level order jaisa hi, par disha har level pe badalti hai: level 0 left se right, level 1 right se left, level 2 phir left se right, aise hi.
 
-      3          level 0: 3            -> [3]
-     / \
-    9   20       level 1: 9 20 ulta    -> [20,9]
-       /  \
-     15    7     level 2: 15 7 seedha  -> [15,7]
+- **e.g.** `[3,9,20,null,null,15,7] -> [[3],[20,9],[15,7]]`
+- **kyun:** level 1 ka [9,20] ulta = [20,9]; level 2 seedha [15,7]
+
+```
+  3          level 0: 3            -> [3]
+ / \
+9   20       level 1: 9 20 ulta    -> [20,9]
+   /  \
+ 15    7     level 2: 15 7 seedha  -> [15,7]
 ```
 
 > [!IMPORTANT]
@@ -776,18 +772,18 @@ vector<vector<int>> zigzagLevelOrder(TreeNode *root) {   // 0: L->R · 1: R->L �
 
 ### ▸ MINIMUM DEPTH (LC-111)   = LEVEL-ORDER + EARLY-STOP
 
-**SAWAAL**
-```
-Binary tree ka root diya hai. Root se sabse paas wale leaf tak raste me kitne node hain, wo lautao. Leaf = jiske dono bachche null. Khaali tree pe 0.
-  e.g. [3,9,20,null,null,15,7] -> 2
-  kyun: 3 -> 9, aur 9 leaf hai = 2 node; 20 wali taraf 3 node lagte
+**SAWAAL** Binary tree ka root diya hai. Root se sabse paas wale leaf tak raste me kitne node hain, wo lautao. Leaf = jiske dono bachche null. Khaali tree pe 0.
 
-      3
-     / \
-    9   20       9 ke dono bachche null = leaf
-       /  \
-     15    7
-  sabse PAAS wala leaf maanga: 3 -> 9 = 2 node
+- **e.g.** `[3,9,20,null,null,15,7] -> 2`
+- **kyun:** 3 -> 9, aur 9 leaf hai = 2 node; 20 wali taraf 3 node lagte
+
+```
+    3
+   / \
+  9   20       9 ke dono bachche null = leaf
+     /  \
+   15    7
+sabse PAAS wala leaf maanga: 3 -> 9 = 2 node
 ```
 
 > [!IMPORTANT]
@@ -831,20 +827,20 @@ int minDepth(TreeNode *root) {              // root se sabse PAAS wale LEAF tak
 
 ### ▸ KTH SMALLEST IN BST (LC-230)  = BST ka INORDER = sorted list, uska k-1 index
 
-**SAWAAL**
-```
-Ek BST aur ek number k diya hai. Tree ki values me k-va sabse chhota number lautao (k 1 se gina jaata hai).
-  e.g. [5,3,6,2,4,null,null,1], k=3 -> 3
-  kyun: inorder (sorted) = 1,2,3,4,5,6; teesra = 3
+**SAWAAL** Ek BST aur ek number k diya hai. Tree ki values me k-va sabse chhota number lautao (k 1 se gina jaata hai).
 
-          5
-         / \
-        3   6
+- **e.g.** `[5,3,6,2,4,null,null,1], k=3 -> 3`
+- **kyun:** inorder (sorted) = 1,2,3,4,5,6; teesra = 3
+
+```
+        5
        / \
-      2   4
-     /
-    1
-  chhote se bade: 1 2 3 4 5 6 -> teesra = 3
+      3   6
+     / \
+    2   4
+   /
+  1
+chhote se bade: 1 2 3 4 5 6 -> teesra = 3
 ```
 
 > [!IMPORTANT]
@@ -875,18 +871,18 @@ int kthSmallest(TreeNode *root, int k) {
 
 ### ▸ VALIDATE BST (LC-98)  = RANGE carry-DOWN
 
-**SAWAAL**
-```
-Binary tree diya hai. Kya ye sahi BST hai? Har node pe uske poore left subtree ki saari values usse chhoti aur poore right subtree ki saari values usse badi honi chahiye (barabar nahi chalega).
-  e.g. [5,4,6,null,null,3,7] -> false
-  kyun: 3 node 6 ke left me (3 < 6 theek), par 6 to 5 ke right me, to 3 > 5 hona chahiye tha
+**SAWAAL** Binary tree diya hai. Kya ye sahi BST hai? Har node pe uske poore left subtree ki saari values usse chhoti aur poore right subtree ki saari values usse badi honi chahiye (barabar nahi chalega).
 
-       5
+- **e.g.** `[5,4,6,null,null,3,7] -> false`
+- **kyun:** 3 node 6 ke left me (3 \< 6 theek), par 6 to 5 ke right me, to 3 > 5 hona chahiye tha
+
+```
+     5
+    / \
+   4   6
       / \
-     4   6
-        / \
-       3   7
-  3 < 6 theek, par 3 bhi 5 ke RIGHT hisse me hai -> 5 se bada chahiye tha -> false
+     3   7
+3 < 6 theek, par 3 bhi 5 ke RIGHT hisse me hai -> 5 se bada chahiye tha -> false
 ```
 
 > [!WARNING]

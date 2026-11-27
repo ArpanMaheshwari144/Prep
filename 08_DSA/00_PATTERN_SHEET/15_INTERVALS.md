@@ -32,12 +32,10 @@
 
 ### ▸ MERGE INTERVALS (LC-56)  = sort-by-start + merge
 
-**SAWAAL**
-```
-intervals[] me [start, end] diye hain. Jo intervals aapas me overlap karte hain (ya bas chhoote hain), unhe jod ke ek kar do. Jude hue intervals ki list lautao.
-  e.g. [[1,3],[2,6],[8,10],[15,18]] -> [[1,6],[8,10],[15,18]]
-  kyun: 2 <= 3 -> [1,3] aur [2,6] overlap -> [1,6]; baaki alag
-```
+**SAWAAL** intervals[] me [start, end] diye hain. Jo intervals aapas me overlap karte hain (ya bas chhoote hain), unhe jod ke ek kar do. Jude hue intervals ki list lautao.
+
+- **e.g.** `[[1,3],[2,6],[8,10],[15,18]] -> [[1,6],[8,10],[15,18]]`
+- **kyun:** 2 \<= 3 -> [1,3] aur [2,6] overlap -> [1,6]; baaki alag
 
 **SAAR**
 ```
@@ -76,17 +74,17 @@ vector<vector<int>> merge(vector<vector<int>> &intervals) {
 
 ### ▸ MEETING ROOMS (LC-252, Easy)  = Merge ka SAME template, bas action alag
 
-**SAWAAL**
-```
-meetings[] me [start, end] diye hain. Kya ek insaan saari meetings attend kar sakta hai, matlab koi do meeting takraati nahi? true ya false lautao.
-  e.g. [[0,30],[5,10],[15,20]] -> false
-  kyun: 5-10 shuru hui jab 0-30 abhi chal rahi (5 < 30) -> overlap
+**SAWAAL** meetings[] me [start, end] diye hain. Kya ek insaan saari meetings attend kar sakta hai, matlab koi do meeting takraati nahi? true ya false lautao.
 
-  time:     0    5   10   15   20        30
-  [0,30]    |-----------------------------|
-  [5,10]         |----|
-  [15,20]                  |----|
-  0-30 ke andar hi baaki dono -> ek insaan ek saath do jagah nahi -> false
+- **e.g.** `[[0,30],[5,10],[15,20]] -> false`
+- **kyun:** 5-10 shuru hui jab 0-30 abhi chal rahi (5 \< 30) -> overlap
+
+```
+time:     0    5   10   15   20        30
+[0,30]    |-----------------------------|
+[5,10]         |----|
+[15,20]                  |----|
+0-30 ke andar hi baaki dono -> ek insaan ek saath do jagah nahi -> false
 ```
 
 > [!IMPORTANT]
@@ -118,17 +116,17 @@ bool canAttendMeetings(vector<vector<int>> &intervals) {
 
 ### ▸ INSERT INTERVAL (LC-57)  = already-SORTED -> 3 phase (no sort)
 
-**SAWAAL**
-```
-intervals[] pehle se sorted hain aur aapas me overlap nahi karte. Ek newInterval daalna hai (overlap ho to jod do). Nayi sorted list lautao.
-  e.g. [[1,3],[6,9]], new=[2,5] -> [[1,5],[6,9]]
-  kyun: [2,5] aur [1,3] overlap -> [1,5]; [6,9] 5 ke baad -> alag
+**SAWAAL** intervals[] pehle se sorted hain aur aapas me overlap nahi karte. Ek newInterval daalna hai (overlap ho to jod do). Nayi sorted list lautao.
 
-  time:   1   2   3   4   5   6   7   8   9
-  [1,3]   |-------|
-  new         |-----------|
-  [6,9]                       |-----------|
-  [1,3] + new = [1,5] (5 < 6, isliye [6,9] alag)
+- **e.g.** `[[1,3],[6,9]], new=[2,5] -> [[1,5],[6,9]]`
+- **kyun:** [2,5] aur [1,3] overlap -> [1,5]; [6,9] 5 ke baad -> alag
+
+```
+time:   1   2   3   4   5   6   7   8   9
+[1,3]   |-------|
+new         |-----------|
+[6,9]                       |-----------|
+[1,3] + new = [1,5] (5 < 6, isliye [6,9] alag)
 ```
 
 > [!IMPORTANT]
@@ -166,13 +164,10 @@ vector<vector<int>> insert(vector<vector<int>> &intervals, vector<int> &newInter
 
 ### ▸ MEETING ROOMS II (LC-253)  = SWEEP LINE / event-count
 
-**SAWAAL**
-```
-start[] aur end[] me meetings ke shuru aur khatam hone ka time diya hai. Kam se kam kitne room chahiye, wo lautao.
-Ek meeting ka end aur doosri ka start same time ho, to wahi room chal jaata hai.
-  e.g. start=[2,9,6], end=[4,12,10] -> 2
-  kyun: t=9 pe [9,12] aur [6,10] dono chal rahi -> 2 room
-```
+**SAWAAL** start[] aur end[] me meetings ke shuru aur khatam hone ka time diya hai. Kam se kam kitne room chahiye, wo lautao. Ek meeting ka end aur doosri ka start same time ho, to wahi room chal jaata hai.
+
+- **e.g.** `start=[2,9,6], end=[4,12,10] -> 2`
+- **kyun:** t=9 pe [9,12] aur [6,10] dono chal rahi -> 2 room
 
 > [!IMPORTANT]
 > **FARAK merge se:** merge/meeting-I = "kya overlap?" (join/bool). MR-II = "KITNA overlap?" (peak count) -> sweep.

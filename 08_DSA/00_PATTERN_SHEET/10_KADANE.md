@@ -18,17 +18,17 @@
 
 ### ▸ BUY/SELL STOCK (LC-121)  = running MIN cache (aaj ka daam - ab tak ka sasta)
 
-**SAWAAL**
-```
-prices[i] din i ka share ka daam hai. Ek din kharido aur uske baad ke kisi din becho. Sabse zyada kitna munafa ho sakta hai, wo lautao. Munafa na ho to 0.
-  e.g. [7,1,5,3,6,4] -> 5
-  kyun: din 1 pe 1 me kharida, din 4 pe 6 me becha = 5; pehle-chhota baad-bada ka isse bada farak nahi
+**SAWAAL** prices[i] din i ka share ka daam hai. Ek din kharido aur uske baad ke kisi din becho. Sabse zyada kitna munafa ho sakta hai, wo lautao. Munafa na ho to 0.
 
-  din:   0   1   2   3   4   5
-  daam:  7   1   5   3   6   4
-             ^           ^
-          kharido      becho      -> 6 - 1 = 5
-  7 sabse mehenga par din 0 pe, kharidne se PEHLE -> wahan bech hi nahi sakte
+- **e.g.** `[7,1,5,3,6,4] -> 5`
+- **kyun:** din 1 pe 1 me kharida, din 4 pe 6 me becha = 5; pehle-chhota baad-bada ka isse bada farak nahi
+
+```
+din:   0   1   2   3   4   5
+daam:  7   1   5   3   6   4
+           ^           ^
+        kharido      becho      -> 6 - 1 = 5
+7 sabse mehenga par din 0 pe, kharidne se PEHLE -> wahan bech hi nahi sakte
 ```
 
 > [!IMPORTANT]
@@ -57,12 +57,10 @@ int maxProfit(vector<int> &prices) {        // aaj becho = aaj ka daam MINUS ab 
 
 ### ▸ MAX SUBARRAY SUM (LC-53)  = KADANE ka BASE (running sum, negative = bojh -> 0)
 
-**SAWAAL**
-```
-Ek array diya hai. Lagaatar numbers ka aisa subarray (kam se kam ek number) chuno jiska jod sabse bada ho, aur wo jod lautao.
-  e.g. [-2,1,-3,4,-1,2,1,-5,4] -> 6
-  kyun: [4,-1,2,1] = 6; pehle ke -2,1,-3 ka jod negative, unhe saath lena sum ghatata
-```
+**SAWAAL** Ek array diya hai. Lagaatar numbers ka aisa subarray (kam se kam ek number) chuno jiska jod sabse bada ho, aur wo jod lautao.
+
+- **e.g.** `[-2,1,-3,4,-1,2,1,-5,4] -> 6`
+- **kyun:** [4,-1,2,1] = 6; pehle ke -2,1,-3 ka jod negative, unhe saath lena sum ghatata
 
 > [!IMPORTANT]
 > **CHAABI:** running `sum += it`, `maxSum = max(maxSum, sum)`, `sum < 0` = bojh -> `sum = 0`.
@@ -92,12 +90,10 @@ int maxSubArray(vector<int> &nums) {        // running sum NEGATIVE = bojh -> su
 
 ### ▸ MAX PRODUCT SUBARRAY (LC-152)  = KADANE + MIN bhi (neg x neg = bada)
 
-**SAWAAL**
-```
-Ek array diya hai. Lagaatar numbers ka aisa subarray chuno jiska guna sabse bada ho, aur wo guna lautao. Minus numbers bhi ho sakte hain.
-  e.g. [-2,3,-4] -> 24
-  kyun: -2 x 3 = -6 (sabse chhota), phir x -4 = 24; neg x neg = bada, isliye min bhi saath rakhna
-```
+**SAWAAL** Ek array diya hai. Lagaatar numbers ka aisa subarray chuno jiska guna sabse bada ho, aur wo guna lautao. Minus numbers bhi ho sakte hain.
+
+- **e.g.** `[-2,3,-4] -> 24`
+- **kyun:** -2 x 3 = -6 (sabse chhota), phir x -4 = 24; neg x neg = bada, isliye min bhi saath rakhna
 
 ### shuruaat + purani galti (24-Sep theek kiya)
 
@@ -134,12 +130,10 @@ int maxProduct(vector<int> &nums) {         // neg*neg = BADA -> MIN bhi track (
 
 ### ▸ MAX ABSOLUTE SUM (LC-1749)  = MAX PRODUCT ka skeleton, * -> +, ans me ABS
 
-**SAWAAL**
-```
-Ek array diya hai. Kisi bhi lagaatar subarray ka jod lo aur uska absolute value (minus hata ke) dekho. Sabse bada absolute jod lautao.
-  e.g. [2,-5,1,-4,3,-2] -> 8
-  kyun: [-5,1,-4] = -8, |-8| = 8; sabse bada positive tukda sirf 3, to bada-negative jeeta
-```
+**SAWAAL** Ek array diya hai. Kisi bhi lagaatar subarray ka jod lo aur uska absolute value (minus hata ke) dekho. Sabse bada absolute jod lautao.
+
+- **e.g.** `[2,-5,1,-4,3,-2] -> 8`
+- **kyun:** [-5,1,-4] = -8, |-8| = 8; sabse bada positive tukda sirf 3, to bada-negative jeeta
 
 ### shuruaat + purani galti (24-Sep theek kiya)
 
@@ -181,15 +175,15 @@ int maxAbsoluteSum(vector<int> &nums) {     // = MAX PRODUCT skeleton, 2 tweak: 
 
 ### ▸ MAX SUM CIRCULAR SUBARRAY (LC-918)  = TRICK: total − MIN-subarray
 
-**SAWAAL**
-```
-Ek gol (circular) array diya hai, matlab end ke baad shuru wala number aata hai. Lagaatar numbers ka sabse bada jod lautao (gol ghoom ke bhi le sakte ho, khaali nahi chalega).
-  e.g. [5,-3,5] -> 10
-  kyun: wrap: last 5 + first 5 = 10; total 7 - min-subarray (-3) = 10
+**SAWAAL** Ek gol (circular) array diya hai, matlab end ke baad shuru wala number aata hai. Lagaatar numbers ka sabse bada jod lautao (gol ghoom ke bhi le sakte ho, khaali nahi chalega).
 
-  5  -3   5  | 5  -3   5     (gol: aakhri 5 ke baad phir pehla 5)
-         [5  | 5]            -> 5 + 5 = 10, lagaatar hai, beech ka -3 chhoot gaya
-  bina ghoome sabse bada 5 + (-3) + 5 = 7 hi tha, isliye ghoom ke 10
+- **e.g.** `[5,-3,5] -> 10`
+- **kyun:** wrap: last 5 + first 5 = 10; total 7 - min-subarray (-3) = 10
+
+```
+5  -3   5  | 5  -3   5     (gol: aakhri 5 ke baad phir pehla 5)
+       [5  | 5]            -> 5 + 5 = 10, lagaatar hai, beech ka -3 chhoot gaya
+bina ghoome sabse bada 5 + (-3) + 5 = 7 hi tha, isliye ghoom ke 10
 ```
 
 > [!IMPORTANT]
@@ -245,12 +239,10 @@ int maxSubarraySumCircular(vector<int> &nums) {
 
 ### ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)  = KADANE (per index) + PREFIX / SUFFIX max + WALL
 
-**SAWAAL**
-```
-Ek array diya hai. Do subarray chuno jo lagaatar hon, khaali na hon, aur ek-doosre ko na chhuein (non-overlapping). Dono ke jod ko milake sabse bada total lautao.
-  e.g. [1,2,-7,8,6,-4] -> 17
-  kyun: [1,2] = 3 aur [8,6] = 14, beech ka -7 chhoda; 3 + 14 = 17
-```
+**SAWAAL** Ek array diya hai. Do subarray chuno jo lagaatar hon, khaali na hon, aur ek-doosre ko na chhuein (non-overlapping). Dono ke jod ko milake sabse bada total lautao.
+
+- **e.g.** `[1,2,-7,8,6,-4] -> 17`
+- **kyun:** [1,2] = 3 aur [8,6] = 14, beech ka -7 chhoda; 3 + 14 = 17
 
 > [!IMPORTANT]
 > **★ COPY-PEN WALA SAWAAL: pehle copy pe array chala (5 step), phir code. Sheet dekh ke seedha likha to detail fisalti.**

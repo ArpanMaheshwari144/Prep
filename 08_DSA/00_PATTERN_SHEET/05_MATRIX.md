@@ -21,12 +21,10 @@
 
 ### ▸ SET MATRIX ZEROES  = 2 marker array (zeroRow / zeroCol), 2 pass
 
-**SAWAAL**
-```
-m x n matrix di hai. Jis cell me 0 hai, uski poori row aur poora column 0 kar do. Isi matrix me badlaav karna hai (in-place).
-  e.g. [[1,1,1],[1,0,1],[1,1,1]] -> [[1,0,1],[0,0,0],[1,0,1]]
-  kyun: 0 cell (1,1) pe -> row 1 aur col 1 poore 0, baaki same
-```
+**SAWAAL** m x n matrix di hai. Jis cell me 0 hai, uski poori row aur poora column 0 kar do. Isi matrix me badlaav karna hai (in-place).
+
+- **e.g.** `[[1,1,1],[1,0,1],[1,1,1]] -> [[1,0,1],[0,0,0],[1,0,1]]`
+- **kyun:** 0 cell (1,1) pe -> row 1 aur col 1 poore 0, baaki same
 
 > [!IMPORTANT]
 > **CHAABI:** do marker array `zeroRow` / `zeroCol`. Pass-1 sirf MARK, pass-2 `zeroRow[i] == 0 || zeroCol[j] == 0` to cell 0.
@@ -58,18 +56,18 @@ void setZeroes(vector<vector<int>> &matrix) {   // in-place, 2 marker array, O(m
 
 ### ▸ SPIRAL MATRIX (LC-54)  = 4 boundary andar simat-te (clockwise)
 
-**SAWAAL**
-```
-m x n matrix di hai. Uske saare numbers spiral kram me (bahar se andar ki taraf, ghadi ki sui ki disha me) ek list me lautao.
-  e.g. [[1,2,3],[4,5,6],[7,8,9]] -> [1,2,3,6,9,8,7,4,5]
-  kyun: upar 1,2,3 -> right col 6,9 -> neeche ulta 8,7 -> left col upar 4 -> beech 5
+**SAWAAL** m x n matrix di hai. Uske saare numbers spiral kram me (bahar se andar ki taraf, ghadi ki sui ki disha me) ek list me lautao.
 
-  1 -> 2 -> 3
-            |
-  4 -> 5    6
-  ^         |
-  7 <- 8 <- 9
-  bahar ka gola pehle (1 2 3 6 9 8 7 4), phir andar ka (5)
+- **e.g.** `[[1,2,3],[4,5,6],[7,8,9]] -> [1,2,3,6,9,8,7,4,5]`
+- **kyun:** upar 1,2,3 -> right col 6,9 -> neeche ulta 8,7 -> left col upar 4 -> beech 5
+
+```
+1 -> 2 -> 3
+          |
+4 -> 5    6
+^         |
+7 <- 8 <- 9
+bahar ka gola pehle (1 2 3 6 9 8 7 4), phir andar ka (5)
 ```
 
 **SAAR**
@@ -134,12 +132,10 @@ vector<int> spiralOrder(vector<vector<int>> &matrix) {
 
 ### ▸ TRANSPOSE  = ans[i][j] = matrix[j][i], naya col x row
 
-**SAWAAL**
-```
-m x n matrix di hai. Uska transpose lautao, matlab row ko column bana do: matrix[i][j] naye matrix me res[j][i] pe jaayega (naya size n x m).
-  e.g. [[1,2,3],[4,5,6]] -> [[1,4],[2,5],[3,6]]
-  kyun: pehli row 1,2,3 ban gayi pehla col; 2x3 se 3x2
-```
+**SAWAAL** m x n matrix di hai. Uska transpose lautao, matlab row ko column bana do: matrix[i][j] naye matrix me res[j][i] pe jaayega (naya size n x m).
+
+- **e.g.** `[[1,2,3],[4,5,6]] -> [[1,4],[2,5],[3,6]]`
+- **kyun:** pehli row 1,2,3 ban gayi pehla col; 2x3 se 3x2
 
 > [!IMPORTANT]
 > **CHAABI:** `ans[i][j] = matrix[j][i]`.
@@ -164,18 +160,17 @@ vector<vector<int>> transpose(vector<vector<int>> &matrix) {
 
 ### ▸ COUNT SERVERS THAT COMMUNICATE (LC-1267, JP)  = SET MATRIX ZEROES ka cousin (row/col COUNT 2-pass)
 
-**SAWAAL**
-```
-Ek grid di hai jisme 1 = server. Do server baat kar sakte hain agar wo ek hi row ya ek hi column me hon.
-Kitne server kisi doosre server se baat kar sakte hain, wo ginti lautao.
-  e.g. [[1,1,0,0],[0,0,1,0],[0,0,1,1]] -> 5
-  kyun: (0,0)-(0,1) row 0, (1,2)-(2,2) col 2, (2,3)-(2,2) row 2 -> paanchon ka saathi = 5
+**SAWAAL** Ek grid di hai jisme 1 = server. Do server baat kar sakte hain agar wo ek hi row ya ek hi column me hon. Kitne server kisi doosre server se baat kar sakte hain, wo ginti lautao.
 
-         c0 c1 c2 c3
-   r0  [ 1  1  0  0 ]    r0 me do server -> dono ka saathi
-   r1  [ 0  0  1  0 ]    r1 me akela, par col 2 me neeche (2,2) hai
-   r2  [ 0  0  1  1 ]    r2 me do server
-  jis server ki row aur col dono me koi doosra nahi, sirf wahi ginti se bahar (yahan aisa koi nahi -> 5)
+- **e.g.** `[[1,1,0,0],[0,0,1,0],[0,0,1,1]] -> 5`
+- **kyun:** (0,0)-(0,1) row 0, (1,2)-(2,2) col 2, (2,3)-(2,2) row 2 -> paanchon ka saathi = 5
+
+```
+       c0 c1 c2 c3
+ r0  [ 1  1  0  0 ]    r0 me do server -> dono ka saathi
+ r1  [ 0  0  1  0 ]    r1 me akela, par col 2 me neeche (2,2) hai
+ r2  [ 0  0  1  1 ]    r2 me do server
+jis server ki row aur col dono me koi doosra nahi, sirf wahi ginti se bahar (yahan aisa koi nahi -> 5)
 ```
 
 > [!IMPORTANT]

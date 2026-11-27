@@ -68,13 +68,10 @@ Dono raaste ek hi jagah pahunchte hain.)
 
 ### ▸ LAST STONE WEIGHT (LC-1046, Easy)  = MAX-HEAP smash
 
-**SAWAAL**
-```
-stones[] me pattharon ka wazan diya hai. Har baari do sabse bhaari patthar takraate hain: barabar hon to dono khatam, warna bhaari wala farak jitna bachta hai.
-Aakhir me jo patthar bache uska wazan lautao, koi na bache to 0.
-  e.g. [3,7,2] -> 2
-  kyun: 7,3 -> 4 bacha · 4,2 -> 2 bacha · ek hi bacha = 2
-```
+**SAWAAL** stones[] me pattharon ka wazan diya hai. Har baari do sabse bhaari patthar takraate hain: barabar hon to dono khatam, warna bhaari wala farak jitna bachta hai. Aakhir me jo patthar bache uska wazan lautao, koi na bache to 0.
+
+- **e.g.** `[3,7,2] -> 2`
+- **kyun:** 7,3 -> 4 bacha · 4,2 -> 2 bacha · ek hi bacha = 2
 
 > [!IMPORTANT]
 > **CHAABI:** `priority_queue<int>` (MAX), `while (pq.size() > 1)`: do top nikaalo, `diff > 0` to wapas push.
@@ -106,15 +103,15 @@ int lastStoneWeight(vector<int> &stones) {  // har turn 2 SABSE BHAARI smash, di
 
 ### ▸ KTH LARGEST ELEMENT (LC-215, Medium)  = MIN-HEAP of size k
 
-**SAWAAL**
-```
-Ek array aur ek number k diya hai. Array ka k-va sabse bada number lautao.
-  e.g. [3,2,1,5,6,4], k=2 -> 5
-  kyun: bade se gino 6, 5 -> 2nd = 5
+**SAWAAL** Ek array aur ek number k diya hai. Array ka k-va sabse bada number lautao.
 
-  bade se line:   6  5 | 4  3  2  1
-                  k=2  | baaki bahar
-  heap (MIN, size 2) me ant tak bache = {5, 6} -> top (sabse chhota) = 5 = jawab
+- **e.g.** `[3,2,1,5,6,4], k=2 -> 5`
+- **kyun:** bade se gino 6, 5 -> 2nd = 5
+
+```
+bade se line:   6  5 | 4  3  2  1
+                k=2  | baaki bahar
+heap (MIN, size 2) me ant tak bache = {5, 6} -> top (sabse chhota) = 5 = jawab
 ```
 
 > [!IMPORTANT]
@@ -141,12 +138,10 @@ int findKthLargest(vector<int> &nums, int k) {   // top-K ka core
 
 ### ▸ K CLOSEST POINTS TO ORIGIN (LC-973, Medium)  = MAX-HEAP of size k
 
-**SAWAAL**
-```
-points[] me [x, y] points diye hain aur ek number k. Origin (0, 0) ke sabse paas wale k points lautao. Doori = x*x + y*y, aur jawab kisi bhi kram me chalega.
-  e.g. [[1,3],[-2,2]], k=1 -> [[-2,2]]
-  kyun: [1,3] = 1+9 = 10, [-2,2] = 4+4 = 8 -> 8 chhota
-```
+**SAWAAL** points[] me [x, y] points diye hain aur ek number k. Origin (0, 0) ke sabse paas wale k points lautao. Doori = x\*x + y\*y, aur jawab kisi bhi kram me chalega.
+
+- **e.g.** `[[1,3],[-2,2]], k=1 -> [[-2,2]]`
+- **kyun:** [1,3] = 1+9 = 10, [-2,2] = 4+4 = 8 -> 8 chhota
 
 > [!IMPORTANT]
 > **CHAABI:** kth-largest ka MIRROR: MAX-heap `pair<dist, point>`, `size > k` pe pop (sabse DOOR evict), bache k paas wale; `.second` = point.
@@ -179,12 +174,10 @@ vector<vector<int>> kClosest(vector<vector<int>> &points, int k) {
 
 ### ▸ TOP K FREQUENT ELEMENTS (LC-347, Medium)  = MIN-HEAP size k on FREQUENCY
 
-**SAWAAL**
-```
-Ek array aur ek number k diya hai. Wo k numbers lautao jo array me sabse zyada baar aate hain. Kram kuch bhi chalega.
-  e.g. [1,1,1,2,2,3], k=2 -> [1,2]
-  kyun: 1 -> 3 baar, 2 -> 2 baar, 3 -> 1 baar -> top 2 = 1, 2
-```
+**SAWAAL** Ek array aur ek number k diya hai. Wo k numbers lautao jo array me sabse zyada baar aate hain. Kram kuch bhi chalega.
+
+- **e.g.** `[1,1,1,2,2,3], k=2 -> [1,2]`
+- **kyun:** 1 -> 3 baar, 2 -> 2 baar, 3 -> 1 baar -> top 2 = 1, 2
 
 > [!IMPORTANT]
 > **CHAABI:** pehle map se freq, phir MIN-heap me `{freq, num}` size k (`size > k` pe pop). Bache k = jawab, `.second` nikaalo.
@@ -224,17 +217,17 @@ vector<int> topKFrequent(vector<int> &nums, int k) {
 
 ### ▸ MERGE K SORTED LISTS (LC-23, Hard)  = MIN-HEAP of current heads
 
-**SAWAAL**
-```
-k sorted linked list di hain. Sabko jod ke ek sorted linked list banao aur uska head lautao.
-  e.g. [[1,4,5],[1,3,4],[2,6]] -> [1,1,2,3,4,4,5,6]
-  kyun: har baar teeno ke current head me sabse chhota uthao: 1,1,2,3,4,4,5,6
+**SAWAAL** k sorted linked list di hain. Sabko jod ke ek sorted linked list banao aur uska head lautao.
 
-  L1:  1 -> 4 -> 5
-  L2:  1 -> 3 -> 4
-  L3:  2 -> 6
-  heap me har list ka sirf AAGE wala:  {1, 1, 2} -> 1 nikla, uska agla 4 andar -> {1, 2, 4} -> 1 nikla ...
-  heap me kabhi 3 se zyada nahi (ek list = ek node)
+- **e.g.** `[[1,4,5],[1,3,4],[2,6]] -> [1,1,2,3,4,4,5,6]`
+- **kyun:** har baar teeno ke current head me sabse chhota uthao: 1,1,2,3,4,4,5,6
+
+```
+L1:  1 -> 4 -> 5
+L2:  1 -> 3 -> 4
+L3:  2 -> 6
+heap me har list ka sirf AAGE wala:  {1, 1, 2} -> 1 nikla, uska agla 4 andar -> {1, 2, 4} -> 1 nikla ...
+heap me kabhi 3 se zyada nahi (ek list = ek node)
 ```
 
 > [!IMPORTANT]
@@ -275,17 +268,17 @@ ListNode *mergeKLists(vector<ListNode *> &lists) {
 
 ### ▸ SORT NEARLY-SORTED (k-sorted) ARRAY  = MIN-HEAP size k+1 (sliding buffer)
 
-**SAWAAL**
-```
-Ek array diya hai jisme har number apni sahi (sorted) jagah se zyada se zyada k khaane door hai. Poora sorted array lautao.
-  e.g. [6,5,3,2,8,10,9], k=3 -> [2,3,5,6,8,9,10]
-  kyun: 2 abhi index 3 pe, sahi jagah index 0 -> 3 door = k ke andar
+**SAWAAL** Ek array diya hai jisme har number apni sahi (sorted) jagah se zyada se zyada k khaane door hai. Poora sorted array lautao.
 
-  index :   0  1  2  3  4  5  6
-  arr   :   6  5  3  2  8 10  9
-  sorted:   2  3  5  6  8  9 10
-  6 (0 -> 3) aur 2 (3 -> 0) sabse door = 3 = k, baaki 0 ya 1 door
-  isliye index 0 ka jawab pehle k+1 = 4 me hi: {6, 5, 3, 2} -> min 2
+- **e.g.** `[6,5,3,2,8,10,9], k=3 -> [2,3,5,6,8,9,10]`
+- **kyun:** 2 abhi index 3 pe, sahi jagah index 0 -> 3 door = k ke andar
+
+```
+index :   0  1  2  3  4  5  6
+arr   :   6  5  3  2  8 10  9
+sorted:   2  3  5  6  8  9 10
+6 (0 -> 3) aur 2 (3 -> 0) sabse door = 3 = k, baaki 0 ya 1 door
+isliye index 0 ka jawab pehle k+1 = 4 me hi: {6, 5, 3, 2} -> min 2
 ```
 
 > [!IMPORTANT]
@@ -325,13 +318,10 @@ vector<int> sortKSorted(vector<int> &arr, int k) {
 
 ### ▸ FIND MEDIAN FROM DATA STREAM (LC-295)  = TWO-HEAPS balanced
 
-**SAWAAL**
-```
-Numbers ek-ek karke aate hain (addNum). Kabhi bhi findMedian() bulaya jaaye to ab tak aaye saare numbers ka median lautao.
-Odd ginti pe beech wala, even pe beech ke do ka average.
-  e.g. add 5, 15, 1, 3 -> findMedian = 4.0
-  kyun: sorted 1,3,5,15 -> beech ke do 3,5 -> (3+5)/2 = 4
-```
+**SAWAAL** Numbers ek-ek karke aate hain (addNum). Kabhi bhi findMedian() bulaya jaaye to ab tak aaye saare numbers ka median lautao. Odd ginti pe beech wala, even pe beech ke do ka average.
+
+- **e.g.** `add 5, 15, 1, 3 -> findMedian = 4.0`
+- **kyun:** sorted 1,3,5,15 -> beech ke do 3,5 -> (3+5)/2 = 4
 
 > [!WARNING]
 > **★ EDGE:**
@@ -413,12 +403,10 @@ public:
 
 ### ▸ REORGANIZE STRING (LC-767)  = MAX-HEAP + POP-TWO-AT-A-TIME (TOP K FREQUENT ka cousin)
 
-**SAWAAL**
-```
-Ek string s di hai. Uske akshar aise lagao ki koi bhi do paas-paas wale akshar same na hon. Koi bhi ek sahi string lautao, aisa na ban sake to khaali string "".
-  e.g. "aab" -> "aba" · "aaab" -> ""
-  kyun: aab: b dono a ke beech · aaab: 3 a alag karne 2 diwaar chahiye, b sirf 1
-```
+**SAWAAL** Ek string s di hai. Uske akshar aise lagao ki koi bhi do paas-paas wale akshar same na hon. Koi bhi ek sahi string lautao, aisa na ban sake to khaali string "".
+
+- **e.g.** `"aab" -> "aba" · "aaab" -> ""`
+- **kyun:** aab: b dono a ke beech · aaab: 3 a alag karne 2 diwaar chahiye, b sirf 1
 
 > [!IMPORTANT]
 > **PEHCHAN:** "rearrange so adjacent not same" / "sabse-zyada wala spread karo"
@@ -485,19 +473,18 @@ string reorganizeString(string s) {
 
 ### ▸ THROTTLING — MIN UTHAO, PADOSI HATAO (Amazon OA)  = MIN-HEAP {val,idx} + vis[] (lazy skip)
 
-**SAWAAL**
-```
-responseTimes[] diya hai. Har kadam pe bache hue numbers me se sabse chhota uthao (barabar ho to chhota index), use jawab me jodo,
-aur use aur uske dono padosi (i-1, i+1, jo bache hon) hata do. Ant me kul jod lautao.
-  e.g. [4,2,9,1,7,3] -> 6
-  kyun: 1 uthaya (9,7 hate) · 2 uthaya (4 hata) · 3 uthaya -> 1+2+3 = 6
+**SAWAAL** responseTimes[] diya hai. Har kadam pe bache hue numbers me se sabse chhota uthao (barabar ho to chhota index), use jawab me jodo, aur use aur uske dono padosi (i-1, i+1, jo bache hon) hata do. Ant me kul jod lautao.
 
-  index:   0   1   2   3   4   5
-  val  :   4   2   9   1   7   3
-  1 (idx 3) uthao -> idx 2, 4 hate :   4   2   _  [1]  _   3
-  2 (idx 1) uthao -> idx 0 hata    :   _  [2]  _  [1]  _   3
-  3 (idx 5) uthao (idx 4 pehle hata):  _  [2]  _  [1]  _  [3]   -> 1 + 2 + 3 = 6
-  padosi = ORIGINAL index wale (i-1, i+1), bache hue me naye padosi nahi bante
+- **e.g.** `[4,2,9,1,7,3] -> 6`
+- **kyun:** 1 uthaya (9,7 hate) · 2 uthaya (4 hata) · 3 uthaya -> 1+2+3 = 6
+
+```
+index:   0   1   2   3   4   5
+val  :   4   2   9   1   7   3
+1 (idx 3) uthao -> idx 2, 4 hate :   4   2   _  [1]  _   3
+2 (idx 1) uthao -> idx 0 hata    :   _  [2]  _  [1]  _   3
+3 (idx 5) uthao (idx 4 pehle hata):  _  [2]  _  [1]  _  [3]   -> 1 + 2 + 3 = 6
+padosi = ORIGINAL index wale (i-1, i+1), bache hue me naye padosi nahi bante
 ```
 
 > [!IMPORTANT]

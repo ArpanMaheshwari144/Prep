@@ -44,18 +44,18 @@ valid-parentheses CHECK karta hai (stack) · generate BANATA hai (choose/un-choo
 
 ### ▸ NEXT GREATER ELEMENT  = monotonic stack ka BASE
 
-**SAWAAL**
-```
-Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse bada number hai, wo lautao. Koi bada na mile to -1.
-  e.g. [2,1,2,4,3] -> [4,2,4,-1,-1]
-  kyun: 2 ke aage pehla bada 4 · 1 ke aage 2 · 2 ke aage 4 · 4 aur 3 ke aage koi bada nahi -> -1
+**SAWAAL** Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse bada number hai, wo lautao. Koi bada na mile to -1.
 
-  2   1   2   4   3
-  2 ----------> 4         (1 chhota, 2 barabar = bada nahi, aage chalo)
-      1 -> 2
-          2 -> 4
-              4 -> -1     (aage sirf 3, chhota)
-                  3 -> -1 (aakhri)
+- **e.g.** `[2,1,2,4,3] -> [4,2,4,-1,-1]`
+- **kyun:** 2 ke aage pehla bada 4 · 1 ke aage 2 · 2 ke aage 4 · 4 aur 3 ke aage koi bada nahi -> -1
+
+```
+2   1   2   4   3
+2 ----------> 4         (1 chhota, 2 barabar = bada nahi, aage chalo)
+    1 -> 2
+        2 -> 4
+            4 -> -1     (aage sirf 3, chhota)
+                3 -> -1 (aakhri)
 ```
 
 ### DRY-RUN [2,1,2,4,3]
@@ -99,12 +99,10 @@ vector<int> nextGreater(vector<int> &nums) {
 
 ### ▸ NEXT SMALLER ELEMENT  = NEXT GREATER, sirf condition ULTI (>)
 
-**SAWAAL**
-```
-Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse chhota (strictly) number hai, wo lautao. Koi na mile to -1.
-  e.g. [4,5,2,10,8] -> [2,2,-1,8,-1]
-  kyun: 4 aur 5 ke aage pehla chhota 2 · 2 ke aage sab bade -> -1 · 10 ke aage 8 · 8 aakhri -> -1
-```
+**SAWAAL** Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse chhota (strictly) number hai, wo lautao. Koi na mile to -1.
+
+- **e.g.** `[4,5,2,10,8] -> [2,2,-1,8,-1]`
+- **kyun:** 4 aur 5 ke aage pehla chhota 2 · 2 ke aage sab bade -> -1 · 10 ke aage 8 · 8 aakhri -> -1
 
 > [!IMPORTANT]
 > **CHAABI:** NEXT GREATER ka code hubahu, sirf `while` ki shart ULTI: `nums[st.top()] > nums[i]` (naya CHHOTA aaya to top ka jawab mila).
@@ -133,12 +131,10 @@ vector<int> nextSmaller(vector<int> &nums) {   // = next greater, sirf condition
 
 ### ▸ PREVIOUS SMALLER ELEMENT  = NEXT SMALLER, sirf LOOP ULTA (right->left)
 
-**SAWAAL**
-```
-Ek array diya hai. Har number ke liye uske baayi taraf jo pehla usse chhota (strictly) number hai, wo lautao. Koi na mile to -1.
-  e.g. [4,5,2,10,8] -> [-1,4,-1,2,2]
-  kyun: 4 ke peeche kuch nahi · 5 ke peeche 4 · 2 ke peeche 4,5 bade -> -1 · 10 aur 8 ke peeche pehla chhota 2
-```
+**SAWAAL** Ek array diya hai. Har number ke liye uske baayi taraf jo pehla usse chhota (strictly) number hai, wo lautao. Koi na mile to -1.
+
+- **e.g.** `[4,5,2,10,8] -> [-1,4,-1,2,2]`
+- **kyun:** 4 ke peeche kuch nahi · 5 ke peeche 4 · 2 ke peeche 4,5 bade -> -1 · 10 aur 8 ke peeche pehla chhota 2
 
 > [!IMPORTANT]
 > **CHAABI:** NEXT SMALLER ka code hubahu, sirf LOOP ULTA: `for (i = n-1; i >= 0; i--)` (PREVIOUS = peeche se chalna). Shart wahi `>`.
@@ -168,10 +164,10 @@ vector<int> prevSmaller(vector<int> &nums) {   // = next smaller, sirf LOOP ULTA
 
 ### ▸ NEXT SMALLER + PREV GREATER  (06/13, naya sawaal 9-Nov, ek file me dono)  = disha + shart, dono ek saath
 
-**SAWAAL**
-```
-Do function likhne hain (dono VALUE lautayein, na mile to -1, strictly):
+**SAWAAL** Do function likhne hain (dono VALUE lautayein, na mile to -1, strictly):
 
+
+```
 (A) nextSmaller: har element ke RIGHT me pehla CHHOTA.
   e.g. [4,5,2,10,8] -> [2, 2, -1, 8, -1]
   kyun: 4 ke aage pehla chhota 2 · 5 ke aage 2 · 2 se chhota koi nahi · 10 ke aage 8 · 8 aakhri
@@ -233,12 +229,10 @@ vector<int> prevGreater(vector<int> &nums)
 
 ### ▸ LARGEST RECTANGLE IN HISTOGRAM (LC-84)  = PREV-SMALLER + NEXT-SMALLER (INDEX store + combine)
 
-**SAWAAL**
-```
-heights[] me bars ki unchai di hai, har bar ki chaudai 1 hai. Lagaatar bars pe jo sabse bada rectangle ban sakta hai, uska area lautao.
-  e.g. [2,1,5,6,2,3] -> 10
-  kyun: bars 5 aur 6 -> height min(5,6)=5 x width 2 = 10, baaki koi bada nahi banta
-```
+**SAWAAL** heights[] me bars ki unchai di hai, har bar ki chaudai 1 hai. Lagaatar bars pe jo sabse bada rectangle ban sakta hai, uska area lautao.
+
+- **e.g.** `[2,1,5,6,2,3] -> 10`
+- **kyun:** bars 5 aur 6 -> height min(5,6)=5 x width 2 = 10, baaki koi bada nahi banta
 
 > [!IMPORTANT]
 > TRAPPING RAIN WATER se farak: wahan har bar ka paani PLUS karte (sabka SUM); yahan sirf EK sabse bada rectangle (5, 6 wale = 10), MAX.
@@ -442,18 +436,18 @@ int largestRectangleArea(vector<int> &heights) {
 
 ### ▸ MAXIMAL RECTANGLE (LC-85, 2D)  = LC-84 ka 2D bhai (har row = histogram)
 
-**SAWAAL**
-```
-0 aur 1 ki 2D matrix di hai. Sirf 1 se bhara hua sabse bada rectangle kitna bada hai, uska area lautao.
-  e.g. [[1,0,1,0,0],[1,0,1,1,1],[1,1,1,1,1],[1,0,0,1,0]] -> 6
-  kyun: row 1 aur row 2 me col 2,3,4 sab 1 -> 2 row x 3 col = 6
+**SAWAAL** 0 aur 1 ki 2D matrix di hai. Sirf 1 se bhara hua sabse bada rectangle kitna bada hai, uska area lautao.
 
-         c0 c1 c2 c3 c4
-   r0  [ 1  0  1  0  0 ]
-   r1  [ 1  0 [1  1  1]]
-   r2  [ 1  1 [1  1  1]]
-   r3  [ 1  0  0  1  0 ]
-  [ ] wala seedha dabba = 6. Saare 1 jude hue hain (13), par wo dabba nahi, tedha tukda hai -> nahi ginte
+- **e.g.** `[[1,0,1,0,0],[1,0,1,1,1],[1,1,1,1,1],[1,0,0,1,0]] -> 6`
+- **kyun:** row 1 aur row 2 me col 2,3,4 sab 1 -> 2 row x 3 col = 6
+
+```
+       c0 c1 c2 c3 c4
+ r0  [ 1  0  1  0  0 ]
+ r1  [ 1  0 [1  1  1]]
+ r2  [ 1  1 [1  1  1]]
+ r3  [ 1  0  0  1  0 ]
+[ ] wala seedha dabba = 6. Saare 1 jude hue hain (13), par wo dabba nahi, tedha tukda hai -> nahi ginte
 ```
 
 > [!WARNING]
@@ -498,12 +492,10 @@ int maximalRectangle(vector<vector<int>> &matrix) {
 
 ### ▸ DAILY TEMPERATURES  = NEXT GREATER, ans me VALUE nahi DISTANCE (i - top)
 
-**SAWAAL**
-```
-temps[] me har din ka taapmaan diya hai. Har din ke liye batao ki kitne din baad pehla usse garam din aata hai. Garam din kabhi na aaye to 0.
-  e.g. [73,74,75,71,69,72,76,73] -> [1,1,4,2,1,1,0,0]
-  kyun: 75 (din 2) ke baad pehla zyada 76 din 6 pe -> 6-2 = 4 · 76 ke baad koi zyada nahi -> 0
-```
+**SAWAAL** temps[] me har din ka taapmaan diya hai. Har din ke liye batao ki kitne din baad pehla usse garam din aata hai. Garam din kabhi na aaye to 0.
+
+- **e.g.** `[73,74,75,71,69,72,76,73] -> [1,1,4,2,1,1,0,0]`
+- **kyun:** 75 (din 2) ke baad pehla zyada 76 din 6 pe -> 6-2 = 4 · 76 ke baad koi zyada nahi -> 0
 
 > [!IMPORTANT]
 > **CHAABI:** NEXT GREATER ka code, ans me VALUE nahi DISTANCE: `ans[tp] = i - tp`.
@@ -533,17 +525,17 @@ vector<int> dailyTemperatures(vector<int> &temps) {
 
 ### ▸ NEXT GREATER ELEM II  = NEXT GREATER + CIRCULAR (2n loop, i % n)
 
-**SAWAAL**
-```
-Ek gol (circular) array diya hai, matlab aakhri number ke baad phir pehla number aata hai. Har number ka agla bada number lautao, na mile to -1.
-  e.g. [1,2,3,4,3] -> [2,3,4,-1,4]
-  kyun: aakhri 3 ke aage kuch nahi, ghoom ke shuru me 1,2,3,4 -> pehla bada 4 · 4 se bada kahin nahi -> -1
+**SAWAAL** Ek gol (circular) array diya hai, matlab aakhri number ke baad phir pehla number aata hai. Har number ka agla bada number lautao, na mile to -1.
 
-  1 -> 2 -> 3 -> 4 -> 3 --+
-  ^                       |
-  +-----------------------+   (aakhri ke baad phir pehla)
-  aakhri 3: aage kuch nahi -> ghoom ke 1, 2, 3 (bade nahi), 4 -> jawab 4
-  4: poora gola ghoom liya, isse bada koi nahi -> -1
+- **e.g.** `[1,2,3,4,3] -> [2,3,4,-1,4]`
+- **kyun:** aakhri 3 ke aage kuch nahi, ghoom ke shuru me 1,2,3,4 -> pehla bada 4 · 4 se bada kahin nahi -> -1
+
+```
+1 -> 2 -> 3 -> 4 -> 3 --+
+^                       |
++-----------------------+   (aakhri ke baad phir pehla)
+aakhri 3: aage kuch nahi -> ghoom ke 1, 2, 3 (bade nahi), 4 -> jawab 4
+4: poora gola ghoom liya, isse bada koi nahi -> -1
 ```
 
 > [!IMPORTANT]
@@ -577,12 +569,10 @@ vector<int> nextGreaterElements(vector<int> &nums) {   // CIRCULAR: aakhri ka gr
 
 ### ▸ ONLINE STOCK SPAN (LC-901)  = monotonic-stack + SUM-span DELTA
 
-**SAWAAL**
-```
-Share ke daam ek-ek karke aate hain (next(price) call). Har call pe span lautao: aaj ko milake peeche kitne lagaatar din ka daam aaj ke daam se kam ya barabar tha.
-  e.g. next: 100,80,60,70,60,75,85 -> 1,1,1,2,1,4,6
-  kyun: 75 aaya -> peeche 60,70,60 sab <= 75, phir 80 bada -> ruk -> 75,60,70,60 = 4
-```
+**SAWAAL** Share ke daam ek-ek karke aate hain (next(price) call). Har call pe span lautao: aaj ko milake peeche kitne lagaatar din ka daam aaj ke daam se kam ya barabar tha.
+
+- **e.g.** `next: 100,80,60,70,60,75,85 -> 1,1,1,2,1,4,6`
+- **kyun:** 75 aaya -> peeche 60,70,60 sab \<= 75, phir 80 bada -> ruk -> 75,60,70,60 = 4
 
 > [!IMPORTANT]
 > **CHAABI:** Stack me INDEX nahi, PAIR `{price, span}`. Peeche ke sasta din pop karo aur pop wale ka span JODO; phir `{price, span}` push.
@@ -616,12 +606,10 @@ public:
 
 ### ▸ VALID PARENTHESES
 
-**SAWAAL**
-```
-Ek string me sirf ( ) [ ] { } hain. true lautao agar har khulne wala bracket sahi type ke bracket se aur sahi kram me band hota hai, warna false.
-  e.g. "{[]}" -> true · "([)]" -> false
-  kyun: "([)]" me ( khula, [ khula, par ) aaya jabki sabse upar [ khula hai -> match nahi
-```
+**SAWAAL** Ek string me sirf ( ) [ ] { } hain. true lautao agar har khulne wala bracket sahi type ke bracket se aur sahi kram me band hota hai, warna false.
+
+- **e.g.** `"{[]}" -> true · "([)]" -> false`
+- **kyun:** "([)]" me ( khula, [ khula, par ) aaya jabki sabse upar [ khula hai -> match nahi
 
 > [!IMPORTANT]
 > **CHAABI:** Opening -> push. Closing -> stack khaali to `false`, warna top pop karke type milao. End me `return st.empty()`.
@@ -655,12 +643,10 @@ bool isValid(string s) {
 
 ### ▸ MIN STACK
 
-**SAWAAL**
-```
-Ek stack banao jisme push(val), pop(), top() aur getMin() chaaron O(1) me chalein. getMin() stack me abhi ka sabse chhota number deta hai.
-  e.g. push(-2) push(0) push(-3) getMin() -> -3 · pop() · top() -> 0 · getMin() -> -2
-  kyun: -3 pop hone ke baad stack me [-2,0] bacha -> upar 0, sabse chhota -2
-```
+**SAWAAL** Ek stack banao jisme push(val), pop(), top() aur getMin() chaaron O(1) me chalein. getMin() stack me abhi ka sabse chhota number deta hai.
+
+- **e.g.** `push(-2) push(0) push(-3) getMin() -> -3 · pop() · top() -> 0 · getMin() -> -2`
+- **kyun:** -3 pop hone ke baad stack me [-2,0] bacha -> upar 0, sabse chhota -2
 
 > [!IMPORTANT]
 > **CHAABI:** Pair `{val, yahan tak ka MIN}` push -> `getMin() = st.top().second`, koi scan nahi. Pop pe purana min apne aap wapas.
@@ -691,12 +677,10 @@ public:
 
 ### ▸ MIN ADD MAKE VALID  = VALID PARENTHESES ka counter wala (stack nahi)
 
-**SAWAAL**
-```
-Ek string me sirf '(' aur ')' hain. Kam se kam kitne bracket jodne padenge taaki string valid ho jaaye, wo ginti lautao.
-  e.g. "()))((" -> 4
-  kyun: pehla () theek · agle do ')' ka koi '(' nahi -> 2 · aakhri do '(' band nahi hue -> 2 · total 4
-```
+**SAWAAL** Ek string me sirf '(' aur ')' hain. Kam se kam kitne bracket jodne padenge taaki string valid ho jaaye, wo ginti lautao.
+
+- **e.g.** `"()))((" -> 4`
+- **kyun:** pehla () theek · agle do ')' ka koi '(' nahi -> 2 · aakhri do '(' band nahi hue -> 2 · total 4
 
 > [!IMPORTANT]
 > **CHAABI:** Do counter: `(` -> `close_needed++`; `)` -> pending open ho to `close_needed--`, warna `open_needed++`. Answer = dono ka JOD.
@@ -729,12 +713,10 @@ int minAddToMakeValid(string s) {           // COUNTER, stack nahi (sirf '(' ')'
 
 ### ▸ QUEUE USING STACKS (LC 232)  — Walmart R2 me aaya ("fully working code")
 
-**SAWAAL**
-```
-Sirf stack (push, pop, top, empty) ka use karke ek queue (pehle aaya, pehle gaya) banao: push(x) peeche daalta hai, pop() aage wala nikaalta hai, peek() aur empty() bhi chahiye.
-  e.g. push(1) push(2) peek() -> 1 · pop() -> 1 · push(3) pop() -> 2 · pop() -> 3 · empty() -> true
-  kyun: queue me jo pehle aaya wahi pehle nikalta -> 1, phir 2, phir 3, ab khaali
-```
+**SAWAAL** Sirf stack (push, pop, top, empty) ka use karke ek queue (pehle aaya, pehle gaya) banao: push(x) peeche daalta hai, pop() aage wala nikaalta hai, peek() aur empty() bhi chahiye.
+
+- **e.g.** `push(1) push(2) peek() -> 1 · pop() -> 1 · push(3) pop() -> 2 · pop() -> 3 · empty() -> true`
+- **kyun:** queue me jo pehle aaya wahi pehle nikalta -> 1, phir 2, phir 3, ab khaali
 
 > [!IMPORTANT]
 > **CHAABI:** Do stack: `push` -> `input`; `pop` / `peek` -> `output` se. `output` KHAALI ho tabhi poora `input` palto (har element ek hi baar palta = amortized O(1)).
@@ -791,12 +773,10 @@ public:
 
 ### ▸ EVALUATE REVERSE POLISH NOTATION (LC 150)
 
-**SAWAAL**
-```
-String ka array tokens: har token ek number (minus wala bhi, "-11") ya operator (+ - * /). Operator apne dono number ke BAAD aata hai. Poore hisaab ka jawab lautao; "/" zero ki taraf kaato.
-  e.g. ["2","1","+","3","*"] -> 9 · ["4","13","5","/","+"] -> 6
-  kyun: (2 + 1) * 3 = 9 · 4 + (13 / 5) = 4 + 2 = 6
-```
+**SAWAAL** String ka array tokens: har token ek number (minus wala bhi, "-11") ya operator (+ - \* /). Operator apne dono number ke BAAD aata hai. Poore hisaab ka jawab lautao; "/" zero ki taraf kaato.
+
+- **e.g.** `["2","1","+","3","*"] -> 9 · ["4","13","5","/","+"] -> 6`
+- **kyun:** (2 + 1) \* 3 = 9 · 4 + (13 / 5) = 4 + 2 = 6
 
 **CODE**
 ```cpp
@@ -835,17 +815,17 @@ int evalRPN(vector<string> &tokens) {
 
 ### ▸ CAR FLEET (LC 853)  = sawaal greedy jaisa (sort + waqt), stack bas fleet ginne ko
 
-**SAWAAL**
-```
-Ek-lane sadak, manzil target pe. Gaadi i position[i] pe, speed[i] se chalti. Overtake nahi: tez gaadi aage wali dheemi ko pakde to uske peeche usi speed se = ek FLEET (manzil pe saath pahunche to bhi ek). Kitne fleet pahunchenge?
-  e.g. target=12, position=[10,8,0,5,3], speed=[2,4,1,1,3] -> 3 · target=10, [7,4], [2,5] -> 1
-  kyun: 10 aur 8 dono 1 ghante -> ek · 0 akela 12 ghante · 5 aur 3 dono 7 ghante -> ek  ·  7 wali 1.5, 4 wali 1.2 -> peeche wali pakad leti -> ek
+**SAWAAL** Ek-lane sadak, manzil target pe. Gaadi i position[i] pe, speed[i] se chalti. Overtake nahi: tez gaadi aage wali dheemi ko pakde to uske peeche usi speed se = ek FLEET (manzil pe saath pahunche to bhi ek). Kitne fleet pahunchenge?
 
-  sadak:  0 -------- 3 ----- 5 -------- 8 ----- 10 ---- 12 (manzil)
-  speed:  1          3       1          4       2
-  waqt:   12         3       7          1       1      (akele chalein to: (12 - pos) / speed)
-  fleet:  {0}        {3, 5} = 7 ghante  {8, 10} = 1 ghanta   -> 3 fleet
-  3 wali akeli 3 ghante me pahunchti, par aage 5 wali (7 ghante) ko raste me pakad ke uske peeche atak gayi
+- **e.g.** `target=12, position=[10,8,0,5,3], speed=[2,4,1,1,3] -> 3 · target=10, [7,4], [2,5] -> 1`
+- **kyun:** 10 aur 8 dono 1 ghante -> ek · 0 akela 12 ghante · 5 aur 3 dono 7 ghante -> ek  ·  7 wali 1.5, 4 wali 1.2 -> peeche wali pakad leti -> ek
+
+```
+sadak:  0 -------- 3 ----- 5 -------- 8 ----- 10 ---- 12 (manzil)
+speed:  1          3       1          4       2
+waqt:   12         3       7          1       1      (akele chalein to: (12 - pos) / speed)
+fleet:  {0}        {3, 5} = 7 ghante  {8, 10} = 1 ghanta   -> 3 fleet
+3 wali akeli 3 ghante me pahunchti, par aage 5 wali (7 ghante) ko raste me pakad ke uske peeche atak gayi
 ```
 
 > [!WARNING]

@@ -19,16 +19,15 @@
 
 ### ▸ ASSIGN COOKIES (LC-455)  = greedy intro (sort + 2-pointer)
 
-**SAWAAL**
-```
-g[] me har bachche ki bhookh (greed) aur s[] me har cookie ka size diya hai. Bachcha khush tab hota hai jab cookie ka size uski bhookh se kam na ho, aur ek bachche ko zyada se zyada ek cookie milti hai.
-Zyada se zyada kitne bachche khush kar sakte ho, wo lautao.
-  e.g. g=[1,2,3], s=[1,1] -> 1
-  kyun: dono cookie size 1 -> sirf greed-1 wala khush
+**SAWAAL** g[] me har bachche ki bhookh (greed) aur s[] me har cookie ka size diya hai. Bachcha khush tab hota hai jab cookie ka size uski bhookh se kam na ho, aur ek bachche ko zyada se zyada ek cookie milti hai. Zyada se zyada kitne bachche khush kar sakte ho, wo lautao.
 
-  bachche (bhookh):  1    2    3
-  cookie (size)   :  1    1
-  cookie 1 -> bhookh 1 khush · doosri cookie 1 < 2 aur 1 < 3 -> kisi kaam ki nahi -> 1
+- **e.g.** `g=[1,2,3], s=[1,1] -> 1`
+- **kyun:** dono cookie size 1 -> sirf greed-1 wala khush
+
+```
+bachche (bhookh):  1    2    3
+cookie (size)   :  1    1
+cookie 1 -> bhookh 1 khush · doosri cookie 1 < 2 aur 1 < 3 -> kisi kaam ki nahi -> 1
 ```
 
 > [!IMPORTANT]
@@ -65,18 +64,18 @@ int findContentChildren(vector<int> &g, vector<int> &s) {
 
 ### ▸ JUMP GAME (LC-55)  = greedy REACHABILITY (farthest-reach track)
 
-**SAWAAL**
-```
-nums[i] batata hai ki index i se zyada se zyada kitne kadam aage kood sakte ho. Index 0 se shuru karke kya aakhri index tak pahunch sakte ho? true ya false lautao.
-  e.g. [2,3,1,1,4] -> true · [3,2,1,0,4] -> false
-  kyun: 0->1->4 pahunche · doosre me har raasta index 3 (value 0) pe atakta
+**SAWAAL** nums[i] batata hai ki index i se zyada se zyada kitne kadam aage kood sakte ho. Index 0 se shuru karke kya aakhri index tak pahunch sakte ho? true ya false lautao.
 
-  [2,3,1,1,4]   index:  0  1  2  3  4
-                nums :  2  3  1  1  4
-                i+nums: 2  4  3  4      -> index 1 se 4 tak pahunch -> true
-  [3,2,1,0,4]   index:  0  1  2  3  4
-                nums :  3  2  1  0  4
-                i+nums: 3  3  3  3      -> sab 3 pe rukte, 4 tak koi nahi -> false
+- **e.g.** `[2,3,1,1,4] -> true · [3,2,1,0,4] -> false`
+- **kyun:** 0->1->4 pahunche · doosre me har raasta index 3 (value 0) pe atakta
+
+```
+[2,3,1,1,4]   index:  0  1  2  3  4
+              nums :  2  3  1  1  4
+              i+nums: 2  4  3  4      -> index 1 se 4 tak pahunch -> true
+[3,2,1,0,4]   index:  0  1  2  3  4
+              nums :  3  2  1  0  4
+              i+nums: 3  3  3  3      -> sab 3 pe rukte, 4 tak koi nahi -> false
 ```
 
 > [!IMPORTANT]
@@ -105,17 +104,17 @@ bool canJump(vector<int> &nums) {  // nums[i] = us index se max kitna kood sakte
 
 ### ▸ NON-OVERLAPPING INTERVALS (LC-435)  = greedy interval-scheduling (keep SMALLER-END) · MERGE INTERVALS ka bhai (sort + overlap check)
 
-**SAWAAL**
-```
-intervals[] diye hain. Kam se kam kitne interval hatane padenge taaki bache hue koi bhi do interval overlap na karein, wo lautao. Sirf chhoona (ek ka end = doosre ka start) overlap nahi maana jaata.
-  e.g. [[1,2],[2,3],[3,4],[1,3]] -> 1
-  kyun: [1,3] hatao -> [1,2],[2,3],[3,4] sirf chhoote, overlap nahi
+**SAWAAL** intervals[] diye hain. Kam se kam kitne interval hatane padenge taaki bache hue koi bhi do interval overlap na karein, wo lautao. Sirf chhoona (ek ka end = doosre ka start) overlap nahi maana jaata.
 
-  time:    1   2   3   4
-  [1,2]    |---|
-  [2,3]        |---|
-  [3,4]            |---|
-  [1,3]    |-------|        <- [1,2] aur [2,3] dono se takraata, ise hatao -> 1
+- **e.g.** `[[1,2],[2,3],[3,4],[1,3]] -> 1`
+- **kyun:** [1,3] hatao -> [1,2],[2,3],[3,4] sirf chhoote, overlap nahi
+
+```
+time:    1   2   3   4
+[1,2]    |---|
+[2,3]        |---|
+[3,4]            |---|
+[1,3]    |-------|        <- [1,2] aur [2,3] dono se takraata, ise hatao -> 1
 ```
 
 > [!IMPORTANT]
@@ -159,13 +158,10 @@ int eraseOverlapIntervals(vector<vector<int>> intervals) {   // MIN kitne HATAO 
 
 ### ▸ GAS STATION (LC-134)  = greedy running-tank + reset-start
 
-**SAWAAL**
-```
-N petrol pump gol ghere me hain. gas[i] = pump i pe milne wala petrol, cost[i] = pump i se agle pump tak ka kharcha.
-Kis pump se shuru karke poora chakkar laga sakte ho, wo index lautao. Na laga sako to -1.
-  e.g. gas=[1,2,3,4,5], cost=[3,4,5,1,2] -> 3
-  kyun: index 3 se tank 3, 6, 4, 2, 0 -> kabhi minus nahi, chakkar poora
-```
+**SAWAAL** N petrol pump gol ghere me hain. gas[i] = pump i pe milne wala petrol, cost[i] = pump i se agle pump tak ka kharcha. Kis pump se shuru karke poora chakkar laga sakte ho, wo index lautao. Na laga sako to -1.
+
+- **e.g.** `gas=[1,2,3,4,5], cost=[3,4,5,1,2] -> 3`
+- **kyun:** index 3 se tank 3, 6, 4, 2, 0 -> kabhi minus nahi, chakkar poora
 
 **DRY-RUN**
 ```
@@ -210,13 +206,10 @@ int canCompleteCircuit(vector<int> &gas, vector<int> &cost) {
 
 ### ▸ TASK SCHEDULER (LC-621)  = greedy IDLE-SLOTS (most-frequent frame)
 
-**SAWAAL**
-```
-tasks me kaam diye hain (har akshar ek kaam, har kaam 1 unit time). Ek hi kaam dobara karne se pehle beech me kam se kam n unit ka gap chahiye (khaali baith sakte ho).
-Saare kaam khatam karne me kam se kam kitna kul time lagega (khaali time bhi milake), wo lautao.
-  e.g. [A,A,A,B,B,B], n=2 -> 8
-  kyun: A B idle A B idle A B = 8 unit
-```
+**SAWAAL** tasks me kaam diye hain (har akshar ek kaam, har kaam 1 unit time). Ek hi kaam dobara karne se pehle beech me kam se kam n unit ka gap chahiye (khaali baith sakte ho). Saare kaam khatam karne me kam se kam kitna kul time lagega (khaali time bhi milake), wo lautao.
+
+- **e.g.** `[A,A,A,B,B,B], n=2 -> 8`
+- **kyun:** A B idle A B idle A B = 8 unit
 
 > [!IMPORTANT]
 > **PEHCHAAN / SAAR:** sabse ZYADA wala task (maxFreq) DHANCHA banata,
@@ -293,12 +286,10 @@ int leastInterval(vector<char> &tasks, int n) {
 
 ### ▸ PARTITION LABELS (LC 763)
 
-**SAWAAL**
-```
-String s (a-z). Jitne zyada tukde ho sakein utne kaato, shart: har akshar sirf EK tukde me aaye. Har tukde ki lambai lautao, kram me.
-  e.g. "ababcbacadefegdehijhklij" -> [9,7,8] · "eccbbbbdec" -> [10] · "abac" -> [3,1]
-  kyun: "ababcbaca" | "defegde" | "hijhklij" (a, b, c sirf pehle me) · e shuru me bhi aakhir me bhi -> poori ek
-```
+**SAWAAL** String s (a-z). Jitne zyada tukde ho sakein utne kaato, shart: har akshar sirf EK tukde me aaye. Har tukde ki lambai lautao, kram me.
+
+- **e.g.** `"ababcbacadefegdehijhklij" -> [9,7,8] · "eccbbbbdec" -> [10] · "abac" -> [3,1]`
+- **kyun:** "ababcbaca" | "defegde" | "hijhklij" (a, b, c sirf pehle me) · e shuru me bhi aakhir me bhi -> poori ek
 
 > [!IMPORTANT]
 > **CHAABI:** pehle se har akshar ka AAKHRI index map me rakh lo, phir chalte-chalte `end = max(end, mp[akshar])`; `j` end pe pahunche to tukda khatam. Ye library me honi chahiye: on the spot ye trick 5-6 hint ke bina nahi banti (Arpan).

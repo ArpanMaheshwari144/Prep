@@ -15,12 +15,10 @@
 
 ### ▸ SINGLE NUMBER (LC-136)
 
-**SAWAAL**
-```
-Array me har number do baar aata hai, sirf ek number ek baar. Wo number lautao. O(n) time aur O(1) extra jagah me.
-  e.g. [4,1,2,1,2] -> 4
-  kyun: 4^1^2^1^2: 1^1 = 0, 2^2 = 0, bacha 4
-```
+**SAWAAL** Array me har number do baar aata hai, sirf ek number ek baar. Wo number lautao. O(n) time aur O(1) extra jagah me.
+
+- **e.g.** `[4,1,2,1,2] -> 4`
+- **kyun:** 4^1^2^1^2: 1^1 = 0, 2^2 = 0, bacha 4
 
 > [!IMPORTANT]
 > **CHAABI:** sab XOR kar do: `a^a = 0` (pair kat jaata), `a^0 = a` -> akela bacha. Koi map nahi, O(1).

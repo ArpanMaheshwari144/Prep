@@ -16,13 +16,10 @@
 
 ### ▸ DESIGN HASHMAP (LLD)
 
-**SAWAAL**
-```
-Built-in map use kiye bina apna HashMap banao (string key, int value). put(key, val): key pehle se ho to value badlo, warna naya jodo.
-get(key): value lautao, na mile to -1. remove(key): key hatao.
-  e.g. put("a",1) put("b",2) put("a",5) get("a") -> 5 · size() -> 2 · remove("b") get("b") -> -1
-  kyun: "a" dobara aaya to naya node nahi, value 5 ho gayi -> keys sirf a,b = 2 · b hata to -1
-```
+**SAWAAL** Built-in map use kiye bina apna HashMap banao (string key, int value). put(key, val): key pehle se ho to value badlo, warna naya jodo. get(key): value lautao, na mile to -1. remove(key): key hatao.
+
+- **e.g.** `put("a",1) put("b",2) put("a",5) get("a") -> 5 · size() -> 2 · remove("b") get("b") -> -1`
+- **kyun:** "a" dobara aaya to naya node nahi, value 5 ho gayi -> keys sirf a,b = 2 · b hata to -1
 
 > [!WARNING]
 > **PUT TRAP (7-redo se pakka):** key MILI -> value update + TURANT return. return NA kiya to loop aage
@@ -148,12 +145,10 @@ public:
 
 ### ▸ DESIGN HASHSET (LLD)  = HASHMAP ka EXACT code, bas VALUE nikaal do
 
-**SAWAAL**
-```
-Built-in set use kiye bina apna HashSet banao (sirf string key). add(key): dohrav nahi daalna. contains(key): hai to true, warna false. remove(key): hatao.
-  e.g. add("apple") add("banana") add("apple") · contains("apple") -> true · size() -> 2 · remove("apple") -> contains false
-  kyun: doosra "apple" pehle se tha, kuch nahi juda -> 2 key · remove ke baad apple gayab
-```
+**SAWAAL** Built-in set use kiye bina apna HashSet banao (sirf string key). add(key): dohrav nahi daalna. contains(key): hai to true, warna false. remove(key): hatao.
+
+- **e.g.** `add("apple") add("banana") add("apple") · contains("apple") -> true · size() -> 2 · remove("apple") -> contains false`
+- **kyun:** doosra "apple" pehle se tha, kuch nahi juda -> 2 key · remove ke baad apple gayab
 
 > [!WARNING]
 > **BUG-CATCH (remove, khud pakda):** advance = "prev = curr; curr = curr->next"
@@ -244,13 +239,10 @@ public:
 
 ### ▸ LRU CACHE (LC146) — COMBO: hashmap + doubly-linked-list
 
-**SAWAAL**
-```
-Ek fixed capacity wala cache banao. get(key): value lautao, na ho to -1. put(key, val): daalo ya badlo. Dono O(1) me.
-Cache bhar jaaye to wo key hatao jo sabse lambe samay se use nahi hui (least recently used).
-  e.g. cap=2: put(1,1) put(2,2) get(1) -> 1 · put(3,3) · get(2) -> -1 · put(4,4) · get(1) -> -1 · get(3) -> 3 · get(4) -> 4
-  kyun: get(1) se 1 taaza, put(3) pe 2 sabse purana -> hata · put(4) pe ab 1 purana -> hata, bache 3,4
-```
+**SAWAAL** Ek fixed capacity wala cache banao. get(key): value lautao, na ho to -1. put(key, val): daalo ya badlo. Dono O(1) me. Cache bhar jaaye to wo key hatao jo sabse lambe samay se use nahi hui (least recently used).
+
+- **e.g.** `cap=2: put(1,1) put(2,2) get(1) -> 1 · put(3,3) · get(2) -> -1 · put(4,4) · get(1) -> -1 · get(3) -> 3 · get(4) -> 4`
+- **kyun:** get(1) se 1 taaza, put(3) pe 2 sabse purana -> hata · put(4) pe ab 1 purana -> hata, bache 3,4
 
 ### VISUAL
 

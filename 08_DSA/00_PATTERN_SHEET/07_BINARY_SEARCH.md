@@ -42,12 +42,10 @@
 
 ### ▸ BINARY SEARCH (BASIC)
 
-**SAWAAL**
-```
-Ek SORTED array aur ek target diya hai. target kis index pe hai wo lautao, na mile to -1. O(log n) me karna hai.
-  e.g. [-1,0,3,5,9,12], target=9 -> 4
-  kyun: 9 index 4 pe baitha hai (-1,0,3,5 ke baad)
-```
+**SAWAAL** Ek SORTED array aur ek target diya hai. target kis index pe hai wo lautao, na mile to -1. O(log n) me karna hai.
+
+- **e.g.** `[-1,0,3,5,9,12], target=9 -> 4`
+- **kyun:** 9 index 4 pe baitha hai (-1,0,3,5 ke baad)
 
 > [!IMPORTANT]
 > **CHAABI:** `mid` nikaalo: `nums[mid] == target` -> return mid; chhota -> `low = mid + 1`; bada -> `high = mid - 1`. Bahar -> -1.
@@ -78,13 +76,10 @@ int search(vector<int> &nums, int target) {
 
 ### ▸ SEARCH INSERT POSITION  = BASIC BS, na mile to low (daalne ki jagah)
 
-**SAWAAL**
-```
-Ek SORTED array (sab alag number) aur ek target diya hai. target mile to uska index lautao.
-Na mile to wo index lautao jahan target daalne se array sorted bana rahe.
-  e.g. [1,3,5,6], target=2 -> 1
-  kyun: 2 na mila, 1 aur 3 ke beech jaayega -> index 1
-```
+**SAWAAL** Ek SORTED array (sab alag number) aur ek target diya hai. target mile to uska index lautao. Na mile to wo index lautao jahan target daalne se array sorted bana rahe.
+
+- **e.g.** `[1,3,5,6], target=2 -> 1`
+- **kyun:** 2 na mila, 1 aur 3 ke beech jaayega -> index 1
 
 > [!IMPORTANT]
 > **CHAABI:** BASIC BS hubahu; na mile to `return low` (low = pehla `nums >= target` = daalne ki jagah).
@@ -114,13 +109,10 @@ int searchInsert(vector<int> &nums, int target) {   // [1,3,5,6], 2 -> 1 (1 aur 
 
 ### ▸ FIRST & LAST POSITION (LC-34)  = BASIC BS x2, mila to ruko mat (ek taraf aur chalo)
 
-**SAWAAL**
-```
-Ek SORTED array (number dohraye ho sakte hain) aur ek target diya hai. target jahan pehli baar aur aakhri baar aata hai, wo dono index lautao.
-Na mile to {-1, -1}. O(log n) me karna hai.
-  e.g. [5,7,7,8,8,10], target=8 -> {3,4}
-  kyun: 8 index 3 aur 4 pe hai -> pehla 3, aakhri 4
-```
+**SAWAAL** Ek SORTED array (number dohraye ho sakte hain) aur ek target diya hai. target jahan pehli baar aur aakhri baar aata hai, wo dono index lautao. Na mile to {-1, -1}. O(log n) me karna hai.
+
+- **e.g.** `[5,7,7,8,8,10], target=8 -> {3,4}`
+- **kyun:** 8 index 3 aur 4 pe hai -> pehla 3, aakhri 4
 
 ### DRY-RUN ([5,7,7,8,8,10], target 8)
 
@@ -180,16 +172,16 @@ vector<int> searchRange(vector<int> &nums, int target) {
 
 ### ▸ SEARCH IN ROTATED (LC-33)  = rotated sorted array me target, O(log n)
 
-**SAWAAL**
-```
-Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai, jaise [4,5,6,7,0,1,2]. Usme target ka index lautao, na mile to -1. O(log n) me.
-  e.g. [4,5,6,7,0,1,2], target=0 -> 4
-  kyun: [0,1,2,4,5,6,7] ghum ke [4,5,6,7,0,1,2] bana, 0 ab index 4 pe hai
+**SAWAAL** Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai, jaise [4,5,6,7,0,1,2]. Usme target ka index lautao, na mile to -1. O(log n) me.
 
-  idx:  0  1  2  3 | 4  5  6
-  val:  4  5  6  7 | 0  1  2
-        4 se 7 tak | gira, phir 0 se 2
-  do sorted tukde; 0 doosre tukde ke shuru me, index 4
+- **e.g.** `[4,5,6,7,0,1,2], target=0 -> 4`
+- **kyun:** [0,1,2,4,5,6,7] ghum ke [4,5,6,7,0,1,2] bana, 0 ab index 4 pe hai
+
+```
+idx:  0  1  2  3 | 4  5  6
+val:  4  5  6  7 | 0  1  2
+      4 se 7 tak | gira, phir 0 se 2
+do sorted tukde; 0 doosre tukde ke shuru me, index 4
 ```
 
 > [!IMPORTANT]
@@ -234,12 +226,10 @@ int search(vector<int> &nums, int target) { // [4,5,6,7,0,1,2] me target ka inde
 
 ### ▸ FIND MIN IN ROTATED  = ROTATED ka KHUD-ANSWER wala (mid vs HIGH, high = mid, low < high)
 
-**SAWAAL**
-```
-Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai. Usme sabse chhota number lautao. O(log n) me.
-  e.g. [3,4,5,1,2] -> 1
-  kyun: 3,4,5 badhte gaye, 1 pe gira -> wahi ghumne ki jagah, wahi min
-```
+**SAWAAL** Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai. Usme sabse chhota number lautao. O(log n) me.
+
+- **e.g.** `[3,4,5,1,2] -> 1`
+- **kyun:** 3,4,5 badhte gaye, 1 pe gira -> wahi ghumne ki jagah, wahi min
 
 > [!IMPORTANT]
 > **CHAABI:** Target nahi, khud MIN -> mid ko HIGH se compare: `nums[mid] > nums[high]` to `low = mid + 1`, warna `high = mid`.
@@ -309,13 +299,10 @@ ISI FAMILY KE AUR (kahani alag, shell wahi):
 
 ### ▸ KOKO BANANAS (LC-875) -- min eating-speed
 
-**SAWAAL**
-```
-piles[] me kelon ke dher hain aur h ghante hain. Koko har ghante ek dher se k kele khaati hai (dher me kam bache hon to bas wahi).
-Saare kele h ghante me khatam karne ke liye sabse kam speed k kitni chahiye, wo lautao.
-  e.g. piles=[3,6,7,11], h=8 -> 4
-  kyun: k=4 -> 1+2+2+3 = 8 ghante, chal gaya · k=3 -> 1+2+3+4 = 10 > 8, nahi chalega
-```
+**SAWAAL** piles[] me kelon ke dher hain aur h ghante hain. Koko har ghante ek dher se k kele khaati hai (dher me kam bache hon to bas wahi). Saare kele h ghante me khatam karne ke liye sabse kam speed k kitni chahiye, wo lautao.
+
+- **e.g.** `piles=[3,6,7,11], h=8 -> 4`
+- **kyun:** k=4 -> 1+2+2+3 = 8 ghante, chal gaya · k=3 -> 1+2+3+4 = 10 > 8, nahi chalega
 
 > [!IMPORTANT]
 > **CHAABI:** Answer-range pe BS: `low = 1`, `high = max(piles)`. `solve(mid)`: `sum ceil(piles[i] / mid) <= h`? haan -> `ans = mid, high = mid - 1` (chhota try), nahi -> `low = mid + 1`.
@@ -355,13 +342,10 @@ int minEatingSpeed(vector<int> &piles, int h) {
 
 ### ▸ SHIP WITHIN D DAYS (LC-1011) -- min capacity  = KOKO wala shell, sirf range + solve alag
 
-**SAWAAL**
-```
-weights[] me packet ka wazan diya hai. Inhe isi kram me D din me bhejna hai, aur ek din ka kul wazan jahaaz ki capacity se zyada nahi ho sakta.
-Sabse kam capacity kitni chahiye, wo lautao.
-  e.g. weights=[3,2,2,4,1,4], D=3 -> 6
-  kyun: 6 se [3,2] [2,4] [1,4] = 3 din · 5 se [3,2] [2] [4,1] [4] = 4 din, zyada
-```
+**SAWAAL** weights[] me packet ka wazan diya hai. Inhe isi kram me D din me bhejna hai, aur ek din ka kul wazan jahaaz ki capacity se zyada nahi ho sakta. Sabse kam capacity kitni chahiye, wo lautao.
+
+- **e.g.** `weights=[3,2,2,4,1,4], D=3 -> 6`
+- **kyun:** 6 se [3,2] [2,4] [1,4] = 3 din · 5 se [3,2] [2] [4,1] [4] = 4 din, zyada
 
 > [!IMPORTANT]
 > **CHAABI:** KOKO ka shell, sirf range + solve alag: `low = max(weights)`, `high = sum(weights)`. `solve`: `sum + w > mid` to `days++, sum = 0`; `days <= D`?
@@ -406,19 +390,19 @@ int shipWithinDays(vector<int> &weights, int days) {
 
 ### ▸ SPLIT ARRAY LARGEST SUM (LC-410) -- min largest part-sum  = SHIP WITHIN D DAYS hi (D din = k hisse)
 
-**SAWAAL**
+**SAWAAL** Ek array ko k lagaatar hisson me todna hai. Har tareeke me sabse bade hisse ka jod dekho. Aisa todo ki ye sabse bada jod jitna ho sake chhota ho, aur wo jod lautao.
+
+- **e.g.** `[7,2,5,10,8], k=2 -> 18`
+- saare split (har split ki cost = uske tukdon me sabse bada sum):
+
 ```
-Ek array ko k lagaatar hisson me todna hai. Har tareeke me sabse bade hisse ka jod dekho.
-Aisa todo ki ye sabse bada jod jitna ho sake chhota ho, aur wo jod lautao.
-  e.g. [7,2,5,10,8], k=2 -> 18
-  saare split (har split ki cost = uske tukdon me sabse bada sum):
-    [7]          | [2,5,10,8]   ->  7 , 25  -> cost 25
-    [7,2]        | [5,10,8]     ->  9 , 23  -> cost 23
-    [7,2,5]      | [10,8]       -> 14 , 18  -> cost 18
-    [7,2,5,10]   | [8]          -> 24 ,  8  -> cost 24
-  cost 25, 23, 18, 24 -> sabse chhoti 18 -> jawab 18.
-  14 aur 18 do alag jawab nahi, EK hi split ke do tukde; us split ki cost 18 hi ginegi, 14 kabhi nahi.
+[7]          | [2,5,10,8]   ->  7 , 25  -> cost 25
+[7,2]        | [5,10,8]     ->  9 , 23  -> cost 23
+[7,2,5]      | [10,8]       -> 14 , 18  -> cost 18
+[7,2,5,10]   | [8]          -> 24 ,  8  -> cost 24
 ```
+
+cost 25, 23, 18, 24 -> sabse chhoti 18 -> jawab 18. 14 aur 18 do alag jawab nahi, EK hi split ke do tukde; us split ki cost 18 hi ginegi, 14 kabhi nahi.
 
 > [!IMPORTANT]
 > **CHAABI:** SHIP WITHIN D DAYS hi: k hisse = D din. `solve`: `sum > mid` to naya tukda (`count++`); `count <= k`? Range `low = max`, `high = sum`.
@@ -462,18 +446,18 @@ int splitArray(vector<int> &nums, int k) {
 
 ### ▸ FIND PEAK ELEMENT (LC-162)
 
-**SAWAAL**
-```
-Ek array diya hai. Peak wo number hai jo apne dono padosiyon se bada ho (array ke bahar ko minus infinity maano). Kisi bhi ek peak ka index lautao. O(log n) me.
-  SHART (LC-162): do padosi kabhi barabar nahi (nums[i] != nums[i+1]). Isi se teesra case (barabar) aata hi nahi; [1,1] pe loop atak jaata
-  e.g. [1,2,1,3,5,6,4] -> 5 (ya 1)
-  kyun: index 5 pe 6 -> padosi 5 aur 4 dono chhote · index 1 pe 2 bhi (1 aur 1 se bada)
+**SAWAAL** Ek array diya hai. Peak wo number hai jo apne dono padosiyon se bada ho (array ke bahar ko minus infinity maano). Kisi bhi ek peak ka index lautao. O(log n) me.
 
-  idx:   0   1   2   3   4   5   6
-  val:   1   2   1   3   5   6   4
-             ^               ^
-       peak (1 < 2 > 1)       peak (5 < 6 > 4)
-  sabse bada nahi maanga, koi bhi ek peak ka index chalega (1 ya 5)
+- SHART (LC-162): do padosi kabhi barabar nahi (nums[i] != nums[i+1]). Isi se teesra case (barabar) aata hi nahi; [1,1] pe loop atak jaata
+- **e.g.** `[1,2,1,3,5,6,4] -> 5 (ya 1)`
+- **kyun:** index 5 pe 6 -> padosi 5 aur 4 dono chhote · index 1 pe 2 bhi (1 aur 1 se bada)
+
+```
+idx:   0   1   2   3   4   5   6
+val:   1   2   1   3   5   6   4
+           ^               ^
+     peak (1 < 2 > 1)       peak (5 < 6 > 4)
+sabse bada nahi maanga, koi bhi ek peak ka index chalega (1 ya 5)
 ```
 
 > [!IMPORTANT]
@@ -507,12 +491,10 @@ int findPeakElement(vector<int> &nums) {    // peak = dono padosi se bada; edges
 
 ### ▸ SINGLE ELEMENT (SORTED, LC-540)  = INDEX-PARITY binary search
 
-**SAWAAL**
-```
-Ek SORTED array me har number theek do baar aata hai, sirf ek number akela (ek baar) hai. Wo akela number lautao. O(log n) me.
-  e.g. [1,1,2,3,3,4,4,8,8] -> 2
-  kyun: 1,1 jodi · 2 ka jodidaar nahi · baaki 3,3 4,4 8,8 jodi -> 2
-```
+**SAWAAL** Ek SORTED array me har number theek do baar aata hai, sirf ek number akela (ek baar) hai. Wo akela number lautao. O(log n) me.
+
+- **e.g.** `[1,1,2,3,3,4,4,8,8] -> 2`
+- **kyun:** 1,1 jodi · 2 ka jodidaar nahi · baaki 3,3 4,4 8,8 jodi -> 2
 
 ### TASVEER: [1,1,2,3,3,4,4,8,8] -> 2
 
@@ -568,17 +550,16 @@ int singleNonDuplicate(vector<int> &nums) {
 
 ### ▸ SEARCH 2D MATRIX  = BASIC BS, poori matrix ek 1D sorted array (index -> row, col)
 
-**SAWAAL**
-```
-Ek matrix di hai jiski har row sorted hai, aur har row ka pehla number pichhli row ke aakhri number se bada hai (matlab poori matrix ek lambi sorted line hai).
-Batao target matrix me hai ya nahi, true ya false.
-  e.g. [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target=3 -> true
-  kyun: 3 pehli row me index 1 pe mil gaya · target=13 hota to 11 aur 16 ke beech, nahi -> false
+**SAWAAL** Ek matrix di hai jiski har row sorted hai, aur har row ka pehla number pichhli row ke aakhri number se bada hai (matlab poori matrix ek lambi sorted line hai). Batao target matrix me hai ya nahi, true ya false.
 
-  [  1   3   5   7 ]
-  [ 10  11  16  20 ]   ->   1  3  5  7 | 10 11 16 20 | 23 30 34 60   (ek lambi sorted line)
-  [ 23  30  34  60 ]        0  1  2  3    4  5  6  7    8  9 10 11
-  3 = line ka index 1 = row 0, col 1 -> true
+- **e.g.** `[[1,3,5,7],[10,11,16,20],[23,30,34,60]], target=3 -> true`
+- **kyun:** 3 pehli row me index 1 pe mil gaya · target=13 hota to 11 aur 16 ke beech, nahi -> false
+
+```
+[  1   3   5   7 ]
+[ 10  11  16  20 ]   ->   1  3  5  7 | 10 11 16 20 | 23 30 34 60   (ek lambi sorted line)
+[ 23  30  34  60 ]        0  1  2  3    4  5  6  7    8  9 10 11
+3 = line ka index 1 = row 0, col 1 -> true
 ```
 
 > [!IMPORTANT]
@@ -612,13 +593,10 @@ bool searchMatrix(vector<vector<int>> &matrix, int target) {
 
 ### ▸ MEDIAN OF 2 SORTED ARRAYS (LC-4, Hard)  = BS-on-ANSWER ka cousin, par VALUE nahi CUT-position pe
 
-**SAWAAL**
-```
-Do SORTED array A aur B diye hain. Dono ko milake jo poora sorted array banega, uska median lautao.
-Kul number odd hon to beech wala, even hon to beech ke do ka average. O(log) me karna hai.
-  e.g. A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> 11.0
-  kyun: mila ke 1,3,7,8,9,11,15,18,19,21,25 = 11 number -> beech wala (6th) = 11
-```
+**SAWAAL** Do SORTED array A aur B diye hain. Dono ko milake jo poora sorted array banega, uska median lautao. Kul number odd hon to beech wala, even hon to beech ke do ka average. O(log) me karna hai.
+
+- **e.g.** `A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> 11.0`
+- **kyun:** mila ke 1,3,7,8,9,11,15,18,19,21,25 = 11 number -> beech wala (6th) = 11
 
 ### DRY RUN: A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> 11
 
