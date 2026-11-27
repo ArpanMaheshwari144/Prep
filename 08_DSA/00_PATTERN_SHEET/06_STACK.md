@@ -58,6 +58,19 @@ valid-parentheses CHECK karta hai (stack) · generate BANATA hai (choose/un-choo
                 3 -> -1 (aakhri)
 ```
 
+```
+dabba me INDEX:value  ·  (nikla)=uska jawab
+
+                        (1:1)=2   (2:2)=4
+                           ^      (0:2)=4
+                |1:1|    |2:2|       ^      |4:3|
+        |0:2|   |0:2|    |0:2|     |3:4|    |3:4|
+        '---'   '---'    '---'     '---'    '---'
+daala :  +0:2    +1:1     +2:2      +3:4     +4:3
+
+bache (3:4, 4:3) = koi bada nahi -> -1  ·  ans = [4, 2, 4, -1, -1]
+```
+
 ### DRY-RUN [2,1,2,4,3]
 
 ```
@@ -104,6 +117,19 @@ vector<int> nextGreater(vector<int> &nums) {
 - **e.g.** `[4,5,2,10,8] -> [2,2,-1,8,-1]`
 - **kyun:** 4 aur 5 ke aage pehla chhota 2 · 2 ke aage sab bade -> -1 · 10 ke aage 8 · 8 aakhri -> -1
 
+```
+dabba me INDEX:value  ·  (nikla)=uska jawab
+
+                        (1:5)=2            (3:10)=8
+                        (0:4)=2               ^
+                |1:5|      ^      |3:10|    |4:8|
+        |0:4|   |0:4|    |2:2|    | 2:2|    |2:2|
+        '---'   '---'    '---'    '----'    '---'
+daala :  +0:4    +1:5     +2:2    +3:10      +4:8
+
+bache (2:2, 4:8) -> -1  ·  ans = [2, 2, -1, 8, -1]
+```
+
 > [!IMPORTANT]
 > **CHAABI:** NEXT GREATER ka code hubahu, sirf `while` ki shart ULTI: `nums[st.top()] > nums[i]` (naya CHHOTA aaya to top ka jawab mila).
 
@@ -135,6 +161,19 @@ vector<int> nextSmaller(vector<int> &nums) {   // = next greater, sirf condition
 
 - **e.g.** `[4,5,2,10,8] -> [-1,4,-1,2,2]`
 - **kyun:** 4 ke peeche kuch nahi · 5 ke peeche 4 · 2 ke peeche 4,5 bade -> -1 · 10 aur 8 ke peeche pehla chhota 2
+
+```
+loop ULTA (i = 4 -> 0)  ·  dabba me INDEX:value  ·  (nikla)=uska jawab
+
+                         (3:10)=2           (1:5)=4
+                         (4:8)=2               ^
+                |3:10|      ^       |1:5|    |0:4|
+        |4:8|   | 4:8|    |2:2|     |2:2|    |2:2|
+        '---'   '----'    '---'     '---'    '---'
+daala :  +4:8   +3:10      +2:2      +1:5     +0:4
+
+bache (2:2, 0:4) -> -1  ·  ans = [-1, 4, -1, 2, 2]
+```
 
 > [!IMPORTANT]
 > **CHAABI:** NEXT SMALLER ka code hubahu, sirf LOOP ULTA: `for (i = n-1; i >= 0; i--)` (PREVIOUS = peeche se chalna). Shart wahi `>`.
@@ -175,6 +214,32 @@ vector<int> prevSmaller(vector<int> &nums) {   // = next smaller, sirf LOOP ULTA
 (B) prevGreater: har element ke LEFT me pehla BADA.
   e.g. [4,5,2,10,8] -> [-1,-1, 5, -1, 10]
   kyun: 4 ke peeche kuch nahi · 5 ke peeche 4 chhota -> -1 · 2 ke peeche pehla bada 5 · 10 se bada koi nahi · 8 ke peeche 10
+```
+
+```
+dabba me INDEX:value  ·  (nikla)=uska jawab
+
+(A) nextSmaller, loop 0 -> 4:
+
+                        (1:5)=2            (3:10)=8
+                        (0:4)=2               ^
+                |1:5|      ^      |3:10|    |4:8|
+        |0:4|   |0:4|    |2:2|    | 2:2|    |2:2|
+        '---'   '---'    '---'    '----'    '---'
+daala :  +0:4    +1:5     +2:2    +3:10      +4:8
+
+ans = [2, 2, -1, 8, -1]
+
+(B) prevGreater, loop 4 -> 0:
+
+                                    (2:2)=5
+                (4:8)=10               ^      | 0:4|
+                   ^       | 2:2|    | 1:5|   | 1:5|
+        |4:8|    |3:10|    |3:10|    |3:10|   |3:10|
+        '---'    '----'    '----'    '----'   '----'
+daala :  +4:8    +3:10      +2:2      +1:5     +0:4
+
+ans = [-1, -1, 5, -1, 10]
 ```
 
 > [!IMPORTANT]
@@ -233,6 +298,34 @@ vector<int> prevGreater(vector<int> &nums)
 
 - **e.g.** `[2,1,5,6,2,3] -> 10`
 - **kyun:** bars 5 aur 6 -> height min(5,6)=5 x width 2 = 10, baaki koi bada nahi banta
+
+```
+dabba me INDEX:height  ·  (nikla)=uska INDEX jawab
+
+nextSmaller, loop 0 -> 5 (default n = 6):
+
+                                          (3:6)=4
+                                          (2:5)=4
+                (0:2)=1           |3:6|      ^      |5:3|
+                   ^      |2:5|   |2:5|    |4:2|    |4:2|
+        |0:2|    |1:1|    |1:1|   |1:1|    |1:1|    |1:1|
+        '---'    '---'    '---'   '---'    '---'    '---'
+daala :  +0:2     +1:1     +2:5    +3:6     +4:2     +5:3
+
+bache (1, 4, 5) -> 6  ·  NS = [1, 6, 4, 4, 6, 6]
+
+prevSmaller, loop 5 -> 0 (default -1):
+
+                                  (3:6)=2   (2:5)=1
+                (5:3)=4              ^      (4:2)=1
+                   ^      |3:6|    |2:5|       ^      |0:2|
+        |5:3|    |4:2|    |4:2|    |4:2|     |1:1|    |1:1|
+        '---'    '---'    '---'    '---'     '---'    '---'
+daala :  +5:3     +4:2     +3:6     +2:5      +1:1     +0:2
+
+bache (1, 0) -> -1  ·  PS = [-1, -1, 1, 2, 1, 4]
+max area = bar 2:5 -> 5 * (4 - 1 - 1) = 10
+```
 
 > [!WARNING]
 > **3 JAGAH DHYAAN:**
@@ -494,6 +587,26 @@ int maximalRectangle(vector<vector<int>> &matrix) {
 - **e.g.** `[73,74,75,71,69,72,76,73] -> [1,1,4,2,1,1,0,0]`
 - **kyun:** 75 (din 2) ke baad pehla zyada 76 din 6 pe -> 6-2 = 4 · 76 ke baad koi zyada nahi -> 0
 
+```
+dabba me INDEX:temp  ·  (nikla)=kitne din baad (i - tp)
+
+                 (0:73)=1   (1:74)=1
+                    ^          ^       |3:71|
+        |0:73|    |1:74|     |2:75|    |2:75|
+        '----'    '----'     '----'    '----'
+daala : +0:73     +1:74      +2:75     +3:71
+
+                 (4:69)=1
+                 (3:71)=2   (5:72)=1
+        |4:69|      ^       (2:75)=4
+        |3:71|    |5:72|       ^       |7:73|
+        |2:75|    |2:75|     |6:76|    |6:76|
+        '----'    '----'     '----'    '----'
+daala : +4:69     +5:72      +6:76     +7:73
+
+bache (6:76, 7:73) -> 0  ·  ans = [1, 1, 4, 2, 1, 1, 0, 0]
+```
+
 > [!IMPORTANT]
 > **CHAABI:** NEXT GREATER ka code, ans me VALUE nahi DISTANCE: `ans[tp] = i - tp`.
 
@@ -535,6 +648,28 @@ aakhri 3: aage kuch nahi -> ghoom ke 1, 2, 3 (bade nahi), 4 -> jawab 4
 4: poora gola ghoom liya, isse bada koi nahi -> -1
 ```
 
+```
+dabba me INDEX:value (i % n)  ·  (nikla)=uska jawab
+
+                (0:1)=2   (1:2)=3   (2:3)=4
+                   ^         ^         ^      |4:3|
+        |0:1|    |1:2|     |2:3|     |3:4|    |3:4|
+        '---'    '---'     '---'     '---'    '---'
+i :      i=0      i=1       i=2       i=3      i=4
+daala :  +0:1     +1:2      +2:3      +3:4     +4:3
+
+                (0:1)=2   (1:2)=3   (2:3)=4
+                   ^         ^      (4:3)=4
+        |0:1|    |1:2|     |2:3|       ^      |4:3|
+        |4:3|    |4:3|     |4:3|     |3:4|    |3:4|
+        |3:4|    |3:4|     |3:4|     |3:4|    |3:4|
+        '---'    '---'     '---'     '---'    '---'
+i :      i=5      i=6       i=7       i=8      i=9
+daala :  +0:1     +1:2      +2:3      +3:4     +4:3
+
+ans = [2, 3, 4, -1, 4]  (4 ka jawab kabhi nahi mila -> -1)
+```
+
 > [!IMPORTANT]
 > **CHAABI:** NEXT GREATER + CIRCULAR: loop `2 * n` tak, har jagah `i % n` (compare, ans, push).
 
@@ -570,6 +705,31 @@ vector<int> nextGreaterElements(vector<int> &nums) {   // CIRCULAR: aakhri ka gr
 
 - **e.g.** `next: 100,80,60,70,60,75,85 -> 1,1,1,2,1,4,6`
 - **kyun:** 75 aaya -> peeche 60,70,60 sab \<= 75, phir 80 bada -> ruk -> 75,60,70,60 = 4
+
+```
+dabba me {price,span}  ·  (nikla) ka span jud gaya
+
+                                          (60,1)
+                                            ^
+                              | 60,1|    | 70,2|
+                   | 80,1|    | 80,1|    | 80,1|
+        |100,1|    |100,1|    |100,1|    |100,1|
+        '-----'    '-----'    '-----'    '-----'
+next : next(100)   next(80)   next(60)   next(70)
+span :     1          1          1          2
+
+                   (60,1)
+                   (70,2)     (75,4)
+       | 60,1|       ^        (80,1)
+       | 70,2|    | 75,4|       ^
+       | 80,1|    | 80,1|    | 85,6|
+       |100,1|    |100,1|    |100,1|
+       '-----'    '-----'    '-----'
+next : next(60)   next(75)   next(85)
+span :    1          4          6
+
+lautaya = [1, 1, 1, 2, 1, 4, 6]
+```
 
 > [!IMPORTANT]
 > **CHAABI:** Stack me INDEX nahi, PAIR `{price, span}`. Peeche ke sasta din pop karo aur pop wale ka span JODO; phir `{price, span}` push.
@@ -608,6 +768,28 @@ public:
 - **e.g.** `"{[]}" -> true · "([)]" -> false`
 - **kyun:** "([)]" me ( khula, [ khula, par ) aaya jabki sabse upar [ khula hai -> match nahi
 
+```
+"{[]}":
+
+                       ([) match   ({) match
+               |  [|       ^           ^
+       |  {|   |  {|     |  {|       |   |
+       '---'   '---'     '---'       '---'
+aaya :   {       [         ]           }
+
+end me dabba khaali -> true
+
+"([)]":
+
+                       ([) nahi
+               |  [|      ^
+       |  (|   |  (|    |  (|
+       '---'   '---'    '---'
+aaya :   (       [        )
+
+) aaya par upar [ tha -> false
+```
+
 > [!IMPORTANT]
 > **CHAABI:** Opening -> push. Closing -> stack khaali to `false`, warna top pop karke type milao. End me `return st.empty()`.
 
@@ -644,6 +826,25 @@ bool isValid(string s) {
 
 - **e.g.** `push(-2) push(0) push(-3) getMin() -> -3 · pop() · top() -> 0 · getMin() -> -2`
 - **kyun:** -3 pop hone ke baad stack me [-2,0] bacha -> upar 0, sabse chhota -2
+
+```
+dabba me {val, yahan tak ka MIN}
+
+                            |-3,-3|     |-3,-3|
+                  | 0,-2|   | 0,-2|     | 0,-2|
+       |-2,-2|    |-2,-2|   |-2,-2|     |-2,-2|
+       '-----'    '-----'   '-----'     '-----'
+kaam : push(-2)   push(0)   push(-3)   getMin=-3
+
+       (-3,-3)
+          ^
+       | 0,-2|   | 0,-2|    | 0,-2|
+       |-2,-2|   |-2,-2|    |-2,-2|
+       '-----'   '-----'    '-----'
+kaam :  pop()     top=0    getMin=-2
+
+getMin -> -3 · top -> 0 · getMin -> -2
+```
 
 > [!IMPORTANT]
 > **CHAABI:** Pair `{val, yahan tak ka MIN}` push -> `getMin() = st.top().second`, koi scan nahi. Pop pe purana min apne aap wapas.
@@ -775,6 +976,33 @@ public:
 - **e.g.** `["2","1","+","3","*"] -> 9 · ["4","13","5","/","+"] -> 6`
 - **kyun:** (2 + 1) \* 3 = 9 · 4 + (13 / 5) = 4 + 2 = 6
 
+```
+["2","1","+","3","*"]:
+
+                        (b=1)           (b=3)
+                        (a=2)           (a=3)
+                |  1|     ^     |  3|     ^
+        |  2|   |  2|   |  3|   |  3|   |  9|
+        '---'   '---'   '---'   '---'   '---'
+token :  "2"     "1"     "+"     "3"     "*"
+daala :   +2      +1      +3      +3      +9
+
+ans = 9
+
+["4","13","5","/","+"]:
+
+                                (b=5)
+                                (a=13)   (b=2)
+                        |  5|     ^      (a=4)
+                | 13|   | 13|   |  2|      ^
+        |  4|   |  4|   |  4|   |  4|    |  6|
+        '---'   '---'   '---'   '---'    '---'
+token :  "4"     "13"    "5"     "/"      "+"
+daala :   +4     +13      +5      +2       +6
+
+ans = 6  (pehle nikla = b)
+```
+
 **CODE**
 ```cpp
 int solve(int a, int b, string token) {
@@ -823,6 +1051,20 @@ speed:  1          3       1          4       2
 waqt:   12         3       7          1       1      (akele chalein to: (12 - pos) / speed)
 fleet:  {0}        {3, 5} = 7 ghante  {8, 10} = 1 ghanta   -> 3 fleet
 3 wali akeli 3 ghante me pahunchti, par aage 5 wali (7 ghante) ko raste me pakad ke uske peeche atak gayi
+```
+
+```
+dabba = stack<double> (har fleet ka waqt)
+
+                                         | 12|
+                         |  7|   |  7|   |  7|
+        |  1|    |  1|   |  1|   |  1|   |  1|
+        '---'    '---'   '---'   '---'   '---'
+gaadi : (10,2)   (8,4)   (5,1)   (3,3)   (0,1)
+waqt :    1        1       7       3       12
+daala :   +1      nahi     +7     nahi    +12
+
+st.size() = 3 fleet
 ```
 
 > [!IMPORTANT]

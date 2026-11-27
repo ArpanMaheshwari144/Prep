@@ -832,6 +832,32 @@ bool checkInclusion(string s1, string s2) {
   window ek-ek khisakti, har window ka ek max -> n - k + 1 = 6 number
 ```
 
+```
+deque (dono taraf khula) me INDEX:value
+front (baaye) se purana nikalta  ·  back (daaye) se chhote nikalte, naya aata
+
+                 front                back
+                 =====================
++0:1               0:1
+                 =====================
++1:3               1:3                  -> (0:1)
+                 =====================
++2:-1              1:3  2:-1                               max 3
+                 =====================
++3:-3              1:3  2:-1  3:-3                         max 3
+                 =====================
++4:5    (1:3) <-   4:5                  -> (3:-3) (2:-1)   max 5
+                 =====================
++5:3               4:5  5:3                                max 5
+                 =====================
++6:6               6:6                  -> (5:3) (4:5)     max 6
+                 =====================
++7:7               7:7                  -> (6:6)           max 7
+                 =====================
+
+ans = [3, 3, 5, 5, 6, 7]
+```
+
 > [!IMPORTANT]
 > **CORE :** nums[i] aaya -> usse CHHOTE back-wale BEKAAR (jab tak nums[i] zinda, wo max ban hi nahi sakte) -> pop_back.
 
