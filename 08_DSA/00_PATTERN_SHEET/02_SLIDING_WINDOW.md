@@ -450,69 +450,36 @@ Q: sirf DONO ENDS (front/back) se TOTAL k cards lo -> unka sum MAXIMIZE.
 
 **DRY RUN (tere code se): [1,2,3,4,5,6,1], k=3 -> 12**
 ```
-PEHLE: L - k KYUN?  (L = 7 card, k = 3 lene hain, kinaron se hi)
-  3 card kinaron se kisi bhi tarah lo, jo 7 - 3 = 4 card BACHTE wo hamesha BEECH me LAGAATAR hote:
+L = 7 card, k = 3 kinaron se lene hain.
+3 card kinaron se kisi bhi tarah lo, jo 7 - 3 = 4 card BACHTE wo hamesha BEECH me LAGAATAR hote.
+To bache hue 4 ki window jitni CHHOTI, liye hue 3 utne BADE:  liye = Total - bache.
 
-    liye (kinaron se)        bache (beech, lagaatar)      liye ka jod
-    aage 1,2,3               [4,5,6,1] = 16               22 - 16 = 6
-    aage 1,2 + peeche 1      [3,4,5,6] = 18               22 - 18 = 4
-    aage 1   + peeche 6,1    [2,3,4,5] = 14               22 - 14 = 8
-    peeche 5,6,1             [1,2,3,4] = 10               22 - 10 = 12   <- sabse bada
+Total = 1+2+3+4+5+6+1 = 22  ->  minSumK(nums, 7 - 3 = 4)
 
-  to: liye ka jod SABSE BADA  =  Total - (bache 4 ka jod SABSE CHHOTA)
-  isliye window size = L - k = 4, aur us size ki window ka MIN sum chahiye -> minSumK(nums, 4)
+minSumK(nums, 4):   sum = 0, minSum = INT_MAX, i = 0
 
-PHIR CODE:
-maxScore(nums, 3):
-  Total = 1+2+3+4+5+6+1 = 22
-  nums.size() - k = 7 - 3 = 4, 0 nahi
-  minSum = minSumK(nums, 4)
+j=0:  sum += 1 -> 1     j-i+1 = 1, 4 nahi
+j=1:  sum += 2 -> 3     j-i+1 = 2, 4 nahi
+j=2:  sum += 3 -> 6     j-i+1 = 3, 4 nahi
+j=3:  sum += 4 -> 10    j-i+1 = 4  -> window bani
+        bache [1,2,3,4] = 10   ->  liye: peeche 5,6,1        = 22 - 10 = 12
+        minSum = min(INT_MAX, 10) = 10
+        sum -= nums[0] (1) -> 9,  i = 1
+j=4:  sum += 5 -> 14    window
+        bache [2,3,4,5] = 14   ->  liye: aage 1 + peeche 6,1  = 22 - 14 = 8
+        minSum = min(10, 14) = 10
+        sum -= nums[1] (2) -> 12, i = 2
+j=5:  sum += 6 -> 18    window
+        bache [3,4,5,6] = 18   ->  liye: aage 1,2 + peeche 1  = 22 - 18 = 4
+        minSum = min(10, 18) = 10
+        sum -= nums[2] (3) -> 15, i = 3
+j=6:  sum += 1 -> 16    window
+        bache [4,5,6,1] = 16   ->  liye: aage 1,2,3           = 22 - 16 = 6
+        minSum = min(10, 16) = 10
+        sum -= nums[3] (4) -> 12, i = 4
+loop khatam -> minSum = 10
 
-minSumK(nums, 4):   sum = 0, minSum = INT_MAX, i = 0, j = 0
-
-j=0:  sum += nums[0] (1)  -> sum = 1
-      j-i+1 = 0-0+1 = 1 >= 4 ?  nahi
-      j++
-
-j=1:  sum += nums[1] (2)  -> sum = 3
-      j-i+1 = 1-0+1 = 2 >= 4 ?  nahi
-      j++
-
-j=2:  sum += nums[2] (3)  -> sum = 6
-      j-i+1 = 2-0+1 = 3 >= 4 ?  nahi
-      j++
-
-j=3:  sum += nums[3] (4)  -> sum = 10
-      j-i+1 = 3-0+1 = 4 >= 4 ?  haan
-         minSum = min(INT_MAX, 10) = 10
-         sum -= nums[0] (1)  -> sum = 9
-         i++ -> i = 1
-      j++
-
-j=4:  sum += nums[4] (5)  -> sum = 14
-      j-i+1 = 4-1+1 = 4 >= 4 ?  haan
-         minSum = min(10, 14) = 10
-         sum -= nums[1] (2)  -> sum = 12
-         i++ -> i = 2
-      j++
-
-j=5:  sum += nums[5] (6)  -> sum = 18
-      j-i+1 = 5-2+1 = 4 >= 4 ?  haan
-         minSum = min(10, 18) = 10
-         sum -= nums[2] (3)  -> sum = 15
-         i++ -> i = 3
-      j++
-
-j=6:  sum += nums[6] (1)  -> sum = 16
-      j-i+1 = 6-3+1 = 4 >= 4 ?  haan
-         minSum = min(10, 16) = 10
-         sum -= nums[3] (4)  -> sum = 12
-         i++ -> i = 4
-      j++ -> j = 7, loop khatam
-
-  return minSum = 10
-
-maxScore: return Total - minSum = 22 - 10 = 12
+answer = Total - minSum = 22 - 10 = 12   (peeche ke 5 + 6 + 1)
 ```
 
 > [!IMPORTANT]
