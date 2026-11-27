@@ -90,11 +90,13 @@ vector<vector<int>> merge(vector<vector<int>> &intervals) {
 - **kyun:** 5-10 shuru hui jab 0-30 abhi chal rahi (5 \< 30) -> overlap
 
 ```
-time:     0    5   10   15   20        30
-[0,30]    |-----------------------------|
-[5,10]         |----|
-[15,20]                  |----|
-0-30 ke andar hi baaki dono -> ek insaan ek saath do jagah nahi -> false
+sort ke baad, back = ans.back(), i = agli meeting
+
+time    0    5   10   15   20        30
+back    |=============================|     ans = [0,30]
+i            |====|
+        start 5 < back ka end 30 -> takraayi -> return false
+        ([15,20] tak pahunchte hi nahi)
 ```
 
 > [!WARNING]
@@ -129,11 +131,19 @@ bool canAttendMeetings(vector<vector<int>> &intervals) {
 - **kyun:** [2,5] aur [1,3] overlap -> [1,5]; [6,9] 5 ke baad -> alag
 
 ```
-time:   1   2   3   4   5   6   7   8   9
-[1,3]   |-------|
-new         |-----------|
-[6,9]                       |-----------|
-[1,3] + new = [1,5] (5 < 6, isliye [6,9] alag)
+time    1   2   3   4   5   6   7   8   9
+new         |===========|                      new = [2,5]
+
+i=0     |=======|                              [1,3]
+        end 3 < new start 2? nahi · start 1 > new end 5? nahi -> OVERLAP
+        new = [min(2,1), max(5,3)] = [1,5]
+new     |===============|
+
+i=1                         |===========|      [6,9]
+        start 6 > new end 5 -> BREAK (aage sab door)
+
+ans     |===============|   |===========|      [1,5] [6,9]
+        (pehle wale + bada new + count se baaki)
 ```
 
 > [!IMPORTANT]
