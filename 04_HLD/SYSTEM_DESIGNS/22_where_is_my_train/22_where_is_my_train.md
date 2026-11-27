@@ -40,7 +40,12 @@ NFR     1  battery na khaaye (GPS nahi, tower se andaza)                        
         3  dikhaya time expected hai, pakka nahi                                 -> kadam 2
         4  tower ki list taaza rahe (naya tower lage / hate)                     -> kadam 4, 4b, 4c
 ```
-Numbers / API: baad me, saare design ke saath.
+**API (Claude ne likha, Arpan ke kehne pe; is app ka round nahi hoga, interview me aata nahi):**
+```
+API     GET  route/{trainNo}/towers   -> raaste ke tower ki list, phone me rakh lo (net band pe kaam aaye)
+        POST train/{trainNo}/location -> jinka net chalu: kaunse tower se jude, kab (crowdsourcing)
+        GET  train/{trainNo}/status   -> kahan hai, "delayed by X min", expected time (dost ka phone bhi yahi)
+```
 
 Trade-off jo bolne hain: GPS jitni pakki jagah nahi, tower ki range jitna andaza (kabhi train aa gayi, app bole "nahi
 aayi") · battery aur bina net ke chalna, badle me thoda kam sahi · dost tak khabar tabhi jab train me kisi ka net chalu.
