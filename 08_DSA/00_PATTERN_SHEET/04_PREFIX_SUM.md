@@ -231,13 +231,6 @@ Ek array aur ek number K diya hai. Kitne lagaatar subarray hain jinka sabse bada
         koi tukda deewar ke paar nahi jaata -> window chhoti-badi karne ka sawaal hi nahi, har kamra alag gino.
 ```
 
-**SAAR**
-```
-kitne subarray jinka MAX bilkul K. [8,2,1,3,4,5,1,10],K=3 -> 3 ([2,1,3],[1,3],[3])
-valid = (har element <= K) AND (>=1 element == K)
-K se BADE element = WALL (array todte). segment ke andar K wale subarray gino
-```
-
 > [!WARNING]
 > **★ EDGE:**
 > "subarray"->SW, "max"->STACK, "count"->PQ sab galat: max FIXED K se compare -> simple scan
@@ -258,21 +251,10 @@ K se BADE element = WALL (array todte). segment ke andar K wale subarray gino
 idx   0     1  2   3    4   5   6      7
      WALL   .  .   K  WALL WALL .    WALL
      |<-- kamra -->|
-```
 
-### DRY-RUN
-
-```
- i  arr   lastWall  lastK   jodo
- 0   8       0       -1      -       (deewar)
- 1   2       0       -1      -       (K abhi aaya hi nahi)
- 2   1       0       -1      -
- 3   3       0        3     +3       [2,1,3] [1,3] [3]  = shuru 1, 2, 3
- 4   4       4        3      -       deewar ne K ko peeche chhod diya
- 5   5       5        3      -
- 6   1       5        3      -       3 - 5 = -2  -> GUARD na ho to ginti ghatti
- 7  10       7        3      -
-                            = 3
+i = 3 pe:  lastWall = 0 (8),  lastK = 3   ->   count += 3 - 0 = 3
+           shuru 1, 2, 3 se, khatam 3 pe:  [2,1,3]  [1,3]  [3]
+baaki har i pe aakhri deewar K ke BAAD hai (lastK < lastWall) -> kuch nahi juda   ->  answer = 3
 ```
 
 ### purani galti (7-Nov REDO_2)
@@ -283,10 +265,6 @@ idx   0     1  2   3    4   5   6      7
 
 > [!WARNING]
 > **★ teesri if (lastK > lastWall) chhooti:** i = 6 pe 3 - 5 = -2 jud jaata
-
-> [!IMPORTANT]
-> **WHY simple:** "hard-dikhne" wala tha (scary constraints + 3 candidate-pattern), par EK insight (walls) ne
-> collapse kar diya -> linear. mushkil = insight-dhundhna, code chhota. (search->test->eliminate = process.)
 
 > [!IMPORTANT]
 > **CHAABI:** K se bada = DEEWAR. Har i pe `lastWall` (aakhri deewar) aur `lastK` (aakhri K); `lastK > lastWall` to `count += lastK - lastWall`.
