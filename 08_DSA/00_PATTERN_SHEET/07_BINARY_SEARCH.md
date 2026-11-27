@@ -270,6 +270,36 @@ int findMin(vector<int> &nums) {            // target nahi, khud MIN -> mid ko H
      // FARAK sirf 2: (a) RANGE (low, high)  (b) solve(mid) ka formula (greedy count <= limit?)
 ```
 
+```
+BS KYUN LAGTA (koko se):  piles = [3,6,7,11], h = 8  ->  jawab 4
+
+BRUTE: speed 1, 2, 3, ... 11 sab try karo, jo pehli chal jaaye wahi jawab.
+PAR ek baat sach hai: speed 6 se 8 ghante me kha liya, to 7, 8, ... 11 se bhi kha lega (tez hi to kha raha).
+                      speed 3 se nahi hua, to 2, 1 se bhi nahi hoga (aur dheere).
+to line aisi dikhti:   speed:  1    2    3  |  4    5    6 ... 11
+                               nahi nahi nahi | HAAN HAAN HAAN ... HAAN     -> pehla HAAN chahiye
+
+isliye mid pe EK check, aur ek KONA poora kaat do:
+  low=1  high=11  mid=6 : 1+1+2+2 = 6 ghante <= 8  HAAN -> ans = 6, 6..11 sab kaat do   -> high = 5 (aur chhota try)
+  low=1  high=5   mid=3 : 1+2+3+4 = 10 > 8         NAHI -> 1..3 sab kaat do            -> low = 4
+  low=4  high=5   mid=4 : 1+2+2+3 = 8 <= 8         HAAN -> ans = 4                     -> high = 3, ruko
+  jawab 4  (11 speed ki jagah sirf 3 check)
+
+TEENO ME YAHI BAAT:
+  koko  : speed  k se kha liya   -> k se badi har speed se bhi khaayega
+  ship  : capacity C se D din me ho gaya -> C se badi har capacity se bhi hoga
+  split : sabse bada tukda <= X rakh ke k tukde ban gaye -> X se bade har X pe bhi banenge
+
+PEHCHAAN: sawaal bole "kam se kam X" aur upar wali baat sach ho (X badha to kaam aasaan) -> BS on answer.
+
+ISI FAMILY KE AUR (kahani alag, shell wahi):
+  LC-1283 smallest divisor   : divisor d se jod <= threshold hua -> bade d se bhi hoga       range 1 .. max
+  LC-1482 m bouquets         : d din me m guldaste ban gaye -> zyada din me bhi banenge      range min .. max din
+  LC-2187 min time for trips : t time me trips poori -> zyada time me bhi                    range 1 .. min * target
+  LC-1552 magnetic balls     : ULTA: doori d rakh ke balls aa gayi -> chhoti doori pe bhi aayengi,
+                               "max" maanga hai -> HAAN pe BADA try (ans = mid, low = mid + 1)  range 1 .. max - min
+```
+
 ---
 
 ### ▸ KOKO BANANAS (LC-875) -- min eating-speed
