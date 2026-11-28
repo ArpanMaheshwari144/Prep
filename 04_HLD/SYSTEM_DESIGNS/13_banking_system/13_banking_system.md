@@ -66,6 +66,40 @@ Numbers 50 lakh account, roz 1 crore transaction = ~120 likhai / sec, padhna iss
         -> bheed chhoti, asli dikkat SAHI hona: ek SQL DB kaafi, shard nahi
 ```
 
+**Round (FR se ant tak, Arpan ne khud bola):**
+
+**Scope (Arpan):** Pehle scope tay, warna aage dikkat. Ek hi bank, do bank nahi, isliye saga nahi, seedha transaction. 5 saal ki statement scope se bahar, wo DB me pehle se hai, usse lena-dena nahi.
+
+**Numbers (Arpan):** 80-90 lakh user, 30-40 lakh DAU. Ek hi bank ke liye ye bahut hai, koi dikkat nahi.
+
+**Dhaancha (tasveer):**
+
+```
+   +-----------------+     +------+     +--------------------+     +-------------------------------+
+   | User (Arpan)    | --> |  LB  | --> | App server (3-4)   | --> | Redis                         |
+   | bank ka app     |     +------+     +--------------------+     | balance, TTL 30 sec           |
+   +-----------------+                           |                 | paisa hila: pehle khaali,     |
+                                                 v                 | phir DB, phir naya balance    |
+                                   +----------------------------+  +-------------------------------+
+                                   | DB: Postgres (ACID)        |
+                                   | primary + secondary        |
+                                   | + replica                  |
+                                   | ledger, outbox = tables    |
+                                   +----------------------------+
+   CDN nahi (bank me koi kaam nahi)
+```
+
+**Round me Arpan:** Bank ka main kaam paisa bhejna: Arpan ne Ravi ko diye to Arpan se kate, Ravi me jude (FR). NFR: paisa dobara na kate, galat na dikhe, balance har baar sahi dikhe; har balance ka hisaab rahe (ledger), jo important hai. Balance hamesha available dikhe ye mushkil hai, bank ke server kabhi dhokha dete hain. App -> LB -> 3-4 server, CDN ka koi matlab nahi. Consistency chahiye, availability se pehle, chizein galat na dikhein, isliye SQL: Postgres, ACID follow karta. Redis kyun: bahut log baar-baar sirf balance dekhne aate, har baar DB pe kyun jaana; thodi der (TTL 30 sec) Redis me rakho. Replica peeche sync hota rehta, us beech galat balance dikh sakta, to thodi der jahan likha (primary) wahin se padhwa lo. Ledger alag table, outbox bhi DB ki table.
+
+*Technical me:* "jahan likha wahin se padho" = read-your-writes (replication lag) · balance Redis me TTL = cache-aside · cross-Q ke jawab = kadam 3 aur kadam 9 me "ek aur raasta".
+
+**API (Arpan):** "Simple 2-3 API, koi khaas nahi. Statement scope se bahar, wo koi maangega bhi nahi."
+
+```
+API     POST transfer     -> Arpan se Ravi, rakam      -> paisa gaya (kata + juda)
+        GET  balance      -> khaata                    -> abhi ka balance (Redis, na mile to DB)
+```
+
 ---
 
 ## 1. Bijli gayi, Arpan ke kate, Ravi ko nahi mile (500 wapas de do)
@@ -182,6 +216,12 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style EK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+
+**Ek aur raasta (round, Netflix 500 + UPI 500, alag server pe):**
+
+**Arpan:** LB kahin bhi bhej sakta. Sticky bhi kar sakte ki ek hi server pe jaaye, par chhodo, ek server pe bahut load padega aur ek second me wahan bhi dono aa sakti. Lock lagao aur kaato, ek-ek karke: pehli andar gayi, dekha balance >= hai, haan to kaato, bache 100. Doosri aayi, dekha >= hai? Nahi, 100 hai, paisa nahi katega, Netflix renew nahi hoga. Atomic transaction: lock lagao, kaato, aage badho, ek-ek karke.
+
+*Technical me:* "lock lagao, ek-ek karke, pehle dekho phir kaato" = row lock (`SELECT ... FOR UPDATE`) · sticky = sticky session (yahan kaam nahi, ek server pe bhi dono aa sakti).
 
 ## 4. Ravi bola "500 mile hi nahi" (alag diary, kaato mat)
 
@@ -401,6 +441,12 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style TD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+
+**Ek aur raasta (round, photocopy ki jagah Redis: 500 bheje, Redis me abhi purana 600, Arpan ne ghabra ke dobara bheja):**
+
+**Arpan:** Redis rakhna sahi, har baar balance DB se nahi la sakte. Koi din me 10 baar balance dekhe to 10 query maarne ka kya fayda. Update aaye to cache invalidate karo, cache khaali, khatam; phir DB me transaction, phir naya balance Redis me rakh do, agli request cache se hit. Balance har pal thodi badalta, isliye ye chal jaata. 30 sec baad TTL udega, dobara bharega. Padhna zyada ho to cache lagao, likhna zyada ho to Redis ka fayda nahi; banking me dono hain, par balance dekhne wale bahut zyada. 30-40 lakh me 15 lakh roz sirf balance dekhte, wo Redis se gaye to din me 15 lakh query DB pe kam. 1 tareekh ko 1 lakh me se 70 hazaar sirf salary dekhne aaye to 70 hazaar query DB pe kyun; Redis me rakho, wahin se do. Kuch log kahenge primary se padh lo; AWS RDS ke liye ye kuch nahi, par wo kaam karna hi kyun.
+
+*Technical me:* "pehle cache khaali, phir DB, phir naya cache me" = write pe cache invalidation + refill (Spring me @CacheEvict / @CachePut jaisa) · "padhna zyada to cache" = read-heavy pe cache · TTL = safety.
 
 ## 10. Haath se balance 100 se 600 (diary se milao)
 
@@ -802,6 +848,7 @@ flowchart TB
 flowchart TB
     A(["Arpan"]):::pill --> LB["LB"]:::card --> C["Kai counter (app server)"]:::card
     C --> DB[("DB: khaate + ledger (kaato mat, neeche likho)<br/>+ outbox, row lock")]:::pill
+    C --> RD[("Redis: balance dikhana, TTL 30 sec<br/>paisa hila: pehle khaali, phir DB, phir naya")]:::card
     DB -- "sync copy" --> REP[("Laptop (replica, Multi-AZ)")]:::card
     DB --> RR[("Photocopy (read replica)")]:::card
     DB --> OB["Relay: outbox padh ke<br/>Ravi ko khabar"]:::card

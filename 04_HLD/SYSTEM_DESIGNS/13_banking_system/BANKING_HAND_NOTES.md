@@ -9,6 +9,7 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 Arpan  -->  LB  -->  kai counter (app server)  -->  DB (khaate, row lock)  --sync copy-->  laptop (replica, Multi-AZ)
                                                        |                                 photocopy (read replica)
                          ledger (kaato mat, neeche likho) · outbox -> Ravi ko khabar
+                         Redis: balance dikhana (TTL 30 sec; paisa hila to pehle khaali, phir DB, phir naya)
                          statement: raat ko pehle se bana ke (batch, checkpoint, snapshot), purana S3 me 10 saal
 
  1   500 kate, bijli gayi, Ravi ko nahi mila     ->  500 wapas (rollback)
@@ -59,6 +60,40 @@ NFR     1  paisa na gum ho, na bane; do baar na kate ki poori koshish (ek DB ke 
         3  balance dekhna tez                                              -> kadam 8, 9
 Numbers 50 lakh account, roz 1 crore transaction = ~120 likhai / sec, padhna isse kahin zyada
         -> bheed chhoti, asli dikkat SAHI hona: ek SQL DB kaafi, shard nahi
+```
+
+**Round (FR se ant tak, Arpan ne khud bola):**
+
+**Scope (Arpan):** Pehle scope tay, warna aage dikkat. Ek hi bank, do bank nahi, isliye saga nahi, seedha transaction. 5 saal ki statement scope se bahar, wo DB me pehle se hai, usse lena-dena nahi.
+
+**Numbers (Arpan):** 80-90 lakh user, 30-40 lakh DAU. Ek hi bank ke liye ye bahut hai, koi dikkat nahi.
+
+**Dhaancha (tasveer):**
+
+```
+   +-----------------+     +------+     +--------------------+     +-------------------------------+
+   | User (Arpan)    | --> |  LB  | --> | App server (3-4)   | --> | Redis                         |
+   | bank ka app     |     +------+     +--------------------+     | balance, TTL 30 sec           |
+   +-----------------+                           |                 | paisa hila: pehle khaali,     |
+                                                 v                 | phir DB, phir naya balance    |
+                                   +----------------------------+  +-------------------------------+
+                                   | DB: Postgres (ACID)        |
+                                   | primary + secondary        |
+                                   | + replica                  |
+                                   | ledger, outbox = tables    |
+                                   +----------------------------+
+   CDN nahi (bank me koi kaam nahi)
+```
+
+**Round me Arpan:** Bank ka main kaam paisa bhejna: Arpan ne Ravi ko diye to Arpan se kate, Ravi me jude (FR). NFR: paisa dobara na kate, galat na dikhe, balance har baar sahi dikhe; har balance ka hisaab rahe (ledger), jo important hai. Balance hamesha available dikhe ye mushkil hai, bank ke server kabhi dhokha dete hain. App -> LB -> 3-4 server, CDN ka koi matlab nahi. Consistency chahiye, availability se pehle, chizein galat na dikhein, isliye SQL: Postgres, ACID follow karta. Redis kyun: bahut log baar-baar sirf balance dekhne aate, har baar DB pe kyun jaana; thodi der (TTL 30 sec) Redis me rakho. Replica peeche sync hota rehta, us beech galat balance dikh sakta, to thodi der jahan likha (primary) wahin se padhwa lo. Ledger alag table, outbox bhi DB ki table.
+
+*Technical me:* "jahan likha wahin se padho" = read-your-writes (replication lag) · balance Redis me TTL = cache-aside · cross-Q ke jawab = kadam 3 aur kadam 9 me "ek aur raasta".
+
+**API (Arpan):** "Simple 2-3 API, koi khaas nahi. Statement scope se bahar, wo koi maangega bhi nahi."
+
+```
+API     POST transfer     -> Arpan se Ravi, rakam      -> paisa gaya (kata + juda)
+        GET  balance      -> khaata                    -> abhi ka balance (Redis, na mile to DB)
 ```
 
 &nbsp;
@@ -150,6 +185,12 @@ Counter hisaab-kitaab se chalega; aisa nahi ki ek-ek group ka karke baithe raho,
 Online me bank andar ye kaise karta, wo system hamein pata nahi, wahan nahi jaana; hum dekh rahe ki andar system kaise kaam karega.
 
 *Technical me:* "counter pe group ki line, kaam khatam to agla" = thode workers / consumers, har group ek counter pe (account ke hisaab se counter tay, queue per counter), counter ek group pe bandha nahi (worker / consumer pool).
+
+**Ek aur raasta (round, Netflix 500 + UPI 500, alag server pe):**
+
+**Arpan:** LB kahin bhi bhej sakta. Sticky bhi kar sakte ki ek hi server pe jaaye, par chhodo, ek server pe bahut load padega aur ek second me wahan bhi dono aa sakti. Lock lagao aur kaato, ek-ek karke: pehli andar gayi, dekha balance >= hai, haan to kaato, bache 100. Doosri aayi, dekha >= hai? Nahi, 100 hai, paisa nahi katega, Netflix renew nahi hoga. Atomic transaction: lock lagao, kaato, aage badho, ek-ek karke.
+
+*Technical me:* "lock lagao, ek-ek karke, pehle dekho phir kaato" = row lock (`SELECT ... FOR UPDATE`) · sticky = sticky session (yahan kaam nahi, ek server pe bhi dono aa sakti).
 
 ---
 
@@ -257,6 +298,12 @@ Replica khud bataye to ek kadam kam, beech me koi nahi. Par replica beemar pad g
 Chhotu ho to wo turant pakad lega "replica jawab nahi de raha, mar gaya, replica hai hi nahi, to kisse poochh rahe". Chhotu wala ek extra kadam hai, aur chhotu beemar pade to doosra chhotu taiyaar rakhna padta.
 
 *Technical me:* replica khud bataye = replica apni position bhejti (kam kadam, par replica atki ho to chup rehti, pata der se chalta); chhotu poochhe = poll / health check (ek kadam zyada, par jawab na aaye to turant pata, replica band). Dono sahi, trade-off.
+
+**Ek aur raasta (round, photocopy ki jagah Redis: 500 bheje, Redis me abhi purana 600, Arpan ne ghabra ke dobara bheja):**
+
+**Arpan:** Redis rakhna sahi, har baar balance DB se nahi la sakte. Koi din me 10 baar balance dekhe to 10 query maarne ka kya fayda. Update aaye to cache invalidate karo, cache khaali, khatam; phir DB me transaction, phir naya balance Redis me rakh do, agli request cache se hit. Balance har pal thodi badalta, isliye ye chal jaata. 30 sec baad TTL udega, dobara bharega. Padhna zyada ho to cache lagao, likhna zyada ho to Redis ka fayda nahi; banking me dono hain, par balance dekhne wale bahut zyada. 30-40 lakh me 15 lakh roz sirf balance dekhte, wo Redis se gaye to din me 15 lakh query DB pe kam. 1 tareekh ko 1 lakh me se 70 hazaar sirf salary dekhne aaye to 70 hazaar query DB pe kyun; Redis me rakho, wahin se do. Kuch log kahenge primary se padh lo; AWS RDS ke liye ye kuch nahi, par wo kaam karna hi kyun.
+
+*Technical me:* "pehle cache khaali, phir DB, phir naya cache me" = write pe cache invalidation + refill (Spring me @CacheEvict / @CachePut jaisa) · "padhna zyada to cache" = read-heavy pe cache · TTL = safety.
 
 ---
 
