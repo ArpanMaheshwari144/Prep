@@ -666,50 +666,49 @@ Node *copyRandomList(Node *head) {
 
 ### DRY RUN (1 -> 2 -> 3 -> 4)
 
-**1. Saare node stack me daalo, size gino:**
+**1. Pehle ANSWER dekho:**
 
 ```
-   | 4 |  <- top (sabse aakhri node)
+list:    1 -> 2 -> 3 -> 4
+answer:  1 -> 4 -> 2 -> 3
+```
+
+**2. Saare node stack me daalo:**
+
+```
+   | 4 |  <- top
    | 3 |
    | 2 |
    | 1 |
-   +---+      size = 4
+   +---+      size = 4,  K = 4 / 2 = 2
 ```
 
-**2. Sirf aadha chalao, K = size / 2 = 2. Kyun aadha?**
+Aadha hi kyun: aage ke 1, 2 pe chalna hai. Peeche ke 4, 3 top ban ke unpe apne aap chipak jaayenge.
+
+**3. Answer se poochho "iske baad kya aana chahiye?":**
 
 ```
-   aage ke  1   2      <- curr inpe chalega
-   peeche ke 4   3      <- stack se top nikalega
-   1 pe 4 chipka, 2 pe 3 chipka = kaam khatam.
-   3 aur 4 pe alag se chalne ki zaroorat nahi, wo top ban ke apne aap chipak gaye.
-```
+=== curr = 1 ===
+answer me 1 ke baad kya?   4
+4 kahan milega?            stack ke TOP pe    -> topNode = 4, pop   (stack: 3 2 1)
+temp = curr->next = 2      (1 ka purana agla bacha lo, warna kho jaayega)
+curr->next = topNode       1 -> 4
+answer me 4 ke baad kya?   2  = temp          -> topNode->next = temp   4 -> 2
+aage badho                 curr = temp = 2
 
-**3. Loop, tere code ki har line ke kram me:**
+   list ab:  1 -> 4 -> 2 -> 3 -> (4 pe wapas)     3 abhi purane 4 pe, agle chakkar me hatega
 
-```
-shuru:  1 -> 2 -> 3 -> 4 -> NULL          stack (upar se): 4 3 2 1
+=== curr = 2 ===
+answer me 2 ke baad kya?   3
+3 kahan milega?            stack ke TOP pe    -> topNode = 3, pop   (stack: 2 1)
+temp = curr->next = 3      (2 ka agla 3 hi tha)
+curr->next = topNode       2 -> 3
+topNode->next = temp       3 -> 3    3 ka purana "4 wala" hata, 3 khud pe point = gol gol ghoom raha
+aage badho                 curr = temp = 3
 
-=== K = 2 (pehla chakkar),  curr = 1 ===
-topNode = st.top()       topNode = 4
-st.pop()                 stack: 3 2 1
-temp = curr->next        temp = 2          <- 1 ka agla PEHLE bacha lo,
-                                              agli line 1 ka next badlegi, 2 ka pata kho jaata
-curr->next = topNode     1 -> 4            (1 ka next ab 2 nahi, 4)
-topNode->next = temp     4 -> 2            (4 ke baad bachaya hua 2 laga)
-curr = temp              curr = 2          (aage badho, bachaye hue pe)
-list ab:  1 -> 4 -> 2 -> 3 -> (4)          3 abhi bhi purane 4 pe, agle chakkar me badlega
+=== K khatam ===
+curr->next = NULL          3 -> NULL   (gol ghoomna band)
 
-=== K = 1 (doosra chakkar),  curr = 2 ===
-topNode = st.top()       topNode = 3
-st.pop()                 stack: 2 1        (inki zaroorat nahi)
-temp = curr->next        temp = 3          (2 ka agla 3 hi tha)
-curr->next = topNode     2 -> 3            (waisa hi raha)
-topNode->next = temp     3 -> 3            (3 khud pe ghoom gaya)
-curr = temp              curr = 3
-
-=== loop khatam ===
-curr->next = NULL        3 -> NULL         (gol ghoomna kata)
 ans:  1 -> 4 -> 2 -> 3
 ```
 
