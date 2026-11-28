@@ -666,50 +666,70 @@ Node *copyRandomList(Node *head) {
 
 ### DRY RUN (1 -> 2 -> 3 -> 4)
 
-**1. Pehle ANSWER dekho:**
-
 ```
-list:    1 -> 2 -> 3 -> 4
-answer:  1 -> 4 -> 2 -> 3
-```
+SHURU
 
-**2. Saare node stack me daalo:**
+   list:     1 -> 2 -> 3 -> 4
+   answer:   1 -> 4 -> 2 -> 3
 
-```
-   | 4 |  <- top
-   | 3 |
-   | 2 |
-   | 1 |
-   +---+      size = 4,  K = 4 / 2 = 2
-```
+   saare node stack me daale:
 
-Aadha hi kyun: aage ke 1, 2 pe chalna hai. Peeche ke 4, 3 top ban ke unpe apne aap chipak jaayenge.
+        | 4 |  <- top
+        | 3 |
+        | 2 |
+        | 1 |
+        +---+
 
-**3. Answer se poochho "iske baad kya aana chahiye?":**
+   size = 4,  K = 4 / 2 = 2   (sirf aage ke 1, 2 pe chalna; 4, 3 top ban ke chipkenge)
 
-```
-=== curr = 1 ===
-answer me 1 ke baad kya?   4
-4 kahan milega?            stack ke TOP pe    -> topNode = 4, pop   (stack: 3 2 1)
-temp = curr->next = 2      (1 ka purana agla bacha lo, warna kho jaayega)
-curr->next = topNode       1 -> 4
-answer me 4 ke baad kya?   2  = temp          -> topNode->next = temp   4 -> 2
-aage badho                 curr = temp = 2
 
-   list ab:  1 -> 4 -> 2 -> 3 -> (4 pe wapas)     3 abhi purane 4 pe, agle chakkar me hatega
 
-=== curr = 2 ===
-answer me 2 ke baad kya?   3
-3 kahan milega?            stack ke TOP pe    -> topNode = 3, pop   (stack: 2 1)
-temp = curr->next = 3      (2 ka agla 3 hi tha)
-curr->next = topNode       2 -> 3
-topNode->next = temp       3 -> 3    3 ka purana "4 wala" hata, 3 khud pe point = gol gol ghoom raha
-aage badho                 curr = temp = 3
+CHAKKAR 1   (curr = 1)
 
-=== K khatam ===
-curr->next = NULL          3 -> NULL   (gol ghoomna band)
+   answer me 1 ke baad 4 chahiye.  4 kahan milega?  stack ke top pe.
 
-ans:  1 -> 4 -> 2 -> 3
+   topNode = st.top() = 4,  pop      stack:  | 3 |
+                                             | 2 |
+                                             | 1 |
+
+   temp = curr->next = 2             1 ka purana agla bacha liya
+
+   curr->next = topNode              1 -> 4
+
+   topNode->next = temp              4 -> 2
+
+   list:   1 -> 4 -> 2 -> 3 -> (wapas 4)      3 abhi purane 4 pe hai
+
+   curr = temp = 2
+
+
+
+CHAKKAR 2   (curr = 2)
+
+   answer me 2 ke baad 3 chahiye.  3 kahan milega?  stack ke top pe.
+
+   topNode = st.top() = 3,  pop      stack:  | 2 |
+                                             | 1 |
+
+   temp = curr->next = 3             2 ka agla 3 hi tha
+
+   curr->next = topNode              2 -> 3
+
+   topNode->next = temp              3 -> 3   (3 ka purana "4 wala" hata, ab khud pe)
+
+   list:   1 -> 4 -> 2 -> 3 --+
+                         ^    |
+                         +----+       3 gol gol ghoom raha
+
+   curr = temp = 3
+
+
+
+AAKHIR   (K khatam)
+
+   curr->next = NULL                 3 -> NULL   (gol ghoomna band)
+
+   list:   1 -> 4 -> 2 -> 3 -> NULL   =  answer
 ```
 
 > [!IMPORTANT]
