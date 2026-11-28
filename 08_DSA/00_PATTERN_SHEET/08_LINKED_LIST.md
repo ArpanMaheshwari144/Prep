@@ -718,8 +718,8 @@ CHAKKAR 2   (curr = 2)
    topNode->next = temp              3 -> 3   (3 ka purana "4 wala" hata, ab khud pe)
 
    list:   1 -> 4 -> 2 -> 3 --+
-                         ^    |
-                         +----+       3 gol gol ghoom raha
+                          ^   |
+                          +---+       3 gol gol ghoom raha
 
    curr = temp = 3
 
