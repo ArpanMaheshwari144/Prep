@@ -27,9 +27,33 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+int solve(vector<int> &coins, int amount, int i, vector<vector<int>> &dp)
+{
+    if (i == 0)
+    {
+        return (amount % coins[i] == 0);
+    }
+
+    if (dp[i][amount] != -1)
+    {
+        return dp[i][amount];
+    }
+
+    int notTake = solve(coins, amount, i - 1, dp);
+    int take = 0;
+    if (coins[i] <= amount)
+    {
+        take = solve(coins, amount - coins[i], i, dp);
+    }
+
+    return dp[i][amount] = take + notTake;
+}
+
 int change(int amount, vector<int> &coins)
 {
-    return 0;
+    int n = coins.size();
+    vector<vector<int>> dp(n + 1, vector<int>(amount + 1, -1));
+    return solve(coins, amount, n - 1, dp);
 }
 
 // ---------- checker (ise mat chhed) ----------
