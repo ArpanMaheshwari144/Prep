@@ -43,6 +43,33 @@ struct Node
 
 void reorderList(Node *head)
 {
+    if (head == NULL)
+        return;
+
+    stack<Node *> st;
+    Node *curr = head;
+    int size = 0;
+    while (curr != NULL)
+    {
+        st.push(curr);
+        size++;
+        curr = curr->next;
+    }
+
+    // 1->2->3->4 stack mei daalo and copy per likho apne aap pata chal jayega kya karna hai
+    int K = size / 2;
+    curr = head;
+    while (K--)
+    {
+        Node *topNode = st.top();
+        st.pop();
+
+        Node *temp = curr->next;
+        curr->next = topNode;
+        topNode->next = temp;
+        curr = temp;
+    }
+    curr->next = NULL;
 }
 
 // ---------- checker (ise mat chhed) ----------
