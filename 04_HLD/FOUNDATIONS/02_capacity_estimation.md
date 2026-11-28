@@ -1,233 +1,34 @@
-# Capacity Estimation — Back-of-Envelope Math
+# Capacity estimation — mota hisaab, utna hi jitna faisla badle
 
-> **NAV** — KYA: QPS/storage ka hisaab (RAIL step 2). lagta hai: [url-shortener](../SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [twitter-feed](../SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [message-queue](../SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md)
+> **NAV** — KYA: kitne log, kitni request, kitna data (mota hisaab). lagta hai: [banking](../SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) · [url-shortener](../SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [twitter-feed](../SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · peeche: [01 HLD kya hai](01_hld_kya_hai.md)
 
-> **HLD Topic 2 — First Weapon (Day 1)**
+## Koi poochhe to aise bolo
 
----
+Capacity estimation ek mota hisaab hai ki kitne log aayenge, ek second mein kitni request aayengi aur kitna data jama hoga. Exact number nahi chahiye, utna hi chahiye jitne se faisla badle. Jaise "data kai TB hai, ek machine mein nahi aayega, isliye baanto", ya "padhne wale likhne walon se 100 guna hain, isliye cache lagao".
 
-## STORY — Restaurant Capacity
+## Kahani (restaurant)
 
-> Tu **restaurant kholne** chal raha:
->
-> Pehla question: *"Kitne customer ek din mein expect karu?"*
-> - 100/day → 1 chef, 5 tables
-> - 10,000/day → 10 chefs, 50 tables, 3 kitchens, parking lot
->
-> **Bina yeh math kiye** — *"chef rakh lo, dekha jayega"* → **chaos.**
->
-> Software mein same — *"server lagao 1, dekha jayega"* → **crash at 10K users.**
->
-> **HLD mein har question ka pehla step:** numbers calculate karo.
+Restaurant kholne se pehle socho ki din mein kitne log aayenge. 100 log aate hain to 1 chef aur 5 table kaafi hain. 10,000 aate hain to 10 chef, kai kitchen aur parking chahiye. Chef ki ginti mein 3-4 upar-neeche hone se farak nahi padta. Farak sirf is baat ka hai ki ek kitchen chalega ya kai chahiye.
 
----
-
-## Why Capacity Estimation?
-
-Interview mein **"Design Twitter"** pucha jaye — agla question:
-> *"Kitne users? Kitne tweets per day? Kitna storage? Kitne servers?"*
-
-**Without numbers, design abstract reh jata.** Numbers se concrete decisions:
-- "1 server enough" vs "100 servers chahiye"
-- "Cache lagao" vs "Direct DB OK"
-- "Sharding zaroori" vs "Single DB chalegi"
-
----
-
-## 5 Magic Numbers — Memorize
+Hisaab ki ek chaabi:
 
 ```
-1 day      = 86,400 seconds (~10^5)        ← MOST IMPORTANT
-1 month    = ~2.5 million seconds (~10^6)
-1 year     = ~30 million seconds (~10^7.5)
+1 din ~ 1 lakh second (10^5)
 
-Storage units:
-1 KB = 10^3 bytes
-1 MB = 10^6 bytes
-1 GB = 10^9 bytes
-1 TB = 10^12 bytes
-1 PB = 10^15 bytes
+1 crore request roz  ->  1 crore / 1 lakh = ~100 request / second
+peak (shaam, sale)   ->  avg ka 2-3 guna
 ```
 
-**Trick:** **1 day = 10^5 seconds** — most calculations isse start.
-
----
-
-## Example — Twitter Estimation
-
-**Step 1: DAU**
-```
-Total users:       ~500M
-Daily active:      ~200M (40%)
-```
-
-**Step 2: Tweets per day**
-```
-Per user/day:      2 tweets
-Total/day:         200M × 2 = 400M tweets
-```
-
-**Step 3: TPS (writes)**
-```
-TPS = 400M / 10^5 = 4,000 tweets/sec
-```
-
-**Step 4: Reads (much higher)**
-```
-Each tweet read by ~100 followers
-Reads/sec = 4K × 100 = 400,000 reads/sec
-```
-
-**Step 5: Storage**
-```
-Tweet size: ~1 KB (text + metadata)
-Daily:      400M × 1KB = 400 GB/day
-Yearly:     400 GB × 365 = ~150 TB/year
-```
-
-**Step 6: Bandwidth**
-```
-Read TPS × size = 400K × 1KB = 400 MB/sec
-Convert to Gbps: 3.2 Gbps read bandwidth
-```
-
----
-
-## Visual — 4 Things to Calculate
+**Banking round me aise bola (number jahan faisla badla):**
 
 ```
-┌─────────────────────────────────────────────┐
-│   1. TRAFFIC          2. STORAGE             │
-│   • DAU                • Per record size     │
-│   • Requests/day       • Daily storage       │
-│   • RPS / TPS          • Yearly storage      │
-│                                              │
-│   3. BANDWIDTH        4. MEMORY              │
-│   • Read MB/s          • Cache size          │
-│   • Write MB/s         • Hot data %          │
-└─────────────────────────────────────────────┘
+80-90 lakh user, 30-40 lakh roz aate     ->  ek bank ke liye bahut, par koi dikkat nahi
+15 lakh roz sirf balance dekhte          ->  padhna bahut zyada, isliye balance Redis me
+1 tareekh: 1 lakh me 70 hazaar salary dekhne  ->  wahi baat, DB pe 70 hazaar query kyun
 ```
 
----
+Yahan numbers ne Redis ka faisla karwaya. Isse aage ka hisaab (bandwidth, kitne TB) is design me kuch nahi badalta, isliye bola hi nahi.
 
-## Common Assumptions Cheat Sheet
+## Ek trap
 
-```
-Read:Write ratios:
-   Twitter/Instagram:    100:1 (read-heavy)
-   Logging/Analytics:    1:100 (write-heavy)
-   E-commerce:           10:1
-
-Daily active percentages:
-   Social media:         30-40%
-   E-commerce:           5-10%
-   Banking:              20-30%
-
-Per-user activity:
-   Twitter posts:        1-2/day
-   Instagram views:      ~50/day
-   E-commerce orders:    ~0.05/day
-```
-
----
-
-## Interview Approach
-
-When asked *"Design X — capacity estimate"*:
-
-```
-1. Clarify: "Kitne total users?"
-2. Calculate DAU (~30% of total)
-3. Per user activity (assume X actions/day)
-4. RPS = (DAU × actions) / 100,000
-5. Storage = (records × size) × 365
-6. Bandwidth = TPS × payload
-7. Note read:write ratio (drives caching)
-```
-
-**Key: Assumptions BOLO explicitly.** Round numbers OK. Powers of 10 (100K, 1M, 10M).
-
----
-
-## Quick Practice — WhatsApp
-
-```
-Total users:           ~2B
-DAU:                   ~1.5B
-Messages/user/day:     ~50
-Total messages/day:    1.5B × 50 = 75B
-Per second:            75B / 10^5 = 750K msg/sec
-Avg msg size:          ~100 bytes
-Daily bandwidth:       7.5 TB/day
-Yearly storage:        ~2.7 PB/year
-```
-
-**Massive scale** — sharding + distributed storage + queues mandatory.
-
----
-
-## Power Phrase
-
-> **"Capacity estimation = HLD ka first step. Numbers calculate karo (DAU, RPS, storage, bandwidth) — phir architecture decisions concrete bante. 1 day = 10^5 seconds — most math iss se start."**
-
----
-
-## Memory Hook
-
-```
-4 things to calculate:
-   1. TRAFFIC    (DAU, RPS/TPS)
-   2. STORAGE    (per record × records × time)
-   3. BANDWIDTH  (TPS × payload size)
-   4. MEMORY     (cache size, hot data %)
-
-Magic numbers:
-   1 day = 10^5 sec    ← the key
-   1 GB  = 10^9 bytes
-   1 TB  = 10^12 bytes
-
-Process:
-   Total users → DAU (30%) → activity/day →
-   /10^5 = TPS → multiply by size = storage/bandwidth
-```
-
----
-
-## ★ (drill se) — bina calculator math
-
-```
-   1 saal ~ 400 din     (365 ki jagah, guna aasan)
-   peak QPS = avg x 2-3
-   cache    = hot 20% data (80-20 niyam)
-   bandwidth = QPS x response size
-
-   TRICK: har number a x 10^n likho -> number guna, EXPONENT JODO
-     20M x 2KB = (2 x 10^7) x (2 x 10^3) = 4 x 10^10 byte = 40 GB
-     40 GB/din x 3 saal = 40 x (3 x 400) = 40 x 1200 = 48,000 GB ~ 48 TB
-
-   WORKED (5M DAU, 4 req/user, 2KB, 3 saal):
-     20M req/din · avg QPS = 20M / 10^5 = 200 · peak 400-600 · storage ~44-48 TB
-   ★ exact nahi chahiye — mota number + tareeka dikhao, aggressive round karo
-```
-
----
-
-## Trap Box
-
-```
-Trap 1: "Exact numbers calculate karna"
-         Calculator nikalna
-         Round powers of 10 (100K, 1M, 10M)
-
-Trap 2: "Sirf write load consider"
-         Reads ignore
-         Reads typically 10-100x writes — both calculate
-
-Trap 3: "Year 1 numbers se design"
-         3-5 year growth ignore
-         Future projections plan for
-
-Trap 4: "Storage forget metadata + indexes + replication"
-         Pure data size
-         +metadata (~3x base data common)
-```
+Numbers pe atak jaana, calculator nikaalna ya 1200 aur 1300 pe bahas karna. Interviewer design dekhta hai. Mota number bolo, maanyata saaf bolo ("maan lo 1 crore user roz") aur aage badho. Jahan number se design nahi badalta, wahan number bolne ki zaroorat hi nahi.
