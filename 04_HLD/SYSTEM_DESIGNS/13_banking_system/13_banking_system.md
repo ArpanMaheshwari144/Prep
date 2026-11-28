@@ -448,6 +448,14 @@ flowchart TB
 
 *Technical me:* "pehle cache khaali, phir DB, phir naya cache me" = write pe cache invalidation + refill (Spring me @CacheEvict / @CachePut jaisa) · "padhna zyada to cache" = read-heavy pe cache · TTL = safety.
 
+**Maan lo interviewer bole "Redis ki zaroorat hi nahi, kyun le rahe ho?":**
+
+**Arpan:** Main apna tark dunga: bahut log sirf dekhne aate, 50 lakh me 30 lakh sirf dekhne aa rahe to 30 lakh query bekaar ki extra. Redis me rakh lo; update aaye to pehle cache invalidate, phir DB, phir naya. Ye nahi bolunga ki "nahi nahi, hum galat kar rahe". HLD me koi ek sahi answer nahi. Haan, Kafka laga deta to wo galat hota. Wo kahe "Redis chhodo", to theek hai sir, replica laga lo, koi dikkat nahi. Replica failover ke liye bhi rakhte: likhne ka ek, padhne ke 1-2 replica, failover bhi aur padhna bhi. Jinhone read replica lagaya wo Redis nahi lagayenge, jinhone Redis lagaya wo replica nahi, aisa nahi; dono apni jagah sahi, kisi ko galat nahi bol sakte.
+
+*Technical me:* Redis vs read replica = dono read scaling ke raaste (trade-off, galat koi nahi) · replica = failover + read.
+
+*Ek baat pakki (Claude ki line, Arpan ne haan kaha):* paisa KAATTE waqt balance Redis se kabhi nahi; "600 hai ya nahi" DB me lock ke saath (kadam 3). Redis sirf app pe balance DIKHANE ke liye. Is scale pe akela read replica (kadam 8) bhi chal jaata; Redis us ke upar ek parat.
+
 ## 10. Haath se balance 100 se 600 (diary se milao)
 
 Raat ko kisi bank wale ne main register me Arpan ka balance haath se 100 ki jagah 600 kar diya, diary me koi line
