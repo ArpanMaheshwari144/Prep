@@ -184,6 +184,86 @@ vector<int> searchRange(vector<int> &nums, int target) {
 
 ████████████████████████████████████████████████
 
+### ▸ TIME BASED KEY-VALUE STORE (LC-981)  = FIRST & LAST ka bhai: mila to ruko mat, aur RIGHT (aakhri waqt <= timestamp)
+
+**SAWAAL** Ek class TimeMap: `set(key, value, timestamp)` us waqt pe value rakhe; `get(key, timestamp)` us key ki wo value de jiska waqt `<= timestamp` ho, kai ho to SABSE BADE waqt wali; na mile to `""`. set me waqt hamesha badhta jaata hai.
+
+- **e.g.** `set(foo,bar,1) · get(foo,3) -> "bar" · set(foo,bar2,4) · get(foo,5) -> "bar2" · get(foo,0) -> ""`
+- **kyun:** 3 se pehle sirf waqt 1 · 5 se pehle waqt 1 aur 4, sabse bada 4 · 0 se pehle kuch nahi
+
+### DRY-RUN (map me daalte hue + har get pe BS)
+
+```
+set("foo","bar",1)     mp:  foo -> [ {1,bar} ]
+
+get("foo",1)           temp: idx 0 = {1,bar}
+                       l0 h0 mid0 (1 <= 1) -> ans=bar, l=1          -> ruk -> "bar"
+get("foo",3)           l0 h0 mid0 (1 <= 3) -> ans=bar, l=1          -> ruk -> "bar"
+
+set("foo","bar2",4)    mp:  foo -> [ {1,bar}, {4,bar2} ]
+                       (push_back; waqt badhta hi hai, isliye vector apne aap sorted)
+
+get("foo",4)           temp: idx 0 = {1,bar} · idx 1 = {4,bar2}
+                       l0 h1 mid0 (1 <= 4) -> ans=bar,  l=1         mila, par ruko mat
+                       l1 h1 mid1 (4 <= 4) -> ans=bar2, l=2         -> ruk -> "bar2"
+get("foo",5)           wahi do kadam                                 -> "bar2"
+get("foo",0)           l0 h1 mid0 (1 > 0)  -> h=-1                   -> ruk -> ""  (ans khaali hi raha)
+get("baz",5)           baz map me hi nahi                            -> ""
+```
+
+> [!IMPORTANT]
+> **CHAABI:** `key -> vector<{waqt, value}>`, set = sirf `push_back` (waqt badhta = vector pehle se sorted, sort nahi). get = BS: `waqt <= timestamp` mila to `ans = value, low = mid + 1` (aur bada waqt aage ho sakta), warna `high = mid - 1`. `ans = ""` se shuru, key na ho to seedha `""`.
+
+**CODE**
+```cpp
+class TimeMap
+{
+public:
+    unordered_map<string, vector<pair<int, string>>> mp; // {key, {timestamp, value}}
+    TimeMap()
+    {
+    }
+
+    void set(string key, string value, int timestamp)
+    {
+        mp[key].push_back({timestamp, value});
+    }
+
+    string get(string key, int timestamp)
+    {
+        if (mp.find(key) == mp.end())
+            return "";
+
+        auto &temp = mp[key];
+        int n = temp.size();
+        string ans = "";
+
+        int low = 0, high = n - 1;
+        while (low <= high)
+        {
+            int mid = low + (high - low) / 2;
+            // ★ waqt <= timestamp mila to ans rakh lo, par ruko mat: low = mid + 1 (aage dekho).
+            //   kyun: get("foo", 3) pe {1, bar} mila, par aage {2, ...} bhi ho sakta tha
+            //   (3 se chhota aur 1 se bada) = behtar jawab. Sabse bada waqt <= timestamp chahiye.
+            if (temp[mid].first <= timestamp)
+            {
+                ans = temp[mid].second;
+                low = mid + 1;
+            }
+            else
+            {
+                high = mid - 1;
+            }
+        }
+        return ans;
+    }
+};
+```
+
+
+
+████████████████████████████████████████████████
+
 #### ── FAMILY: ROTATED (ek comparison se kaunsa half sorted / pivot kidhar, wahi half rakho) ──
 
 ### ▸ SEARCH IN ROTATED (LC-33)  = rotated sorted array me target, O(log n)

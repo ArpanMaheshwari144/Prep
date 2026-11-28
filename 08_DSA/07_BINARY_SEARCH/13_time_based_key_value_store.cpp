@@ -38,17 +38,43 @@ using namespace std;
 class TimeMap
 {
 public:
+    unordered_map<string, vector<pair<int, string>>> mp; // {key, {timestamp, value}}
     TimeMap()
     {
     }
 
     void set(string key, string value, int timestamp)
     {
+        mp[key].push_back({timestamp, value});
     }
 
     string get(string key, int timestamp)
     {
-        return "";
+        if (mp.find(key) == mp.end())
+            return "";
+
+        auto &temp = mp[key];
+        int n = temp.size();
+        string ans = "";
+
+        int low = 0, high = n - 1;
+        while (low <= high)
+        {
+            int mid = low + (high - low) / 2;
+            // ★ waqt <= timestamp mila to ans rakh lo, par ruko mat: low = mid + 1 (aage dekho).
+            //   kyun: get("foo", 3) pe {1, bar} mila, par aage {2, ...} bhi ho sakta tha
+            //   (3 se chhota aur 1 se bada) = behtar jawab. Sabse bada waqt <= timestamp chahiye.
+            if (temp[mid].first <= timestamp)
+            {
+                ans = temp[mid].second;
+                low = mid + 1;
+            }
+            else
+            {
+                high = mid - 1;
+            }
+        }
+        return ans;
     }
 };
 
