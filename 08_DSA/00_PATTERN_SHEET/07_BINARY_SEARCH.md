@@ -194,21 +194,31 @@ vector<int> searchRange(vector<int> &nums, int target) {
 ### DRY-RUN (map me daalte hue + har get pe BS)
 
 ```
-set("foo","bar",1)     mp:  foo -> [ {1,bar} ]
+1) set("foo","bar",1)
 
-get("foo",1)           temp: idx 0 = {1,bar}
-                       l0 h0 mid0 (1 <= 1) -> ans=bar, l=1          -> ruk -> "bar"
-get("foo",3)           l0 h0 mid0 (1 <= 3) -> ans=bar, l=1          -> ruk -> "bar"
+   mp:   "foo"  ->   idx 0
+                    {1, bar}
 
-set("foo","bar2",4)    mp:  foo -> [ {1,bar}, {4,bar2} ]
-                       (push_back; waqt badhta hi hai, isliye vector apne aap sorted)
+   get("foo",3):  low=0  high=0
+     mid=0 :  waqt 1 <= 3  ->  ans = "bar",  low = 1      (mila, par aage dekho)
+     low=1 > high=0  ->  ruk                               ->  "bar"
 
-get("foo",4)           temp: idx 0 = {1,bar} · idx 1 = {4,bar2}
-                       l0 h1 mid0 (1 <= 4) -> ans=bar,  l=1         mila, par ruko mat
-                       l1 h1 mid1 (4 <= 4) -> ans=bar2, l=2         -> ruk -> "bar2"
-get("foo",5)           wahi do kadam                                 -> "bar2"
-get("foo",0)           l0 h1 mid0 (1 > 0)  -> h=-1                   -> ruk -> ""  (ans khaali hi raha)
-get("baz",5)           baz map me hi nahi                            -> ""
+
+2) set("foo","bar2",4)        push_back, waqt badhta hai to vector apne aap sorted
+
+   mp:   "foo"  ->   idx 0      idx 1
+                    {1, bar}   {4, bar2}
+
+   get("foo",5):  low=0  high=1
+     mid=0 :  waqt 1 <= 5  ->  ans = "bar",   low = 1     (mila, par aage dekho)
+     mid=1 :  waqt 4 <= 5  ->  ans = "bar2",  low = 2
+     low=2 > high=1  ->  ruk                               ->  "bar2"
+
+   get("foo",0):  low=0  high=1
+     mid=0 :  waqt 1 > 0   ->  high = -1
+     low=0 > high=-1  ->  ruk, ans khaali hi raha          ->  ""
+
+   get("baz",5):  "baz" map me hi nahi                     ->  ""
 ```
 
 > [!IMPORTANT]
