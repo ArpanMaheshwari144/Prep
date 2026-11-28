@@ -685,19 +685,31 @@ Node *copyRandomList(Node *head) {
    3 aur 4 pe alag se chalne ki zaroorat nahi, wo top ban ke apne aap chipak gaye.
 ```
 
-**3. Har baar: top nikalo, curr ke baad lagao, uske baad purana agla:**
+**3. Loop, tere code ki har line ke kram me:**
 
 ```
-K=2:  curr = 1,  temp = 2 (1 ka agla)
-      stack se topNode = 4 nikla   (bache: 3 2 1)
-      1 -> 4 -> 2 -> 3 ...        curr = temp = 2
+shuru:  1 -> 2 -> 3 -> 4 -> NULL          stack (upar se): 4 3 2 1
 
-K=1:  curr = 2,  temp = 3 (2 ka agla)
-      stack se topNode = 3 nikla   (bache: 2 1, inki zaroorat nahi)
-      2 -> 3,  aur 3 -> temp = 3   (3 khud pe ghoom gaya)
-      curr = temp = 3
+=== K = 2 (pehla chakkar),  curr = 1 ===
+topNode = st.top()       topNode = 4
+st.pop()                 stack: 3 2 1
+temp = curr->next        temp = 2          <- 1 ka agla PEHLE bacha lo,
+                                              agli line 1 ka next badlegi, 2 ka pata kho jaata
+curr->next = topNode     1 -> 4            (1 ka next ab 2 nahi, 4)
+topNode->next = temp     4 -> 2            (4 ke baad bachaya hua 2 laga)
+curr = temp              curr = 2          (aage badho, bachaye hue pe)
+list ab:  1 -> 4 -> 2 -> 3 -> (4)          3 abhi bhi purane 4 pe, agle chakkar me badlega
 
-loop khatam:  curr->next = NULL  ->  3 -> NULL   (gol ghoomna kata)
+=== K = 1 (doosra chakkar),  curr = 2 ===
+topNode = st.top()       topNode = 3
+st.pop()                 stack: 2 1        (inki zaroorat nahi)
+temp = curr->next        temp = 3          (2 ka agla 3 hi tha)
+curr->next = topNode     2 -> 3            (waisa hi raha)
+topNode->next = temp     3 -> 3            (3 khud pe ghoom gaya)
+curr = temp              curr = 3
+
+=== loop khatam ===
+curr->next = NULL        3 -> NULL         (gol ghoomna kata)
 ans:  1 -> 4 -> 2 -> 3
 ```
 
