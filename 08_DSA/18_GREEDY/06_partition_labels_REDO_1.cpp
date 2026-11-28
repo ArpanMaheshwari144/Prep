@@ -28,7 +28,29 @@ using namespace std;
 
 vector<int> partitionLabels(string s)
 {
-    return {};
+    int n = s.size();
+    vector<int> mp(26, -1);
+    for (int i = 0; i < n; i++)
+    {
+        int index = s[i] - 'a';
+        mp[index] = i;
+    }
+
+    vector<int> ans;
+    int i = 0;
+    while (i < n)
+    {
+        int end = mp[s[i] - 'a'];
+        int j = i;
+        while (j < end)
+        {
+            end = max(end, mp[s[j] - 'a']);
+            j++;
+        }
+        ans.push_back(j - i + 1);
+        i = j + 1;
+    }
+    return ans;
 }
 
 // ---------- checker (ise mat chhed) ----------
