@@ -652,3 +652,88 @@ Node *copyRandomList(Node *head) {
 ```
 
 
+
+
+
+████████████████████████████████████████████████
+
+### ▸ REORDER LIST (LC-143)  = STACK (peeche wale node) + JODTE JAO
+
+**SAWAAL** List di hai L0 -> L1 -> ... -> Ln. Use L0 -> Ln -> L1 -> Ln-1 -> ... banao (node idhar-udhar karne hain, value nahi). Kuch lautana nahi.
+
+- **e.g.** `1->2->3->4 -> 1->4->2->3` · `1->2->3->4->5 -> 1->5->2->4->3`
+- **kyun:** aage se ek, peeche se ek, baari-baari. Peeche wala chahiye = stack ka top.
+
+### DRY RUN (1 -> 2 -> 3 -> 4)
+
+**1. Saare node stack me daalo, size gino:**
+
+```
+   | 4 |  <- top (sabse aakhri node)
+   | 3 |
+   | 2 |
+   | 1 |
+   +---+      size = 4
+```
+
+**2. Sirf aadha chalao, K = size / 2 = 2. Kyun aadha?**
+
+```
+   aage ke  1   2      <- curr inpe chalega
+   peeche ke 4   3      <- stack se top nikalega
+   1 pe 4 chipka, 2 pe 3 chipka = kaam khatam.
+   3 aur 4 pe alag se chalne ki zaroorat nahi, wo top ban ke apne aap chipak gaye.
+```
+
+**3. Har baar: top nikalo, curr ke baad lagao, uske baad purana agla:**
+
+```
+K=2:  curr = 1,  temp = 2 (1 ka agla)
+      stack se topNode = 4 nikla   (bache: 3 2 1)
+      1 -> 4 -> 2 -> 3 ...        curr = temp = 2
+
+K=1:  curr = 2,  temp = 3 (2 ka agla)
+      stack se topNode = 3 nikla   (bache: 2 1, inki zaroorat nahi)
+      2 -> 3,  aur 3 -> temp = 3   (3 khud pe ghoom gaya)
+      curr = temp = 3
+
+loop khatam:  curr->next = NULL  ->  3 -> NULL   (gol ghoomna kata)
+ans:  1 -> 4 -> 2 -> 3
+```
+
+> [!IMPORTANT]
+> **CHAABI:** (1) saare node stack me, size gino (2) `size / 2` baar: curr ke baad top jodo, top ke baad purana agla (3) aakhir me `curr->next = NULL`.
+
+**CODE**
+```cpp
+void reorderList(Node *head)
+{
+    if (head == NULL)
+        return;
+
+    stack<Node *> st;
+    Node *curr = head;
+    int size = 0;
+    while (curr != NULL)
+    {
+        st.push(curr);
+        size++;
+        curr = curr->next;
+    }
+
+    // 1->2->3->4 stack mei daalo and copy per likho apne aap pata chal jayega kya karna hai
+    int K = size / 2;
+    curr = head;
+    while (K--)
+    {
+        Node *topNode = st.top();
+        st.pop();
+
+        Node *temp = curr->next;
+        curr->next = topNode;
+        topNode->next = temp;
+        curr = temp;
+    }
+    curr->next = NULL;        // ★ ye na ho to list gol ghoomti rehti (dry run me 3 -> 3)
+}
+```
